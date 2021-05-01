@@ -107,24 +107,33 @@
                     <h1>Usuarios actuales</h1>
                 </div>
             </div>
-            <div class="row">
+
+            <form class="row" method="post" th:action="@{/admin/buscadorUsuarios}">
+
                 <div class="col-2">
                     <!-- search bar -->
-                    <select class="custom-select" id="inputGroupSelect01">
-                        <option selected value="todos">Todos</option>
-                        <option value="clientes">Clientes</option>
-                        <option value="repartidores">Repartidores</option>
-                        <option value="restaurantes">Restaurantes</option>
-                        <option value="admin">Admin</option>
+                    <select name="rol" class="custom-select" >
+                        <option selected value="">Todos</option>
+                        <option value="Cliente">Clientes</option>
+                        <option value="Repartidor">Repartidores</option>
+                        <option value="AdminRestaurante">Restaurantes</option>
+                        <option value="AdminSistema">Admin</option>
                     </select>
                 </div>
                 <div class="col-8">
-                    <input class="input-search-bar" placeholder="Busque un usuario por nombre...">
+                    <input name="searchField" class="input-search-bar" placeholder="Busque un usuario por nombre...">
                 </div>
                 <div class="col-2">
-                    <button type="button" class="btn btn-warning">Buscar</button>
+                    <button type="submit" class="btn btn-warning">Buscar</button>
                 </div>
-            </div>
+
+                <!-- Limpiar-->
+<!--                <div class="col-2">-->
+<!--                    <a class="btn btn-outline-secondary" th:href="@{'/admin/usuariosActuales'}">Limpiar</a>-->
+<!--                </div>-->
+
+            </form>
+
             <div class="row table-users">
                 <!-- table -->
                 <div class="col-md-12">
@@ -140,12 +149,16 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                <th scope="row">1</th>
-                                <td>Cuto Guadalupe</td>
-                                <td>71327393</td>
-                                <td>cutogod@upc.pe</td>
-                                <td>Cliente</td>
+                                <tr th:each="user, vEst : ${lisOfUsersPage}"
+
+                                    style="cursor: pointer"
+                                    th:onclick="'javascript:rowClicked(\'' + ${user.getIdusuarios()} + '\');'">
+
+                                    <th scope="row" th:text="${user.getIdusuarios()}"></th>
+                                    <td th:text="${user.getNombre()}"></td>
+                                    <td th:text="${user.getDni()}"></td>
+                                    <td th:text="${user.getDni()}"></td>
+                                    <td th:text="${user.getRol()}"></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -208,6 +221,12 @@
                 $('a[aria-expanded=true]').attr('aria-expanded', 'false');
             });
         });
+
+        //    Make a whole row as clickeable
+        function rowClicked(value) {
+            location.href = "/admin/user?id=" + value;
+        }
+
     </script>
 
     <style>

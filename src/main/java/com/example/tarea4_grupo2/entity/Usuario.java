@@ -1,6 +1,7 @@
 package com.example.tarea4_grupo2.entity;
 
 import javax.persistence.*;
+import java.util.Date;
 
 // TODO atributo fecha
 // TODO validaciones de No Nulo, etc
@@ -22,6 +23,7 @@ public class Usuario {
     private Integer comisionventa;
     private String rol;
     private Integer cuentaActiva;
+    private Date fechaNacimiento;
 
     public Integer getIdusuarios() {
         return idusuarios;
@@ -111,4 +113,11 @@ public class Usuario {
         this.cuentaActiva = cuentaActiva;
     }
 
+    public Date getFechaNacimiento() {
+        return fechaNacimiento;
+    }
+
+    public void setFechaNacimiento(Date fechaNacimiento) {
+        this.fechaNacimiento = fechaNacimiento;
+    }
 }
