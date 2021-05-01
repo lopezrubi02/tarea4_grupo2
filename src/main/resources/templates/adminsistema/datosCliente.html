@@ -111,7 +111,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-12">
-                        <h1>Datos del repartidor</h1>
+                        <h1>Datos del cliente</h1>
                     </div>
                 </div>
                 <hr>
@@ -166,40 +166,31 @@
                                         </div>
                                         <div class="col-sm-9 text-secondary" th:text="${usuario.getSexo()}"></div>
                                     </div>
-
-                                    <!-- Info especifica del repartidor -->
-                                    <hr>
-                                    <div class="row">
-                                        <div class="col-sm-3">
-                                            <h6 class="mb-0">Tipo de movilidad</h6>
-                                        </div>
-                                        <div class="col-sm-9 text-secondary" th:text="${repartidor.getMovilidad()}"></div>
-                                    </div>
-                                    <hr>
-                                    <div class="row">
-                                        <div class="col-sm-3">
-                                            <h6 class="mb-0">Placa</h6>
-                                        </div>
-                                        <div class="col-sm-9 text-secondary" th:text="${repartidor.getPlaca()}"></div>
-                                    </div>
-                                    <hr>
-                                    <div class="row">
-                                        <div class="col-sm-3">
-                                            <h6 class="mb-0">Licencia</h6>
-                                        </div>
-                                        <div class="col-sm-9 text-secondary" th:text="${repartidor.getLicencia()}"></div>
-                                    </div>
-                                    <hr>
-                                    <div class="row">
-                                        <div class="col-sm-3">
-                                            <h6 class="mb-0">Distrito</h6>
-                                        </div>
-                                        <div class="col-sm-9 text-secondary" th:text="${repartidor.getDistritoactual()}"></div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <div class="row" style="margin-top: 5vh;">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Distrito</th>
+                            <th scope="col">Direccion</th>
+
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="direccion, vEst : ${direccionesList}">
+                                <th scope="row" th:text="${vEst.index + 1}"></th>
+                                <td th:text="${direccion.getDistrito()}"></td>
+                                <td th:text="${direccion.getDireccion()}"></td>
+
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
 
 

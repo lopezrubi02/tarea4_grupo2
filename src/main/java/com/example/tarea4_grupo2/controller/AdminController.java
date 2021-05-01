@@ -1,6 +1,12 @@
 package com.example.tarea4_grupo2.controller;
 
+import com.example.tarea4_grupo2.entity.Direcciones;
+import com.example.tarea4_grupo2.entity.Repartidor;
+import com.example.tarea4_grupo2.entity.Restaurante;
 import com.example.tarea4_grupo2.entity.Usuario;
+import com.example.tarea4_grupo2.repository.DireccionesRepository;
+import com.example.tarea4_grupo2.repository.RepartidorRepository;
+import com.example.tarea4_grupo2.repository.RestauranteRepository;
 import com.example.tarea4_grupo2.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,6 +27,15 @@ public class AdminController {
 
     @Autowired
     UsuarioRepository usuarioRepository;
+
+    @Autowired
+    RepartidorRepository repartidorRepository;
+
+    @Autowired
+    DireccionesRepository direccionesRepository;
+
+    @Autowired
+    RestauranteRepository restauranteRepository;
 
     @GetMapping("/usuariosActuales")
     public String usuariosActuales(
@@ -110,7 +125,27 @@ public class AdminController {
 
                 case "Repartidor":
                     model.addAttribute("usuario", usuario);
+
+                    Repartidor repartidor = repartidorRepository.findRepartidorByUsuariosIdusuariosEquals(id);
+                    model.addAttribute("repartidor", repartidor);
+
                     return "adminsistema/datosRepartidor";
+
+                case "Cliente":
+                    model.addAttribute("usuario", usuario);
+
+                    List<Direcciones> direccionesList = direccionesRepository.findAllByUsuariosIdusuariosEquals(id);
+                    model.addAttribute("direccionesList", direccionesList);
+
+                    return "adminsistema/datosCliente";
+
+                case "AdminRestaurante":
+                    model.addAttribute("usuario", usuario);
+
+                    Restaurante restaurante = restauranteRepository.findRestauranteByIdadminrestEquals(id);
+                    model.addAttribute("restaurante", restaurante);
+
+                    return "adminsistema/datosRestaurante";
 
                 default:
                     return "redirect:/admin/usuariosActuales";

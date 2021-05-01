@@ -3,7 +3,6 @@ package com.example.tarea4_grupo2.entity;
 import javax.persistence.*;
 import java.util.Date;
 
-// TODO atributo fecha
 // TODO validaciones de No Nulo, etc
 
 @Entity
