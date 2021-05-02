@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <!-- basic -->
@@ -14,13 +14,13 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <!-- bootstrap css -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <!-- owl css -->
-    <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}"/>
     <!-- style css -->
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" th:href="@{/css/styleAdminView.css}" />
     <!-- responsive-->
-    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}" />
     <!-- awesome fontfamily -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <!--[if lt IE 9]>
@@ -53,10 +53,10 @@
                         <a href="index.html">Usuarios actuales</a>
                     </li>
                     <li>
-                        <a href="about.html">Gestion de nuevas cuentas</a>
+                        <a href="GestionCuentasPrincipal.html">Gestion de nuevas cuentas</a>
                     </li>
                     <li>
-                        <a href="recipe.html">Reportes</a>
+                        <a href="ADMIN_Reportes.html">Reportes</a>
                     </li>
                 </ul>
 
@@ -77,7 +77,9 @@
                     <div class="full">
                         <div class="right_header_info">
                             <ul>
-                                
+                                <li class="dinone"><a href="#">Usuarios Actuales</a></li>
+                                <li class="dinone"><a href="GestionCuentasPrincipal.html">Gestión de nuevas cuentas</a></li>
+                                <li class="dinone"><a href="ADMIN_Reportes.html">Reportes</a></li>
                                 <!-- TODO -->
                                 <li class="button_user"><a class="button active" href="#login.html">Mi cuenta</a><a class="button" href="#">Logout</a></li>
                                 <li>
@@ -100,13 +102,14 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-8">
-					<h1>Datos del Repartidor</h1>
+                    <h2>Datos del Administrador de Restaurante</h2>
                 </div>
 				<div class="col-4" >
 					<div class="d-flex justify-content-end">
 					<li class="button_user"><a class="button active">Cuenta Nueva</a></li>
 					</div>
 				</div>
+				
             </div>
             <hr>
             <div class="row">
@@ -124,7 +127,7 @@
                                 <h6 class="mb-0">Nombre</h6>
                               </div>
                               <div class="col-sm-9 text-secondary">
-                                Borges Zavaleta
+                                Messi Ronaldo
                               </div>
                             </div>
                             <hr>
@@ -133,7 +136,7 @@
                                 <h6 class="mb-0">Email</h6>
                               </div>
                               <div class="col-sm-9 text-secondary">
-                                sendero.bifurcado@gmail.com
+                                cr7@gaaaa.com
                               </div>
                             </div>
                             <hr>
@@ -142,7 +145,7 @@
                                   <h6 class="mb-0">DNI</h6>
                                 </div>
                                 <div class="col-sm-9 text-secondary">
-                                  972994970
+                                  972-148-970
                                 </div>
                               </div>
                             <div class="row">
@@ -159,7 +162,7 @@
                                 <h6 class="mb-0">Fecha de nacimiento</h6>
                               </div>
                               <div class="col-sm-9 text-secondary">
-                                01/04/1998
+                                01/5/2000
                               </div>
                             </div>
                             <hr>
@@ -171,61 +174,92 @@
                                 M
                               </div>
                             </div>
-							 <hr>
-                            <div class="row">
-                              <div class="col-sm-3">
-                                <h6 class="mb-0">Tipo de movilidad</h6>
-                              </div>
-                              <div class="col-sm-9 text-secondary">
-                                Moto
-                              </div>
-                            </div>
-							<div class="row">
-                              <div class="col-sm-3">
-                                <h6 class="mb-0">Placa</h6>
-                              </div>
-                              <div class="col-sm-9 text-secondary">
-                                AEB-564
-                              </div>
-                            </div>
-							<div class="row">
-                              <div class="col-sm-3">
-                                <h6 class="mb-0">Licencia</h6>
-                              </div>
-                              <div class="col-sm-9 text-secondary">
-                                AASDDFDFDF
-                              </div>
-                            </div>
                           </div>
                         </div>
                     </div>
                 </div>
-            </div>
-			 <br></br> 
-			<div class="d-flex justify-content-end">
-				<a href="ADMIN_RazonDenegacionCuenta.html">
-				<button class="btn btn-dark" style="margin-left: 10px" href="#">Denegar Cuenta</button></a>
-				<button class="btn btn-warning" style="margin-left: 10px" href="#">Aceptar Cuenta</button>
+					
 			</div>
+			<br></br> 
+		<div class="d-flex justify-content-end">
+						<button class="btn btn-dark" style="margin-left: 10px"href="#">Denegar Cuenta</button>
+						<button class="btn btn-warning" style="margin-left: 10px" href="#">Aceptar Cuenta</button>
+					</div>	
+		</div>
 			
-            <div class="row" style="margin-top: 5vh;">
-                <table class="table">
-                    <thead>
-                      <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Direccion</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <th scope="row">1</th>
-                        <td>Pluton</td>
-                      </tr>
-                    </tbody>
-                  </table>
-            </div>
+		
+    </div>
+		
 
-        </div>
+        <div class="container" style="margin-top:5vh">
+          <div class="row">
+              <div class="col-md-12">
+                  <h1>Datos del restaurante</h1>
+              </div>
+          </div>
+          <hr>
+          <div class="row">
+              <div class="col-12 col-lg-6 text-center" style="margin-bottom: 4vh;">
+                  <!-- imagen -->
+                  <img src="./images/cevicheria.jpg" class="img-responsive">  
+              </div>
+              <div class="col-12 col-lg-6">
+                  <!-- datos -->
+                  <div class="col-md-8">
+                      <div class="card user-data">
+                        <div class="card-body">
+                          <div class="row">
+                            <div class="col-sm-3">
+                              <h6 class="mb-0">Nombre</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                              Cevicheria "Aquaman"
+                            </div>
+                          </div>
+                          <hr>
+                          <div class="row">
+                            <div class="col-sm-3">
+                              <h6 class="mb-0">RUC</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                              77777777777
+                            </div>
+                          </div>
+                          <hr>
+                          <div class="row">
+                              <div class="col-sm-3">
+                                <h6 class="mb-0">Direccion</h6>
+                              </div>
+                              <div class="col-sm-9 text-secondary">
+                                Urb. A la vuelta de la upc #45
+                              </div>
+                            </div>
+                          <div class="row">
+                            <div class="col-sm-3">
+                              <h6 class="mb-0">Distrito</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                              Por ahi
+                            </div>
+                          </div>
+                          <hr>
+                          <div class="row">
+                            <div class="col-sm-3">
+                              <h6 class="mb-0">Categoria</h6>
+                            </div>
+                            <div class="col-sm-9 text-secondary">
+                              Sushi
+                            </div>
+                          </div>
+  
+                        </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          
+
+      </div>
     </div>
     </div>
     <!-- end blog -->
@@ -249,12 +283,12 @@
     </div>
     <div class="overlay"></div>
     <!-- Javascript files-->
-    <script src="js/jquery.min.js"></script>
-    <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap.bundle.min.js"></script>
-    <script src="js/owl.carousel.min.js"></script>
-    <script src="js/custom.js"></script>
-     <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script th:src="@{/js/jquery.min.js}" ></script>
+    <script th:src="@{/js/popper.min.js}" ></script>
+    <script th:src="@{/js/bootstrap.bundle.min.js}" ></script>
+    <script th:src="@{/js/owl.carousel.min.js}" ></script>
+    <script th:src="@{/js/custom.js}" ></script>
+    <script th:src="@{/js/jquery.mCustomScrollbar.concat.min.js}" ></script>
     
     <script src="js/jquery-3.0.0.min.js"></script>
     <script type="text/javascript">

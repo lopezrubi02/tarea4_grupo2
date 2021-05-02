@@ -14,13 +14,13 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <!-- bootstrap css -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <!-- owl css -->
-    <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}"/>
     <!-- style css -->
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" th:href="@{/css/styleAdminView.css}" />
     <!-- responsive-->
-    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}" />
     <!-- awesome fontfamily -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <!--[if lt IE 9]>
@@ -32,7 +32,7 @@
 <body class="main-layout">
     <!-- loader  -->
     <div class="loader_bg">
-        <div class="loader"><img src="images/loading.gif" alt="" /></div>
+        <div class="loader"><img th:src="@{/images/loading.gif}" alt="" /></div>
     </div>
 
     <div class="wrapper">
@@ -70,7 +70,7 @@
             <div class="row">
                 <div class="col-md-3">
                     <div class="full">
-                        <a class="logo" href="index.html"><img src="images/logo.png" alt="#" /></a>
+                        <a class="logo" href="index.html"><img th:src="@{/images/logo.png}" alt="#" /></a>
                     </div>
                 </div>
                 <div class="col-md-9">
@@ -84,7 +84,7 @@
                                 <li class="button_user"><a class="button active" href="#login.html">Mi cuenta</a><a class="button" href="#">Logout</a></li>
                                 <li>
                                     <button type="button" id="sidebarCollapse">
-                                        <img src="images/menu_icon.png" alt="#">
+                                        <img src="static/images/menu_icon.png" alt="#">
                                     </button>
                                 </li>
                             </ul>
@@ -110,7 +110,7 @@
             <div class="row">
                 <div class="col-12 col-md-5">
                     <!-- imagen -->
-                    <img src="./images/userImage.jpg">
+                    <img th:src="@{/images/userImage.jpg}">
                 </div>
                 <div class="col-12 col-md-7">
                     <!-- formulario -->
@@ -183,14 +183,14 @@
     </div>
     <div class="overlay"></div>
     <!-- Javascript files-->
-    <script src="js/jquery.min.js"></script>
-    <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap.bundle.min.js"></script>
-    <script src="js/owl.carousel.min.js"></script>
-    <script src="js/custom.js"></script>
-     <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
-    
-    <script src="js/jquery-3.0.0.min.js"></script>
+    <script th:src="@{/js/jquery.min.js}" ></script>
+    <script th:src="@{/js/popper.min.js}" ></script>
+    <script th:src="@{/js/bootstrap.bundle.min.js}" ></script>
+    <script th:src="@{/js/owl.carousel.min.js}" ></script>
+    <script th:src="@{/js/custom.js}" ></script>
+    <script th:src="@{/js/jquery.mCustomScrollbar.concat.min.js}" ></script>
+
+    <script th:src="@{/js/jquery-3.0.0.min.js}" ></script>
     <script type="text/javascript">
         $(document).ready(function() {
             $("#sidebar").mCustomScrollbar({
