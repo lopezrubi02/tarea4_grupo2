@@ -167,19 +167,33 @@ public class AdminController {
         return "adminsistema/nuevasCuentas";
     }
 
+
+    @GetMapping("/gestionCuentas")
+    public String gestionCuentas(){
+        return "adminsistema/GestionCuentasPrincipal";
+    }
+
     @PostMapping("/buscadorNuevos")
     public String buscarNuevos(@RequestParam(value = "searchField" ,defaultValue = "") String buscar,
                                @RequestParam(value = "rolSelected" ,defaultValue = "Todos")String rol,
                                Model model){
         List<Usuario> usuarioList;
+        System.out.println("El rol es: " + rol);
         if(rol.equals("Repartidor") || rol.equals("Restaurant")){
                 usuarioList = usuarioRepository.findAllByRolAndNombreAndCuentaActiva(rol,buscar,0);
         }else{
             usuarioList = usuarioRepository.findAllByNombreAndCuentaActiva(buscar,0);
         }
         model.addAttribute("listaUsuariosNuevos",usuarioList);
-
+        model.addAttribute(rol,"rolSelected");
         return "adminsistema/nuevasCuentas";
+    }
+
+
+
+    @GetMapping("adminForm")
+    public String adminForm(){
+        return "adminsistema/agregarAdmin";
     }
 
     @PostMapping("/agregarAdmin")
@@ -195,6 +209,7 @@ public class AdminController {
             attr.addFlashAttribute("msg","Administrador creado exitosamente");
         }else{
             attr.addFlashAttribute("msg","Fallo al crear Administrador");
+            return "adminsistema/agregarAdmin";
         }
         return "adminsistema/GestionCuentasPrincipal";
     }

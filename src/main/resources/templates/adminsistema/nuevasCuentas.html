@@ -78,7 +78,7 @@
                         <div class="right_header_info">
                             <ul>
                                 <li class="dinone"><a href="#">Usuarios Actuales</a></li>
-                                <li class="dinone"><a href="GestionCuentasPrincipal.html">Gestión de nuevas cuentas</a></li>
+                                <li class="dinone"><a th:href="@{gestionCuentas}">Gestión de nuevas cuentas</a></li>
                                 <li class="dinone"><a href="ADMIN_Reportes.html">Reportes</a></li>
                                 <!-- TODO -->
                                 <li class="button_user"><a class="button active" href="#login.html">Mi cuenta</a><a class="button" href="#">Logout</a></li>
@@ -106,13 +106,13 @@
                 </div>
             </div>
             <div class="row">
-                <form class="input-group mb-lg-3" method="post" th:action="@{admin/}"><!-- COMPLETAR -->
+                <form class="input-group mb-lg-3" method="post" th:action="@{buscadorNuevos}"><!-- COMPLETAR -->
                     <div class="col-2">
                         <!-- search bar -->
                         <select class="custom-select" id="rolSelected">
-                            <option selected value="todos">Todos</option>
-                            <option value="repartidores">Repartidor</option>
-                            <option value="restaurantes">Restaurant</option>
+                            <option value="Todos">Todos</option>
+                            <option value="Repartidor">Repartidores</option>
+                            <option value="Restaurant">Restaurantes</option>
                         </select>
                     </div>
                     <div class="col-6">
@@ -120,7 +120,7 @@
                     </div>
                     <div class="input-group-append">
                         <button class="btn btn-outline-info" type="submit" >Buscar</button>
-                        <a class="btn btn-outline-danger ml-2" th:href="@{/nuevosUsuarios}">Limpiar</a>
+                        <a class="btn btn-outline-danger ml-2" th:href="@{nuevosUsuarios}">Limpiar</a>
                     </div>
 
                 </form>

@@ -114,7 +114,7 @@
                 </div>
                 <div class="col-12 col-md-7">
                     <!-- formulario -->
-                    <form th:action="@{/agregarAdmin}">
+                    <form th:action="@{agregarAdmin}">
                         <div class="form-group">
                             <label for="nombre">Nombre:</label>
                             <input type="text" class="form-control" id="nombre" >
@@ -137,13 +137,13 @@
                         </div>
                         <div class="form-group">
                             <label for="fechaNacimiento">Nacimiento:</label>
-                            <input type="datetime-local" class="form-control" id="fechaNacimiento" >
+                            <input type="date" class="form-control" id="fechaNacimiento" >
                         </div>
                         <div class="form-group">
                             <label for="sexo">Sexo:</label>
                             <select type="text" class="form-control" id="sexo" >
                                 <option value="Masculino" >Masculino</option>
-                                <option value="Femenino" >Masculino</option>
+                                <option value="Femenino" >Femenino</option>
                             </select>
 
                         </div>
@@ -154,9 +154,9 @@
 						<div class="form-group">
                           <label for="password2">Confirmar Contraseña:</label>
                           <input type="password" class="form-control" id="password2">
-                        </div> 
-                        
-                        <button class="send" href="adminsistema/GestionCuentasPrincipal.html" >Cancelar</button>
+                        </div>
+
+                        <a th:href="@{gestionCuentas}" class="btn btn-danger">Cancelar</a>
 						<button class="send"  style="margin-left: 10px" type="submit">Aceptar</button>
                        
                     </form>

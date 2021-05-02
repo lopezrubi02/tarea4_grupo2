@@ -110,15 +110,15 @@
 			<div class="col-12 col-md-6">
                     <!-- imagen -->
                     <div align="center"><img src="./images/Foto-NuevoRest.jpg" href="ADMIN_nuevasCuentas.html" width="350" height="350"></div>
-					<a th:href="@{/nuevosUsuarios}">
-					<button type="button " class="btn btn-dark btn-lg btn-block" href="#">Solicitud de Nuevas Cuentas</button></a>
+					<a th:href="@{nuevosUsuarios}">
+					<button type="button " class="btn btn-dark btn-lg btn-block" th:href="@{nuevosUsuarios}">Solicitud de Nuevas Cuentas</button></a>
                 </div>
 				
                 <div class="col-12 col-md-6">
 					<!-- imagen -->
-                    <div align="center"><img src="./images/Foto-NuevoAdmin.png" href="agregarAdmin.html" width="348" height="348"></div>
-					<a href="agregarAdmin.html">
-					<button type="button btn-block" class="btn btn-warning btn-lg btn-block" href="#">Añadir Nuevo Administrador</button></a>
+                    <div align="center"><img src="./images/Foto-NuevoAdmin.png" th:href="@{adminForm}" width="348" height="348"></div>
+					<a th:href="@{adminForm}">
+					<button type="button btn-block" class="btn btn-warning btn-lg btn-block" th:href="@{adminForm}">Añadir Nuevo Administrador</button></a>
                 </div>
 				
 			<!-- Anterior NavBar-->
