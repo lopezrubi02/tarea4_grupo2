@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <!-- basic -->
@@ -53,7 +53,7 @@
                         <a href="index.html">Usuarios actuales</a>
                     </li>
                     <li>
-                        <a href="ADMIN_GestionCuentasPrincipal.html">Gestion de nuevas cuentas</a>
+                        <a href="GestionCuentasPrincipal.html">Gestion de nuevas cuentas</a>
                     </li>
                     <li>
                         <a href="ADMIN_Reportes.html">Reportes</a>
@@ -78,7 +78,7 @@
                         <div class="right_header_info">
                             <ul>
                                 <li class="dinone"><a href="#">Usuarios Actuales</a></li>
-                                <li class="dinone"><a href="ADMIN_GestionCuentasPrincipal.html">Gestión de nuevas cuentas</a></li>
+                                <li class="dinone"><a href="GestionCuentasPrincipal.html">Gestión de nuevas cuentas</a></li>
                                 <li class="dinone"><a href="ADMIN_Reportes.html">Reportes</a></li>
                                 <!-- TODO -->
                                 <li class="button_user"><a class="button active" href="#login.html">Mi cuenta</a><a class="button" href="#">Logout</a></li>
@@ -102,77 +102,27 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <h1>Solicitud de Nuevas Cuentas</h1>
+                    <h1>Gestión de nuevas cuentas</h1>
                 </div>
             </div>
+            <hr>
             <div class="row">
-                <div class="col-2">
-                    <!-- search bar -->
-                    <select class="custom-select" id="inputGroupSelect01">
-                        <option selected value="todos">Todos</option>
-                        <option value="repartidores">Repartidores</option>
-                        <option value="restaurantes">Restaurantes</option>
-                    </select>
+			<div class="col-12 col-md-6">
+                    <!-- imagen -->
+                    <div align="center"><img src="./images/Foto-NuevoRest.jpg" href="ADMIN_nuevasCuentas.html" width="350" height="350"></div>
+					<a th:href="@{/nuevosUsuarios}">
+					<button type="button " class="btn btn-dark btn-lg btn-block" href="#">Solicitud de Nuevas Cuentas</button></a>
                 </div>
-                <div class="col-6">
-                    <input class="input-search-bar" size="30" placeholder="Busque un usuario por nombre...">
+				
+                <div class="col-12 col-md-6">
+					<!-- imagen -->
+                    <div align="center"><img src="./images/Foto-NuevoAdmin.png" href="agregarAdmin.html" width="348" height="348"></div>
+					<a href="agregarAdmin.html">
+					<button type="button btn-block" class="btn btn-warning btn-lg btn-block" href="#">Añadir Nuevo Administrador</button></a>
                 </div>
-                <div class="col-4">
-					<div class="d-flex justify-content-start">
-					<li class="button_user"><a class="button active">Buscar</a></li>
-					</div>
-				</div>
-            </div>
-            <div class="row table-users">
-                <!-- table -->
-                <div class="col-md-12">
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Nombre</th>
-                                <th scope="col">DNI</th>
-                                <th scope="col">Email</th>
-                                <th scope="col">Tipo</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                <th scope="row">1</th>
-                                <td><a href="ADMIN_AceptarCuentaRepartidor.html">Borges Zavaleta</a></td>
-                                <td>45321344</td>
-                                <td>sendero.bifurcado@gmail.com</td>
-                                <td>Repartidores</td>
-                                </tr>
-                            </tbody>
-							<tbody>
-                                <tr>
-                                <th scope="row">1</th>
-                                <td><a href="#">Charles Darwin Montes</a></td>
-                                <td>71327393</td>
-                                <td>darwin.galapagos@gmail.com</td>
-                                <td>Repartidores</td>
-                                </tr>
-                            </tbody>
-							<tbody>
-                                <tr>
-                                <th scope="row">1</th>
-                                <td><a href="ADMIN_AceptarCuentaRestaurante.html">Fiorella Arroyo Ugarte</a></td>
-                                <td>56343213</td>
-                                <td>morro.baile48@hotmail.com</td>
-                                <td>Restaurantes</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <!-- end of table -->
-
-                <div class="col-md-12">
-                    <p>Anterior | 1 | 2 | 3 | Siguiente</p>
-                </div>
-
+				
+			<!-- Anterior NavBar-->
+				
             </div>
         </div>
     </div>
@@ -185,7 +135,7 @@
             <div class="container-fluid">
                 <div class="copyright">
                     <div class="container">
-                        <p>© 2050 All Rights Reserved</p>
+                        <p>© 2021 Todos los Derechos Reservados</p>
                     </div>
                 </div>
             </div>

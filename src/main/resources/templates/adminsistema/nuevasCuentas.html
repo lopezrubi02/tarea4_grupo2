@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <!-- basic -->
@@ -53,7 +53,7 @@
                         <a href="index.html">Usuarios actuales</a>
                     </li>
                     <li>
-                        <a href="ADMIN_GestionCuentasPrincipal.html">Gestion de nuevas cuentas</a>
+                        <a href="GestionCuentasPrincipal.html">Gestion de nuevas cuentas</a>
                     </li>
                     <li>
                         <a href="ADMIN_Reportes.html">Reportes</a>
@@ -78,7 +78,7 @@
                         <div class="right_header_info">
                             <ul>
                                 <li class="dinone"><a href="#">Usuarios Actuales</a></li>
-                                <li class="dinone"><a href="ADMIN_GestionCuentasPrincipal.html">Gestión de nuevas cuentas</a></li>
+                                <li class="dinone"><a href="GestionCuentasPrincipal.html">Gestión de nuevas cuentas</a></li>
                                 <li class="dinone"><a href="ADMIN_Reportes.html">Reportes</a></li>
                                 <!-- TODO -->
                                 <li class="button_user"><a class="button active" href="#login.html">Mi cuenta</a><a class="button" href="#">Logout</a></li>
@@ -102,27 +102,62 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <h1>Gestión de nuevas cuentas</h1>
+                    <h1>Solicitud de Nuevas Cuentas</h1>
                 </div>
             </div>
-            <hr>
             <div class="row">
-			<div class="col-12 col-md-6">
-                    <!-- imagen -->
-                    <div align="center"><img src="./images/Foto-NuevoRest.jpg" href="ADMIN_nuevasCuentas.html" width="350" height="350"></div>
-					<a href="ADMIN_nuevasCuentas.html">
-					<button type="button " class="btn btn-dark btn-lg btn-block" href="#">Solicitud de Nuevas Cuentas</button></a>
+                <form class="input-group mb-lg-3" method="post" th:action="@{admin/}"><!-- COMPLETAR -->
+                    <div class="col-2">
+                        <!-- search bar -->
+                        <select class="custom-select" id="rolSelected">
+                            <option selected value="todos">Todos</option>
+                            <option value="repartidores">Repartidor</option>
+                            <option value="restaurantes">Restaurant</option>
+                        </select>
+                    </div>
+                    <div class="col-6">
+                        <input name="searchField" class="form-control mb-3" type="text" placeholder="Search" th:text="${searchField}"/>
+                    </div>
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-info" type="submit" >Buscar</button>
+                        <a class="btn btn-outline-danger ml-2" th:href="@{/nuevosUsuarios}">Limpiar</a>
+                    </div>
+
+                </form>
+            </div>
+
+            <div class="row table-users">
+                <!-- table -->
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">DNI</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Tipo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="usuario,info : ${listaUsuariosNuevos}">
+                                <th th:text="${info.index}"></th>
+                                <td th:text="${usuario.nombre + ' ' + usuario.apellidos }"></td>
+                                <td th:text="${usuario.dni}"></td>
+                                <td th:text="${usuario.email}"></td>
+                                <td th:text="${usuario.rol}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-				
-                <div class="col-12 col-md-6">
-					<!-- imagen -->
-                    <div align="center"><img src="./images/Foto-NuevoAdmin.png" href="ADMIN_agregarAdmin.html" width="348" height="348"></div>
-					<a href="ADMIN_agregarAdmin.html">
-					<button type="button btn-block" class="btn btn-warning btn-lg btn-block" href="#">Añadir Nuevo Administrador</button></a>
+                <!-- end of table -->
+
+                <div class="col-md-12">
+                    <p>Anterior | 1 | 2 | 3 | Siguiente</p>
                 </div>
-				
-			<!-- Anterior NavBar-->
-				
+
             </div>
         </div>
     </div>
@@ -135,7 +170,7 @@
             <div class="container-fluid">
                 <div class="copyright">
                     <div class="container">
-                        <p>© 2021 Todos los Derechos Reservados</p>
+                        <p>© 2050 All Rights Reserved</p>
                     </div>
                 </div>
             </div>

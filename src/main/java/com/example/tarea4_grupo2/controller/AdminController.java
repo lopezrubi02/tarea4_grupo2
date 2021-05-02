@@ -8,6 +8,7 @@ import com.example.tarea4_grupo2.repository.DireccionesRepository;
 import com.example.tarea4_grupo2.repository.RepartidorRepository;
 import com.example.tarea4_grupo2.repository.RestauranteRepository;
 import com.example.tarea4_grupo2.repository.UsuarioRepository;
+//import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,8 +44,7 @@ public class AdminController {
             @RequestParam(name = "page", defaultValue = "1") String requestedPage,
             @RequestParam(name = "searchField", defaultValue = "") String searchField,
             @RequestParam(name = "rol", defaultValue = "") String rol,
-            Model model
-    ) {
+            Model model) {
         /**
          * Validaciones
          * ---
@@ -62,7 +63,7 @@ public class AdminController {
             // si es que no estan vacios, se filtra por rol y nombre
             usuarioList = usuarioRepository.findAllByRolAndCuentaActivaAndNombre(rol, 1, searchField);
         } else if (!searchField.equals("")) {
-            // si el nobre es el que no esta vacio, se filtra por nombre
+            // si el nombre es el que no esta vacio, se filtra por nombre
             usuarioList = usuarioRepository.findAllByNombreAndCuentaActiva(searchField, 1);
         } else if (!rol.equals("")) {
             // viceversa
@@ -155,6 +156,50 @@ public class AdminController {
             return "redirect:/admin/usuariosActuales";
         }
     }
+
+    @GetMapping("/nuevosUsuarios")
+    public String nuevosUsuarios(Model model){
+
+        List<Usuario> usuarioList;
+        usuarioList = usuarioRepository.findAllByCuentaActivaEquals(0);
+        model.addAttribute("listaUsuariosNuevos",usuarioList);
+
+        return "adminsistema/nuevasCuentas";
+    }
+
+    @PostMapping("/buscadorNuevos")
+    public String buscarNuevos(@RequestParam(value = "searchField" ,defaultValue = "") String buscar,
+                               @RequestParam(value = "rolSelected" ,defaultValue = "Todos")String rol,
+                               Model model){
+        List<Usuario> usuarioList;
+        if(rol.equals("Repartidor") || rol.equals("Restaurant")){
+                usuarioList = usuarioRepository.findAllByRolAndNombreAndCuentaActiva(rol,buscar,0);
+        }else{
+            usuarioList = usuarioRepository.findAllByNombreAndCuentaActiva(buscar,0);
+        }
+        model.addAttribute("listaUsuariosNuevos",usuarioList);
+
+        return "adminsistema/nuevasCuentas";
+    }
+
+    @PostMapping("/agregarAdmin")
+    public String agregarAdmin(@RequestParam(value = "password1") String pass1,
+                               @RequestParam(value = "password2") String pass2,
+                               Usuario u, Model model,
+                               RedirectAttributes attr){
+        if(pass1.equals(pass2)){
+            u.setRol("Administrador");
+            usuarioRepository.nuevoUsuario(u.getIdusuarios(),u.getNombre(),u.getApellidos(),
+                    u.getEmail(),pass1,u.getTelefono(),u.getFechaNacimiento(),u.getSexo(),u.getDni(),
+                    u.getRol());
+            attr.addFlashAttribute("msg","Administrador creado exitosamente");
+        }else{
+            attr.addFlashAttribute("msg","Fallo al crear Administrador");
+        }
+        return "adminsistema/GestionCuentasPrincipal";
+    }
+
+
 
 
 }
