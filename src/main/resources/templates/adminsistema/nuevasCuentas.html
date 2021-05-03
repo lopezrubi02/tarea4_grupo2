@@ -87,7 +87,7 @@
                                 <li class="button_user"><a class="button active" href="#login.html">Mi cuenta</a><a class="button" href="#">Logout</a></li>
                                 <li>
                                     <button type="button" id="sidebarCollapse">
-                                        <img th:src="@{images/menu_icon.png}" alt="#">
+                                        <img th:src="@{/images/menu_icon.png}" alt="#">
                                     </button>
                                 </li>
                             </ul>
@@ -115,18 +115,21 @@
                 <form class="input-group mb-lg-3" method="post" th:action="@{buscadorNuevos}"><!-- COMPLETAR -->
                     <div class="col-2">
                         <!-- search bar -->
-                        <select class="custom-select" id="rolSelected">
-                            <option value="Todos">Todos</option>
-                            <option value="Repartidor">Repartidores</option>
-                            <option value="Restaurant">Restaurantes</option>
+                        <select class="custom-select" id="rolSelected" onChange="window.location=this.options[this.selectedIndex].value">
+                            <option selected="true" disabled="disabled">Filtrar por Rol</option>
+                            <option value="nuevosUsuarios?rolSelected=Todos">Todos</option>
+                            <option value="nuevosUsuarios?rolSelected=Repartidor">Repartidores</option>
+                            <option value="nuevosUsuarios?rolSelected=AdminRestaurante">Restaurantes</option>
                         </select>
                     </div>
                     <div class="col-6">
-                        <input name="searchField" class="form-control mb-3" type="text" placeholder="Search" th:text="${searchField}"/>
+                        <input name="searchField" class="form-control mb-3" type="text" placeholder="Busqueda" th:text="${searchField}"/>
                     </div>
                     <div class="input-group-append">
-                        <button class="btn btn-outline-info" type="submit" >Buscar</button>
-                        <a class="btn btn-outline-danger ml-2" th:href="@{nuevosUsuarios}">Limpiar</a>
+                        <li class="button_user" ><a class="button active"  ><button  class="btn btn-link" type="submit" >Buscar</button></a></li>
+                        <!--button class="btn btn-outline-warning" type="submit" >Buscar</button-->
+                        <li class="button_user"><a class="button active" th:href="@{nuevosUsuarios}" > Limpiar </a></li>
+                        <!--a class="btn btn-outline-danger ml-2" th:href="@{nuevosUsuarios}">Limpiar</a-->
                     </div>
 
                 </form>
