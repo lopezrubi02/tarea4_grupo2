@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,16 +60,16 @@ public class AdminController {
 
         if (!searchField.equals("") && !rol.equals("")) {
             // si es que no estan vacios, se filtra por rol y nombre
-            usuarioList = usuarioRepository.findAllByRolAndCuentaActivaAndNombre(rol, 1, searchField);
+            usuarioList = usuarioRepository.findAllByRolAndCuentaactivaAndNombre(rol, 1, searchField);
         } else if (!searchField.equals("")) {
             // si el nombre es el que no esta vacio, se filtra por nombre
-            usuarioList = usuarioRepository.findAllByNombreAndCuentaActiva(searchField, 1);
+            usuarioList = usuarioRepository.findAllByNombreAndCuentaactiva(searchField, 1);
         } else if (!rol.equals("")) {
             // viceversa
-            usuarioList = usuarioRepository.findAllByRolAndCuentaActiva(rol, 1);
+            usuarioList = usuarioRepository.findAllByRolAndCuentaactiva(rol, 1);
         } else {
             // si todos los campos estan vacios, se muestran todos por defecto
-            usuarioList = usuarioRepository.findAllByCuentaActivaEquals(1);
+            usuarioList = usuarioRepository.findAllByCuentaactivaEquals(1);
         }
 
         int numberOfPages = (int) Math.ceil(usuarioList.size() / numberOfUsersPerPage);
@@ -162,7 +161,7 @@ public class AdminController {
     public String nuevosUsuarios(Model model){
 
         List<Usuario> usuarioList;
-        usuarioList = usuarioRepository.findAllByCuentaActivaEquals(0);
+        usuarioList = usuarioRepository.findAllByCuentaactivaEquals(0);
         model.addAttribute("listaUsuariosNuevos",usuarioList);
 
         return "adminsistema/nuevasCuentas";
@@ -181,9 +180,9 @@ public class AdminController {
         List<Usuario> usuarioList;
         System.out.println("El rol es: " + rol);
         if(rol.equals("Repartidor") || rol.equals("Restaurant")){
-                usuarioList = usuarioRepository.findAllByRolAndNombreAndCuentaActiva(rol,buscar,0);
+                usuarioList = usuarioRepository.findAllByRolAndNombreAndCuentaactiva(rol,buscar,0);
         }else{
-            usuarioList = usuarioRepository.findAllByNombreAndCuentaActiva(buscar,0);
+            usuarioList = usuarioRepository.findAllByNombreAndCuentaactiva(buscar,0);
         }
         model.addAttribute("listaUsuariosNuevos",usuarioList);
         model.addAttribute(rol,"rolSelected");
@@ -201,10 +200,10 @@ public class AdminController {
     public String agregarAdmin(@RequestParam(value = "password2") String pass2,
                                Usuario u, Model model,
                                RedirectAttributes attr){
-        if(u.getContraseniaHash().equals(pass2)){
+        if(u.getContraseniahash().equals(pass2)){
             u.setRol("Administrador");
             usuarioRepository.nuevoUsuario(u.getIdusuarios(),u.getNombre(),u.getApellidos(),
-                    u.getEmail(),u.getContraseniaHash(),u.getTelefono(),u.getFechaNacimiento(),
+                    u.getEmail(),u.getContraseniahash(),u.getTelefono(),u.getFechanacimiento(),
                     u.getSexo(),u.getDni(), u.getRol());
             attr.addFlashAttribute("msg","Administrador creado exitosamente");
         }else{

@@ -9,13 +9,13 @@ import java.util.List;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
-    List<Usuario> findAllByCuentaActivaEquals(Integer cuentaActiva);
-    List<Usuario> findAllByRolAndCuentaActiva(String rol, Integer cuentaActiva);
-    List<Usuario> findAllByRolAndCuentaActivaAndNombre(String rol, Integer cuentaActiva, String name);
-    List<Usuario> findAllByNombreAndCuentaActiva(String nombre, int cuentaActiva);
+    List<Usuario> findAllByCuentaactivaEquals(Integer cuenta_activa);
+    List<Usuario> findAllByRolAndCuentaactiva(String rol, Integer cuenta_activa);
+    List<Usuario> findAllByRolAndCuentaactivaAndNombre(String rol, Integer cuenta_activa, String name);
+    List<Usuario> findAllByNombreAndCuentaactiva(String nombre, Integer cuenta_activa);
 
     //Gestion de Nuevas Cuentas
-    List<Usuario> findAllByRolAndNombreAndCuentaActiva(String rol, String nombre, Integer cuentaActiva);
+    List<Usuario> findAllByRolAndNombreAndCuentaactiva(String rol, String nombre, Integer cuenta_activa);
 
     //@Query(value = "update usuario u set contrasenia_hash =sha2(?1,256) where idusuarios = ?2;",nativeQuery = true )
     //Usuario updateContraUsuario(String contrasenia,int idusuario);
