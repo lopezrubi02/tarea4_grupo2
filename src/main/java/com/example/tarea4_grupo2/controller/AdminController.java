@@ -156,6 +156,7 @@ public class AdminController {
             return "redirect:/admin/usuariosActuales";
         }
     }
+    //Gestion de Nuevas Cuentas
 
     @GetMapping("/nuevosUsuarios")
     public String nuevosUsuarios(Model model){
@@ -197,21 +198,27 @@ public class AdminController {
     }
 
     @PostMapping("/agregarAdmin")
-    public String agregarAdmin(@RequestParam(value = "password1") String pass1,
-                               @RequestParam(value = "password2") String pass2,
+    public String agregarAdmin(@RequestParam(value = "password2") String pass2,
                                Usuario u, Model model,
                                RedirectAttributes attr){
-        if(pass1.equals(pass2)){
+        if(u.getContraseniaHash().equals(pass2)){
             u.setRol("Administrador");
             usuarioRepository.nuevoUsuario(u.getIdusuarios(),u.getNombre(),u.getApellidos(),
-                    u.getEmail(),pass1,u.getTelefono(),u.getFechaNacimiento(),u.getSexo(),u.getDni(),
-                    u.getRol());
+                    u.getEmail(),u.getContraseniaHash(),u.getTelefono(),u.getFechaNacimiento(),
+                    u.getSexo(),u.getDni(), u.getRol());
             attr.addFlashAttribute("msg","Administrador creado exitosamente");
         }else{
             attr.addFlashAttribute("msg","Fallo al crear Administrador");
             return "adminsistema/agregarAdmin";
         }
         return "adminsistema/GestionCuentasPrincipal";
+    }
+
+    //Reportes
+
+    @GetMapping("/reportes")
+    public String reportesAdmin(){
+        return "adminsistema/ADMIN_Reportes";
     }
 
 
