@@ -61,39 +61,41 @@
                 </ul>
 
             </nav>
-        </div>
+     </div>
 
     <div id="content">
     <!-- header -->
-    <header>
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="full">
-                        <a class="logo" href="index.html"><img th:src="@{/images/logo.png}" alt="#" /></a>
+        <header>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="full">
+                            <a class="logo" href="index.html"><img th:src="@{/images/logo.png}" alt="#" /></a>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-9">
-                    <div class="full">
-                        <div class="right_header_info">
-                            <ul>
-                                <li class="dinone"><a href="#">Usuarios Actuales</a></li>
-                                <li class="dinone"><a href="GestionCuentasPrincipal.html">Gestión de nuevas cuentas</a></li>
-                                <li class="dinone"><a href="#">Reportes</a></li>
-                                <!-- TODO -->
-                                <li class="button_user"><a class="button active" href="#login.html">Mi cuenta</a><a class="button" href="#">Logout</a></li>
-                                <li>
-                                    <button type="button" id="sidebarCollapse">
-                                        <img src="static/images/menu_icon.png" alt="#">
-                                    </button>
-                                </li>
-                            </ul>
+                    <div class="col-md-9">
+                        <div class="full">
+                            <div class="right_header_info">
+                                <ul>
+                                    <li class="dinone"><a href="#">Usuarios Actuales</a></li>
+                                    <li class="dinone"><a href="GestionCuentasPrincipal.html">Gestión de nuevas cuentas</a></li>
+                                    <li class="dinone"><a href="#">Reportes</a></li>
+                                    <!-- TODO -->
+                                    <li class="button_user"><a class="button active" href="#login.html">Mi cuenta</a><a class="button" href="#">Logout</a></li>
+                                    <li>
+                                        <button type="button" id="sidebarCollapse">
+                                            <img th:src="@{/images/menu_icon.png}" alt="#">
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </header>
+        </header>
+    </div>
+    </div>
     <!-- end header -->
 
 
@@ -114,7 +116,7 @@
                 </div>
                 <div class="col-12 col-md-7">
                     <!-- formulario -->
-                    <form th:action="@{agregarAdmin}">
+                    <form th:action="@{agregarAdmin}" method="post">
                         <div class="form-group">
                             <label for="nombre">Nombre:</label>
                             <input type="text" class="form-control" id="nombre" >
@@ -142,21 +144,21 @@
                         <div class="form-group">
                             <label for="sexo">Sexo:</label>
                             <select type="text" class="form-control" id="sexo" >
-                                <option value="Masculino" >Masculino</option>
-                                <option value="Femenino" >Femenino</option>
+                                <option value="Masculino" text="Masculino">Masculino</option>
+                                <option value="Femenino" text="Femenino">Femenino</option>
                             </select>
 
                         </div>
                         <div class="form-group">
-                          <label for="password1">Contraseña:</label>
-                          <input type="password" class="form-control" id="password1">
+                          <label for="contraseniaHash">Contraseña:</label>
+                          <input type="password" class="form-control" id="contraseniaHash">
                         </div> 
 						<div class="form-group">
                           <label for="password2">Confirmar Contraseña:</label>
                           <input type="password" class="form-control" id="password2">
                         </div>
 
-                        <a th:href="@{gestionCuentas}" class="btn btn-danger">Cancelar</a>
+                        <a th:href="@{gestionCuentas}" class="btn btn-warning">Cancelar</a>
 						<button class="send"  style="margin-left: 10px" type="submit">Aceptar</button>
                        
                     </form>
