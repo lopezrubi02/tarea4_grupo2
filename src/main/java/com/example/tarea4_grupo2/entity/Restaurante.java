@@ -13,7 +13,7 @@ public class Restaurante {
     private String distrito;
     private String ruc;
     private String nombre;
-    private int activo;
+
     private Float calificacionpromedio;
 
     private int idadminrest;
@@ -59,13 +59,6 @@ public class Restaurante {
         this.nombre = nombre;
     }
 
-    public int getActivo() {
-        return activo;
-    }
-
-    public void setActivo(int activo) {
-        this.activo = activo;
-    }
 
     public int getIdadminrest() {
         return idadminrest;

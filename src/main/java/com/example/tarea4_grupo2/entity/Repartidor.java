@@ -16,7 +16,7 @@ public class Repartidor {
     private Byte foto;
     private boolean disponibilidad;
     private Float calificacionpromedio;
-    private int activo;
+
     private String distritoactual;
 
     @Column(name="usuarios_idusuarios")
@@ -80,13 +80,6 @@ public class Repartidor {
         this.calificacionpromedio = calificacionpromedio;
     }
 
-    public int getActivo() {
-        return activo;
-    }
-
-    public void setActivo(int activo) {
-        this.activo = activo;
-    }
 
     public int getUsuariosIdusuarios() {
         return usuariosIdusuarios;
