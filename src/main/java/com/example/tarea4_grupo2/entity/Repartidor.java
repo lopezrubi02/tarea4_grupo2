@@ -9,6 +9,7 @@ public class Repartidor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idrepartidor;
+
     private String movilidad;
     private String placa;
     private String licencia;

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -157,21 +158,28 @@ public class AdminController {
     }
     //Gestion de Nuevas Cuentas
 
-    @GetMapping("/nuevosUsuarios")
-    public String nuevosUsuarios(Model model){
+    @GetMapping("/gestionCuentas")
+    public String gestionCuentas(){
+        return "adminsistema/GestionCuentasPrincipal";
+    }
 
+    @GetMapping("/nuevosUsuarios")
+    public String nuevosUsuarios(Model model,@RequestParam(value = "rolSelected" ,defaultValue = "Todos")String rol){
         List<Usuario> usuarioList;
-        usuarioList = usuarioRepository.findAllByCuentaactivaEquals(0);
+        if(rol.equals("Repartidor") || rol.equals("AdminRestaurante") ){
+            usuarioList = usuarioRepository.findAllByRolAndCuentaactiva(rol,0);
+        }else{
+            usuarioList = usuarioRepository.cuentasNuevas();
+        }
+
+        //usuarioList = usuarioRepository.findAllByCuentaactivaEquals(0);
         model.addAttribute("listaUsuariosNuevos",usuarioList);
 
         return "adminsistema/nuevasCuentas";
     }
 
 
-    @GetMapping("/gestionCuentas")
-    public String gestionCuentas(){
-        return "adminsistema/GestionCuentasPrincipal";
-    }
+
 
     @PostMapping("/buscadorNuevos")
     public String buscarNuevos(@RequestParam(value = "searchField" ,defaultValue = "") String buscar,
@@ -179,10 +187,11 @@ public class AdminController {
                                Model model){
         List<Usuario> usuarioList;
         System.out.println("El rol es: " + rol);
-        if(rol.equals("Repartidor") || rol.equals("Restaurant")){
-                usuarioList = usuarioRepository.findAllByRolAndNombreAndCuentaactiva(rol,buscar,0);
+        if(rol.equals("Repartidor") || rol.equals("AdminRestaurant")){
+            usuarioList = usuarioRepository.findAllByRolAndNombreAndCuentaactiva(rol,buscar,0);
         }else{
-            usuarioList = usuarioRepository.findAllByNombreAndCuentaactiva(buscar,0);
+            buscar = "%"+buscar+"%";
+            usuarioList = usuarioRepository.buscarGestionCuentasNuevas(buscar);
         }
         model.addAttribute("listaUsuariosNuevos",usuarioList);
         model.addAttribute(rol,"rolSelected");
@@ -197,7 +206,7 @@ public class AdminController {
     }
 
     @PostMapping("/agregarAdmin")
-    public String agregarAdmin(@RequestParam(value = "password2") String pass2,
+    public String agregarAdmin(@RequestParam(name = "password2") String pass2,
                                Usuario u, Model model,
                                RedirectAttributes attr){
         if(u.getContraseniahash().equals(pass2)){
