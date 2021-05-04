@@ -12,7 +12,7 @@ public class Pedidos {
 
     @Column(nullable = false)
     private float montototal;
-    private String idrestaurante;
+
 
     @Column(nullable = false)
     private int comisionrepartidor;
@@ -27,22 +27,29 @@ public class Pedidos {
     private int calificacionrestaurante;
     private int calificacionrepartidor;
 
-    @Size(max=200,message = "El nombre no puede tener más de 200 caracteres")
+    @Size(max=200,message = "El comentario no puede tener más de 200 caracteres")
     private String comentario;
 
     private float tiempodelivery;
 
     @Column(nullable = false)
-    private String estado_restaurante;
+    private String estadorestaurante;
 
     @Column(nullable = false)
-    private String estado_repartidor;
+    private String estadorepartidor;
 
     @Column(nullable = false)
     private int idcliente;
 
-    @Column(nullable = false)
+
     private int idrepartidor;
+
+    private int restaurante_idrestaurante;
+    private String fechahorapedido;
+    private String fechahoraentregado;
+    private int direccionentrega;
+
+
 
     public int getIdpedidos() {
         return idpedidos;
@@ -60,13 +67,7 @@ public class Pedidos {
         this.montototal = montototal;
     }
 
-    public String getIdrestaurante() {
-        return idrestaurante;
-    }
 
-    public void setIdrestaurante(String idrestaurante) {
-        this.idrestaurante = idrestaurante;
-    }
 
     public int getComisionrepartidor() {
         return comisionrepartidor;
@@ -132,21 +133,6 @@ public class Pedidos {
         this.tiempodelivery = tiempodelivery;
     }
 
-    public String getEstado_restaurante() {
-        return estado_restaurante;
-    }
-
-    public void setEstado_restaurante(String estado_restaurante) {
-        this.estado_restaurante = estado_restaurante;
-    }
-
-    public String getEstado_repartidor() {
-        return estado_repartidor;
-    }
-
-    public void setEstado_repartidor(String estado_repartidor) {
-        this.estado_repartidor = estado_repartidor;
-    }
 
     public int getIdcliente() {
         return idcliente;
@@ -162,5 +148,54 @@ public class Pedidos {
 
     public void setIdrepartidor(int idrepartidor) {
         this.idrepartidor = idrepartidor;
+    }
+
+
+    public String getEstadorestaurante() {
+        return estadorestaurante;
+    }
+
+    public void setEstadorestaurante(String estadorestaurante) {
+        this.estadorestaurante = estadorestaurante;
+    }
+
+    public String getEstadorepartidor() {
+        return estadorepartidor;
+    }
+
+    public void setEstadorepartidor(String estadorepartidor) {
+        this.estadorepartidor = estadorepartidor;
+    }
+
+    public int getRestaurante_idrestaurante() {
+        return restaurante_idrestaurante;
+    }
+
+    public void setRestaurante_idrestaurante(int restaurante_idrestaurante) {
+        this.restaurante_idrestaurante = restaurante_idrestaurante;
+    }
+
+    public String getFechahorapedido() {
+        return fechahorapedido;
+    }
+
+    public void setFechahorapedido(String fechahorapedido) {
+        this.fechahorapedido = fechahorapedido;
+    }
+
+    public String getFechahoraentregado() {
+        return fechahoraentregado;
+    }
+
+    public void setFechahoraentregado(String fechahoraentregado) {
+        this.fechahoraentregado = fechahoraentregado;
+    }
+
+    public int getDireccionentrega() {
+        return direccionentrega;
+    }
+
+    public void setDireccionentrega(int direccionentrega) {
+        this.direccionentrega = direccionentrega;
     }
 }

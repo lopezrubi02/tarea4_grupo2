@@ -21,8 +21,11 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     //Usuario updateContraUsuario(String contrasenia,int idusuario);
 
     @Query(value= "insert into usuarios (idusuario, nombre, apellidos, email, contrasenia_hash,telefono,fecha_nacimiento,sexo,dni,rol) " +
-            "values(?1,?2,?3,?4,sha2(?5,256),?6,?7,?8,?9,?10);",nativeQuery = true)
+            "values(?1,?2,?3,?4,sha2(?5,256),?6,?7,?8,?9,'Cliente');",nativeQuery = true)
     Usuario nuevoUsuario(int id, String nombre, String apellido, String email, String contra, int telefono,
                          Date fecha, String sexo, String dni, String rol);
+
+
+
 
 }

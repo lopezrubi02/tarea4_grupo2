@@ -1,6 +1,7 @@
 package com.example.tarea4_grupo2.entity;
 
 import javax.persistence.*;
+import java.sql.Blob;
 
 @Entity
 @Table(name = "datosrepartidor")
@@ -11,8 +12,15 @@ public class Repartidor {
     private String movilidad;
     private String placa;
     private String licencia;
-    private int usuariosIdusuarios;
+    private Byte foto;
+    private boolean disponibilidad;
+    private Float calificacionpromedio;
+    private int activo;
     private String distritoactual;
+
+    @Column(name="usuarios_idusuarios")
+    private int usuariosIdusuarios;
+
 
 
     public int getIdrepartidor() {
@@ -45,6 +53,38 @@ public class Repartidor {
 
     public void setLicencia(String licencia) {
         this.licencia = licencia;
+    }
+
+    public Byte getFoto() {
+        return foto;
+    }
+
+    public void setFoto(Byte foto) {
+        this.foto = foto;
+    }
+
+    public boolean isDisponibilidad() {
+        return disponibilidad;
+    }
+
+    public void setDisponibilidad(boolean disponibilidad) {
+        this.disponibilidad = disponibilidad;
+    }
+
+    public Float getCalificacionpromedio() {
+        return calificacionpromedio;
+    }
+
+    public void setCalificacionpromedio(Float calificacionpromedio) {
+        this.calificacionpromedio = calificacionpromedio;
+    }
+
+    public int getActivo() {
+        return activo;
+    }
+
+    public void setActivo(int activo) {
+        this.activo = activo;
     }
 
     public int getUsuariosIdusuarios() {
