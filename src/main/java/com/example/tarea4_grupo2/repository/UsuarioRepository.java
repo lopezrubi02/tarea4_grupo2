@@ -18,10 +18,10 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
     List<Usuario> findAllByRolAndNombreAndCuentaActiva(String rol, String nombre, Integer cuentaActiva);
 
-    @Query(value = "select * from usuarios u where cuentaactiva = 0 and (u.rol ='Repartidor' or u.rol = 'AdminRestaurante');",nativeQuery = true)
+    @Query(value = "select * from usuarios u where cuentaActiva = 0 and (u.rol ='Repartidor' or u.rol = 'AdminRestaurante');",nativeQuery = true)
     List<Usuario> cuentasNuevas();
 
-    @Query(value = "select * from usuarios u where cuentaactiva = 0 and (u.nombre like ?1 or u.apellidos like ?1) " +
+    @Query(value = "select * from usuarios u where cuentaActiva = 0 and (u.nombre like ?1 or u.apellidos like ?1) " +
             " and (u.rol ='Repartidor' or u.rol = 'AdminRestaurante') ;",nativeQuery = true)
     List<Usuario> buscarGestionCuentasNuevas(String buscar);
 
