@@ -13,7 +13,7 @@ public class Restaurante {
     private String distrito;
     private String ruc;
     private String nombre;
-    private int activo;
+
     private int idadminrest;
 
     public int getIdrestaurante() {
@@ -56,13 +56,7 @@ public class Restaurante {
         this.nombre = nombre;
     }
 
-    public int getActivo() {
-        return activo;
-    }
 
-    public void setActivo(int activo) {
-        this.activo = activo;
-    }
 
     public int getIdadminrest() {
         return idadminrest;

@@ -32,9 +32,9 @@
 
 <body class="main-layout">
     <!-- loader  -->
-    <div class="loader_bg">
+    <!--div class="loader_bg">
         <div class="loader"><img th:href="@{/images/loading.gif}" alt="" /></div>
-    </div>
+    </div-->
 
     <div class="wrapper">
     <!-- end loader -->
@@ -112,10 +112,9 @@
 			  <div class="col-md">
 				<div class="form-floating">
 				  <select class="form-select" id="floatingSelectGrid" aria-label="Floating label select example">
-					<option selected>Dirección 1</option>
-					<option value="1">Dirección 2</option>
-					<option value="2">Dirección 3</option>
-					<option value="3">Dirección 4</option>
+                      <option th:each="direccion : ${direccionesUsuario}"
+                              th:text="${direccion.getDireccion()}"
+                              th:value="${direccion.getIddirecciones()}">
 				  </select>
 				  <label for="floatingSelectGrid">¿A dónde vas  a enviar tu pedido?</label>
 				</div>
@@ -140,18 +139,12 @@
 			  <div class="col-md">
 				<div class="form-floating">
 				  <select class="form-select" id="floatingSelectGrid" aria-label="Floating label select example">
-					<option selected>Todos</option>
-					<option value="1">Árabe</option>
-					<option value="2">Asiática</option>
-					<option value="3">Café</option>
-					<option value="3">Carnes</option>
-					<option value="3">Café</option>
-					<option value="3">Chifa</option>
-					<option value="3">Criolla</option>
-					<option value="3">Desayunos</option>
-					<option value="3">Fusión</option>
+					<option th:each="categoria : ${listaCategorias}"
+                    th:text="${categoria.getNombrecategoria()}"
+                    th:value="${categoria.getIdcategorias()}">
 				  </select>
 				  <label for="floatingSelectGrid">Categoría</label>
+
 				</div>
 			  </div>
 			  <div class="col-md">
@@ -236,7 +229,7 @@
        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mar_bottom">
         <div class="blog_box">
           <div class="blog_img_box">
-            <figure><img src="images/blog_img2.png" width="70" height="70"/>
+            <figure><img th:href="@{/images/blog_img2.png}" width="70" height="70"/>
              
             </figure>
           </div>
