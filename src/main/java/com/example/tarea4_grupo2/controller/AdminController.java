@@ -72,6 +72,11 @@ public class AdminController {
             usuarioList = usuarioRepository.findAllByCuentaActivaEquals(1);
         }
 
+        // si no se encuentra nada, se redirige a la lista general
+        if(usuarioList.size() == 0){
+            return "redirect:/admin/usuariosActuales";
+        }
+
         int numberOfPages = (int) Math.ceil(usuarioList.size() / numberOfUsersPerPage);
         if (page > numberOfPages) {
             page = numberOfPages;
@@ -80,19 +85,18 @@ public class AdminController {
         int start = (int) numberOfUsersPerPage * (page - 1);
         int end = (int) (start + numberOfUsersPerPage);
 
-        System.out.println(usuarioList.size());
-        System.out.println(numberOfUsersPerPage);
-        System.out.println(numberOfPages);
         System.out.println(start);
         System.out.println(end);
+        System.out.println(usuarioList.size());
 
         List<Usuario> lisOfUsersPage = usuarioList.subList(start, Math.min(end, usuarioList.size()));
 
         model.addAttribute("lisOfUsersPage", lisOfUsersPage);
         model.addAttribute("currentPage", page);
         model.addAttribute("maxNumberOfPages", numberOfPages);
+        model.addAttribute("rol", rol);
+        model.addAttribute("searchField", searchField);
 
-        System.out.println(numberOfPages);
         return "adminsistema/usuariosActuales";
     }
 
@@ -156,5 +160,17 @@ public class AdminController {
         }
     }
 
+    @GetMapping("/miCuenta")
+    public String miCuenta(
+            Model model){
+        // TODO se harcodeo el id del actual usuario logeado
+        int id = 1;
+
+        Optional<Usuario> optional = usuarioRepository.findById(id);
+        Usuario usuario = optional.get();
+        model.addAttribute("usuario", usuario);
+
+        return "adminsistema/miCuenta";
+    }
 
 }
