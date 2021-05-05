@@ -85,10 +85,6 @@ public class AdminController {
         int start = (int) numberOfUsersPerPage * (page - 1);
         int end = (int) (start + numberOfUsersPerPage);
 
-        System.out.println(start);
-        System.out.println(end);
-        System.out.println(usuarioList.size());
-
         List<Usuario> lisOfUsersPage = usuarioList.subList(start, Math.min(end, usuarioList.size()));
 
         model.addAttribute("lisOfUsersPage", lisOfUsersPage);
@@ -172,5 +168,80 @@ public class AdminController {
 
         return "adminsistema/miCuenta";
     }
+
+    //Gestion de Nuevas Cuentas
+
+    @GetMapping("/gestionCuentas")
+    public String gestionCuentas(){
+        return "adminsistema/GestionCuentasPrincipal";
+    }
+
+    @GetMapping("/nuevosUsuarios")
+    public String nuevosUsuarios(Model model,@RequestParam(value = "rolSelected" ,defaultValue = "Todos")String rol){
+        List<Usuario> usuarioList;
+        if(rol.equals("Repartidor") || rol.equals("AdminRestaurante") ){
+            usuarioList = usuarioRepository.findAllByRolAndCuentaActiva(rol,0);
+        }else{
+            usuarioList = usuarioRepository.cuentasNuevas();
+        }
+
+        //usuarioList = usuarioRepository.findAllByCuentaactivaEquals(0);
+        model.addAttribute("listaUsuariosNuevos",usuarioList);
+
+        return "adminsistema/nuevasCuentas";
+    }
+
+
+
+
+    @PostMapping("/buscadorNuevos")
+    public String buscarNuevos(@RequestParam(value = "searchField" ,defaultValue = "") String buscar,
+                               @RequestParam(value = "rolSelected" ,defaultValue = "Todos")String rol,
+                               Model model){
+        List<Usuario> usuarioList;
+        System.out.println("El rol es: " + rol);
+        if(rol.equals("Repartidor") || rol.equals("AdminRestaurant")){
+            usuarioList = usuarioRepository.findAllByRolAndNombreAndCuentaActiva(rol,buscar,0);
+        }else{
+            buscar = "%"+buscar+"%";
+            usuarioList = usuarioRepository.buscarGestionCuentasNuevas(buscar);
+        }
+        model.addAttribute("listaUsuariosNuevos",usuarioList);
+        model.addAttribute(rol,"rolSelected");
+        return "adminsistema/nuevasCuentas";
+    }
+
+
+
+    @GetMapping("adminForm")
+    public String adminForm(){
+        return "adminsistema/agregarAdmin";
+    }
+
+    @PostMapping("/agregarAdmin")
+    public String agregarAdmin(@RequestParam(name = "password2") String pass2,
+                               Usuario u, Model model,
+                               RedirectAttributes attr){
+        if(u.getContraseniaHash().equals(pass2)){
+            u.setRol("Administrador");
+            usuarioRepository.nuevoUsuario(u.getIdusuarios(),u.getNombre(),u.getApellidos(),
+                    u.getEmail(),u.getContraseniaHash(),u.getTelefono(),u.getFechaNacimiento(),
+                    u.getSexo(),u.getDni(), u.getRol());
+            attr.addFlashAttribute("msg","Administrador creado exitosamente");
+        }else{
+            attr.addFlashAttribute("msg","Fallo al crear Administrador");
+            return "adminsistema/agregarAdmin";
+        }
+        return "adminsistema/GestionCuentasPrincipal";
+    }
+
+    //Reportes
+
+    @GetMapping("/reportes")
+    public String reportesAdmin(){
+        return "adminsistema/ADMIN_Reportes";
+    }
+
+
 
 }

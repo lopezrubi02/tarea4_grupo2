@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <!-- basic -->
@@ -14,13 +14,13 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <!-- bootstrap css -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <!-- owl css -->
-    <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}"/>
     <!-- style css -->
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" th:href="@{/css/styleAdminView.css}" />
     <!-- responsive-->
-    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}" />
     <!-- awesome fontfamily -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <!--[if lt IE 9]>
@@ -32,7 +32,7 @@
 <body class="main-layout">
     <!-- loader  -->
     <div class="loader_bg">
-        <div class="loader"><img src="images/loading.gif" alt="" /></div>
+        <div class="loader"><img th:src="@{/images/loading.gif}" alt="" /></div>
     </div>
 
     <div class="wrapper">
@@ -53,7 +53,7 @@
                         <a href="index.html">Usuarios actuales</a>
                     </li>
                     <li>
-                        <a href="ADMIN_GestionCuentasPrincipal.html">Gestion de nuevas cuentas</a>
+                        <a href="GestionCuentasPrincipal.html">Gestion de nuevas cuentas</a>
                     </li>
                     <li>
                         <a href="ADMIN_Reportes.html">Reportes</a>
@@ -70,7 +70,7 @@
             <div class="row">
                 <div class="col-md-3">
                     <div class="full">
-                        <a class="logo" href="index.html"><img src="images/logo.png" alt="#" /></a>
+                        <a class="logo" href="index.html"><img th:src="@{/images/logo.png}" alt="#" /></a>
                     </div>
                 </div>
                 <div class="col-md-9">
@@ -78,8 +78,8 @@
                         <div class="right_header_info">
                             <ul>
                                 <li class="dinone"><a href="#">Usuarios Actuales</a></li>
-                                <li class="dinone"><a href="ADMIN_GestionCuentasPrincipal.html">Gestión de nuevas cuentas</a></li>
-                                <li class="dinone"><a href="#">Reportes</a></li>
+                                <li class="dinone"><a href="GestionCuentasPrincipal.html">Gestión de nuevas cuentas</a></li>
+                                <li class="dinone"><a href="ADMIN_Reportes.html">Reportes</a></li>
                                 <!-- TODO -->
                                 <li class="button_user"><a class="button active" href="#login.html">Mi cuenta</a><a class="button" href="#">Logout</a></li>
                                 <li>
@@ -94,93 +94,68 @@
             </div>
         </div>
     </header>
+    </div>
+    </div>
     <!-- end header -->
 
 
     <!-- blog -->
-	<fooetr>
-    <div class="footer">
+    <div class="blog">
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <h2>Añadir Nuevo Administrador</h2>
+                    <h1>Gestión de nuevas cuentas</h1>
                 </div>
             </div>
             <hr>
             <div class="row">
-                <div class="col-12 col-md-5">
+			<div class="col-12 col-md-6">
                     <!-- imagen -->
-                    <img src="./images/userImage.jpg">
+                    <div align="center"><img th:src="@{/images/Foto-NuevoRest.jpg}" href="ADMIN_nuevasCuentas.html" width="350" height="350"></div>
+					<a th:href="@{nuevosUsuarios}">
+					<button type="button " class="btn btn-dark btn-lg btn-block" th:href="@{nuevosUsuarios}">Solicitud de Nuevas Cuentas</button></a>
                 </div>
-                <div class="col-12 col-md-7">
-                    <!-- formulario -->
-                    <form>
-                        <div class="form-group">
-                            <label for="nombre">Nombre:</label>
-                            <input type="text" class="form-control" id="nombre" >
-                        </div>
-                        <div class="form-group">
-                          <label for="exampleInputEmail1">Email:</label>
-                          <input type="email" class="form-control" id="exampleInputEmail1" >
-                        </div>
-                        <div class="form-group">
-                            <label for="nombre">DNI:</label>
-                            <input type="text" class="form-control" id="nombre" >
-                        </div>
-                        <div class="form-group">
-                            <label for="nombre">Telefono:</label>
-                            <input type="text" class="form-control" id="nombre" >
-                        </div>
-                        <div class="form-group">
-                            <label for="nombre">Nacimiento:</label>
-                            <input type="text" class="form-control" id="nombre" >
-                        </div>
-                        <div class="form-group">
-                            <label for="nombre">Sexo:</label>
-                            <input type="text" class="form-control" id="nombre" >
-                        </div>
-                        <div class="form-group">
-                          <label for="exampleInputPassword1">Contraseña:</label>
-                          <input type="password" class="form-control" id="exampleInputPassword1">
-                        </div> 
-						<div class="form-group">
-                          <label for="exampleInputPassword2">Confirmar Contraseña:</label>
-                          <input type="password" class="form-control" id="exampleInputPassword2">
-                        </div> 
-                        
-                        <button class="send"   type="submit">Cancelar</button>
-						<button class="send"  style="margin-left: 10px" type="submit">Aceptar</button>
-                       
-                    </form>
+				
+                <div class="col-12 col-md-6">
+					<!-- imagen -->
+                    <div align="center"><img th:src="@{/images/Foto-NuevoAdmin.png}" th:href="@{adminForm}" width="348" height="348"></div>
+					<a th:href="@{adminForm}">
+					<button type="button btn-block" class="btn btn-warning btn-lg btn-block" th:href="@{adminForm}">Añadir Nuevo Administrador</button></a>
+                </div>
+				
+			<!-- Anterior NavBar-->
+				
+            </div>
+        </div>
+    </div>
+    </div>
+    <!-- end blog -->
+
+    <!-- footer -->
+    <fooetr>
+        <div class="footer">
+            <div class="container-fluid">
+                <div class="copyright">
+                    <div class="container">
+                        <p>© 2021 Todos los Derechos Reservados</p>
+                    </div>
                 </div>
             </div>
             
         </div>
-		
-		<div class="copyright">
-                <div class="container">
-                    <p>© 2021 Todos los derechos reservados.</p>
-                </div>
-            </div>
-    </div>
-	</fooetr>
-    
-    <!-- end blog -->
-
-    <!-- footer -->
-    
+    </fooetr>
     <!-- end footer -->
 
     </div>
     </div>
     <div class="overlay"></div>
     <!-- Javascript files-->
-    <script src="js/jquery.min.js"></script>
-    <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap.bundle.min.js"></script>
-    <script src="js/owl.carousel.min.js"></script>
-    <script src="js/custom.js"></script>
-     <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script th:src="@{/js/jquery.min.js}" ></script>
+    <script th:src="@{/js/popper.min.js}" ></script>
+    <script th:src="@{/js/bootstrap.bundle.min.js}" ></script>
+    <script th:src="@{/js/owl.carousel.min.js}" ></script>
+    <script th:src="@{/js/custom.js}" ></script>
+    <script th:src="@{/js/jquery.mCustomScrollbar.concat.min.js}" ></script>
     
     <script src="js/jquery-3.0.0.min.js"></script>
     <script type="text/javascript">

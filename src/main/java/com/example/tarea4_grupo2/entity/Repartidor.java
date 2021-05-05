@@ -1,6 +1,7 @@
 package com.example.tarea4_grupo2.entity;
 
 import javax.persistence.*;
+import java.sql.Blob;
 
 @Entity
 @Table(name = "datosrepartidor")
@@ -8,11 +9,19 @@ public class Repartidor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idrepartidor;
+
     private String movilidad;
     private String placa;
     private String licencia;
-    private int usuariosIdusuarios;
+    private Byte foto;
+    private boolean disponibilidad;
+    private Float calificacionpromedio;
+
     private String distritoactual;
+
+    @Column(name="usuarios_idusuarios")
+    private int usuariosIdusuarios;
+
 
 
     public int getIdrepartidor() {

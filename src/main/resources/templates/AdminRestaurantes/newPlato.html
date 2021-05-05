@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
     <!-- site metas -->
-    <title>Spicyo   </title>
+    <title>Register</title>
     <!-- bootstrap css -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <!-- owl css -->
@@ -23,93 +23,98 @@
     <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
 </head>
-<!-- body -->
+
 <body class="main-layout">
-<!-- loader  -->
-<div class="loader_bg">
-    <div class="loader"><img src="images/loading.gif" alt="" /></div>
-</div>
+
 <div class="wrapper">
     <!-- end loader -->
+
     <div id="content">
         <!-- header -->
         <header>
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="full">
-                            <a class="logo" href="index.html"><img src="images/logo.png" alt="#" /></a>
-                        </div>
-                    </div>
+            <div class="container-fluid" >
+                <div style="text-align: center">
+                    <h2 style="color: white;font-size: xx-large" th:text="${plato.idplato == 0? 'Agregar plato' : 'Editar plato'}">Registra un plato</h2>
                 </div>
             </div>
         </header>
-        <div class="bg_bg">
-            <!-- end about -->
 
+        <div class="bg_bg">
+
+            <!-- end about -->
             <!-- footer -->
             <fooetr>
                 <div class="footer">
                     <div class="container-fluid">
                         <div class="row">
+                            <div class="col-md-12">
+                                <h2>Ingresa los siguientes datos</h2>
+                            </div>
+
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
-                                <form class="main_form" style="align-self: center">
-                                    <div style="font-size: 40px;color: black;text-align: center">Llena el siguiente formulario</div>
-                                    <br>
+
+                                <form method="post" th:action="@{/guardarPlato}" th:object="${plato}" class="main_form">
+                                    <input type="hidden" name="idplato" id="idplato" th:value="*{idplato}">
+                                    <input type="hidden" name="restaurante" id="restaurante" th:value="1">
                                     <div class="row">
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <input class="form-control" placeholder="Nombre" type="text" name="nombre" id="nombre">
+                                            <label for="nombre">Nombre del plato</label>
+                                            <input th:field="*{nombre}" class="form-control" placeholder="Nombre del plato" type="text" name="nombre" id="nombre">
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <input class="form-control" placeholder="Apelliods" type="text" name="apellidos" id="apellidos">
+                                            <label for="descripcion">Descripcion del plato</label>
+                                            <input th:field="*{descripcion}" class="form-control" placeholder="Descripcion del plato" type="text" name="descripcion" id="descripcion">
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <input class="form-control" placeholder="DNI" type="text" name="dni" id="dni">
+                                            <label for="precio">Precio del plato</label>
+                                            <input th:field="*{precio}" class="form-control" placeholder="Precio" type="text" name="precio" id="precio">
                                         </div>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <input class="form-control" placeholder="Telefono" type="text" name="telefono" id="telefono">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:if="${plato.idplato}">
+                                            <label for="cupones">Cupon asociado 1</label>
+                                            <select class="form-control" th:field="*{cupones}">
+                                                <option th:each="cupon: ${listaCupones}" th:value="${cupon.idcupones}" th:text="${cupon.nombre}"></option>
+                                            </select>
                                         </div>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <input class="form-control" placeholder="Fecha de Nacimineto" type="text" name="fechanac" id="fechanac">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:unless="${plato.idplato}">
+                                            <label for="cupones">Cupon asociado 2</label>
+                                            <select class="form-control" th:field="*{cupones}">
+                                                <option th:each="cupon: ${listaCupones}" th:value="${cupon.idcupones}" th:text="${cupon.nombre}"
+                                                        th:selected="${cupon.idcupones == plato.cupones}" style="color: #0b2e13"></option>
+                                            </select>
                                         </div>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <input class="form-control" placeholder="Direccion" type="text" name="direccion" id="direccion">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:if="${plato.idplato}">
+                                            <label for="disponibilidad">Disponible?</label>
+                                            <select class="form-control" th:field="*{disponibilidad}">
+                                                <option value="1">Disponible</option>
+                                                <option value="0">Agotado</option>
+                                            </select>
                                         </div>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <input class="form-control" placeholder="Sexo" type="text" name="sexo" id="sexo">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:unless="${plato.idplato}">
+                                            <input type="hidden" name="disponibilidad" id="disponibilidad" th:value="1">
                                         </div>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <input class="form-control" placeholder="Correo" type="text" name="correo" id="correo">
-                                        </div>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <input class="form-control" placeholder="Contraseña" type="password" name="password" id="password">
-                                        </div>
+                                        </br>
+                                        </br>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <div class="row">
                                                 <div class="col-md-3">
-                                                    <a class="send" th:href="@{/correoconfirmar}" style="text-align: center" >Registrarse</a>
+                                                    <button class="send" type="submit">Registrar</button>
                                                 </div>
                                                 <div class="col-md-3">
-                                                    <a class="send" th:href="@{/login}" style="text-align: center">Regresar</a>
+                                                    <a class="send" th:href="@{/menu}" style="text-align: center">Regresar</a>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </form>
                             </div>
-                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12" style="align-content: center">
-                                <br>
-                                <br>
-                                <br>
-                                <br>
-                                <button class="send" align="left" style="text-align: center" >Adjuntar foto</button>
-                                <div class="img-box" align="left" style="padding-bottom: 20px;padding-top: 90px">
-                                    <figure style="align-content: center"><img src="/images/persona.jpg" style="height: 700px;width: 500px"></figure>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                                <div class="img-box" align="center">
+                                    <figure><img src="/images/bembos.png" style="width:500px;height:500px"></figure>
                                 </div>
+                                <div style="text-align: center;font-size: 30px;color: black">Imagen del restaurante</div>
                             </div>
                         </div>
                     </div>
-                    <br>
                     <div class="copyright">
                         <div class="container">
                             <p>© 2021 Todos los derechos reservados.</p>
@@ -118,8 +123,10 @@
                 </div>
             </fooetr>
             <!-- end footer -->
+
         </div>
     </div>
+
     <div class="overlay"></div>
     <!-- Javascript files-->
     <script src="js/jquery.min.js"></script>
@@ -128,7 +135,6 @@
     <script src="js/owl.carousel.min.js"></script>
     <script src="js/custom.js"></script>
     <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
-
     <script src="js/jquery-3.0.0.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
@@ -149,7 +155,6 @@
             });
         });
     </script>
-
     <style>
         #owl-demo .item{
             margin: 3px;
@@ -160,8 +165,6 @@
             height: auto;
         }
     </style>
-
-
     <script>
         $(document).ready(function() {
             var owl = $('.owl-carousel');

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <!-- basic -->
@@ -118,34 +118,46 @@
           <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
              <div class="about_box">
                 <div>
-                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                <label>Correo</label>
-                     <input class="form-control" placeholder="micorreo@gmail.com" type="text" name="numeroDeCelular">
-                </div>
-                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                <label>Nombres y apellidos</label>
-                     <input class="form-control" placeholder="Pedro Piedra" type="text" name="numeroDeCelular">
-                </div>
-                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                <label>DNI</label>
-                     <input class="form-control" placeholder="74644558" type="text" name="numeroDeCelular">
-                </div>
-                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                <label>Número de celular</label>
-                     <input class="form-control" placeholder="95461358" type="text" name="numeroDeCelular">
-                </div>
-                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                <label>Fecha de nacimiento</label>
-                    <input class="form-control" placeholder="01/05/1999" type="text" name="nacimiento">
-                </div>
-                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                <label>Dirección</label>
-                    <input class="form-control" placeholder="Av. Univeritaria 123" type="text" name="direccion">
-                </div>
-                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                <label>Contraseña</label>
-                    <input class="form-control" placeholder="************" type="text" name="contraseña">
-                </div>               
+                    <form method="post" th:action="@{'/repartidor/save_perfil'}" th:object="${repartidor}">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                            <label>Correo</label>
+                            <input class="form-control" placeholder="micorreo@gmail.com" type="text"
+                                   th:field="*{email}">
+                        </div>
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                            <label>Nombres y apellidos</label>
+                            <input class="form-control" placeholder="Pedro Piedra" type="text"
+                                   th:field='"*{nombre}" + *{apellidos}"'>
+                        </div>
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                            <label>DNI</label>
+                            <input class="form-control" placeholder="74644558" type="text"
+                                   th:field="*{dni}">
+                        </div>
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                            <label>Número de celular</label>
+                            <input class="form-control" placeholder="95461358" type="text"
+                                   th:field="*{telefono}">
+                        </div>
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                            <label>Fecha de nacimiento</label>
+                            <input class="form-control" placeholder="01/05/1999" type="text"
+                                   th:field="*{fechanacimiento}">
+                        </div>
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                            <label>Dirección</label>
+                            <input class="form-control" placeholder="Av. Univeritaria 123" type="text"
+                                   th:text="${direccion}">
+                        </div>
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                            <label>Contraseña</label>
+                            <input class="form-control" placeholder="************" type="text"
+                                   th:field="*{contraseniahash}">
+                        </div>
+                        <a th:href="@{'/repartidor'}" class="btn btn-danger">Cancelar</a>
+                        <button type="submit" class="btn btn-primary" >Registrar</button>
+                    </form>
+
                  <a href="repartidor_principal.html">Guardar <i class="fa fa-long-arrow-right" aria-hidden="true"></i></a>
              </div>
          </div>      

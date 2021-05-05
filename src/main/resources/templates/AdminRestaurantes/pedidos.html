@@ -42,7 +42,7 @@
         <header>
             <div class="container-fluid" >
                 <div style="text-align: center">
-                    <h2 style="color: white;font-size: xx-large">Crea tu cupon</h2>
+                    <h2 style="color: white;font-size: xx-large">Mis pedidos</h2>
                 </div>
             </div>
         </header>
@@ -59,63 +59,49 @@
                         </div>
 
                         <div class="container-fluid">
-                            <table class="table-bordered">
+                            <table class="table-bordered" style="margin-bottom: 10px; margin-top: 10px">
                                 <thead>
                                 <tr>
-                                    <th>Nombre del cupon</th>
-                                    <th>Descripcion</th>
-                                    <th>Fecha de inicio</th>
-                                    <th>Fecha de fin</th>
+                                    <th>Cantidad</th>
+                                    <th>Contenido del pedido</th>
+                                    <th>Usuario</th>
+                                    <th>Fecha de pedido</th>
+                                    <th>Monto (S/.)</th>
                                     <th>Descuento (S/.)</th>
-                                    <th>Plato asociado</th>
-                                    <th>¿Activo?</th>
+                                    <th>¿Uso cupon?</th>
                                     <th></th>
                                     <th></th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td>Martes de 2x1</td>
-                                    <td>Llevate dos hamburguesas al precio de una</td>
-                                    <td>25-04-2021</td>
-                                    <td>05-05-2021</td>
-                                    <td>Hamburguesa carretillera</td>
-                                    <td>13.9</td>
-                                    <td>Si</td>
-                                    <td><a class="btn btn-info" th:href="@{/crearCupon}">Editar cupon</a></td>
-                                    <td><a class="btn btn-danger" th:href="@{/perfil}">Borrar cupon</a></td>
-                                </tr>
-                                <tr>
-                                    <td>5x1 Helados</td>
-                                    <td>Paga 5 helados al precio de uno</td>
-                                    <td>25-04-2021</td>
-                                    <td>05-05-2021</td>
-                                    <td>Helado</td>
-                                    <td>13.9</td>
-                                    <td>Si</td>
-                                    <td><a class="btn btn-info" th:href="@{/crearCupon}">Editar cupon</a></td>
-                                    <td><a class="btn btn-danger" th:href="@{/perfil}">Borrar cupon</a></td>
-                                </tr>
-                                <tr>
-                                    <td>Trio Hamburguesas</td>
-                                    <td>Llevate 3 hamburguesas en el estilo que quieras al mismo precio de la clasica!</td>
-                                    <td>25-04-2021</td>
-                                    <td>05-05-2021</td>
+                                    <td>1</td>
                                     <td>Hamburguesa clasica</td>
-                                    <td>13.9</td>
+                                    <td>Jorge Castillo</td>
+                                    <td>27-04-2021</td>
+                                    <td>17.9</td>
+                                    <td>0</td>
+                                    <td>No</td>
+                                    <td><a class="btn btn-info" th:href="@{/pedidos}">Aceptar pedido</a></td>
+                                    <td><a class="btn btn-danger" th:href="@{/pedidos}">Denegar pedido</a></td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Duo Crispy</td>
+                                    <td>Zulema Villareal</td>
+                                    <td>26-04-2021</td>
+                                    <td>39.9</td>
+                                    <td>10</td>
                                     <td>Si</td>
-                                    <td><a class="btn btn-info" th:href="@{/crearCupon}">Editar cupon</a></td>
-                                    <td><a class="btn btn-danger" th:href="@{/perfil}">Borrar cupon</a></td>
+                                    <td><a class="btn btn-info" th:href="@{/pedidos}">Aceptar pedido</a></td>
+                                    <td><a class="btn btn-danger" th:href="@{/pedidos}">Denegar pedido</a></td>
                                 </tr>
                                 </tbody>
                             </table>
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                 <div class="row">
                                     <div class="col-md-3">
-                                        <a class="send" th:href="@{/crearCupon}" style="text-align: center">Crear Cupon</a>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <a class="btn btn-danger mt-2 mb-3" th:href="@{/perfil}">Regresar</a>
+                                        <a class="send" th:href="@{/perfil}" style="text-align: center">Regresar</a>
                                     </div>
                                 </div>
                             </div>
