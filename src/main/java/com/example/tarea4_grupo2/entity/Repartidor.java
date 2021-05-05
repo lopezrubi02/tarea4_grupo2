@@ -14,13 +14,46 @@ public class Repartidor {
     private String placa;
     private String licencia;
     private Byte foto;
+
+    public Byte getFoto() {
+        return foto;
+    }
+
+    public void setFoto(Byte foto) {
+        this.foto = foto;
+    }
+
+    public boolean isDisponibilidad() {
+        return disponibilidad;
+    }
+
+    public void setDisponibilidad(boolean disponibilidad) {
+        this.disponibilidad = disponibilidad;
+    }
+
+    public Float getCalificacionpromedio() {
+        return calificacionpromedio;
+    }
+
+    public void setCalificacionpromedio(Float calificacionpromedio) {
+        this.calificacionpromedio = calificacionpromedio;
+    }
+
     private boolean disponibilidad;
     private Float calificacionpromedio;
 
     private String distritoactual;
 
+    public int getIdusuarios() {
+        return idusuarios;
+    }
+
+    public void setIdusuarios(int idusuarios) {
+        this.idusuarios = idusuarios;
+    }
+
     @Column(name="usuarios_idusuarios")
-    private int usuariosIdusuarios;
+    private int idusuarios;
 
 
 
@@ -54,14 +87,6 @@ public class Repartidor {
 
     public void setLicencia(String licencia) {
         this.licencia = licencia;
-    }
-
-    public int getUsuariosIdusuarios() {
-        return usuariosIdusuarios;
-    }
-
-    public void setUsuariosIdusuarios(int usuariosIdusuarios) {
-        this.usuariosIdusuarios = usuariosIdusuarios;
     }
 
     public String getDistritoactual() {
