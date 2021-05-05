@@ -172,7 +172,7 @@ public class AdminController {
             usuarioList = usuarioRepository.cuentasNuevas();
         }
 
-        //usuarioList = usuarioRepository.findAllByCuentaactivaEquals(0);
+        //usuarioList = usuarioRepository.findAllByCuentaActivaEquals(0);
         model.addAttribute("listaUsuariosNuevos",usuarioList);
 
         return "adminsistema/nuevasCuentas";
