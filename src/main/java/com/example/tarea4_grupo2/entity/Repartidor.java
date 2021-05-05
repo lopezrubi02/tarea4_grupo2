@@ -1,6 +1,7 @@
 package com.example.tarea4_grupo2.entity;
 
 import javax.persistence.*;
+import java.sql.Blob;
 
 @Entity
 @Table(name = "datosrepartidor")
@@ -12,18 +13,15 @@ public class Repartidor {
     private String movilidad;
     private String placa;
     private String licencia;
-    private int usuariosIdusuarios;
+    private Byte foto;
+    private boolean disponibilidad;
+    private Float calificacionpromedio;
+
     private String distritoactual;
 
-    public String getDisponibilidad() {
-        return disponibilidad;
-    }
+    @Column(name="usuarios_idusuarios")
+    private int usuariosIdusuarios;
 
-    public void setDisponibilidad(String disponibilidad) {
-        this.disponibilidad = disponibilidad;
-    }
-
-    private String disponibilidad;
 
 
     public int getIdrepartidor() {

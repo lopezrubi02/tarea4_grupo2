@@ -9,20 +9,19 @@ import java.util.List;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
-    List<Usuario> findAllByCuentaactivaEquals(Integer cuentaActiva);
-    List<Usuario> findAllByRolAndCuentaactiva(String rol, Integer cuentaActiva);
-    List<Usuario> findAllByRolAndCuentaactivaAndNombre(String rol, Integer cuentaActiva, String name);
-    List<Usuario> findAllByNombreAndCuentaactiva(String nombre, int cuentaActiva);
-
+    List<Usuario> findAllByCuentaActivaEquals(Integer cuentaActiva);
+    List<Usuario> findAllByRolAndCuentaActiva(String rol, Integer cuentaActiva);
+    List<Usuario> findAllByRolAndCuentaActivaAndNombre(String rol, Integer cuentaActiva, String name);
+    List<Usuario> findAllByNombreAndCuentaActiva(String nombre, int cuentaActiva);
 
     //Gestion de Nuevas Cuentas
 
-    List<Usuario> findAllByRolAndNombreAndCuentaactiva(String rol, String nombre, Integer cuentaActiva);
+    List<Usuario> findAllByRolAndNombreAndCuentaActiva(String rol, String nombre, Integer cuentaActiva);
 
-    @Query(value = "select * from usuarios u where cuentaactiva = 0 and (u.rol ='Repartidor' or u.rol = 'AdminRestaurante');",nativeQuery = true)
+    @Query(value = "select * from usuarios u where cuentaActiva = 0 and (u.rol ='Repartidor' or u.rol = 'AdminRestaurante');",nativeQuery = true)
     List<Usuario> cuentasNuevas();
 
-    @Query(value = "select * from usuarios u where cuentaactiva = 0 and (u.nombre like ?1 or u.apellidos like ?1) " +
+    @Query(value = "select * from usuarios u where cuentaActiva = 0 and (u.nombre like ?1 or u.apellidos like ?1) " +
             " and (u.rol ='Repartidor' or u.rol = 'AdminRestaurante') ;",nativeQuery = true)
     List<Usuario> buscarGestionCuentasNuevas(String buscar);
 
@@ -30,7 +29,5 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
             "values(?1,?2,?3,?4,sha2(?5,256),?6,?7,?8,?9,?10);",nativeQuery = true)
     Usuario nuevoUsuario(int id, String nombre, String apellido, String email, String contra, int telefono,
                          Date fecha, String sexo, String dni, String rol);
-
-
 
 }
