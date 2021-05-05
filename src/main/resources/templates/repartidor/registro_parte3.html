@@ -77,16 +77,20 @@
                     </div>
                     
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
-                        <form class="main_form">
-                            <div class="row">
+                        <form class="main_form" method="post" th:action="@{'/repartidor/save3'}"
+                              th:object="${repartidor}">
+                            <div class="row" >
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input class="form-control" placeholder="Correo" type="text" name="correo">
+                                    <input class="form-control" placeholder="Correo" th:field="*{email}">
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input class="form-control" placeholder="Nombres y apellidos" type="text" name="nombre">
+                                    <input class="form-control" placeholder="Nombres " th:field="*{nombre}">
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input class="form-control" placeholder="DNI" type="text" name="dni">
+                                    <input class="form-control" placeholder="Apellidos " th:field="*{apellidos}">
+                                </div>
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                    <input class="form-control" placeholder="DNI" th:field="*{dni}">
                                 </div>
                                 <div class="col-xl-8 col-lg-12 col-md-12 col-sm-12">
                                     <a class="form-control" type="text" name="sexo">Sexo</a>

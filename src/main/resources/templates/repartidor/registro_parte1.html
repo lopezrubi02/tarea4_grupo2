@@ -80,26 +80,21 @@
                       
                          
                       
-                        <form class="main_form">
+                        <form class="main_form" method="post" th:action="@{'/repartidor/save1'}"
+                              th:object="${repartidor}">
                             <div class="row">
                              
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" class="radio">
-                                    <label><input type="radio" value=""> Moto</label>
+                                    <label><input type="radio" th:field="*{movilidad}"> Moto</label>
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" class="radio">
-                                    <label>
-                                        <input type="radio" value="">
-                                            Bicicleta
-                                    </label>
+                                    <label> <input type="radio" th:field="*{movilidad}">Bicicleta </label>
                                 </div>
+
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" class="radio">
-                                    <label>
-                                        <input type="radio" value="">
-                                            Bicimoto
-                                    </label>
+                                    <label> <input type="radio" th:field="*{movilidad}"> Bicimoto </label>
                                 </div>
-                                </br>
-                                </br>
+
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <button class="send" type="submit">Registrar</button>
                                 </div>
@@ -188,7 +183,7 @@
            })
          })
       </script>
-
+    </div>
 </body>
 
 </html>

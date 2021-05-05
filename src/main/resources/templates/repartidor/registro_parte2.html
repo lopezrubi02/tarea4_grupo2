@@ -80,14 +80,15 @@
                       
                          
                       
-                        <form class="main_form">
+                        <form class="main_form" method="post" th:action="@{'/repartidor/save2'}"
+                              th:object="${repartidor}">
                             <div class="row">
                              
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input class="form-control" placeholder="Placa" type="text" name="placa">
+                                    <input class="form-control" placeholder="Placa" th:field="*{placa}">
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input class="form-control" placeholder="Licencia de conducir" type="text" name="licencia">
+                                    <input class="form-control" placeholder="Licencia de conducir" th:field="*{licencia}">
                                 </div>
                                 </br>
                                 </br>

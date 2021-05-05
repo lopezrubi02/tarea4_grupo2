@@ -15,6 +15,16 @@ public class Repartidor {
     private int usuariosIdusuarios;
     private String distritoactual;
 
+    public String getDisponibilidad() {
+        return disponibilidad;
+    }
+
+    public void setDisponibilidad(String disponibilidad) {
+        this.disponibilidad = disponibilidad;
+    }
+
+    private String disponibilidad;
+
 
     public int getIdrepartidor() {
         return idrepartidor;
