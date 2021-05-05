@@ -51,8 +51,12 @@ public class RepartidorController {
         if (optRepartidor.isPresent()) {
             repartidor = optRepartidor.get();
             model.addAttribute("repartidor",repartidor);
-            Repartidor datos = repartidorRepository.findByUsuarios_idusuarios(repartidor.getIdusuarios());
-            model.addAttribute("datos",datos);
+            Optional<Repartidor> datos = repartidorRepository.findById(repartidor.getIdusuarios());
+            if(datos.isPresent()){
+                Repartidor datosR =datos.get();
+                model.addAttribute("datos",datosR);
+            }
+            //model.addAttribute("datos",datos);
         }
         return "repartidor/repartidor_principal";
     }
@@ -62,7 +66,15 @@ public class RepartidorController {
                                         @RequestParam("movilidad") String movilidad,
                                         @RequestParam("disponibilidad") String disponibilidad) {
 
-        datosRepartidor.setDisponibilidad(disponibilidad);
+        //disponible - true | ocupado-false
+        if(disponibilidad.equalsIgnoreCase("disponible")){
+            boolean disponibilidadB = true;
+            datosRepartidor.setDisponibilidad(disponibilidadB);
+        }else{
+            boolean disponibilidadB = false;
+            datosRepartidor.setDisponibilidad(disponibilidadB);
+        }
+
         datosRepartidor.setMovilidad(movilidad);
         repartidorRepository.save(datosRepartidor);
 
@@ -87,8 +99,8 @@ public class RepartidorController {
             Direcciones direccion=direccionesRepository.findByUsuarios_idusuarios(id);
             model.addAttribute("repartidor",repartidor);
             model.addAttribute("direccion",direccion);
-            Repartidor datos = repartidorRepository.findByUsuarios_idusuarios(repartidor.getIdusuarios());
-            model.addAttribute("datos",datos);
+            //Repartidor datos = usuarioRepository.findByIdusuarios(repartidor.getIdusuarios());
+            //model.addAttribute("datos",datos);
         }
         return "repartidor/repartidor_perfil";
     }

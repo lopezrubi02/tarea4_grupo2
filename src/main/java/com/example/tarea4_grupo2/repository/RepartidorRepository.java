@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface RepartidorRepository  extends JpaRepository<Repartidor, Integer> {
+
     Repartidor findRepartidorByUsuariosIdusuariosEquals(int idusuario);
 
     @Query(value = "select p.idpedidos, p.montototal, p.comisionrepartidor, p.calificacionrepartidor, r.nombre, r.distrito\n" +
@@ -29,7 +30,7 @@ public interface RepartidorRepository  extends JpaRepository<Repartidor, Integer
             "where (idrepartidor=?1  ) ",nativeQuery = true)
     List<RepartidorComisionMensualDTO> obtenerComisionPorMes(int id);
 
-    Repartidor findByUsuarios_idusuarios(int usuarios_idusuarios);
+
 
 
 
