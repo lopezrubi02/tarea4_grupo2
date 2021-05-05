@@ -932,3 +932,33 @@ a.article, a.article:hover {
     color: #fff;
     font-weight: 500;
 }
+
+/* pagination color */
+.pagination > li > a
+{
+    background-color: white;
+    color: #7c7c7c;
+}
+
+.pagination > li > a:focus,
+.pagination > li > a:hover,
+.pagination > li > span:focus,
+.pagination > li > span:hover
+{
+    color: #000;
+    background-color: #eee;
+    border-color: #ddd;
+}
+
+.pagination > .active > a
+{
+    color: black;
+    background-color: #212020 !Important;
+    border: solid 1px #212020 !Important;
+}
+
+.pagination > .active > a:hover
+{
+    background-color: #212020 !Important;
+    border: solid 1px #212020;
+}
