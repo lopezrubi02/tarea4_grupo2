@@ -1,5 +1,7 @@
 package com.example.tarea4_grupo2.entity;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -22,6 +24,8 @@ public class Usuario {
     private Integer comisionventa;
     private String rol;
     private Integer cuentaActiva;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date fechaNacimiento;
 
     public Integer getIdusuarios() {
