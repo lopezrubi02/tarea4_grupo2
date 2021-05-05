@@ -2,6 +2,7 @@ package com.example.tarea4_grupo2.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.util.Date;
 
 @Entity
 @Table(name ="pedidos")
@@ -24,7 +25,9 @@ public class Pedidos {
 
     @Column(nullable = false)
     private int idmetodopago;
+
     private int calificacionrestaurante;
+
     private int calificacionrepartidor;
 
     @Size(max=200,message = "El comentario no puede tener más de 200 caracteres")
@@ -49,8 +52,6 @@ public class Pedidos {
     private String fechahoraentregado;
     private int direccionentrega;
 
-
-
     public int getIdpedidos() {
         return idpedidos;
     }
@@ -66,8 +67,6 @@ public class Pedidos {
     public void setMontototal(float montototal) {
         this.montototal = montototal;
     }
-
-
 
     public int getComisionrepartidor() {
         return comisionrepartidor;
@@ -133,6 +132,21 @@ public class Pedidos {
         this.tiempodelivery = tiempodelivery;
     }
 
+    public String getEstadorestaurante() {
+        return estadorestaurante;
+    }
+
+    public void setEstadorestaurante(String estadorestaurante) {
+        this.estadorestaurante = estadorestaurante;
+    }
+
+    public String getEstadorepartidor() {
+        return estadorepartidor;
+    }
+
+    public void setEstadorepartidor(String estadorepartidor) {
+        this.estadorepartidor = estadorepartidor;
+    }
 
     public int getIdcliente() {
         return idcliente;
@@ -148,23 +162,6 @@ public class Pedidos {
 
     public void setIdrepartidor(int idrepartidor) {
         this.idrepartidor = idrepartidor;
-    }
-
-
-    public String getEstadorestaurante() {
-        return estadorestaurante;
-    }
-
-    public void setEstadorestaurante(String estadorestaurante) {
-        this.estadorestaurante = estadorestaurante;
-    }
-
-    public String getEstadorepartidor() {
-        return estadorepartidor;
-    }
-
-    public void setEstadorepartidor(String estadorepartidor) {
-        this.estadorepartidor = estadorepartidor;
     }
 
     public int getRestaurante_idrestaurante() {
