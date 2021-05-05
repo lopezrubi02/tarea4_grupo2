@@ -11,7 +11,7 @@ public class Direcciones {
     private int iddirecciones;
     private String direccion;
     private String distrito;
-    private int usuarios_idusuarios;
+    private int usuariosIdusuarios;
 
     public int getIddirecciones() {
         return iddirecciones;
@@ -37,11 +37,11 @@ public class Direcciones {
         this.distrito = distrito;
     }
 
-    public int getUsuarios_idusuarios() {
-        return usuarios_idusuarios;
+    public int getUsuariosIdusuarios() {
+        return usuariosIdusuarios;
     }
 
-    public void setUsuarios_idusuarios(int usuarios_idusuarios) {
-        this.usuarios_idusuarios = usuarios_idusuarios;
+    public void setUsuariosIdusuarios(int usuarios_idusuarios) {
+        this.usuariosIdusuarios = usuarios_idusuarios;
     }
 }

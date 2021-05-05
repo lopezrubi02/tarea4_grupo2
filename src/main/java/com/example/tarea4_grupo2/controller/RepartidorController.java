@@ -96,7 +96,7 @@ public class RepartidorController {
         Optional<Usuario> optRepartidor = usuarioRepository.findById(id);
         if (optRepartidor.isPresent()) {
             repartidor = optRepartidor.get();
-            Direcciones direccion=direccionesRepository.findByUsuarios_idusuarios(id);
+            Direcciones direccion=direccionesRepository.findByUsuariosIdusuarios(id);
             model.addAttribute("repartidor",repartidor);
             model.addAttribute("direccion",direccion);
             //Repartidor datos = usuarioRepository.findByIdusuarios(repartidor.getIdusuarios());
