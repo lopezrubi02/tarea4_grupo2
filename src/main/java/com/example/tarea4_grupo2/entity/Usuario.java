@@ -15,14 +15,14 @@ public class Usuario {
     private String nombre;
     private String apellidos;
     private String email;
-    private String contraseniahash;
+    private String contraseniaHash;
     private Integer telefono;
     private String sexo;
     private String dni;
     private Integer comisionventa;
     private String rol;
-    private Integer cuentaactiva;
-    private Date fechanacimiento;
+    private Integer cuentaActiva;
+    private Date fechaNacimiento;
 
     public Integer getIdusuarios() {
         return idusuarios;
@@ -98,27 +98,27 @@ public class Usuario {
         this.rol = rol;
     }
 
-    public String getContraseniahash() {
-        return contraseniahash;
+    public String getContraseniaHash() {
+        return contraseniaHash;
     }
 
-    public void setContraseniahash(String contrasenia_hash) {
-        this.contraseniahash = contrasenia_hash;
+    public void setContraseniaHash(String contrasenia_hash) {
+        this.contraseniaHash = contrasenia_hash;
     }
 
-    public Integer getCuentaactiva() {
-        return cuentaactiva;
+    public Integer getCuentaActiva() {
+        return cuentaActiva;
     }
 
-    public void setCuentaactiva(Integer cuenta_activa) {
-        this.cuentaactiva = cuenta_activa;
+    public void setCuentaActiva(Integer cuenta_activa) {
+        this.cuentaActiva = cuenta_activa;
     }
 
-    public Date getFechanacimiento() {
-        return fechanacimiento;
+    public Date getFechaNacimiento() {
+        return fechaNacimiento;
     }
 
-    public void setFechanacimiento(Date fecha_nacimiento) {
-        this.fechanacimiento = fecha_nacimiento;
+    public void setFechaNacimiento(Date fecha_nacimiento) {
+        this.fechaNacimiento = fecha_nacimiento;
     }
 }
