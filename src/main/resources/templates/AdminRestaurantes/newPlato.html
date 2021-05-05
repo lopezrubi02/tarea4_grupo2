@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <!-- basic -->
     <meta charset="utf-8">
@@ -9,6 +10,7 @@
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
     <!-- site metas -->
     <title>Register</title>
+
     <!-- bootstrap css -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <!-- owl css -->
@@ -23,9 +25,15 @@
     <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
 </head>
+<!-- body -->
 
 <body class="main-layout">
 
+<!-- loader  -->
+<!--<div class="loader_bg">
+    <div class="loader"><img src="images/loading.gif" alt="" /></div>
+</div>
+-->
 <div class="wrapper">
     <!-- end loader -->
 
@@ -34,7 +42,7 @@
         <header>
             <div class="container-fluid" >
                 <div style="text-align: center">
-                    <h2 style="color: white;font-size: xx-large" th:text="${plato.idplato == 0? 'Agregar plato' : 'Editar plato'}">Registra un plato</h2>
+                    <h2 style="color: white;font-size: xx-large">Registra un plato</h2>
                 </div>
             </div>
         </header>
@@ -53,44 +61,29 @@
 
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
 
-                                <form method="post" th:action="@{/guardarPlato}" th:object="${plato}" class="main_form">
-                                    <input type="hidden" name="idplato" id="idplato" th:value="*{idplato}">
-                                    <input type="hidden" name="restaurante" id="restaurante" th:value="1">
+                                <form method="post" th:action="@{/guardarPlato}" class="main_form">
                                     <div class="row">
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <label for="nombre">Nombre del plato</label>
-                                            <input th:field="*{nombre}" class="form-control" placeholder="Nombre del plato" type="text" name="nombre" id="nombre">
+                                            <input type="hidden" name="correo" id="correo" value="ola" >
+                                            <input class="form-control" placeholder="Nombre del plato" type="text" name="nombre" id="nombre">
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <label for="descripcion">Descripcion del plato</label>
-                                            <input th:field="*{descripcion}" class="form-control" placeholder="Descripcion del plato" type="text" name="descripcion" id="descripcion">
+                                            <input class="form-control" placeholder="Descripcion del plato" type="text" name="ruc" id="ruc">
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <label for="precio">Precio del plato</label>
-                                            <input th:field="*{precio}" class="form-control" placeholder="Precio" type="text" name="precio" id="precio">
+                                            <input class="form-control" placeholder="Stock diario" type="text" name="direccion" id="direccion">
                                         </div>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:if="${plato.idplato}">
-                                            <label for="cupones">Cupon asociado 1</label>
-                                            <select class="form-control" th:field="*{cupones}">
-                                                <option th:each="cupon: ${listaCupones}" th:value="${cupon.idcupones}" th:text="${cupon.nombre}"></option>
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                            <input class="form-control" placeholder="Precio" type="text" name="distrito" id="distrito">
+                                        </div>
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" style="margin-bottom: 15px">
+                                            <label class="col-xl-12 col-lg-12 col-md-12 col-sm-12" for="categoria">Categoria</label>
+                                            <select class="custom-select" name="categoria" id="categoria">
+                                                <option value="1" >Hamburguesas</option>
+                                                <option value="2" >Bebidas</option>
+                                                <option value="3" >Postres</option>
+                                                <option value="4" >Combos</option>
                                             </select>
-                                        </div>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:unless="${plato.idplato}">
-                                            <label for="cupones">Cupon asociado 2</label>
-                                            <select class="form-control" th:field="*{cupones}">
-                                                <option th:each="cupon: ${listaCupones}" th:value="${cupon.idcupones}" th:text="${cupon.nombre}"
-                                                        th:selected="${cupon.idcupones == plato.cupones}" style="color: #0b2e13"></option>
-                                            </select>
-                                        </div>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:if="${plato.idplato}">
-                                            <label for="disponibilidad">Disponible?</label>
-                                            <select class="form-control" th:field="*{disponibilidad}">
-                                                <option value="1">Disponible</option>
-                                                <option value="0">Agotado</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:unless="${plato.idplato}">
-                                            <input type="hidden" name="disponibilidad" id="disponibilidad" th:value="1">
                                         </div>
                                         </br>
                                         </br>
