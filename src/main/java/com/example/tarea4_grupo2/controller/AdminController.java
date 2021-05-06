@@ -19,6 +19,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -246,14 +249,41 @@ public class AdminController {
     }
 
     @PostMapping("/agregarAdmin")
-    public String agregarAdmin(@RequestParam(name = "password2") String pass2,
-                               Usuario u, Model model,
-                               RedirectAttributes attr){
-        if(u.getContraseniaHash().equals(pass2)){
-            u.setRol("Administrador");
-            usuarioRepository.nuevoUsuario(u.getIdusuarios(),u.getNombre(),u.getApellidos(),
-                    u.getEmail(),u.getContraseniaHash(),u.getTelefono(),u.getFechaNacimiento(),
-                    u.getSexo(),u.getDni(), u.getRol());
+    public String agregarAdmin(@RequestParam("nombres") String nombres,
+                               @RequestParam("apellidos") String apellidos,
+                               @RequestParam("email" ) String email,
+                               @RequestParam("dni") String dni,
+                               @RequestParam("telefono") Integer telefono,
+                               @RequestParam("fechaNacimiento") String fechaNacimiento,
+                               @RequestParam("sexo") String sexo,
+                               @RequestParam("contraseniaHash") String contraseniaHash,
+                               @RequestParam("password2") String pass2,
+                               Model model, RedirectAttributes attr){
+        System.out.println(nombres + apellidos + email + dni + telefono + fechaNacimiento);
+        System.out.println(fechaNacimiento);
+        if(contraseniaHash.equals(pass2)){
+            Usuario usuario = new Usuario();
+            usuario.setNombre(nombres);
+            usuario.setApellidos(apellidos);
+            usuario.setEmail(email);
+            usuario.setTelefono(telefono);
+            usuario.setSexo(sexo);
+            usuario.setContraseniaHash(contraseniaHash);
+            usuario.setRol("AdminSistema");
+            usuario.setCuentaActiva(1);
+            usuario.setDni(dni);
+            LocalDateTime localDate = LocalDateTime.now();
+            usuario.setUltimafechaingreso(localDate);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            try{
+                usuario.setFechaNacimiento(sdf.parse(fechaNacimiento));
+                System.out.println(fechaNacimiento);
+            } catch (ParseException e) {
+                e.printStackTrace();
+                attr.addFlashAttribute("msg","Fecha Incorrecta");
+                return "adminsistema/agregarAdmin";
+            }
+            usuarioRepository.save(usuario);
             attr.addFlashAttribute("msg","Administrador creado exitosamente");
         }else{
             attr.addFlashAttribute("msg","Fallo al crear Administrador");
@@ -264,11 +294,41 @@ public class AdminController {
 
     //Reportes
 
+    //Reportes
+
     @GetMapping("/reportes")
     public String reportesAdmin(){
         return "adminsistema/ADMIN_Reportes";
     }
 
+    @GetMapping("/usuarioReportes")
+    public String usuariosReportes(Model model){
+        List<Usuario> usuarioList = usuarioRepository.usuarioreportes();
+        model.addAttribute("listaUsuariosreporte",usuarioList);
+        return "adminsistema/ADMIN_ReportesVistaUsuarios";
+    }
+
+
+    @GetMapping("/usuarioFiltro")
+    public String usuarioFiltro(Model model,@RequestParam(value = "rolSelected" ,defaultValue = "Todos")String rol){
+        List<Usuario> usuarioList;
+        if(rol.equals("Repartidor") || rol.equals("AdminRestaurante") || rol.equals("Cliente")  ){
+            usuarioList = usuarioRepository.findAllByRolAndCuentaActiva(rol,1);
+        }else{
+            usuarioList = usuarioRepository.usuarioreportes();
+        }
+
+        model.addAttribute("listaUsuariosreporte",usuarioList);
+
+        return "adminsistema/ADMIN_ReportesVistaUsuarios";
+    }
+
+
+    @GetMapping("/RestaurantesReportes")
+    public String restaurantesReportes(){
+        List<Restaurante> restaurantesList = restauranteRepository.findAll();
+        return "adminsistema/ADMIN_ReportesVistaRestaurante";
+    }
 
 
 }

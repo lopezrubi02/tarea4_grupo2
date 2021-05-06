@@ -49,13 +49,13 @@
             <ul class="list-unstyled components">
 
                 <li >
-                    <a href="perfilrestaurante.html">Perfil</a>
+                    <a th:href="@{/perfil}">Perfil</a>
                 </li>
                 <li>
-                    <a href="about.html">Cupones</a>
+                    <a th:href="@{/cupones}">Cupones</a>
                 </li>
                 <li class="active">
-                    <a href="recipe.html">Calificaciones</a>
+                    <a th:href="@{/calificaciones}">Calificaciones</a>
                 </li>
             </ul>
 
@@ -114,68 +114,17 @@
                     </div>
                 </div>
                 <div class="row">
-
+                    <a class="btn btn-primary mt-4 mb-4" th:href="@{/crearPlato}">Nuevo Plato</a>
                     <div class="col-md-12">
                         <div class="owl-carousel owl-theme">
-
-                            <div class="item">
+                            <div class="item" th:each="plato : ${listaPlatos}">
                                 <div class="product_blog_img">
                                     <a th:href="@{/crearPlato}"><img src="images/bembos1.png" alt="#" /></a>
                                 </div>
                                 <div class="product_blog_cont">
-                                    <h3>Duo Crispy</h3>
-                                    <h4>2 hamburguesas clasicas con papas regulares y 6 nuggets</h4>
-                                    <h4><span class="theme_color">S/.</span>14</h4>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="product_blog_img">
-                                    <img src="images/bembos2.png" alt="#" style="height: 150px"/>
-                                </div>
-                                <div class="product_blog_cont">
-                                    <h3>Combo La Colorada</h3>
-                                    <h4>Hamburguesa con tocino y salsa chimichurri, acompanado de gaseosa y papas regulares</h4>
-                                    <h4><span class="theme_color">S/.</span>20</h4>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="product_blog_img">
-                                    <img src="images/bembos1.png" alt="#" />
-                                </div>
-                                <div class="product_blog_cont">
-                                    <h3>Duo Crispy</h3>
-                                    <h4>2 hamburguesas clasicas con papas regulares y 6 nuggets</h4>
-                                    <h4><span class="theme_color">S/.</span>14</h4>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="product_blog_img">
-                                    <img src="images/bembos2.png" alt="#" style="height: 150px"/>
-                                </div>
-                                <div class="product_blog_cont">
-                                    <h3>Combo La Colorada</h3>
-                                    <h4>Hamburguesa con tocino y salsa chimichurri, acompanado de gaseosa y papas regulares</h4>
-                                    <h4><span class="theme_color">S/.</span>20</h4>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="product_blog_img">
-                                    <img src="images/bembos1.png" alt="#" />
-                                </div>
-                                <div class="product_blog_cont">
-                                    <h3>Duo Crispy</h3>
-                                    <h4>2 hamburguesas clasicas con papas regulares y 6 nuggets</h4>
-                                    <h4><span class="theme_color">S/.</span>14</h4>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="product_blog_img">
-                                    <img src="images/bembos2.png" alt="#" style="height: 150px"/>
-                                </div>
-                                <div class="product_blog_cont">
-                                    <h3>Combo La Colorada</h3>
-                                    <h4>Hamburguesa con tocino y salsa chimichurri, acompanado de gaseosa y papas regulares</h4>
-                                    <h4><span class="theme_color">S/.</span>20</h4>
+                                    <h3 th:text="${plato.nombre}"></h3>
+                                    <h4 th:text="${plato.descripcion}"></h4>
+                                    <h4 th:text="${plato.precio}"><span class="theme_color">S/.</span></h4>
                                 </div>
                             </div>
                         </div>
@@ -183,78 +132,6 @@
                 </div>
             </div>
         </section>
-        <section class="resip_section">
-            <div class="container">
-                <div class="col-md-12">
-                    <div class="title">
-                        <h2 style="color:white">Hamburguesas</h2>
-                    </div>
-                </div>
-                <div class="row">
-
-                    <div class="col-md-12">
-                        <div class="owl-carousel owl-theme">
-
-                            <div class="item">
-                                <div class="product_blog_img">
-                                    <img src="images/hambur1.png" alt="#" />
-                                </div>
-                                <div class="product_blog_cont">
-                                    <h3>Hamburguesa clasica</h3>
-                                    <h4><span class="theme_color">S/.</span>14</h4>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="product_blog_img">
-                                    <img src="images/hambur2.png" alt="#" />
-                                </div>
-                                <div class="product_blog_cont">
-                                    <h3>Hamburguesa Carretillera</h3>
-                                    <h4><span class="theme_color">S/.</span>20</h4>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="product_blog_img">
-                                    <img src="images/hambur3.png" alt="#" />
-                                </div>
-                                <div class="product_blog_cont">
-                                    <h3>Hamburguesa La Colorada</h3>
-                                    <h4><span class="theme_color">S/.</span>30</h4>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="product_blog_img">
-                                    <img src="images/hambur1.png" alt="#" />
-                                </div>
-                                <div class="product_blog_cont">
-                                    <h3>Hamburguesa clasica</h3>
-                                    <h4><span class="theme_color">S/.</span>14</h4>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="product_blog_img">
-                                    <img src="images/hambur2.png" alt="#" />
-                                </div>
-                                <div class="product_blog_cont">
-                                    <h3>Hamburguesa Carretillera</h3>
-                                    <h4><span class="theme_color">S/.</span>20</h4>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="product_blog_img">
-                                    <img src="images/hambur3.png" alt="#" />
-                                </div>
-                                <div class="product_blog_cont">
-                                    <h3>Hamburguesa La Colorada</h3>
-                                    <h4><span class="theme_color">S/.</span>30</h4>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <!-- footer -->
         <fooetr>
             <div class="container-fluid">
