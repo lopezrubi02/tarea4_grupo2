@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface RepartidorRepository  extends JpaRepository<Repartidor, Integer> {
 
-    Repartidor findRepartidorByUsuariosIdusuariosEquals(int idusuario);
+    Repartidor findRepartidorByIdusuariosEquals(int idusuario);
 
     @Query(value = "select p.idpedidos, p.montototal, p.comisionrepartidor, p.calificacionrepartidor, r.nombre, r.distrito\n" +
             "from pedidos p\n" +

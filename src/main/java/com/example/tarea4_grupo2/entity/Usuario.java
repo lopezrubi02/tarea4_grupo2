@@ -17,14 +17,19 @@ public class Usuario {
     private String nombre;
     private String apellidos;
     private String email;
+
+    @Column(name = "contraseniahash")
     private String contraseniaHash;
     private Integer telefono;
     private String sexo;
     private String dni;
     private Integer comisionventa;
     private String rol;
+
+    @Column(name = "cuentaactiva")
     private Integer cuentaActiva;
 
+    @Column(name = "fechanacimiento")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date fechaNacimiento;
 

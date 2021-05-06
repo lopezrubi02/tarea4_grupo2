@@ -98,9 +98,11 @@ public class AdminController {
 
     @PostMapping("/buscadorUsuarios")
     public String buscarEmployee(@RequestParam(value = "searchField", defaultValue = "") String searchField,
-                                 @RequestParam(value = "rol", defaultValue = "") String rol,
+                                 @RequestParam(value = "rol") String rol,
                                  RedirectAttributes redirectAttributes,
                                  Model model) {
+
+        System.out.println(rol);
 
         redirectAttributes.addAttribute("rol", rol);
         redirectAttributes.addAttribute("searchField", searchField);
@@ -126,7 +128,7 @@ public class AdminController {
                 case "Repartidor":
                     model.addAttribute("usuario", usuario);
 
-                    Repartidor repartidor = repartidorRepository.findRepartidorByUsuariosIdusuariosEquals(id);
+                    Repartidor repartidor = repartidorRepository.findRepartidorByIdusuariosEquals(id);
                     model.addAttribute("repartidor", repartidor);
 
                     return "adminsistema/datosRepartidor";
