@@ -30,7 +30,7 @@ public class RepartidorController {
     @Autowired
     RestauranteRepository restauranteRepository;
 
-    @PostMapping("/Reporte1")
+    @PostMapping("/Reporte1")       //sarita
     public String buscaxRestauranteDistrito(@RequestParam("valorBuscado") String searchField,
                                       Model model) {
 
@@ -91,7 +91,7 @@ public class RepartidorController {
         int id=10;
         id = repartidor.getIdrepartidor();
 
-        Repartidor repartidor2 = repartidorRepository.findRepartidorByUsuariosIdusuariosEquals(id);
+        Repartidor repartidor2 = repartidorRepository.findRepartidorByIdusuariosEquals(id);
 
         model.addAttribute("repartidor",repartidor2);
 
