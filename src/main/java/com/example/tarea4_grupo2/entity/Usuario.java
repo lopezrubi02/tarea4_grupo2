@@ -1,5 +1,6 @@
 package com.example.tarea4_grupo2.entity;
 
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -17,18 +18,23 @@ public class Usuario {
     private String nombre;
     private String apellidos;
     private String email;
+
+    @Column(name = "contraseniahash")
     private String contraseniaHash;
     private Integer telefono;
     private String sexo;
     private String dni;
     private Integer comisionventa;
     private String rol;
+
+    @Column(name = "cuentaactiva")
     private Integer cuentaActiva;
 
 
     @OneToOne(mappedBy = "usuarios")
     Repartidor datosrepartidor;
 
+    @Column(name = "fechanacimiento")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date fechaNacimiento;
 

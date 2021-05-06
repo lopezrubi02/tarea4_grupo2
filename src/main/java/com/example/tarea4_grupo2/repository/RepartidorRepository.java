@@ -2,8 +2,7 @@ package com.example.tarea4_grupo2.repository;
 
 import com.example.tarea4_grupo2.entity.Pedidos;
 import com.example.tarea4_grupo2.entity.Repartidor;
-import com.example.tarea4_grupo2.entity.RepartidorComisionMensualDTO;
-import com.example.tarea4_grupo2.entity.Usuario;
+import com.example.tarea4_grupo2.dto.RepartidorComisionMensualDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -11,7 +10,7 @@ import java.util.List;
 
 public interface RepartidorRepository  extends JpaRepository<Repartidor, Integer> {
 
-    Repartidor findRepartidorByUsuariosIdusuariosEquals(int idusuario);
+    Repartidor findRepartidorByIdusuariosEquals(int idusuario);
 
     @Query(value = "select p.idpedidos, p.montototal, p.comisionrepartidor, p.calificacionrepartidor, r.nombre, r.distrito\n" +
             "from pedidos p\n" +
