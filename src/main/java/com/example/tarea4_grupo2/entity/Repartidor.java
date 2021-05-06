@@ -44,17 +44,18 @@ public class Repartidor {
 
     private String distritoactual;
 
-    public int getIdusuarios() {
-        return idusuarios;
+
+    public Usuario getUsuarios() {
+        return usuarios;
     }
 
-    public void setIdusuarios(int idusuarios) {
-        this.idusuarios = idusuarios;
+    public void setUsuarios(Usuario usuarios) {
+        this.usuarios = usuarios;
     }
 
-    @Column(name="usuarios_idusuarios")
-    private int idusuarios;
-
+    @OneToOne
+    @PrimaryKeyJoinColumn(name = "usuarios_idusuarios")
+    Usuario usuarios;
 
 
     public int getIdrepartidor() {

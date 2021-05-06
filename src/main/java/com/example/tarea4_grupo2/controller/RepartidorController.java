@@ -44,19 +44,15 @@ public class RepartidorController {
 
 
     @GetMapping("/home")
-    public String homeRepartidor(@ModelAttribute("repartidor") Usuario repartidor,Model model) {
+    public String homeRepartidor(@ModelAttribute("repartidor") Repartidor repartidor,Model model) {
 
         int id=10;
-        Optional<Usuario> optRepartidor = usuarioRepository.findById(id);
-        if (optRepartidor.isPresent()) {
-            repartidor = optRepartidor.get();
-            model.addAttribute("repartidor",repartidor);
-            Optional<Repartidor> datos = repartidorRepository.findById(repartidor.getIdusuarios());
-            if(datos.isPresent()){
-                Repartidor datosR =datos.get();
-                model.addAttribute("datos",datosR);
-            }
-            //model.addAttribute("datos",datos);
+
+        Optional<Repartidor> repartidor2 = repartidorRepository.findById(id);
+        if(repartidor2.isPresent()) {
+            repartidor=repartidor2.get();
+            model.addAttribute("repartidor", repartidor);
+
         }
         return "repartidor/repartidor_principal";
     }
@@ -89,19 +85,17 @@ public class RepartidorController {
     }
 
     @GetMapping("/perfil")
-    public String perfilRepartidor(@ModelAttribute("repartidor") Usuario repartidor, Model model) {
+    public String perfilRepartidor(@ModelAttribute("repartidor") Repartidor repartidor, Model model) {
 
         int id=10;
+        id = repartidor.getIdrepartidor();
 
-        Optional<Usuario> optRepartidor = usuarioRepository.findById(id);
-        if (optRepartidor.isPresent()) {
-            repartidor = optRepartidor.get();
-            Direcciones direccion=direccionesRepository.findByUsuariosIdusuarios(id);
-            model.addAttribute("repartidor",repartidor);
-            model.addAttribute("direccion",direccion);
-            //Repartidor datos = usuarioRepository.findByIdusuarios(repartidor.getIdusuarios());
-            //model.addAttribute("datos",datos);
-        }
+        Repartidor repartidor2 = repartidorRepository.findRepartidorByUsuariosIdusuariosEquals(id);
+
+        model.addAttribute("repartidor",repartidor2);
+
+
+
         return "repartidor/repartidor_perfil";
     }
 

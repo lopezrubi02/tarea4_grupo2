@@ -25,6 +25,10 @@ public class Usuario {
     private String rol;
     private Integer cuentaActiva;
 
+
+    @OneToOne(mappedBy = "usuarios")
+    Repartidor datosrepartidor;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date fechaNacimiento;
 
