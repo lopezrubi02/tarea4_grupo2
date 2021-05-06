@@ -1,5 +1,7 @@
 package com.example.tarea4_grupo2.entity;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.Date;
@@ -48,8 +50,9 @@ public class Pedidos {
     private int idrepartidor;
 
     private int restaurante_idrestaurante;
-    private String fechahorapedido;
-    private String fechahoraentregado;
+
+    private Date fechahorapedido;
+    private Date fechahoraentregado;
     private int direccionentrega;
 
     public int getIdpedidos() {
@@ -172,19 +175,19 @@ public class Pedidos {
         this.restaurante_idrestaurante = restaurante_idrestaurante;
     }
 
-    public String getFechahorapedido() {
+    public Date getFechahorapedido() {
         return fechahorapedido;
     }
 
-    public void setFechahorapedido(String fechahorapedido) {
+    public void setFechahorapedido(Date fechahorapedido) {
         this.fechahorapedido = fechahorapedido;
     }
 
-    public String getFechahoraentregado() {
+    public Date getFechahoraentregado() {
         return fechahoraentregado;
     }
 
-    public void setFechahoraentregado(String fechahoraentregado) {
+    public void setFechahoraentregado(Date fechahoraentregado) {
         this.fechahoraentregado = fechahoraentregado;
     }
 

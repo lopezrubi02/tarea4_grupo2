@@ -100,22 +100,17 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-12">
-                        <h2 th:text="${repartidor.nombre} + ${repartidor.apellidos}"></h2>
+
                     </div>
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
-                        <form th:action="@{'/repartidor/save_home'}" class="main_form" th:object="${datos}">
+                        <form th:action="@{'/repartidor/save_home'}" class="main_form" th:object="${repartidor}">
                             <div class="row">
                              
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <input class="form-control" placeholder="Distrito donde se encuentra" type="text"
                                            th:field="*{distritoactual}">
                                 </div>
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <select  th:field="*{disponibilidad}" class="mb-4 col-xl-12 col-lg-12 col-md-12 col-sm-12" class="form-selected" name="select" >
-                                      <option value="disponible">Disponible</option>
-                                      <option value="ocupado" >Ocupado</option>
-                                    </select>
-                                </div>
+
                                 </br>
                                 </br>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
