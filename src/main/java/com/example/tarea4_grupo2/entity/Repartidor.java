@@ -15,6 +15,10 @@ public class Repartidor {
     private String licencia;
     private Byte foto;
 
+    @OneToOne
+    @PrimaryKeyJoinColumn(name = "usuarios_idusuarios")
+    Usuario usuarios;
+
     public Byte getFoto() {
         return foto;
     }
@@ -52,10 +56,6 @@ public class Repartidor {
     public void setUsuarios(Usuario usuarios) {
         this.usuarios = usuarios;
     }
-
-    @OneToOne
-    @PrimaryKeyJoinColumn(name = "usuarios_idusuarios")
-    Usuario usuarios;
 
 
     public int getIdrepartidor() {
