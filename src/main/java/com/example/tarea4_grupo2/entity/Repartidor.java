@@ -15,10 +15,13 @@ public class Repartidor {
     private String licencia;
     private Byte foto;
 
-    @OneToOne
+    @Column(name ="usuarios_idusuarios")
+    private int idusuarios;
+
+    /*@OneToOne
     @PrimaryKeyJoinColumn(name = "usuarios_idusuarios")
     Usuario usuarios;
-
+*/
     public Byte getFoto() {
         return foto;
     }
@@ -50,14 +53,22 @@ public class Repartidor {
     private String distritoactual;
 
 
-    public Usuario getUsuarios() {
+/*    public Usuario getUsuarios() {
         return usuarios;
     }
 
     public void setUsuarios(Usuario usuarios) {
         this.usuarios = usuarios;
     }
+*/
 
+    public int getIdusuarios() {
+        return idusuarios;
+    }
+
+    public void setIdusuarios(int idusuarios) {
+        this.idusuarios = idusuarios;
+    }
 
     public int getIdrepartidor() {
         return idrepartidor;

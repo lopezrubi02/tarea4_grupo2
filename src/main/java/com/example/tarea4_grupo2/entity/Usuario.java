@@ -27,14 +27,8 @@ public class Usuario {
     private Integer comisionventa;
     private String rol;
 
-    private Date ultimafechaingreso;
-
     @Column(name = "cuentaactiva")
     private Integer cuentaActiva;
-
-
-    @OneToOne(mappedBy = "usuarios")
-    private Repartidor datosrepartidor;
 
     @Column(name = "fechanacimiento")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -134,21 +128,5 @@ public class Usuario {
 
     public void setFechaNacimiento(Date fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
-    }
-
-    public Date getUltimafechaingreso() {
-        return ultimafechaingreso;
-    }
-
-    public void setUltimafechaingreso(Date ultimafechaingreso) {
-        this.ultimafechaingreso = ultimafechaingreso;
-    }
-
-    public Repartidor getDatosrepartidor() {
-        return datosrepartidor;
-    }
-
-    public void setDatosrepartidor(Repartidor datosrepartidor) {
-        this.datosrepartidor = datosrepartidor;
     }
 }
