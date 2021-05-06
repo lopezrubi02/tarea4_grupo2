@@ -49,33 +49,32 @@ public class RepartidorController {
 
         int id=10;
 
-        Optional<Repartidor> repartidor2 = repartidorRepository.findById(id);
-        if(repartidor2.isPresent()) {
-            repartidor=repartidor2.get();
-            model.addAttribute("repartidor", repartidor);
+        Optional<Usuario> optional = usuarioRepository.findById(id);
 
+        if (optional.isPresent()) {
+            Usuario usuario = optional.get();
+            model.addAttribute("usuario", usuario);
+
+            Repartidor repartidor2 = repartidorRepository.findRepartidorByIdusuariosEquals(id);
+            model.addAttribute("repartidor", repartidor2);
         }
         return "repartidor/repartidor_principal";
     }
 
-    @PostMapping("/save_home")
-    public String guardarHomeRepartidor(Repartidor datosRepartidor,
-                                        @RequestParam("movilidad") String movilidad,
-                                        @RequestParam("disponibilidad") String disponibilidad) {
+    @PostMapping("/save_principal")
+    public String guardarHomeRepartidor(
+            Repartidor repartidorRecibido) {
 
-        //disponible - true | ocupado-false
-        if(disponibilidad.equalsIgnoreCase("disponible")){
-            boolean disponibilidadB = true;
-            datosRepartidor.setDisponibilidad(disponibilidadB);
-        }else{
-            boolean disponibilidadB = false;
-            datosRepartidor.setDisponibilidad(disponibilidadB);
-        }
+        Repartidor optionalRepartidor = repartidorRepository.findRepartidorByIdusuariosEquals(repartidorRecibido.getIdusuarios());
+        Repartidor repartidorEnlabasededatos = optionalRepartidor;
 
-        datosRepartidor.setMovilidad(movilidad);
-        repartidorRepository.save(datosRepartidor);
+        //repartidorEnlabasededatos.setMovilidad(optionalRepartidor.getMovilidad());
+        repartidorEnlabasededatos.setDisponibilidad(repartidorRecibido.isDisponibilidad());
+        repartidorEnlabasededatos.setDistritoactual(repartidorRecibido.getDistritoactual());
 
-        return "repartidor/home";
+        repartidorRepository.save(repartidorEnlabasededatos);
+
+        return "redirect:/repartidor/home";
     }
 
 
@@ -89,25 +88,43 @@ public class RepartidorController {
     public String perfilRepartidor(@ModelAttribute("repartidor") Repartidor repartidor, Model model) {
 
         int id=10;
-        id = repartidor.getIdrepartidor();
 
-        Repartidor repartidor2 = repartidorRepository.findRepartidorByIdusuariosEquals(id);
+        Optional<Usuario> optional = usuarioRepository.findById(id);
 
-        model.addAttribute("repartidor",repartidor2);
+        if (optional.isPresent()) {
+            Usuario usuario = optional.get();
+            model.addAttribute("usuario", usuario);
 
+            Repartidor repartidor2 = repartidorRepository.findRepartidorByIdusuariosEquals(id);
+            model.addAttribute("repartidor", repartidor2);
 
+            Direcciones direcciones = direccionesRepository.findByUsuariosIdusuarios(id);
+            model.addAttribute("direcciones", direcciones);
+        }
 
         return "repartidor/repartidor_perfil";
     }
 
     @PostMapping("/save_perfil")
-    public String guardarPerfilRepartidor(@ModelAttribute("repartidor") Usuario repartidor,
-                                        @RequestParam("direccion") String direccion) {
+    public String guardarPerfilRepartidor(@ModelAttribute("usuario") Usuario usuario,
+                                        @RequestParam("idusuario") int idusuario,@RequestParam("telefono") int telefono,
+                                          @RequestParam("direccion") String direccion,@RequestParam("password") String password
+    ) {
 
+        Optional<Usuario> usuario1= usuarioRepository.findById(idusuario);
 
-        usuarioRepository.save(repartidor);
+        if(usuario1.isPresent()){
+            usuario=usuario1.get();
+            usuario.setTelefono(telefono);
+            usuario.setContraseniaHash(password);
+            usuarioRepository.save(usuario);
 
-        return "repartidor/home";
+            Direcciones dnueva = direccionesRepository.findByUsuariosIdusuarios(usuario.getIdusuarios());
+            dnueva.setDireccion(direccion);
+            direccionesRepository.save(dnueva);
+        }
+
+        return "redirect:/repartidor/perfil";
     }
 
 
