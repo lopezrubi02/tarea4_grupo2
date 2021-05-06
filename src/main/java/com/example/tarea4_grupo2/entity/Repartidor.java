@@ -42,6 +42,7 @@ public class Repartidor {
     private boolean disponibilidad;
     private Float calificacionpromedio;
 
+
     private String distritoactual;
 
     public int getIdusuarios() {
