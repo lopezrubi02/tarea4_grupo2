@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -169,6 +171,29 @@ public class AdminController {
         model.addAttribute("usuario", usuario);
 
         return "adminsistema/miCuenta";
+    }
+
+    @PostMapping("/miCuenta")
+    public String updateAdminInfo(
+            Usuario usuarioRecibido,
+            RedirectAttributes redirectAttributes
+    ){
+
+        // se obtiene el usuario en la base de datos para actualizar solo los campos que han cambiado
+        Optional<Usuario> optionalUsuario = usuarioRepository.findById(usuarioRecibido.getIdusuarios());
+        Usuario usuarioEnlabasededatos = optionalUsuario.get();
+
+        usuarioEnlabasededatos.setNombre(usuarioRecibido.getNombre());
+        usuarioEnlabasededatos.setEmail(usuarioRecibido.getEmail());
+        usuarioEnlabasededatos.setDni(usuarioRecibido.getDni());
+        usuarioEnlabasededatos.setTelefono(usuarioRecibido.getTelefono());
+        usuarioEnlabasededatos.setFechaNacimiento(usuarioRecibido.getFechaNacimiento());
+        usuarioEnlabasededatos.setSexo(usuarioRecibido.getSexo());
+
+        usuarioRepository.save(usuarioEnlabasededatos);
+
+        return "redirect:/admin/usuariosActuales";
+
     }
 
     //Gestion de Nuevas Cuentas

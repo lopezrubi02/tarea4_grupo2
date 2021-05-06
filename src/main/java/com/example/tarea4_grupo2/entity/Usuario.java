@@ -1,5 +1,6 @@
 package com.example.tarea4_grupo2.entity;
 
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;

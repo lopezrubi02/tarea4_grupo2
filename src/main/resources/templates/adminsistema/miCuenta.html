@@ -109,7 +109,7 @@
     
     <!-- blog -->
     <div class="blog">
-        <div class="container">z
+        <div class="container">
             <div class="row">
                 <div class="col-md-12">
                     <h1>Mi cuenta</h1>
@@ -124,6 +124,7 @@
                 <div class="col-12 col-md-7">
                     <!-- formulario -->
                     <form method="post" th:action="${'/admin/miCuenta'}" th:object="${usuario}">
+                        <input th:field="*{idusuarios}" type="hidden">
                         <div class="form-group">
                             <label>Nombre</label>
                             <input type="text" class="form-control" th:field="*{nombre}">
