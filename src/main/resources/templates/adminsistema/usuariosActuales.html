@@ -84,7 +84,7 @@
 
                                 
                                 <!-- TODO -->
-                                <li class="button_user"><a class="button active" href="#login.html">Mi cuenta</a><a class="button" href="#">Logout</a></li>
+                                <li class="button_user"><a class="button active" th:href="@{/admin/miCuenta}">Mi cuenta</a><a class="button" href="#">Logout</a></li>
                                 <li>
                                     <button type="button" id="sidebarCollapse">
                                         <img src="images/menu_icon.png" alt="#">
@@ -108,16 +108,17 @@
                 </div>
             </div>
 
+            <!-- BUSCADOR -->
             <form class="row" method="post" th:action="@{/admin/buscadorUsuarios}">
 
                 <div class="col-2">
                     <!-- search bar -->
                     <select name="rol" class="custom-select" >
                         <option selected value="">Todos</option>
-                        <option value="Cliente">Clientes</option>
-                        <option value="Repartidor">Repartidores</option>
-                        <option value="AdminRestaurante">Restaurantes</option>
-                        <option value="AdminSistema">Admin</option>
+                        <option th:selected="(${rol} == 'Cliente')"  value="Cliente">Clientes</option>
+                        <option th:selected="(${rol} == 'Repartidor')" value="Repartidor">Repartidores</option>
+                        <option th:selected="(${rol} == 'AdminRestaurante')" value="AdminRestaurante">Restaurantes</option>
+                        <option th:selected="(${rol} == 'AdminSistema')" value="AdminSistema">Admin</option>
                     </select>
                 </div>
                 <div class="col-8">
@@ -166,8 +167,39 @@
                 </div>
                 <!-- end of table -->
 
-                <div class="col-md-12">
-                    <p>Anterior | 1 | 2 | 3 | Siguiente</p>
+                <h1 th:text="${maxNumberOfPages}"></h1>
+                <!-- paginacion -->
+                <div class="row">
+                    <nav aria-label="Page navigation example" class = "mx-auto">
+                        <ul class="pagination justify-content-center">
+
+                            <!--  BOTON ANTERIOR -->
+                            <li class="page-item disabled" th:if="${currentPage eq 1 }">
+                                <span class="page-link">Anterior</span>
+                            </li>
+                            <li class="page-item" th:unless="${currentPage eq 1}">
+                                <a class="page-link"
+                                   th:href="@{/admin/usuariosActuales(page=${currentPage - 1},searchField=${searchField},rol=${rol} )}">Anterior</a>
+                            </li>
+
+                            <!-- BOTONES NUMEROS -->
+                            <li th:each="i : ${#numbers.sequence( 1, maxNumberOfPages )}"
+                                th:class="${ i == currentPage ? 'page-item active .bg-secondary' : 'page-item' }">
+                                <a class="page-link"  th:href="@{/admin/usuariosActuales(page=${i},searchField=${searchField},rol=${rol} )}"
+                                   th:text="${i}"
+                                ></a>
+                            </li>
+
+                            <!--  BOTON SIGUIENTE -->
+                            <li class="page-item disabled" th:if="${currentPage eq maxNumberOfPages }">
+                                <span class="page-link">Anterior</span>
+                            </li>
+                            <li class="page-item" th:unless="${currentPage eq maxNumberOfPages}">
+                                <a class="page-link" th:href="@{/admin/usuariosActuales(page=${currentPage + 1},searchField=${searchField},rol=${rol} )}">Siguiente</a>
+                            </li>
+
+                        </ul>
+                    </nav>
                 </div>
 
             </div>

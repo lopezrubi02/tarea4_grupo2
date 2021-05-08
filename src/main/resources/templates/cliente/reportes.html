@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <!-- basic -->
@@ -14,26 +14,26 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <!-- bootstrap css -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <!-- owl css -->
-    <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}">
     <!-- style css -->
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
     <!-- responsive-->
-    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
     <!-- awesome fontfamily -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
 </head>
 <!-- body -->
 
 <body class="main-layout blog_page">
     <!-- loader  -->
-    <div class="loader_bg">
+    <!--div class="loader_bg">
         <div class="loader"><img src="images/loading.gif" alt="" /></div>
-    </div>
+    </div-->
 
     <div class="wrapper">
     <!-- end loader -->
@@ -70,7 +70,7 @@
             <div class="row">
                 <div class="col-md-3">
                     <div class="full">
-                        <a class="logo" href=""><img src="images/logo.png" alt="#" /></a>
+                        <a class="logo" href=""><img th:src="@{/images/logo.png}" alt="#" /></a>
                     </div>
                 </div>
                 <div class="col-md-9">
@@ -81,10 +81,10 @@
                                 <li class="dinone"><a href="#">Relizar pedido</a></li>
                        
                                 <li class="button_user"><a class="button active" href="#login.html">Mi perfil</a><a class="button" href="#">Cerrar sesión</a></li>
-                                <li><a href="#"><img style="margin-right: 15px;" src="images/carrito.png" width="45" height="45"></a></li>
+                                <li><a href="#"><img style="margin-right: 15px;" th:src="@{/images/carrito.png}" width="45" height="45"></a></li>
                                 <li>
                                     <button type="button" id="sidebarCollapse">
-                                        <img src="images/menu_icon.png" alt="#">
+                                        <img th:src="@{/images/menu_icon.png}" alt="#">
                                     </button>
                                 </li>
                             </ul>
@@ -114,12 +114,12 @@
     <div class="row">
       <div class="col-md-12">
         <div class="title">
-          <i><img width="100" height="100" src="images/reporte.png" alt="#"/></i>
+          <i><img width="100" height="100" th:src="@{/images/reporte.png}" alt="#"/></i>
           
           <span>Registros de toda tu actividad</span>
         </div>
 		<div class="title">
-          <a href="#"><i><img width="100" height="100" src="images/image_processing20200511-32371-1id5bed.png" alt="#"/></i></a>
+          <a href="#"><i><img width="100" height="100" th:src="@{/images/image_processing20200511-32371-1id5bed.png}" alt="#"/></i></a>
           <span>Mira tus reportes pasados</span>
         </div>
       </div>
@@ -128,7 +128,7 @@
       <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mar_bottom">
         <div class="blog_box">
           <div class="blog_img_box">
-            <figure><img src="images/descarga.jpg" alt="#"/>
+            <figure><img th:src="@{/images/descarga.jpg}" alt="#"/>
              <span>Top 3 de Restaurantes</span>
             </figure>
           </div>
@@ -153,7 +153,7 @@
        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mar_bottom">
         <div class="blog_box">
           <div class="blog_img_box">
-            <figure><img src="images/64bb5e41f11d3c3463f4bdc4c773d62d-plato-de-pollo-by-vexels.png" alt="#"/>
+            <figure><img th:src="@{/images/64bb5e41f11d3c3463f4bdc4c773d62d-plato-de-pollo-by-vexels.png}" alt="#"/>
              <span>Top 3 de platos más vendidos</span>
             </figure>
           </div>
@@ -178,7 +178,7 @@
        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
         <div class="blog_box">
           <div class="blog_img_box">
-            <figure><img src="images/2643809.png" alt="#"/>
+            <figure><img th:src="@{/images/2643809.png}" alt="#"/>
              <span>Historial de consumo por restaurante y total</span>
             </figure>
           </div>
@@ -208,7 +208,7 @@
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mar_bottom">
         <div class="blog_box">
           <div class="blog_img_box">
-            <figure><img src="images/hucha_53876-25494.jpg" alt="#"/>
+            <figure><img th:src="@{/images/hucha_53876-25494.jpg}" alt="#"/>
              <span>Dinero ahorrado por los cupones</span>
             </figure>
           </div>
@@ -220,7 +220,7 @@
        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mar_bottom">
         <div class="blog_box">
           <div class="blog_img_box">
-            <figure><img src="images/9a6b5f8bf55c5848572197757ec5f7c1-icono-de-flechas-de-tiempo-trazo-de-reloj-by-vexels.png" alt="#"/>
+            <figure><img th:src="@{/images/9a6b5f8bf55c5848572197757ec5f7c1-icono-de-flechas-de-tiempo-trazo-de-reloj-by-vexels.png}" alt="#"/>
              <span>Tiempo medio por delivery</span>
             </figure>
           </div>

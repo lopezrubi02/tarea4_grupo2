@@ -9,4 +9,6 @@ import java.util.List;
 public interface DireccionesRepository extends JpaRepository<Direcciones, Integer> {
 
     List<Direcciones> findAllByUsuariosIdusuariosEquals(int idusuario);
+
+    Direcciones findByUsuariosIdusuarios(int usuarios_idusuarios);
 }

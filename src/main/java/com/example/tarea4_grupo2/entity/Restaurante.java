@@ -13,8 +13,11 @@ public class Restaurante {
     private String distrito;
     private String ruc;
     private String nombre;
-    private int activo;
+
+    private Float calificacionpromedio;
+
     private int idadminrest;
+    private Byte foto;
 
     public int getIdrestaurante() {
         return idrestaurante;
@@ -56,13 +59,6 @@ public class Restaurante {
         this.nombre = nombre;
     }
 
-    public int getActivo() {
-        return activo;
-    }
-
-    public void setActivo(int activo) {
-        this.activo = activo;
-    }
 
     public int getIdadminrest() {
         return idadminrest;
@@ -70,5 +66,22 @@ public class Restaurante {
 
     public void setIdadminrest(int idadminrest) {
         this.idadminrest = idadminrest;
+    }
+
+
+    public Float getCalificacionpromedio() {
+        return calificacionpromedio;
+    }
+
+    public void setCalificacionpromedio(Float calificacionpromedio) {
+        this.calificacionpromedio = calificacionpromedio;
+    }
+
+    public Byte getFoto() {
+        return foto;
+    }
+
+    public void setFoto(Byte foto) {
+        this.foto = foto;
     }
 }

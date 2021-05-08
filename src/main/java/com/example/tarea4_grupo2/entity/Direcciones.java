@@ -41,7 +41,7 @@ public class Direcciones {
         return usuariosIdusuarios;
     }
 
-    public void setUsuariosIdusuarios(int usuariosIdusuarios) {
-        this.usuariosIdusuarios = usuariosIdusuarios;
+    public void setUsuariosIdusuarios(int usuarios_idusuarios) {
+        this.usuariosIdusuarios = usuarios_idusuarios;
     }
 }

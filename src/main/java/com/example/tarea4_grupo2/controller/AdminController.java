@@ -8,7 +8,6 @@ import com.example.tarea4_grupo2.repository.DireccionesRepository;
 import com.example.tarea4_grupo2.repository.RepartidorRepository;
 import com.example.tarea4_grupo2.repository.RestauranteRepository;
 import com.example.tarea4_grupo2.repository.UsuarioRepository;
-//import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,7 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -44,7 +47,8 @@ public class AdminController {
             @RequestParam(name = "page", defaultValue = "1") String requestedPage,
             @RequestParam(name = "searchField", defaultValue = "") String searchField,
             @RequestParam(name = "rol", defaultValue = "") String rol,
-            Model model) {
+            Model model
+    ) {
         /**
          * Validaciones
          * ---
@@ -61,16 +65,21 @@ public class AdminController {
 
         if (!searchField.equals("") && !rol.equals("")) {
             // si es que no estan vacios, se filtra por rol y nombre
-            usuarioList = usuarioRepository.findAllByRolAndCuentaactivaAndNombre(rol, 1, searchField);
+            usuarioList = usuarioRepository.findAllByRolAndCuentaActivaAndNombre(rol, 1, searchField);
         } else if (!searchField.equals("")) {
-            // si el nombre es el que no esta vacio, se filtra por nombre
-            usuarioList = usuarioRepository.findAllByNombreAndCuentaactiva(searchField, 1);
+            // si el nobre es el que no esta vacio, se filtra por nombre
+            usuarioList = usuarioRepository.findAllByNombreAndCuentaActiva(searchField, 1);
         } else if (!rol.equals("")) {
             // viceversa
-            usuarioList = usuarioRepository.findAllByRolAndCuentaactiva(rol, 1);
+            usuarioList = usuarioRepository.findAllByRolAndCuentaActiva(rol, 1);
         } else {
             // si todos los campos estan vacios, se muestran todos por defecto
-            usuarioList = usuarioRepository.findAllByCuentaactivaEquals(1);
+            usuarioList = usuarioRepository.findAllByCuentaActivaEquals(1);
+        }
+
+        // si no se encuentra nada, se redirige a la lista general
+        if(usuarioList.size() == 0){
+            return "redirect:/admin/usuariosActuales";
         }
 
         int numberOfPages = (int) Math.ceil(usuarioList.size() / numberOfUsersPerPage);
@@ -81,27 +90,24 @@ public class AdminController {
         int start = (int) numberOfUsersPerPage * (page - 1);
         int end = (int) (start + numberOfUsersPerPage);
 
-        System.out.println(usuarioList.size());
-        System.out.println(numberOfUsersPerPage);
-        System.out.println(numberOfPages);
-        System.out.println(start);
-        System.out.println(end);
-
         List<Usuario> lisOfUsersPage = usuarioList.subList(start, Math.min(end, usuarioList.size()));
 
         model.addAttribute("lisOfUsersPage", lisOfUsersPage);
         model.addAttribute("currentPage", page);
         model.addAttribute("maxNumberOfPages", numberOfPages);
+        model.addAttribute("rol", rol);
+        model.addAttribute("searchField", searchField);
 
-        System.out.println(numberOfPages);
         return "adminsistema/usuariosActuales";
     }
 
     @PostMapping("/buscadorUsuarios")
     public String buscarEmployee(@RequestParam(value = "searchField", defaultValue = "") String searchField,
-                                 @RequestParam(value = "rol", defaultValue = "") String rol,
+                                 @RequestParam(value = "rol") String rol,
                                  RedirectAttributes redirectAttributes,
                                  Model model) {
+
+        System.out.println(rol);
 
         redirectAttributes.addAttribute("rol", rol);
         redirectAttributes.addAttribute("searchField", searchField);
@@ -127,7 +133,7 @@ public class AdminController {
                 case "Repartidor":
                     model.addAttribute("usuario", usuario);
 
-                    Repartidor repartidor = repartidorRepository.findRepartidorByUsuariosIdusuariosEquals(id);
+                    Repartidor repartidor = repartidorRepository.findRepartidorByIdusuariosEquals(id);
                     model.addAttribute("repartidor", repartidor);
 
                     return "adminsistema/datosRepartidor";
@@ -156,6 +162,43 @@ public class AdminController {
             return "redirect:/admin/usuariosActuales";
         }
     }
+
+    @GetMapping("/miCuenta")
+    public String miCuenta(
+            Model model){
+        // TODO se harcodeo el id del actual usuario logeado
+        int id = 1;
+
+        Optional<Usuario> optional = usuarioRepository.findById(id);
+        Usuario usuario = optional.get();
+        model.addAttribute("usuario", usuario);
+
+        return "adminsistema/miCuenta";
+    }
+
+    @PostMapping("/miCuenta")
+    public String updateAdminInfo(
+            Usuario usuarioRecibido,
+            RedirectAttributes redirectAttributes
+    ){
+
+        // se obtiene el usuario en la base de datos para actualizar solo los campos que han cambiado
+        Optional<Usuario> optionalUsuario = usuarioRepository.findById(usuarioRecibido.getIdusuarios());
+        Usuario usuarioEnlabasededatos = optionalUsuario.get();
+
+        usuarioEnlabasededatos.setNombre(usuarioRecibido.getNombre());
+        usuarioEnlabasededatos.setEmail(usuarioRecibido.getEmail());
+        usuarioEnlabasededatos.setDni(usuarioRecibido.getDni());
+        usuarioEnlabasededatos.setTelefono(usuarioRecibido.getTelefono());
+        usuarioEnlabasededatos.setFechaNacimiento(usuarioRecibido.getFechaNacimiento());
+        usuarioEnlabasededatos.setSexo(usuarioRecibido.getSexo());
+
+        usuarioRepository.save(usuarioEnlabasededatos);
+
+        return "redirect:/admin/usuariosActuales";
+
+    }
+
     //Gestion de Nuevas Cuentas
 
     @GetMapping("/gestionCuentas")
@@ -167,12 +210,12 @@ public class AdminController {
     public String nuevosUsuarios(Model model,@RequestParam(value = "rolSelected" ,defaultValue = "Todos")String rol){
         List<Usuario> usuarioList;
         if(rol.equals("Repartidor") || rol.equals("AdminRestaurante") ){
-            usuarioList = usuarioRepository.findAllByRolAndCuentaactiva(rol,0);
+            usuarioList = usuarioRepository.findAllByRolAndCuentaActiva(rol,0);
         }else{
             usuarioList = usuarioRepository.cuentasNuevas();
         }
 
-        //usuarioList = usuarioRepository.findAllByCuentaactivaEquals(0);
+        //usuarioList = usuarioRepository.findAllByCuentaActivaEquals(0);
         model.addAttribute("listaUsuariosNuevos",usuarioList);
 
         return "adminsistema/nuevasCuentas";
@@ -188,7 +231,7 @@ public class AdminController {
         List<Usuario> usuarioList;
         System.out.println("El rol es: " + rol);
         if(rol.equals("Repartidor") || rol.equals("AdminRestaurant")){
-            usuarioList = usuarioRepository.findAllByRolAndNombreAndCuentaactiva(rol,buscar,0);
+            usuarioList = usuarioRepository.findAllByRolAndNombreAndCuentaActiva(rol,buscar,0);
         }else{
             buscar = "%"+buscar+"%";
             usuarioList = usuarioRepository.buscarGestionCuentasNuevas(buscar);
@@ -206,14 +249,41 @@ public class AdminController {
     }
 
     @PostMapping("/agregarAdmin")
-    public String agregarAdmin(@RequestParam(name = "password2") String pass2,
-                               Usuario u, Model model,
-                               RedirectAttributes attr){
-        if(u.getContraseniahash().equals(pass2)){
-            u.setRol("Administrador");
-            usuarioRepository.nuevoUsuario(u.getIdusuarios(),u.getNombre(),u.getApellidos(),
-                    u.getEmail(),u.getContraseniahash(),u.getTelefono(),u.getFechanacimiento(),
-                    u.getSexo(),u.getDni(), u.getRol());
+    public String agregarAdmin(@RequestParam("nombres") String nombres,
+                               @RequestParam("apellidos") String apellidos,
+                               @RequestParam("email" ) String email,
+                               @RequestParam("dni") String dni,
+                               @RequestParam("telefono") Integer telefono,
+                               @RequestParam("fechaNacimiento") String fechaNacimiento,
+                               @RequestParam("sexo") String sexo,
+                               @RequestParam("contraseniaHash") String contraseniaHash,
+                               @RequestParam("password2") String pass2,
+                               Model model, RedirectAttributes attr){
+        System.out.println(nombres + apellidos + email + dni + telefono + fechaNacimiento);
+        System.out.println(fechaNacimiento);
+        if(contraseniaHash.equals(pass2)){
+            Usuario usuario = new Usuario();
+            usuario.setNombre(nombres);
+            usuario.setApellidos(apellidos);
+            usuario.setEmail(email);
+            usuario.setTelefono(telefono);
+            usuario.setSexo(sexo);
+            usuario.setContraseniaHash(contraseniaHash);
+            usuario.setRol("AdminSistema");
+            usuario.setCuentaActiva(1);
+            usuario.setDni(dni);
+            LocalDateTime localDate = LocalDateTime.now();
+            usuario.setUltimafechaingreso(localDate);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            try{
+                usuario.setFechaNacimiento(sdf.parse(fechaNacimiento));
+                System.out.println(fechaNacimiento);
+            } catch (ParseException e) {
+                e.printStackTrace();
+                attr.addFlashAttribute("msg","Fecha Incorrecta");
+                return "adminsistema/agregarAdmin";
+            }
+            usuarioRepository.save(usuario);
             attr.addFlashAttribute("msg","Administrador creado exitosamente");
         }else{
             attr.addFlashAttribute("msg","Fallo al crear Administrador");
@@ -224,12 +294,41 @@ public class AdminController {
 
     //Reportes
 
+    //Reportes
+
     @GetMapping("/reportes")
     public String reportesAdmin(){
         return "adminsistema/ADMIN_Reportes";
     }
 
+    @GetMapping("/usuarioReportes")
+    public String usuariosReportes(Model model){
+        List<Usuario> usuarioList = usuarioRepository.usuarioreportes();
+        model.addAttribute("listaUsuariosreporte",usuarioList);
+        return "adminsistema/ADMIN_ReportesVistaUsuarios";
+    }
 
+
+    @GetMapping("/usuarioFiltro")
+    public String usuarioFiltro(Model model,@RequestParam(value = "rolSelected" ,defaultValue = "Todos")String rol){
+        List<Usuario> usuarioList;
+        if(rol.equals("Repartidor") || rol.equals("AdminRestaurante") || rol.equals("Cliente")  ){
+            usuarioList = usuarioRepository.findAllByRolAndCuentaActiva(rol,1);
+        }else{
+            usuarioList = usuarioRepository.usuarioreportes();
+        }
+
+        model.addAttribute("listaUsuariosreporte",usuarioList);
+
+        return "adminsistema/ADMIN_ReportesVistaUsuarios";
+    }
+
+
+    @GetMapping("/RestaurantesReportes")
+    public String restaurantesReportes(){
+        List<Restaurante> restaurantesList = restauranteRepository.findAll();
+        return "adminsistema/ADMIN_ReportesVistaRestaurante";
+    }
 
 
 }
