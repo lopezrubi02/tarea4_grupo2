@@ -77,13 +77,6 @@ public class RepartidorController {
         return "redirect:/repartidor/home";
     }
 
-
-
-    @GetMapping("/new1")
-    public String nuevoRepartidor1(@ModelAttribute("repartidor") Repartidor repartidor) {
-        return "repartidor/registro_parte1";
-    }
-
     @GetMapping("/perfil")
     public String perfilRepartidor(@ModelAttribute("repartidor") Repartidor repartidor, Model model) {
 
@@ -127,14 +120,19 @@ public class RepartidorController {
         return "redirect:/repartidor/perfil";
     }
 
+    @GetMapping("/new1")
+    public String nuevoRepartidor1(@ModelAttribute("repartidor") Repartidor repartidor) {
+        return "repartidor/registro_parte1";
+    }
 
     @PostMapping("/save1")
-    public String guardarRepartidor1(Repartidor repartidor,@RequestParam("movilidad") String movilidad) {
+    public String guardarRepartidor1(@RequestParam("movilidad") String movilidad, Model model) {
 
+        Repartidor repartidor=new Repartidor();
         repartidor.setMovilidad(movilidad);
-        repartidorRepository.save(repartidor);
+        model.addAttribute("repartidor",repartidor);
 
-        return "repartidor/new2";
+        return "redirect:/repartidor/new2";
     }
 
     @GetMapping("/new2")
