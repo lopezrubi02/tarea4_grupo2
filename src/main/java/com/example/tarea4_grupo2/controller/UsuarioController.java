@@ -1,6 +1,8 @@
 package com.example.tarea4_grupo2.controller;
 
+import com.example.tarea4_grupo2.entity.Direcciones;
 import com.example.tarea4_grupo2.entity.Usuario;
+import com.example.tarea4_grupo2.repository.DireccionesRepository;
 import com.example.tarea4_grupo2.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,6 +21,9 @@ public class UsuarioController {
 
     @Autowired
     UsuarioRepository usuarioRepository;
+
+    @Autowired
+    DireccionesRepository direccionesRepository;
 
     @GetMapping("/nuevo")
     public String nuevoCliente(){
@@ -61,6 +66,18 @@ public class UsuarioController {
                 return "cliente/registroCliente";
             }
             usuarioRepository.save(usuario);
+
+            Usuario usuarionuevo = usuarioRepository.findByDni(dni);
+
+            int idusuarionuevo = usuarionuevo.getIdusuarios();
+
+            Direcciones direccionactual = new Direcciones();
+            direccionactual.setDireccion(direccion);
+            direccionactual.setDistrito(distrito);
+            direccionactual.setUsuariosIdusuarios(idusuarionuevo);
+
+            direccionesRepository.save(direccionactual);
+
             return "cliente/confirmarCuenta";
         }else{
             return "cliente/registroCliente";
