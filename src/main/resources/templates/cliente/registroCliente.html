@@ -103,13 +103,13 @@
                 <div class="row">
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                       
-                        <form class="main_form" method="post" th:action="@{/cliente/guardarCliente}">
+                        <form class="main_form" method="post" th:action="@{/cliente/guardarNuevo}">
                             <div class="row">
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <input class="form-control" placeholder="Correo" type="text" name="email" id="email">
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input class="form-control" placeholder="Nombres" type="text" name="nombre" id="nombre">
+                                    <input class="form-control" placeholder="Nombres" type="text" name="nombres" id="nombres">
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <input class="form-control" placeholder="Apellidos" type="text" name="apellidos" id="apellidos">
@@ -121,10 +121,14 @@
                                     <input class="form-control" placeholder="Celular" type="text" name="telefono" id="telefono">
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input class="form-control" placeholder="Fecha de Nacimiento" type="text" name="fechanacimiento" id="fechanacimiento">
+                                    <input placeholder="Fecha de nacimiento"  type="date" class="form-control" name="fechaNacimiento">
                                 </div>
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input class="form-control" placeholder="Fecha de Nacimiento" type="text" name="sexo" id="sexo">
+                                <div class="form-group">
+                                    <label >Sexo:</label>
+                                    <select type="text" class="form-control" name="sexo" >
+                                        <option value="Masculino" text="Masculino">Masculino</option>
+                                        <option value="Femenino" text="Femenino">Femenino</option>
+                                    </select>
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <input class="form-control" placeholder="Dirección" type="text" name="direccion" id="direccion">
@@ -133,13 +137,13 @@
                                     <input class="form-control" placeholder="Distrito" type="text" name="distrito" id="distrito">
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input class="form-control" placeholder="Contraseña" type="text" name="contrasenia1" id="contrasenia1">
+                                    <input class="form-control" placeholder="Contraseña" type="password" name="contraseniaHash" id="contraseniaHash">
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input class="form-control" placeholder="Confirmar Contraseña" type="text" name="contrasenia2" id="contrasenia2">
+                                    <input class="form-control" placeholder="Confirmar Contraseña" type="password" name="password2" id="password2">
                                 </div>						
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <a class="send" type="submit">Registrar</a>
+                                    <button class="send" type="submit" >Registrar</button>
                                 </div>
                             </div>
                         </form>
@@ -156,6 +160,7 @@
                 </div>
             </div>
         </div>
+        </div>
     </footer>
     <!-- end footer -->
 
@@ -163,14 +168,14 @@
     </div>
     <div class="overlay"></div>
     <!-- Javascript files-->
-    <script src="js/jquery.min.js"></script>
-    <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap.bundle.min.js"></script>
-    <script src="js/owl.carousel.min.js"></script>
-    <script src="js/custom.js"></script>
-     <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script th:href="@{/js/jquery.min.js}"></script>
+    <script th:href="@{/js/popper.min.js}"></script>
+    <script th:href="@{/js/bootstrap.bundle.min.js}"></script>
+    <script th:href="@{/js/owl.carousel.min.js}"></script>
+    <script th:href="@{/js/custom.js}"></script>
+     <script th:href="@{/js/jquery.mCustomScrollbar.concat.min.js}"></script>
     
-     <script src="js/jquery-3.0.0.min.js"></script>
+     <script th:href="@{/js/jquery-3.0.0.min.js}"></script>
    <script type="text/javascript">
         $(document).ready(function() {
             $("#sidebar").mCustomScrollbar({
