@@ -2,6 +2,7 @@ package com.example.tarea4_grupo2.controller;
 
 import com.example.tarea4_grupo2.entity.Direcciones;
 import com.example.tarea4_grupo2.entity.Usuario;
+import com.example.tarea4_grupo2.repository.CategoriasRepository;
 import com.example.tarea4_grupo2.repository.DireccionesRepository;
 import com.example.tarea4_grupo2.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 @Controller
 @RequestMapping("/cliente")
@@ -24,6 +26,9 @@ public class UsuarioController {
 
     @Autowired
     DireccionesRepository direccionesRepository;
+
+    @Autowired
+    CategoriasRepository categoriasRepository;
 
     @GetMapping("/nuevo")
     public String nuevoCliente(){
@@ -88,5 +93,19 @@ public class UsuarioController {
     @GetMapping("/reportes")
     public String reportesCliente(){
         return "cliente/reportes";
+    }
+
+    @GetMapping("/realizarpedido")
+    public String realizarpedido(Model model){
+
+        int idusuarioactual = 7;
+
+        List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuarioactual);
+
+        model.addAttribute("listacategorias", categoriasRepository.findAll());
+        model.addAttribute("listadirecciones",listadireccionescliente);
+
+
+        return "cliente/realizar_pedido_cliente";
     }
 }
