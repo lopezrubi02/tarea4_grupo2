@@ -156,11 +156,11 @@ public class RepartidorController {
         return "repartidor/registro_parte3";
     }
 
-    @GetMapping("/reportes")
-    public String repartidorReportes(Model model) {
+    //@GetMapping("/reportes")
+    //public String repartidorReportes(Model model) {
         //hardcodeado por ahora
-        int id=10;
-        List<RepartidorComisionMensualDTO> listaComisionMensual = repartidorRepository.obtenerComisionPorMes(id);
+       // int id=10;
+      //  List<RepartidorComisionMensualDTO> listaComisionMensual = repartidorRepository.obtenerComisionPorMes(id);
 
 
 }
