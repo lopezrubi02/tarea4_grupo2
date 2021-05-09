@@ -29,8 +29,39 @@
         }
     </style>
 </head>
-<body>
 
-</body>
+<header>
+    <body th:fragment="navbar">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="full">
+                    <a class="logo" href="index.html"><img src="images/logo.png" alt="#" /></a>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div class="full">
+                    <div class="right_header_info">
+                        <ul>
+                            <li class="dinone"><a th:href="@{'/repartidor'}">Home</a></li>
+                            <li class="dinone"><a href="repartidor_reportes.html">Reportes</a></li>
+                            <li class="dinone"><a th:href="@{'/repartidor/PedidosDisponibles'}">Notificaciones</a></li>
+                            <!-- TODO -->
+                            <li class="button_user"><a class="button active" href="#repartidor_perfil.html">Mi cuenta</a><a class="button" href="repartidor_login.html">Logout</a></li>
+                            <li>
+                                <button type="button" id="sidebarCollapse">
+                                    <img src="images/menu_icon.png" alt="#">
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </body>
+</header>
+
+
 </html>
 
