@@ -14,26 +14,30 @@ import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-
-        http.formLogin().loginPage("cliente/loginForm").loginProcessingUrl("/processLogin")
-                .usernameParameter("correo");
-
-        http.logout();
-    }
-
+public class WebSecurityConfig_Cliente extends WebSecurityConfigurerAdapter {
     @Autowired
     DataSource dataSource;
 
-    /*@Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    @Override
+    protected void configure(HttpSecurity httpSecurity) throws Exception{
+
+        httpSecurity.formLogin();
+        httpSecurity.authorizeRequests()
+                .antMatchers("/cliente", "/cliente/**").hasAuthority("Cliente")
+                .anyRequest().permitAll();
+
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception{
         auth.jdbcAuthentication()
                 .dataSource(dataSource)
                 .passwordEncoder(new BCryptPasswordEncoder())
-                .usersByUsernameQuery("select email, pwd, activo FROM usuario WHERE email = ?")
-                .authoritiesByUsernameQuery("select u.email, r.nombre from usuario u inner join " +
-                        "rol r on (u.idrol = r.idrol) where u.email = ? and u.activo = 1");
-    }*/
+
+                .usersByUsernameQuery("select email, contraseniahash, cuentaactiva from usuarios WHERE email = ?")
+                .authoritiesByUsernameQuery("select email, rol from usuarios where cuentaactiva=1 and email = ?");
+
+
+    }
+
 }
