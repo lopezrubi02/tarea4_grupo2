@@ -165,7 +165,9 @@
 				</div>
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
 				<label>Contraseña</label>
-                    <input class="form-control" type="password" th:field="*{contraseniaHash}">
+                    <!-- <input id="inputt3" placeholder="Password" onclick="thisv4()" type="password" th:field="*{password}">
+                    -->
+                    <input placeholder="Passsword" class="form-control" type="password" th:value="*{contraseniaHash}" name="contraseniaHash">
                 </div>
                     <button class="send button" type="submit"
                     style="padding : 9px 0px; font-size: 16px">Guardar cambios</button>
