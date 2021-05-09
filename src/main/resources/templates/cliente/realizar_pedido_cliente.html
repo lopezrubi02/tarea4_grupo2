@@ -113,10 +113,10 @@
 			  <div class="col-md">
 				<div class="form-floating">
 				  <select class="form-select" id="floatingSelectGrid1" aria-label="Floating label select example">
-					<option selected>Dirección 1</option>
-					<option value="1">Dirección 2</option>
-					<option value="2">Dirección 3</option>
-					<option value="3">Dirección 4</option>
+					<option th:each="direccion : ${listadirecciones}"
+                    th:text="${direccion.getDireccion()}"
+                    th:value="${direccion.getIddirecciones()}">Dirección 1</option>
+
 				  </select>
 				  <label for="floatingSelectGrid1">¿A dónde vas  a enviar tu pedido?</label>
 				</div>
@@ -141,16 +141,9 @@
 			  <div class="col-md">
 				<div class="form-floating">
 				  <select class="form-select" id="floatingSelectGrid2" aria-label="Floating label select example">
-					<option selected>Todos</option>
-					<option value="1">Árabe</option>
-					<option value="2">Asiática</option>
-					<option value="3">Café</option>
-					<option value="3">Carnes</option>
-					<option value="3">Café</option>
-					<option value="3">Chifa</option>
-					<option value="3">Criolla</option>
-					<option value="3">Desayunos</option>
-					<option value="3">Fusión</option>
+					<option th:each = "categoria : ${listacategorias}"
+                    th:text="${categoria.getNombrecategoria()}"
+                    th:value="${categoria.getIdcategorias()}">Todos</option>
 				  </select>
 				  <label for="floatingSelectGrid2">Categoría</label>
 				</div>
@@ -170,11 +163,12 @@
 				  <div class="col-md">
 				<div class="form-floating">
 				  <select class="form-select" id="floatingSelectGrid4" aria-label="Floating label select example">
-					<option selected>1 estrella</option>
-					<option value="1">2 estrellas</option>
-					<option value="2">3 estrellas</option>
-					<option value="3">4 estrellas</option>
-					<option value="3">5 estrellas</option>
+					<option selected>Todos</option>
+                      <option value="1">1 estrellas</option>
+					<option value="2">2 estrellas</option>
+					<option value="3">3 estrellas</option>
+					<option value="4">4 estrellas</option>
+					<option value="5">5 estrellas</option>
 				  </select>
 				  <label for="floatingSelectGrid4">Calificación promedio</label>
 				</div>
@@ -275,8 +269,6 @@
     </fooetr>
     <!-- end footer -->
 
-    </div>
-    </div>
     <div class="overlay"></div>
     <!-- Javascript files-->
     <script th:href="@{/js/jquery.min.js}"></script>

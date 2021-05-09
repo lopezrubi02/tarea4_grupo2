@@ -1,5 +1,6 @@
 package com.example.tarea4_grupo2.controller;
 
+import com.example.tarea4_grupo2.entity.Categorias;
 import com.example.tarea4_grupo2.entity.Direcciones;
 import com.example.tarea4_grupo2.entity.Usuario;
 import com.example.tarea4_grupo2.repository.CategoriasRepository;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/cliente")
@@ -101,11 +103,72 @@ public class UsuarioController {
         int idusuarioactual = 7;
 
         List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuarioactual);
-
-        model.addAttribute("listacategorias", categoriasRepository.findAll());
+        List<Categorias> listacategorias = categoriasRepository.findAll();
+        model.addAttribute("listacategorias", listacategorias);
         model.addAttribute("listadirecciones",listadireccionescliente);
 
 
         return "cliente/realizar_pedido_cliente";
     }
+
+    @GetMapping("/miperfil")
+    public String miperfil(Model model){
+        int idusuario = 7;
+        List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuario);
+        model.addAttribute("listadirecciones",listadireccionescliente);
+        Optional<Usuario> optional = usuarioRepository.findById(idusuario);
+        Usuario usuario = optional.get();
+        model.addAttribute("usuario", usuario);
+        System.out.println(usuario.getIdusuarios());
+        return "cliente/miPerfil";
+    }
+
+    @PostMapping("/miperfil")
+    public String updatemiperfil(Usuario usuarioRecibido){
+        System.out.println(usuarioRecibido.getIdusuarios());
+        Optional<Usuario> optusuario = usuarioRepository.findById(usuarioRecibido.getIdusuarios());
+        Usuario usuariodb = optusuario.get();
+
+        usuariodb.setEmail(usuarioRecibido.getEmail());
+        usuariodb.setTelefono(usuarioRecibido.getTelefono());
+        System.out.println("contra es" + usuarioRecibido.getContraseniaHash() + "     ****");
+        usuariodb.setContraseniaHash(usuarioRecibido.getContraseniaHash());
+        usuarioRepository.save(usuariodb);
+
+        return "redirect:/cliente/miperfil";
+    }
+
+
+    @GetMapping("/borrardireccion")
+    public String borrardireccion(@RequestParam("iddireccion") int iddireccion,
+                                  Model model){
+
+        direccionesRepository.deleteById(iddireccion);
+
+        return "redirect:/cliente/miperfil";
+    }
+
+    @GetMapping("/agregardireccion")
+    public String agregardireccion(){
+
+        return "cliente/registrarNuevaDireccion";
+    }
+
+    @PostMapping("/guardarnuevadireccion")
+    public String guardarnuevadireccion(@RequestParam("direccion") String direccion,
+                                        @RequestParam("distrito") String distrito){
+
+        int idusuario = 7;
+
+        Direcciones direccioncrear = new Direcciones();
+        direccioncrear.setDireccion(direccion);
+        direccioncrear.setDistrito(distrito);
+        direccioncrear.setUsuariosIdusuarios(idusuario);
+
+        direccionesRepository.save(direccioncrear);
+
+        return "redirect:/cliente/miperfil";
+
+    }
+
 }
