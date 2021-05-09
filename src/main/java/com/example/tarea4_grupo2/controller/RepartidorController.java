@@ -1,5 +1,6 @@
 package com.example.tarea4_grupo2.controller;
 
+import com.example.tarea4_grupo2.dto.PedidosDisponiblesDTO;
 import com.example.tarea4_grupo2.dto.RepartidorComisionMensualDTO;
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
@@ -31,10 +32,29 @@ public class RepartidorController {
     @Autowired
     RestauranteRepository restauranteRepository;
 
-    //El repartidor acepta el pedido del restaurante y se cambia el estado a "esperando recojo del restaurante"
+    @GetMapping("/VerDetalles")
+    public String verDetalles (Model model, @RequestParam("id") int id){
+        Optional<Pedidos> optionalPedidos = pedidosRepository.findById(id);
 
+        if (optionalPedidos.isPresent()) {
+            Pedidos pedido = optionalPedidos.get();
+            model.addAttribute("pedido", pedido);
+            return "repartidor/repartidor_detalles_pedido";
+        } else {
+            return "redirect:/repartidor";
+        }
+    }
+
+    @GetMapping("/PedidosDisponibles")
+    public String pedidosDisponibles (RedirectAttributes attr, Model model){
+        List<PedidosDisponiblesDTO> listaPedidos = repartidorRepository.findListaPedidosDisponibles();
+        model.addAttribute("listaPedidosDisponibles", listaPedidos);
+        return "repartidor/repartidor_pedidos_disponibles";
+    }
+
+    //El repartidor acepta el pedido del restaurante y se cambia el estado a "esperando recojo del restaurante"
     @GetMapping("/AceptaPedido")
-    public String aceptaPedidoPorElRepartidor(RedirectAttributes attr, @RequestParam("idpedidos") int idPedidoElegido, Model model){
+    public String aceptaPedidoPorElRepartidor(RedirectAttributes attr, @RequestParam("idpedido") int idPedidoElegido, Model model){
         Optional<Pedidos> pedidoElegido = pedidosRepository.findById(idPedidoElegido);
 
         if (pedidoElegido.isPresent()) {
