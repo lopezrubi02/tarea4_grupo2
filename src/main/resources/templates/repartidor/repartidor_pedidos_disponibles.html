@@ -80,15 +80,17 @@
                         <div class="full">
                             <div class="right_header_info">
                                 <ul>
+
                                     <li class="dinone"><a th:href="@{'/repartidor'}">Home</a></li>
                                     <li class="dinone"><a href="repartidor_reportes.html">Reportes</a></li>
                                     <li class="dinone"><a th:href="@{'/repartidor/PedidosDisponibles'}">Notificaciones</a></li>
+
                                     <!-- TODO -->
-                                    <li class="button_user"><a class="button active" href="#repartidor_perfil.html">Mi
-                                        cuenta</a><a class="button" href="repartidor_login.html">Logout</a></li>
+                                    <li class="button_user"><a class="button active" href="#login.html">Mi cuenta</a><a
+                                            class="button" href="#">Logout</a></li>
                                     <li>
                                         <button type="button" id="sidebarCollapse">
-                                            <img src="images/menu_icon.png" alt="#">
+                                            <img th:src="@{/images/menu_icon.png}">
                                         </button>
                                     </li>
                                 </ul>
@@ -116,23 +118,23 @@
                             <table class="table table-striped">
                                 <thead>
                                 <tr>
-                                    <th scope="col"># PEDIDO</th>
-                                    <th scope="col">RESTAURANTE</th>
-                                    <th scope="col">LUGAR DE RECOJO</th>
-                                    <th scope="col">LUGAR DE DESTINO</th>
-                                    <th scope="col">S/. TOTAL</th>
-                                    <th scope="col">Ver detalles</th>
+                                    <th># PEDIDO</th>
+                                    <th>RESTAURANTE</th>
+                                    <th>LUGAR DE RECOJO</th>
+                                    <th>LUGAR DE DESTINO</th>
+                                    <th>S/. TOTAL</th>
+                                    <th>Ver detalles</th>
                                     <th></th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr th:each="pedidoDisponible, info : ${listaPedidosDisponibles}">
-                                    <td th:text="${info.index + 1}"></td>
-                                    <td th:text="${pedidoDisponible.getRestaurante()}"></td>
-                                    <td th:text="${pedidoDisponible.getDistritorestaurante()}"></td>
-                                    <td th:text="${pedidoDisponible.getDireccioncliente()}"></td>
-                                    <td th:text="${pedidoDisponible.getComision()}"></td>
-                                    <td th:text="${pedidoDisponible.getMonto()}"></td>
+                                    <td th:text="${info.index + 1}">SIN RESULTADOS</td>
+                                    <td th:text="${pedidoDisponible.getRestaurante()}">SIN RESULTADOS</td>
+                                    <td th:text="${pedidoDisponible.getDistritorestaurante()}">SIN RESULTADOS</td>
+                                    <td th:text="${pedidoDisponible.getDireccioncliente()}">SIN RESULTADOS</td>
+                                    <td th:text="${pedidoDisponible.getComision()}">SIN RESULTADOS</td>
+                                    <td th:text="${pedidoDisponible.getMonto()}">SIN RESULTADOS</td>
                                     <td><a class="btn btn-primary"
                                            th:href="@{'/repartidor/VerDetalles' + '?id=' + ${pedidoDisponible.getIdpedidos()}}">Ver
                                         detalles</a></td>

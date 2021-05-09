@@ -47,8 +47,8 @@ public class RepartidorController {
 
     @GetMapping("/PedidosDisponibles")
     public String pedidosDisponibles (RedirectAttributes attr, Model model){
-        List<PedidosDisponiblesDTO> listaPedidos = repartidorRepository.findListaPedidosDisponibles();
-        model.addAttribute("listaPedidosDisponibles", listaPedidos);
+        List<PedidosDisponiblesDTO> listaPedidosDisponibles = repartidorRepository.findListaPedidosDisponibles();
+        model.addAttribute("listaPedidosDisponibles", listaPedidosDisponibles);
         return "repartidor/repartidor_pedidos_disponibles";
     }
 
