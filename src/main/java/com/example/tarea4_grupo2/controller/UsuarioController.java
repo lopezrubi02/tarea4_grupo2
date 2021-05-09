@@ -5,6 +5,7 @@ import com.example.tarea4_grupo2.entity.Direcciones;
 import com.example.tarea4_grupo2.entity.Usuario;
 import com.example.tarea4_grupo2.repository.CategoriasRepository;
 import com.example.tarea4_grupo2.repository.DireccionesRepository;
+import com.example.tarea4_grupo2.repository.PedidosRepository;
 import com.example.tarea4_grupo2.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,6 +32,9 @@ public class UsuarioController {
 
     @Autowired
     CategoriasRepository categoriasRepository;
+
+    @Autowired
+    PedidosRepository pedidosRepository;
 
     @GetMapping("/nuevo")
     public String nuevoCliente(){
@@ -93,7 +97,11 @@ public class UsuarioController {
     }
 
     @GetMapping("/reportes")
-    public String reportesCliente(){
+    public String reportesCliente(Model model, @RequestParam("idcliente") int idcliente,
+                                  @RequestParam("anio") int anio,
+                                  @RequestParam("mes") int mes){
+        model.addAttribute("listaTop3Restaurantes", pedidosRepository.obtenerTop3Restaurantes(idcliente, anio, mes));
+        model.addAttribute("listaPromedioTiempo", pedidosRepository.obtenerTiemposPromedio(idcliente, anio, mes));
         return "cliente/reportes";
     }
 

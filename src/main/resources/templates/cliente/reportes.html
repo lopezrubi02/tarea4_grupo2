@@ -226,20 +226,10 @@
           </div>
 		<div class="container">
 		  <table class="center">
-		  <tr>
-			<td>1</td>
-			<td><p>Parrillas La Rama</p></td>
-			<td><p>25 minutos</p></td>
-		  </tr>
-		  <tr>
-			<td>2</td>
-			<td><p>Cevicheria El Perico</p></td>
-			<td><p>27 minutos</p></td>
-		  </tr>
-		  <tr>
-			<td>3</td>
-			<td><p>Fuente de Soda Lucerito</p></td>
-			<td><p>30 minutos</p></td>
+		  <tr th:each="tiempoProm, in : ${listaPromedioTiempo}">
+			<td th:text="${in.index + 1}"></td>
+			<td th:text="${tiempoProm.getNombrerestaurante()}"></td>
+			<td th:text="${tiempoProm.getTiempopromedio()}"></td>
 		  </tr>
 		  </table>
 		  </div>        
