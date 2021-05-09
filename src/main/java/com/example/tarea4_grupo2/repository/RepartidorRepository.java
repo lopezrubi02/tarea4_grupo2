@@ -1,5 +1,6 @@
 package com.example.tarea4_grupo2.repository;
 
+import com.example.tarea4_grupo2.dto.PedidosDisponiblesDTO;
 import com.example.tarea4_grupo2.dto.RepartidorComisionMensualDTO;
 import com.example.tarea4_grupo2.entity.Pedidos;
 import com.example.tarea4_grupo2.entity.Repartidor;
@@ -30,9 +31,12 @@ public interface RepartidorRepository  extends JpaRepository<Repartidor, Integer
             "where (idrepartidor=?1  ) ",nativeQuery = true)
     List<RepartidorComisionMensualDTO> obtenerComisionPorMes(int id);
 
-
-
-
-
+    @Query(value = "select p.idpedidos ,r.nombre as restaurante, r.distrito as distritorestaurante, d.direccion as direccioncliente, p.comisionrepartidor as comision, p.montototal as monto\n" +
+            "            from\n" +
+            "            pedidos p\n" +
+            "               inner join  restaurante r on (p.restaurante_idrestaurante = r.idrestaurante)\n" +
+            "               inner join direcciones d on (p.direccionentrega = d.iddirecciones)\n" +
+            "where p.estadorepartidor = '0'", nativeQuery = true)
+    List<PedidosDisponiblesDTO> findListaPedidosDisponibles();
 
 }
