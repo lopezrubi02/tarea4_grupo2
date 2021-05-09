@@ -48,8 +48,12 @@ public class RepartidorController {
     @GetMapping("/PedidosDisponibles")
     public String pedidosDisponibles (RedirectAttributes attr, Model model){
         List<PedidosDisponiblesDTO> listaPedidos = repartidorRepository.findListaPedidosDisponibles();
-        model.addAttribute("listaPedidosDisponibles", listaPedidos);
-        return "repartidor/repartidor_pedidos_disponibles";
+        if (listaPedidos.isEmpty()){
+            return "redirect:/repartidor";
+        }else {
+            model.addAttribute("listaPedidosDisponibles", listaPedidos);
+            return "repartidor/repartidor_pedidos_disponibles";
+        }
     }
 
     //El repartidor acepta el pedido del restaurante y se cambia el estado a "esperando recojo del restaurante"
