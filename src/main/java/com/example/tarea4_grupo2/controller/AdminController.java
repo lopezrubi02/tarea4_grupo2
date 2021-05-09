@@ -1,5 +1,7 @@
 package com.example.tarea4_grupo2.controller;
 
+import com.example.tarea4_grupo2.dto.RepartidoresReportes_DTO;
+import com.example.tarea4_grupo2.dto.RestauranteReportes_DTO;
 import com.example.tarea4_grupo2.entity.Direcciones;
 import com.example.tarea4_grupo2.entity.Repartidor;
 import com.example.tarea4_grupo2.entity.Restaurante;
@@ -325,9 +327,63 @@ public class AdminController {
 
 
     @GetMapping("/RestaurantesReportes")
-    public String restaurantesReportes(){
-        List<Restaurante> restaurantesList = restauranteRepository.findAll();
-        return "adminsistema/ADMIN_ReportesVistaRestaurante";
+    public String restaurantesReportes(Model model){
+        List<RestauranteReportes_DTO> reporteLista = restauranteRepository.reportesRestaurantes();
+        model.addAttribute("reporteLista",reporteLista);
+
+        double max = 0;
+        int indicemayor = 0;
+        for (int i = 0; i < reporteLista.size(); i++) {
+            if (reporteLista.get(i).ventastotales() > max) {
+                max = reporteLista.get(i).ventastotales();
+                indicemayor = i;
+            }
+        }
+        double min = max;
+        int indicemenor = indicemayor;
+        for (int i = 0; i < reporteLista.size(); i++) {
+            if (reporteLista.get(i).ventastotales() < min) {
+                min = reporteLista.get(i).ventastotales();
+                indicemenor = i;
+            }
+        }
+        RestauranteReportes_DTO mayor = reporteLista.get(indicemayor);
+        RestauranteReportes_DTO menor = reporteLista.get(indicemenor);
+
+        model.addAttribute("mayorrest",mayor);
+        model.addAttribute("menorrest",menor);
+        //t.stream().mapToDouble(i -> i).max().getAsDouble()
+        return "adminsistema/ADMIN_ReportesVistaRestaurantes";
+    }
+
+    @GetMapping("/RepartidorReportes")
+    public String repartidorReportes(Model model){
+        List<RepartidoresReportes_DTO>  reporteLista = repartidorRepository.reporteRepartidores();
+        model.addAttribute("reporteLista",reporteLista);
+
+        double max = 0;
+        int indicemayor = 0;
+        for (int i = 0; i < reporteLista.size(); i++) {
+            if (reporteLista.get(i).pedidos() > max) {
+                max = reporteLista.get(i).pedidos();
+                indicemayor = i;
+            }
+        }
+        double min = max;
+        int indicemenor = indicemayor;
+        for (int i = 0; i < reporteLista.size(); i++) {
+            if (reporteLista.get(i).pedidos() < min) {
+                min = reporteLista.get(i).pedidos();
+                indicemenor = i;
+            }
+        }
+        RepartidoresReportes_DTO mayor = reporteLista.get(indicemayor);
+        RepartidoresReportes_DTO menor = reporteLista.get(indicemenor);
+
+        model.addAttribute("mayorrep",mayor);
+        model.addAttribute("menorrep",menor);
+
+        return "adminsistema/ADMIN_ReportesVistaRepartidor";
     }
 
 
