@@ -27,7 +27,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     DataSource dataSource;
 
-    @Override
+    /*@Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.jdbcAuthentication()
                 .dataSource(dataSource)
@@ -35,5 +35,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .usersByUsernameQuery("select email, pwd, activo FROM usuario WHERE email = ?")
                 .authoritiesByUsernameQuery("select u.email, r.nombre from usuario u inner join " +
                         "rol r on (u.idrol = r.idrol) where u.email = ? and u.activo = 1");
-    }
+    }*/
 }
