@@ -37,7 +37,7 @@
     <div class="wrapper">
     <!-- end loader -->
 
-    
+
 
     <div id="content">
     <!-- header -->
@@ -76,31 +76,33 @@
 					<div class="col-md-12">
 						<h2>Inicar sesión</h2>
 					</div>
-					
+
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
-                      
-						 
-                      
-						<form class="main_form">
-                            <div class="row">
-                             
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input class="form-control" placeholder="Correo" type="text" name="correo">
-                                </div>
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input class="form-control" placeholder="Contraseña" type="text" name="contraseña">
-                                </div>
-								
-								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-									<a href="">Olvidé mi contraseña</a>
-								</div>
-								</br>
-								</br>
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <button class="send" type="submit" href="realizar_pedido_cliente.html">Ingresar</button>
-                                </div>
+
+
+                        <main class="form-signin">
+                        <form th:action="@{/processLogin}" method="post">
+                            <h1 class="h3 mb-3 fw-normal">Acceso</h1>
+
+                            <div class="form-floating">
+                                <label for="username">Correo</label>
+                                <input type="text" class="form-control" id="username" placeholder="Usuario" name="correo" required autofocus>
+
                             </div>
+                            <div class="form-floating">
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+
+                            </div>
+                            <div class="checkbox mb-3">
+                                <label>
+                                    <input type="checkbox" value="remember-me"> Recordarme
+                                </label>
+                            </div>
+                            <h4 th:if="${param.error}" class="form-signin-heading" style="color:#ff0000">Acceso denegado</h4>
+                            <button class="w-100 btn btn-lg btn-primary" type="submit">Ingresar</button>
                         </form>
+                        </main>
                     </div>
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                         <div class="img-box">
@@ -108,7 +110,7 @@
                         </div>
                     </div>
                 </div>
-            
+
             </div>
             <div class="copyright">
                 <div class="container">
@@ -129,7 +131,7 @@
     <script src="js/owl.carousel.min.js"></script>
     <script src="js/custom.js"></script>
      <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
-    
+
      <script src="js/jquery-3.0.0.min.js"></script>
    <script type="text/javascript">
         $(document).ready(function() {
@@ -162,7 +164,7 @@
     }
     </style>
 
-     
+
       <script>
          $(document).ready(function() {
            var owl = $('.owl-carousel');
@@ -184,7 +186,7 @@
            })
          })
       </script>
-
+    </div>
 </body>
 
 </html>
