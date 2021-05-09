@@ -101,7 +101,9 @@ public class UsuarioController {
                                   @RequestParam("anio") int anio,
                                   @RequestParam("mes") int mes){
         model.addAttribute("listaTop3Restaurantes", pedidosRepository.obtenerTop3Restaurantes(idcliente, anio, mes));
+        model.addAttribute("listaTop3Platos", pedidosRepository.obtenerTop3Platos(idcliente, anio, mes));
         model.addAttribute("listaPromedioTiempo", pedidosRepository.obtenerTiemposPromedio(idcliente, anio, mes));
+        model.addAttribute("listaHistorialConsumo", pedidosRepository.obtenerHistorialConsumo(idcliente, anio, mes));
         return "cliente/reportes";
     }
 
