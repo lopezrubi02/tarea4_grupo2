@@ -2,6 +2,7 @@ package com.example.tarea4_grupo2.controller;
 
 import com.example.tarea4_grupo2.entity.Categorias;
 import com.example.tarea4_grupo2.entity.Direcciones;
+import com.example.tarea4_grupo2.entity.Pedidos;
 import com.example.tarea4_grupo2.entity.Usuario;
 import com.example.tarea4_grupo2.repository.CategoriasRepository;
 import com.example.tarea4_grupo2.repository.DireccionesRepository;
