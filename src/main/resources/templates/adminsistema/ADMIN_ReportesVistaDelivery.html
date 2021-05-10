@@ -150,39 +150,11 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                <th scope="row">1</th>
-                                <td>24/04/21</td>
-                                <td>180</td>
-                                <td>240</td>
-                                
-                                </tr>
-                            </tbody>
-							<tbody>
-                                <tr>
-                                <th scope="row">2</th>
-                                <td>23/04/21</td>
-                                <td>140</td>
-                                <td>235</td>
-                                
-                                </tr>
-                            </tbody>
-							<tbody>
-                                <tr>
-                                <th scope="row">3</th>
-                                <td>22/04/21</td>
-                                <td>195</td>
-                                <td>298</td>
-                                
-                                </tr>
-                            </tbody>
-							<tbody>
-                                <tr>
-                                <th scope="row">4</th>
-                                <td>21/04/21</td>
-                                <td>171</td>
-                                <td>301</td>
-                                
+                                <tr th:each="deli, info:${listadeli}">
+                                <th scope="row" th:text="${info.index + 1}"></th>
+                                <td th:text="${deli.fecha}"></td>
+                                <td th:text="${deli.pedidos}"></td>
+                                <td th:text="${deli.comision}"></td>
                                 </tr>
                             </tbody>
                         </table>
