@@ -152,10 +152,10 @@
                             <tbody>
                                 <tr th:each="restaurante,info : ${reporteLista}">
                                     <td scope="row" th:text="${info.index + 1}"></td>
-                                    <td th:text="${restaurante.restnombre()}"></td>
-                                    <td th:text="${restaurante.nombre() + ' ' + restaurante.apellidos()}"></td>
-                                    <td th:text="${restaurante.pedidos()}"></td>
-                                    <td th:text="${restaurante.ventastotales()}"></td>
+                                    <td th:text="${restaurante.restnombre}"></td>
+                                    <td th:text="${restaurante.nombre + ' ' + restaurante.apellidos}"></td>
+                                    <td th:text="${restaurante.pedidos}"></td>
+                                    <td th:text="${restaurante.ventastotales}"></td>
                                 </tr>
                             </tbody>
 
@@ -190,18 +190,18 @@
 								<tbody>
 									<tr>
 									<th scope="row">1</th>
-									<td th:text="${mayorrest.restnombre()}"> </td>
-									<td th:text="${mayorrest.nombre() + ' ' + mayorrest.apellidos()}"></td>
-									<td th:text="${mayorrest.ventastotales()}"></td>
+									<td th:text="${mayorrest.restnombre}"> </td>
+									<td th:text="${mayorrest.nombre + ' ' + mayorrest.apellidos}"></td>
+									<td th:text="${mayorrest.ventastotales}"></td>
 									<td>Restaurante con más ventas</td>
 									</tr>
 								</tbody>
 								<tbody>
 									<tr>
 									<th scope="row">2</th>
-									<td th:text="${menorrest.restnombre()}"></td>
-									<td th:text="${menorrest.nombre()+' '+menorrest.apellidos()}"></td>
-									<td th:text="${menorrest.ventastotales()}"></td>
+									<td th:text="${menorrest.restnombre}"></td>
+									<td th:text="${menorrest.nombre+' '+menorrest.apellidos}"></td>
+									<td th:text="${menorrest.ventastotales}"></td>
 									<td>Restaurante con menos Ventas</td>
 									</tr>
 								</tbody>
