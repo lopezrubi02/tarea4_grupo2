@@ -69,7 +69,8 @@
                                 </div>
                             </div>
                         </div>
-                        <li class="button_user"><a class="button active" href="repartidor_pedido_en_progreso.html">Confirmar recojo del pedido</a>
+                        <li class="button_user"><a class="btn btn-primary" th:href="@{'/repartidor/ConfirmaRecojo' + '?idpedido=' + ${pedido.getIdpedidos()}}">Confirmar Recojo</a></li>
+
                     </div>
                     <!-- end of table -->
 
