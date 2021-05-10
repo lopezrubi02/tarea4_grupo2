@@ -15,4 +15,13 @@ public class LoginController {
     ){
         return "adminsistema/login";
     }
+
+    @GetMapping("/loginCliente")
+    public String loginFormCliente(
+            @RequestParam(value = "error", required = false) String error,
+            Model model
+    )
+    {
+        return "cliente/loginForm";
+    }
 }

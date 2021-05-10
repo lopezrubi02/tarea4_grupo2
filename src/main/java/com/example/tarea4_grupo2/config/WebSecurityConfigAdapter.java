@@ -29,6 +29,16 @@ public class WebSecurityConfigAdapter extends org.springframework.security.confi
                 .antMatchers("/admin", "/admin/**").hasAuthority("AdminSistema")
                 .anyRequest().permitAll();
 
+        //para login cliente
+        httpSecurity.formLogin()
+                .loginPage("/logincliente")
+                .loginProcessingUrl("/processLoginCliente");
+        httpSecurity.logout();
+
+        httpSecurity.authorizeRequests()
+                .antMatchers("/cliente","cliente/**").hasAuthority("Cliente")
+                .anyRequest().permitAll();
+
     }
 
     @Override
@@ -40,6 +50,14 @@ public class WebSecurityConfigAdapter extends org.springframework.security.confi
                 .usersByUsernameQuery("select email, contraseniahash, cuentaactiva from usuarios WHERE email = ?")
                 .authoritiesByUsernameQuery("select email, rol from usuarios where cuentaactiva=1 and email = ?");
 
+
+        //para logincliente
+        auth.jdbcAuthentication()
+                .dataSource(dataSource)
+                .passwordEncoder(new BCryptPasswordEncoder())
+
+                .usersByUsernameQuery("select email, contraseniahash, cuentaactiva from usuarios WHERE email = ?")
+                .authoritiesByUsernameQuery("select email, rol from usuarios where cuentaactiva=1 and email = ?");
 
     }
 
