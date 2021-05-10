@@ -68,8 +68,7 @@
                                 <p th:text="'Comisión: S/. ' + ${pedido.getComisionrepartidor()}"></p>
                             </div>
                         </div>
-                        <li class="button_user"><a class="btn btn-primary" th:href="@{'/repartidor'}"> Regresar</a></li>
-                        <li class="button_user"><a class="btn btn-primary" th:href="@{'/repartidor/AceptaPedido' + '?idpedido=' + ${pedido.getIdpedidos()}}">Aceptar pedido</a></li>
+                        <li class="button_user"><a class="btn btn-primary" th:href="@{'/repartidor/ConfirmaRecojo' + '?idpedido=' + ${pedido.getIdpedidos()}}">Confirmar Recojo</a></li>
 
 
                     </div>
