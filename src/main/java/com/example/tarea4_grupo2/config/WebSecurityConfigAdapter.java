@@ -19,7 +19,12 @@ public class WebSecurityConfigAdapter extends org.springframework.security.confi
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception{
 
-        httpSecurity.formLogin();
+        httpSecurity.formLogin()
+                .loginPage("/loginAdmin") // for the Controlller
+                .loginProcessingUrl("/processLoginAdmin"); // for the POST request of the login form
+
+        httpSecurity.logout();
+
         httpSecurity.authorizeRequests()
                 .antMatchers("/admin", "/admin/**").hasAuthority("AdminSistema")
                 .anyRequest().permitAll();
