@@ -243,6 +243,53 @@ public class AdminController {
         return "adminsistema/nuevasCuentas";
     }
 
+    @GetMapping("/newuser")
+    public String revisarCuenta(Model model,
+            @RequestParam(value = "id") int id){
+        Optional<Usuario> optional = usuarioRepository.findById(id);
+        if(optional.isPresent()){
+            Usuario usuario = optional.get();
+            if(usuario.getCuentaActiva()==0){
+
+                switch (usuario.getRol()){
+                    case "AdminRestaurante":
+                        model.addAttribute("usuario",usuario);
+                        Restaurante restaurante = restauranteRepository.findRestauranteByIdadminrestEquals(id);
+                        model.addAttribute("restaurante",restaurante);
+                        return "adminsistema/AceptarCuentaRestaurante";
+                    case "Repartidor":
+                        model.addAttribute("usuario",usuario);
+                        Repartidor repartidor = repartidorRepository.findRepartidorByIdusuariosEquals(id);
+                        List<Direcciones> listadirecciones = direccionesRepository.findAllByUsuariosIdusuariosEquals(id);
+                        model.addAttribute("repartidor",repartidor);
+                        model.addAttribute("lista",listadirecciones);
+                        return "adminsistema/AceptarCuentaRepartidor";
+                    default:
+                        return "redirect:/admin/nuevasCuentas";
+                }
+            }
+        }
+        return "redirect:/admin/nuevasCuentas";
+    }
+
+    @GetMapping("/aceptar")
+    public String aceptarCuenta(@RequestParam(value="id") int id,
+                                RedirectAttributes attr){
+        Optional<Usuario> optional = usuarioRepository.findById(id);
+        if(optional.isPresent()){
+            Usuario usuario = optional.get();
+            if(usuario.getCuentaActiva()==0){
+                    usuario.setCuentaActiva(1);
+                    usuarioRepository.save(usuario);
+                    attr.addFlashAttribute("msg","Cuenta aceptada exitosamente");
+                    return "redirect:/admin/nuevosUsuarios";
+                }
+            }
+        attr.addFlashAttribute("msg","Ha ocurrido un error,cuenta no aprobada");
+        return "redirect:/admin/nuevosUsuarios";
+    }
+
+
 
 
     @GetMapping("adminForm")
@@ -334,16 +381,16 @@ public class AdminController {
         double max = 0;
         int indicemayor = 0;
         for (int i = 0; i < reporteLista.size(); i++) {
-            if (reporteLista.get(i).ventastotales() > max) {
-                max = reporteLista.get(i).ventastotales();
+            if (reporteLista.get(i).getVentastotales() > max) {
+                max = reporteLista.get(i).getVentastotales();
                 indicemayor = i;
             }
         }
         double min = max;
         int indicemenor = indicemayor;
         for (int i = 0; i < reporteLista.size(); i++) {
-            if (reporteLista.get(i).ventastotales() < min) {
-                min = reporteLista.get(i).ventastotales();
+            if (reporteLista.get(i).getVentastotales() < min) {
+                min = reporteLista.get(i).getVentastotales();
                 indicemenor = i;
             }
         }
@@ -361,19 +408,19 @@ public class AdminController {
         List<RepartidoresReportes_DTO>  reporteLista = repartidorRepository.reporteRepartidores();
         model.addAttribute("reporteLista",reporteLista);
 
-        double max = 0;
+        int max = 0;
         int indicemayor = 0;
         for (int i = 0; i < reporteLista.size(); i++) {
-            if (reporteLista.get(i).pedidos() > max) {
-                max = reporteLista.get(i).pedidos();
+            if (reporteLista.get(i).getPedidos() > max) {
+                max = reporteLista.get(i).getPedidos();
                 indicemayor = i;
             }
         }
-        double min = max;
+        int min = max;
         int indicemenor = indicemayor;
         for (int i = 0; i < reporteLista.size(); i++) {
-            if (reporteLista.get(i).pedidos() < min) {
-                min = reporteLista.get(i).pedidos();
+            if (reporteLista.get(i).getPedidos() < min) {
+                min = reporteLista.get(i).getPedidos();
                 indicemenor = i;
             }
         }
