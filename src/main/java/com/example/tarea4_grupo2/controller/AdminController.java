@@ -1,15 +1,13 @@
 package com.example.tarea4_grupo2.controller;
 
+import com.example.tarea4_grupo2.dto.DeliveryReportes_DTO;
 import com.example.tarea4_grupo2.dto.RepartidoresReportes_DTO;
 import com.example.tarea4_grupo2.dto.RestauranteReportes_DTO;
 import com.example.tarea4_grupo2.entity.Direcciones;
 import com.example.tarea4_grupo2.entity.Repartidor;
 import com.example.tarea4_grupo2.entity.Restaurante;
 import com.example.tarea4_grupo2.entity.Usuario;
-import com.example.tarea4_grupo2.repository.DireccionesRepository;
-import com.example.tarea4_grupo2.repository.RepartidorRepository;
-import com.example.tarea4_grupo2.repository.RestauranteRepository;
-import com.example.tarea4_grupo2.repository.UsuarioRepository;
+import com.example.tarea4_grupo2.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,6 +41,9 @@ public class AdminController {
 
     @Autowired
     RestauranteRepository restauranteRepository;
+
+    @Autowired
+    PedidosRepository pedidosRepository;
 
     @GetMapping("/usuariosActuales")
     public String usuariosActuales(
@@ -431,6 +432,13 @@ public class AdminController {
         model.addAttribute("menorrep",menor);
 
         return "adminsistema/ADMIN_ReportesVistaRepartidor";
+    }
+
+    @GetMapping("/DeliveryReportes")
+    public String deliveryReportes(Model model){
+        List<DeliveryReportes_DTO> listaDeli = pedidosRepository.reportesDelivery();
+        model.addAttribute("listadeli",listaDeli);
+        return "adminsistema/ADMIN_ReportesVistaDelivery";
     }
 
 
