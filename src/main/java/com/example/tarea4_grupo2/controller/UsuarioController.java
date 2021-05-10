@@ -37,6 +37,14 @@ public class UsuarioController {
     @Autowired
     PedidosRepository pedidosRepository;
 
+    @GetMapping("/paginaprincipal")
+    public String paginaprincipal()
+    {
+        return "cliente/paginaPrincipal";
+    }
+
+
+
     @GetMapping("/nuevo")
     public String nuevoCliente(){
         return "cliente/registroCliente";
