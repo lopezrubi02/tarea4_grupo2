@@ -1,14 +1,15 @@
 package com.example.tarea4_grupo2.controller;
 
+import com.example.tarea4_grupo2.dto.PedidosDisponiblesDTO;
+import com.example.tarea4_grupo2.dto.PlatosPorPedidoDTO;
+import com.example.tarea4_grupo2.dto.RepartidorComisionMensualDTO;
 import com.example.tarea4_grupo2.entity.*;
-import com.example.tarea4_grupo2.repository.DireccionesRepository;
-import com.example.tarea4_grupo2.repository.RepartidorRepository;
-import com.example.tarea4_grupo2.repository.RestauranteRepository;
-import com.example.tarea4_grupo2.repository.UsuarioRepository;
+import com.example.tarea4_grupo2.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +28,83 @@ public class RepartidorController {
     DireccionesRepository direccionesRepository;
 
     @Autowired
+    PedidosRepository pedidosRepository;
+
+    @Autowired
     RestauranteRepository restauranteRepository;
+
+    @GetMapping("/VerDetalles")
+    public String verDetalles (Model model, @RequestParam("id") int id){
+        Optional<Pedidos> optionalPedidos = pedidosRepository.findById(id);
+
+        if (optionalPedidos.isPresent()) {
+            Pedidos pedido = optionalPedidos.get();
+            List <PlatosPorPedidoDTO> listaPlatosPorPedidoDTO= repartidorRepository.findListaPlatosPorPedido(id);
+            Optional<Restaurante> restauranteOptional = restauranteRepository.findById(pedido.getRestaurante_idrestaurante());
+            if (restauranteOptional.isPresent()){
+                model.addAttribute("listaPlatosPorPedidoDTO", listaPlatosPorPedidoDTO);
+                model.addAttribute("pedido", pedido);
+                Restaurante restaurante = restauranteOptional.get();
+                model.addAttribute("restaurante", restaurante);
+                return "repartidor/repartidor_detalles_pedido";
+            }else {
+                return "redirect:/repartidor";
+            }
+        }else{return "redirect:/repartidor";}
+    }
+
+    @GetMapping("/PedidosDisponibles")
+    public String pedidosDisponibles (RedirectAttributes attr, Model model){
+        List<PedidosDisponiblesDTO> listaPedidosDisponibles = repartidorRepository.findListaPedidosDisponibles();
+        model.addAttribute("listaPedidosDisponibles", listaPedidosDisponibles);
+        return "repartidor/repartidor_pedidos_disponibles";
+    }
+
+    //El repartidor acepta el pedido del restaurante y se cambia el estado a "esperando recojo del restaurante"
+    @GetMapping("/AceptaPedido")
+    public String aceptaPedidoPorElRepartidor(RedirectAttributes attr, @RequestParam("idpedido") int idPedidoElegido, Model model){
+        Optional<Pedidos> pedidoElegido = pedidosRepository.findById(idPedidoElegido);
+
+        if (pedidoElegido.isPresent()) {
+            Pedidos pedido = pedidoElegido.get();
+            pedido.setEstadorepartidor("0"); //Estado de esperando recojo del restaurante
+            return "repartidor/repartidor_recojo_de_producto";
+        } else {
+            attr.addFlashAttribute("Este pedido ya no está disponible :(");
+            return "redirect:/repartidor";
+        }
+    }
+
+    //El repartidor recoge el pedido del restaurante y el estado cambia a "por entregar".
+    @GetMapping("/ConfirmaRecojo")
+    public String confirmaRecojo(RedirectAttributes attr, @RequestParam("idpedidos") int idPedidoElegido, Model model){
+        Optional<Pedidos> pedidoElegido = pedidosRepository.findById(idPedidoElegido);
+
+        if (pedidoElegido.isPresent()) {
+            Pedidos pedido = pedidoElegido.get();
+            pedido.setEstadorepartidor("1"); //Estado de recogido
+            return "repartidor/repartidor_pedido_en_progreso";
+        } else {
+            attr.addFlashAttribute("Este pedido ya no está disponible :(");
+            return "redirect:/repartidor";
+        }
+    }
+
+    //El repartidor entrega el pedido al cliente
+    @GetMapping("/ConfirmaEntrega")
+    public String confirmaEntrega(RedirectAttributes attr, @RequestParam("idpedidos") int idPedidoElegido, Model model){
+        Optional<Pedidos> pedidoElegido = pedidosRepository.findById(idPedidoElegido);
+
+        if (pedidoElegido.isPresent()) {
+            Pedidos pedido = pedidoElegido.get();
+            pedido.setEstadorepartidor("2"); //Estado de entregado al cliente
+            attr.addFlashAttribute("Se registró la entrega del pedido al cliente");
+            return "redirect:/repartidor";
+        } else {
+            attr.addFlashAttribute("Este pedido ya no está disponible :(");
+            return "redirect:/repartidor";
+        }
+    }
 
     @PostMapping("/Reporte1")
     public String buscaxRestauranteDistrito(@RequestParam("valorBuscado") String searchField,
@@ -43,86 +120,95 @@ public class RepartidorController {
     }
 
 
-    @GetMapping("/home")
-    public String homeRepartidor(@ModelAttribute("repartidor") Usuario repartidor,Model model) {
+    @GetMapping(value={"/home", "", "/"})
+    public String homeRepartidor(@ModelAttribute("repartidor") Repartidor repartidor,Model model) {
 
         int id=10;
-        Optional<Usuario> optRepartidor = usuarioRepository.findById(id);
-        if (optRepartidor.isPresent()) {
-            repartidor = optRepartidor.get();
-            model.addAttribute("repartidor",repartidor);
-            Optional<Repartidor> datos = repartidorRepository.findById(repartidor.getIdusuarios());
-            if(datos.isPresent()){
-                Repartidor datosR =datos.get();
-                model.addAttribute("datos",datosR);
-            }
-            //model.addAttribute("datos",datos);
+
+        Optional<Usuario> optional = usuarioRepository.findById(id);
+
+        if (optional.isPresent()) {
+            Usuario usuario = optional.get();
+            model.addAttribute("usuario", usuario);
+
+            Repartidor repartidor2 = repartidorRepository.findRepartidorByIdusuariosEquals(id);
+            model.addAttribute("repartidor", repartidor2);
         }
         return "repartidor/repartidor_principal";
     }
 
-    @PostMapping("/save_home")
-    public String guardarHomeRepartidor(Repartidor datosRepartidor,
-                                        @RequestParam("movilidad") String movilidad,
-                                        @RequestParam("disponibilidad") String disponibilidad) {
+    @PostMapping("/save_principal")
+    public String guardarHomeRepartidor(
+            Repartidor repartidorRecibido) {
 
-        //disponible - true | ocupado-false
-        if(disponibilidad.equalsIgnoreCase("disponible")){
-            boolean disponibilidadB = true;
-            datosRepartidor.setDisponibilidad(disponibilidadB);
-        }else{
-            boolean disponibilidadB = false;
-            datosRepartidor.setDisponibilidad(disponibilidadB);
-        }
+        Repartidor optionalRepartidor = repartidorRepository.findRepartidorByIdusuariosEquals(repartidorRecibido.getIdusuarios());
+        Repartidor repartidorEnlabasededatos = optionalRepartidor;
 
-        datosRepartidor.setMovilidad(movilidad);
-        repartidorRepository.save(datosRepartidor);
+        //repartidorEnlabasededatos.setMovilidad(optionalRepartidor.getMovilidad());
+        repartidorEnlabasededatos.setDisponibilidad(repartidorRecibido.isDisponibilidad());
+        repartidorEnlabasededatos.setDistritoactual(repartidorRecibido.getDistritoactual());
 
-        return "repartidor/home";
+        repartidorRepository.save(repartidorEnlabasededatos);
+
+        return "redirect:/repartidor/home";
     }
 
+    @GetMapping("/perfil")
+    public String perfilRepartidor(@ModelAttribute("repartidor") Repartidor repartidor, Model model) {
 
+        int id=10;
+
+        Optional<Usuario> optional = usuarioRepository.findById(id);
+
+        if (optional.isPresent()) {
+            Usuario usuario = optional.get();
+            model.addAttribute("usuario", usuario);
+
+            Repartidor repartidor2 = repartidorRepository.findRepartidorByIdusuariosEquals(id);
+            model.addAttribute("repartidor", repartidor2);
+
+            Direcciones direcciones = direccionesRepository.findByUsuariosIdusuarios(id);
+            model.addAttribute("direcciones", direcciones);
+        }
+
+        return "repartidor/repartidor_perfil";
+    }
+
+    @PostMapping("/save_perfil")
+    public String guardarPerfilRepartidor(@ModelAttribute("usuario") Usuario usuario,
+                                        @RequestParam("idusuario") int idusuario,@RequestParam("telefono") int telefono,
+                                          @RequestParam("direccion") String direccion,@RequestParam("password") String password
+    ) {
+
+        Optional<Usuario> usuario1= usuarioRepository.findById(idusuario);
+
+        if(usuario1.isPresent()){
+            usuario=usuario1.get();
+            usuario.setTelefono(telefono);
+            usuario.setContraseniaHash(password);
+            usuarioRepository.save(usuario);
+
+            Direcciones dnueva = direccionesRepository.findByUsuariosIdusuarios(usuario.getIdusuarios());
+            dnueva.setDireccion(direccion);
+            direccionesRepository.save(dnueva);
+        }
+
+        return "redirect:/repartidor/perfil";
+    }
 
     @GetMapping("/new1")
     public String nuevoRepartidor1(@ModelAttribute("repartidor") Repartidor repartidor) {
         return "repartidor/registro_parte1";
     }
 
-    @GetMapping("/perfil")
-    public String perfilRepartidor(@ModelAttribute("repartidor") Usuario repartidor, Model model) {
-
-        int id=10;
-
-        Optional<Usuario> optRepartidor = usuarioRepository.findById(id);
-        if (optRepartidor.isPresent()) {
-            repartidor = optRepartidor.get();
-            Direcciones direccion=direccionesRepository.findByUsuariosIdusuarios(id);
-            model.addAttribute("repartidor",repartidor);
-            model.addAttribute("direccion",direccion);
-            //Repartidor datos = usuarioRepository.findByIdusuarios(repartidor.getIdusuarios());
-            //model.addAttribute("datos",datos);
-        }
-        return "repartidor/repartidor_perfil";
-    }
-
-    @PostMapping("/save_perfil")
-    public String guardarPerfilRepartidor(@ModelAttribute("repartidor") Usuario repartidor,
-                                        @RequestParam("direccion") String direccion) {
-
-
-        usuarioRepository.save(repartidor);
-
-        return "repartidor/home";
-    }
-
-
     @PostMapping("/save1")
-    public String guardarRepartidor1(Repartidor repartidor,@RequestParam("movilidad") String movilidad) {
+    public String guardarRepartidor1(@RequestParam("movilidad") String movilidad, Model model) {
 
+        Repartidor repartidor=new Repartidor();
         repartidor.setMovilidad(movilidad);
-        repartidorRepository.save(repartidor);
+        model.addAttribute("repartidor",repartidor);
 
-        return "repartidor/new2";
+        return "redirect:/repartidor/new2";
     }
 
     @GetMapping("/new2")
@@ -146,15 +232,11 @@ public class RepartidorController {
         return "repartidor/registro_parte3";
     }
 
-    @GetMapping("/reportes")
-    public String repartidorReportes(Model model) {
+    //@GetMapping("/reportes")
+    //public String repartidorReportes(Model model) {
         //hardcodeado por ahora
-        int id=10;
-        List<RepartidorComisionMensualDTO> listaComisionMensual = repartidorRepository.obtenerComisionPorMes(id);
+       // int id=10;
+      //  List<RepartidorComisionMensualDTO> listaComisionMensual = repartidorRepository.obtenerComisionPorMes(id);
 
-        model.addAttribute("listaComisionMensual",listaComisionMensual);
-
-        return "repartidor/repartidor_reportes";
-    }
 
 }

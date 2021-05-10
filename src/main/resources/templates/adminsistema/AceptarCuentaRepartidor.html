@@ -123,8 +123,7 @@
                               <div class="col-sm-3">
                                 <h6 class="mb-0">Nombre</h6>
                               </div>
-                              <div class="col-sm-9 text-secondary">
-                                Borges Zavaleta
+                              <div class="col-sm-9 text-secondary" th:text="${usuario.nombre+' '+usuario.apellidos}">
                               </div>
                             </div>
                             <hr>
@@ -132,8 +131,8 @@
                               <div class="col-sm-3">
                                 <h6 class="mb-0">Email</h6>
                               </div>
-                              <div class="col-sm-9 text-secondary">
-                                sendero.bifurcado@gmail.com
+                              <div class="col-sm-9 text-secondary" th:text="${usuario.email}">
+
                               </div>
                             </div>
                             <hr>
@@ -141,16 +140,14 @@
                                 <div class="col-sm-3">
                                   <h6 class="mb-0">DNI</h6>
                                 </div>
-                                <div class="col-sm-9 text-secondary">
-                                  972994970
-                                </div>
+                                <div class="col-sm-9 text-secondary" th:text="${usuario.dni}">
+                                 </div>
                               </div>
                             <div class="row">
                               <div class="col-sm-3">
                                 <h6 class="mb-0">Telefono</h6>
                               </div>
-                              <div class="col-sm-9 text-secondary">
-                                972-148-970
+                              <div class="col-sm-9 text-secondary" th:text="${usuario.telefono}">
                               </div>
                             </div>
                             <hr>
@@ -158,8 +155,7 @@
                               <div class="col-sm-3">
                                 <h6 class="mb-0">Fecha de nacimiento</h6>
                               </div>
-                              <div class="col-sm-9 text-secondary">
-                                01/04/1998
+                              <div class="col-sm-9 text-secondary" th:text="${usuario.fechaNacimiento}">
                               </div>
                             </div>
                             <hr>
@@ -167,8 +163,7 @@
                               <div class="col-sm-3">
                                 <h6 class="mb-0">Sexo</h6>
                               </div>
-                              <div class="col-sm-9 text-secondary">
-                                M
+                              <div class="col-sm-9 text-secondary" th:text="${usuario.sexo}">
                               </div>
                             </div>
 							 <hr>
@@ -176,24 +171,21 @@
                               <div class="col-sm-3">
                                 <h6 class="mb-0">Tipo de movilidad</h6>
                               </div>
-                              <div class="col-sm-9 text-secondary">
-                                Moto
+                              <div class="col-sm-9 text-secondary" th:text="${repartidor.movilidad}">
                               </div>
                             </div>
 							<div class="row">
                               <div class="col-sm-3">
                                 <h6 class="mb-0">Placa</h6>
                               </div>
-                              <div class="col-sm-9 text-secondary">
-                                AEB-564
+                              <div class="col-sm-9 text-secondary" th:text="${repartidor.placa}">
                               </div>
                             </div>
 							<div class="row">
                               <div class="col-sm-3">
                                 <h6 class="mb-0">Licencia</h6>
                               </div>
-                              <div class="col-sm-9 text-secondary">
-                                AASDDFDFDF
+                              <div class="col-sm-9 text-secondary" th:text="${repartidor.licencia}">
                               </div>
                             </div>
                           </div>
@@ -205,7 +197,8 @@
 			<div class="d-flex justify-content-end">
 				<a href="ADMIN_RazonDenegacionCuenta.html">
 				<button class="btn btn-dark" style="margin-left: 10px" href="#">Denegar Cuenta</button></a>
-				<button class="btn btn-warning" style="margin-left: 10px" href="#">Aceptar Cuenta</button>
+				<!--button class="btn btn-warning" style="margin-left: 10px" th:href="@{'/admin/aceptar'+'?id='+${usuario.idusuarios}}">Aceptar Cuenta</button-->
+                <li class="button_user"><a class="button active" th:href="@{'/admin/aceptar'+'?id='+${usuario.idusuarios}}" >Aceptar Cuenta</a></li>
 			</div>
 			
             <div class="row" style="margin-top: 5vh;">
@@ -217,9 +210,9 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <th scope="row">1</th>
-                        <td>Pluton</td>
+                      <tr th:each="direccion,info : ${lista}">
+                        <th scope="row" th:text="${info.index + 1}">1</th>
+                        <th th:text="${direccion.direccion+' -'+direccion.distrito}"></th>
                       </tr>
                     </tbody>
                   </table>

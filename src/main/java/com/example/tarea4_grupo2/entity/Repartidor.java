@@ -15,6 +15,13 @@ public class Repartidor {
     private String licencia;
     private Byte foto;
 
+    @Column(name ="usuarios_idusuarios")
+    private int idusuarios;
+
+    /*@OneToOne
+    @PrimaryKeyJoinColumn(name = "usuarios_idusuarios")
+    Usuario usuarios;
+*/
     public Byte getFoto() {
         return foto;
     }
@@ -42,7 +49,18 @@ public class Repartidor {
     private boolean disponibilidad;
     private Float calificacionpromedio;
 
+
     private String distritoactual;
+
+
+/*    public Usuario getUsuarios() {
+        return usuarios;
+    }
+
+    public void setUsuarios(Usuario usuarios) {
+        this.usuarios = usuarios;
+    }
+*/
 
     public int getIdusuarios() {
         return idusuarios;
@@ -51,11 +69,6 @@ public class Repartidor {
     public void setIdusuarios(int idusuarios) {
         this.idusuarios = idusuarios;
     }
-
-    @Column(name="usuarios_idusuarios")
-    private int idusuarios;
-
-
 
     public int getIdrepartidor() {
         return idrepartidor;

@@ -58,7 +58,7 @@
                         <a href="GestionCuentasPrincipal.html">Gestion de nuevas cuentas</a>
                     </li>
                     <li>
-                        <a href="ADMIN_Reportes.html">Reportes</a>
+                        <a th:href="@{reportes}">Reportes</a>
                     </li>
                 </ul>
 
@@ -82,7 +82,7 @@
                             <ul>
                                 <li class="dinone"><a href="#">Usuarios Actuales</a></li>
                                 <li class="dinone"><a th:href="@{gestionCuentas}">Gestión de nuevas cuentas</a></li>
-                                <li class="dinone"><a href="ADMIN_Reportes.html">Reportes</a></li>
+                                <li class="dinone"><a th:href="@{reportes}">Reportes</a></li>
                                 <!-- TODO -->
                                 <li class="button_user"><a class="button active" href="#login.html">Mi cuenta</a><a class="button" href="#">Logout</a></li>
                                 <li>
@@ -107,8 +107,11 @@
     <div class="blog">
         <div class="container">
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-8">
                     <h1>Solicitud de Nuevas Cuentas</h1>
+                </div>
+                <div class="col-md-4">
+                    <button th:if="${msg != null}" th:text="${msg}" class="btn btn-dark" role="alert"></button>
                 </div>
             </div>
             <div class="row">
@@ -135,6 +138,7 @@
                 </form>
             </div>
 
+            <p></p>
             <div class="row table-users">
                 <!-- table -->
                 <div class="col-md-12">
@@ -152,7 +156,12 @@
                             <tbody>
                             <tr th:each="usuario,info : ${listaUsuariosNuevos}">
                                 <th th:text="${info.index + 1}"></th>
-                                <td th:text="${usuario.nombre + ' ' + usuario.apellidos }"></td>
+                                <th>
+                                    <a th:href="@{'/admin/newuser'+'?id='+${usuario.idusuarios}}">
+                                        <div th:text="${usuario.nombre + ' ' + usuario.apellidos }">
+                                        </div>
+                                    </a>
+                                </th>
                                 <td th:text="${usuario.dni}"></td>
                                 <td th:text="${usuario.email}"></td>
                                 <td th:text="${usuario.rol}"></td>
@@ -179,7 +188,7 @@
             <div class="container-fluid">
                 <div class="copyright">
                     <div class="container">
-                        <p>© 2050 All Rights Reserved</p>
+                        <p>© 2021 Todos los derechos reservados</p>
                     </div>
                 </div>
             </div>

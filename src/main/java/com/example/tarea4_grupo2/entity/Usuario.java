@@ -4,6 +4,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 // TODO validaciones de No Nulo, etc
@@ -33,6 +34,8 @@ public class Usuario {
     @Column(name = "fechanacimiento")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date fechaNacimiento;
+
+    private LocalDateTime ultimafechaingreso;
 
     public Integer getIdusuarios() {
         return idusuarios;
@@ -128,5 +131,13 @@ public class Usuario {
 
     public void setFechaNacimiento(Date fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
+    }
+
+    public LocalDateTime getUltimafechaingreso() {
+        return ultimafechaingreso;
+    }
+
+    public void setUltimafechaingreso(LocalDateTime ultimafechaingreso) {
+        this.ultimafechaingreso = ultimafechaingreso;
     }
 }

@@ -114,13 +114,7 @@
     <div class="row">
       <div class="col-md-12">
         <div class="title">
-          <i><img width="100" height="100" th:src="@{/images/reporte.png}" alt="#"/></i>
-          
-          <span>Registros de toda tu actividad</span>
-        </div>
-		<div class="title">
-          <a href="#"><i><img width="100" height="100" th:src="@{/images/image_processing20200511-32371-1id5bed.png}" alt="#"/></i></a>
-          <span>Mira tus reportes pasados</span>
+
         </div>
       </div>
     </div>
@@ -134,18 +128,11 @@
           </div>
 		  <div class="container">
 		  <table class="center">
-		  <tr>
-			<td>1</td>
-			<td><p>Parrillas La Rama</p></td>
-		  </tr>
-		  <tr>
-			<td>2</td>
-			<td><p>Cevicheria El Perico</p></td>
-		  </tr>
-		  <tr>
-			<td>3</td>
-			<td><p>Fuente de Soda Lucerito</p></td>
-		  </tr>
+              <tr th:each="top3Rest, in : ${listaTop3Restaurantes}">
+                  <td th:text="${in.index + 1}"></td>
+                  <td th:text="${top3Rest.getRestaurante()}"></td>
+                  <td th:text="${top3Rest.getVecesasistida()}"></td>
+              </tr>
 		  </table>
 		  </div>
         </div>
@@ -159,18 +146,11 @@
           </div>
 		<div class="container">
 		  <table class="center">
-		  <tr>
-			<td>1</td>
-			<td><p>Ceviche de conchas negras</p></td>
-		  </tr>
-		  <tr>
-			<td>2</td>
-			<td><p>Pollo a la parrilla</p></td>
-		  </tr>
-		  <tr>
-			<td>3</td>
-			<td><p>Sandwich de Pescado</p></td>
-		  </tr>
+              <tr th:each="top3platos, in : ${listaTop3Platos}">
+                  <td th:text="${in.index + 1}"></td>
+                  <td th:text="${top3platos.getNombreplato()}"></td>
+                  <td th:text="${top3platos.getVecespedido()}"></td>
+              </tr>
 		  </table>
 		  </div>        
 		  </div>
@@ -184,24 +164,12 @@
           </div>
 		<div class="container">
 		  <table class="center">
-		  <tr>
-			<td>1</td>
-			<td><p>Parrillas La Rama</p></td>
-			<td><p>8 veces</p></td>
-			<td><p>45 soles</p></td>
-		  </tr>
-		  <tr>
-			<td>2</td>
-			<td><p>Cevicheria El Perico</p></td>
-			<td><p>5 veces</p></td>
-			<td><p>80 soles</p></td>
-		  </tr>
-		  <tr>
-			<td>3</td>
-			<td><p>Fuente de Soda Lucerito</p></td>
-			<td><p>3 veces</p></td>
-			<td><p>20 soles</p></td>
-		  </tr>
+              <tr th:each="historial, in : ${listaHistorialConsumo}">
+                  <td th:text="${in.index + 1}"></td>
+                  <td th:text="${historial.getNomrestaurante()}"></td>
+                  <td th:text="${historial.getAsistencia()}"></td>
+                  <td th:text="${historial.getConsumomensual()}"</td>
+              </tr>
 		  </table>
 		  </div>        </div>
       </div>
@@ -226,20 +194,10 @@
           </div>
 		<div class="container">
 		  <table class="center">
-		  <tr>
-			<td>1</td>
-			<td><p>Parrillas La Rama</p></td>
-			<td><p>25 minutos</p></td>
-		  </tr>
-		  <tr>
-			<td>2</td>
-			<td><p>Cevicheria El Perico</p></td>
-			<td><p>27 minutos</p></td>
-		  </tr>
-		  <tr>
-			<td>3</td>
-			<td><p>Fuente de Soda Lucerito</p></td>
-			<td><p>30 minutos</p></td>
+		  <tr th:each="tiempoProm, in : ${listaPromedioTiempo}">
+			<td th:text="${in.index + 1}"></td>
+			<td th:text="${tiempoProm.getNombrerestaurante()}"></td>
+			<td th:text="${tiempoProm.getTiempopromedio()}"></td>
 		  </tr>
 		  </table>
 		  </div>        

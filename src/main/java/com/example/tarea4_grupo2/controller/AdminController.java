@@ -1,5 +1,7 @@
 package com.example.tarea4_grupo2.controller;
 
+import com.example.tarea4_grupo2.dto.RepartidoresReportes_DTO;
+import com.example.tarea4_grupo2.dto.RestauranteReportes_DTO;
 import com.example.tarea4_grupo2.entity.Direcciones;
 import com.example.tarea4_grupo2.entity.Repartidor;
 import com.example.tarea4_grupo2.entity.Restaurante;
@@ -19,6 +21,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -238,6 +243,53 @@ public class AdminController {
         return "adminsistema/nuevasCuentas";
     }
 
+    @GetMapping("/newuser")
+    public String revisarCuenta(Model model,
+            @RequestParam(value = "id") int id){
+        Optional<Usuario> optional = usuarioRepository.findById(id);
+        if(optional.isPresent()){
+            Usuario usuario = optional.get();
+            if(usuario.getCuentaActiva()==0){
+
+                switch (usuario.getRol()){
+                    case "AdminRestaurante":
+                        model.addAttribute("usuario",usuario);
+                        Restaurante restaurante = restauranteRepository.findRestauranteByIdadminrestEquals(id);
+                        model.addAttribute("restaurante",restaurante);
+                        return "adminsistema/AceptarCuentaRestaurante";
+                    case "Repartidor":
+                        model.addAttribute("usuario",usuario);
+                        Repartidor repartidor = repartidorRepository.findRepartidorByIdusuariosEquals(id);
+                        List<Direcciones> listadirecciones = direccionesRepository.findAllByUsuariosIdusuariosEquals(id);
+                        model.addAttribute("repartidor",repartidor);
+                        model.addAttribute("lista",listadirecciones);
+                        return "adminsistema/AceptarCuentaRepartidor";
+                    default:
+                        return "redirect:/admin/nuevasCuentas";
+                }
+            }
+        }
+        return "redirect:/admin/nuevasCuentas";
+    }
+
+    @GetMapping("/aceptar")
+    public String aceptarCuenta(@RequestParam(value="id") int id,
+                                RedirectAttributes attr){
+        Optional<Usuario> optional = usuarioRepository.findById(id);
+        if(optional.isPresent()){
+            Usuario usuario = optional.get();
+            if(usuario.getCuentaActiva()==0){
+                    usuario.setCuentaActiva(1);
+                    usuarioRepository.save(usuario);
+                    attr.addFlashAttribute("msg","Cuenta aceptada exitosamente");
+                    return "redirect:/admin/nuevosUsuarios";
+                }
+            }
+        attr.addFlashAttribute("msg","Ha ocurrido un error,cuenta no aprobada");
+        return "redirect:/admin/nuevosUsuarios";
+    }
+
+
 
 
     @GetMapping("adminForm")
@@ -246,14 +298,41 @@ public class AdminController {
     }
 
     @PostMapping("/agregarAdmin")
-    public String agregarAdmin(@RequestParam(name = "password2") String pass2,
-                               Usuario u, Model model,
-                               RedirectAttributes attr){
-        if(u.getContraseniaHash().equals(pass2)){
-            u.setRol("Administrador");
-            usuarioRepository.nuevoUsuario(u.getIdusuarios(),u.getNombre(),u.getApellidos(),
-                    u.getEmail(),u.getContraseniaHash(),u.getTelefono(),u.getFechaNacimiento(),
-                    u.getSexo(),u.getDni(), u.getRol());
+    public String agregarAdmin(@RequestParam("nombres") String nombres,
+                               @RequestParam("apellidos") String apellidos,
+                               @RequestParam("email" ) String email,
+                               @RequestParam("dni") String dni,
+                               @RequestParam("telefono") Integer telefono,
+                               @RequestParam("fechaNacimiento") String fechaNacimiento,
+                               @RequestParam("sexo") String sexo,
+                               @RequestParam("contraseniaHash") String contraseniaHash,
+                               @RequestParam("password2") String pass2,
+                               Model model, RedirectAttributes attr){
+        System.out.println(nombres + apellidos + email + dni + telefono + fechaNacimiento);
+        System.out.println(fechaNacimiento);
+        if(contraseniaHash.equals(pass2)){
+            Usuario usuario = new Usuario();
+            usuario.setNombre(nombres);
+            usuario.setApellidos(apellidos);
+            usuario.setEmail(email);
+            usuario.setTelefono(telefono);
+            usuario.setSexo(sexo);
+            usuario.setContraseniaHash(contraseniaHash);
+            usuario.setRol("AdminSistema");
+            usuario.setCuentaActiva(1);
+            usuario.setDni(dni);
+            LocalDateTime localDate = LocalDateTime.now();
+            usuario.setUltimafechaingreso(localDate);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            try{
+                usuario.setFechaNacimiento(sdf.parse(fechaNacimiento));
+                System.out.println(fechaNacimiento);
+            } catch (ParseException e) {
+                e.printStackTrace();
+                attr.addFlashAttribute("msg","Fecha Incorrecta");
+                return "adminsistema/agregarAdmin";
+            }
+            usuarioRepository.save(usuario);
             attr.addFlashAttribute("msg","Administrador creado exitosamente");
         }else{
             attr.addFlashAttribute("msg","Fallo al crear Administrador");
@@ -264,11 +343,95 @@ public class AdminController {
 
     //Reportes
 
+    //Reportes
+
     @GetMapping("/reportes")
     public String reportesAdmin(){
         return "adminsistema/ADMIN_Reportes";
     }
 
+    @GetMapping("/usuarioReportes")
+    public String usuariosReportes(Model model){
+        List<Usuario> usuarioList = usuarioRepository.usuarioreportes();
+        model.addAttribute("listaUsuariosreporte",usuarioList);
+        return "adminsistema/ADMIN_ReportesVistaUsuarios";
+    }
+
+
+    @GetMapping("/usuarioFiltro")
+    public String usuarioFiltro(Model model,@RequestParam(value = "rolSelected" ,defaultValue = "Todos")String rol){
+        List<Usuario> usuarioList;
+        if(rol.equals("Repartidor") || rol.equals("AdminRestaurante") || rol.equals("Cliente")  ){
+            usuarioList = usuarioRepository.findAllByRolAndCuentaActiva(rol,1);
+        }else{
+            usuarioList = usuarioRepository.usuarioreportes();
+        }
+
+        model.addAttribute("listaUsuariosreporte",usuarioList);
+
+        return "adminsistema/ADMIN_ReportesVistaUsuarios";
+    }
+
+
+    @GetMapping("/RestaurantesReportes")
+    public String restaurantesReportes(Model model){
+        List<RestauranteReportes_DTO> reporteLista = restauranteRepository.reportesRestaurantes();
+        model.addAttribute("reporteLista",reporteLista);
+
+        double max = 0;
+        int indicemayor = 0;
+        for (int i = 0; i < reporteLista.size(); i++) {
+            if (reporteLista.get(i).getVentastotales() > max) {
+                max = reporteLista.get(i).getVentastotales();
+                indicemayor = i;
+            }
+        }
+        double min = max;
+        int indicemenor = indicemayor;
+        for (int i = 0; i < reporteLista.size(); i++) {
+            if (reporteLista.get(i).getVentastotales() < min) {
+                min = reporteLista.get(i).getVentastotales();
+                indicemenor = i;
+            }
+        }
+        RestauranteReportes_DTO mayor = reporteLista.get(indicemayor);
+        RestauranteReportes_DTO menor = reporteLista.get(indicemenor);
+
+        model.addAttribute("mayorrest",mayor);
+        model.addAttribute("menorrest",menor);
+        //t.stream().mapToDouble(i -> i).max().getAsDouble()
+        return "adminsistema/ADMIN_ReportesVistaRestaurantes";
+    }
+
+    @GetMapping("/RepartidorReportes")
+    public String repartidorReportes(Model model){
+        List<RepartidoresReportes_DTO>  reporteLista = repartidorRepository.reporteRepartidores();
+        model.addAttribute("reporteLista",reporteLista);
+
+        int max = 0;
+        int indicemayor = 0;
+        for (int i = 0; i < reporteLista.size(); i++) {
+            if (reporteLista.get(i).getPedidos() > max) {
+                max = reporteLista.get(i).getPedidos();
+                indicemayor = i;
+            }
+        }
+        int min = max;
+        int indicemenor = indicemayor;
+        for (int i = 0; i < reporteLista.size(); i++) {
+            if (reporteLista.get(i).getPedidos() < min) {
+                min = reporteLista.get(i).getPedidos();
+                indicemenor = i;
+            }
+        }
+        RepartidoresReportes_DTO mayor = reporteLista.get(indicemayor);
+        RepartidoresReportes_DTO menor = reporteLista.get(indicemenor);
+
+        model.addAttribute("mayorrep",mayor);
+        model.addAttribute("menorrep",menor);
+
+        return "adminsistema/ADMIN_ReportesVistaRepartidor";
+    }
 
 
 }
