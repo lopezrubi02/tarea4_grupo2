@@ -1,6 +1,7 @@
 package com.example.tarea4_grupo2.controller;
 
 import com.example.tarea4_grupo2.dto.PedidosDisponiblesDTO;
+import com.example.tarea4_grupo2.dto.PlatosPorPedidoDTO;
 import com.example.tarea4_grupo2.dto.RepartidorComisionMensualDTO;
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
@@ -38,11 +39,18 @@ public class RepartidorController {
 
         if (optionalPedidos.isPresent()) {
             Pedidos pedido = optionalPedidos.get();
-            model.addAttribute("pedido", pedido);
-            return "repartidor/repartidor_detalles_pedido";
-        } else {
-            return "redirect:/repartidor";
-        }
+            List <PlatosPorPedidoDTO> listaPlatosPorPedidoDTO= repartidorRepository.findListaPlatosPorPedido(id);
+            Optional<Restaurante> restauranteOptional = restauranteRepository.findById(pedido.getRestaurante_idrestaurante());
+            if (restauranteOptional.isPresent()){
+                model.addAttribute("listaPlatosPorPedidoDTO", listaPlatosPorPedidoDTO);
+                model.addAttribute("pedido", pedido);
+                Restaurante restaurante = restauranteOptional.get();
+                model.addAttribute("restaurante", restaurante);
+                return "repartidor/repartidor_detalles_pedido";
+            }else {
+                return "redirect:/repartidor";
+            }
+        }else{return "redirect:/repartidor";}
     }
 
     @GetMapping("/PedidosDisponibles")
