@@ -1,8 +1,8 @@
 package com.example.tarea4_grupo2.controller;
 
 import com.example.tarea4_grupo2.dto.PedidosDisponiblesDTO;
+import com.example.tarea4_grupo2.dto.PedidosReporteDTO;
 import com.example.tarea4_grupo2.dto.PlatosPorPedidoDTO;
-import com.example.tarea4_grupo2.dto.RepartidorComisionMensualDTO;
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,31 +34,33 @@ public class RepartidorController {
     RestauranteRepository restauranteRepository;
 
     @GetMapping("/VerDetalles")
-    public String verDetalles (Model model, @RequestParam("id") int id){
+    public String verDetalles(Model model, @RequestParam("id") int id) {
         Optional<Pedidos> optionalPedidos = pedidosRepository.findById(id);
 
         if (optionalPedidos.isPresent()) {
             Pedidos pedido = optionalPedidos.get();
-            List <PlatosPorPedidoDTO> listaPlatosPorPedidoDTO= repartidorRepository.findListaPlatosPorPedido(id);
+            List<PlatosPorPedidoDTO> listaPlatosPorPedidoDTO = repartidorRepository.findListaPlatosPorPedido(id);
             Optional<Restaurante> restauranteOptional = restauranteRepository.findById(pedido.getRestaurante_idrestaurante());
-            if (restauranteOptional.isPresent()){
+            if (restauranteOptional.isPresent()) {
                 model.addAttribute("listaPlatosPorPedidoDTO", listaPlatosPorPedidoDTO);
                 model.addAttribute("pedido", pedido);
                 Restaurante restaurante = restauranteOptional.get();
                 model.addAttribute("restaurante", restaurante);
                 return "repartidor/repartidor_detalles_pedido";
-            }else {
+            } else {
                 return "redirect:/repartidor";
             }
-        }else{return "redirect:/repartidor";}
+        } else {
+            return "redirect:/repartidor";
+        }
     }
 
     @GetMapping("/PedidosDisponibles")
-    public String pedidosDisponibles (RedirectAttributes attr, Model model){
+    public String pedidosDisponibles(RedirectAttributes attr, Model model) {
         List<PedidosDisponiblesDTO> listaPedidos = repartidorRepository.findListaPedidosDisponibles();
-        if (listaPedidos.isEmpty()){
+        if (listaPedidos.isEmpty()) {
             return "redirect:/repartidor";
-        }else {
+        } else {
             model.addAttribute("listaPedidosDisponibles", listaPedidos);
             return "repartidor/repartidor_pedidos_disponibles";
         }
@@ -66,7 +68,7 @@ public class RepartidorController {
 
     //El repartidor acepta el pedido del restaurante y se cambia el estado a "esperando recojo del restaurante"
     @GetMapping("/AceptaPedido")
-    public String aceptaPedidoPorElRepartidor(RedirectAttributes attr, @RequestParam("idpedido") int idPedidoElegido, Model model){
+    public String aceptaPedidoPorElRepartidor(RedirectAttributes attr, @RequestParam("idpedido") int idPedidoElegido, Model model) {
         Optional<Pedidos> pedidoElegido = pedidosRepository.findById(idPedidoElegido);
 
         if (pedidoElegido.isPresent()) {
@@ -82,15 +84,17 @@ public class RepartidorController {
                 model.addAttribute("restaurante", restaurante);
                 return "repartidor/repartidor_recojo_de_producto";
             } else {
-                attr.addFlashAttribute("Este pedido ya no está disponible :(");
+                attr.addFlashAttribute("msg", "Este pedido ya no está disponible :(");
                 return "redirect:/repartidor";
             }
-        }else{return "redirect:/repartidor";}
+        } else {
+            return "redirect:/repartidor";
+        }
     }
 
     //El repartidor recoge el pedido del restaurante y el estado cambia a "por entregar".
     @GetMapping("/ConfirmaRecojo")
-    public String confirmaRecojo(RedirectAttributes attr, @RequestParam("idpedido") int idPedidoElegido, Model model){
+    public String confirmaRecojo(RedirectAttributes attr, @RequestParam("idpedido") int idPedidoElegido, Model model) {
         Optional<Pedidos> pedidoElegido = pedidosRepository.findById(idPedidoElegido);
 
         if (pedidoElegido.isPresent()) {
@@ -109,40 +113,53 @@ public class RepartidorController {
 
                 return "repartidor/repartidor_pedido_en_progreso";
             } else {
-                attr.addFlashAttribute("Este pedido ya no está disponible :(");
+                attr.addFlashAttribute("msg", "Este pedido ya no está disponible :(");
                 return "redirect:/repartidor";
             }
-        }else{return "redirect:/repartidor";}
+        } else {
+            return "redirect:/repartidor";
+        }
 
     }
 
     //El repartidor entrega el pedido al cliente
     @GetMapping("/ConfirmaEntrega")
-    public String confirmaEntrega(RedirectAttributes attr, @RequestParam("idpedido") int idPedidoElegido, Model model){
+    public String confirmaEntrega(RedirectAttributes attr, @RequestParam("idpedido") int idPedidoElegido, Model model) {
         Optional<Pedidos> pedidoElegido = pedidosRepository.findById(idPedidoElegido);
 
         if (pedidoElegido.isPresent()) {
             Pedidos pedido = pedidoElegido.get();
             pedido.setEstadorepartidor("2"); //Estado de entregado al cliente
-            attr.addFlashAttribute("Se registró la entrega del pedido al cliente");
+            attr.addFlashAttribute("msg", "Se registró la entrega del pedido al cliente");
             return "redirect:/repartidor";
         } else {
-            attr.addFlashAttribute("Este pedido ya no está disponible :(");
+            attr.addFlashAttribute("msg", "Este pedido ya no está disponible :(");
             return "redirect:/repartidor";
         }
     }
 
-    @PostMapping("/Reporte1")
-    public String buscaxRestauranteDistrito(@RequestParam("valorBuscado") String searchField,
-                                      Model model) {
+    //Filtra por Restaurante o Distrito
+    @PostMapping("/Buscador")
+    public String buscador(@RequestParam("valorBuscado") String searchField,
+                           Model model, RedirectAttributes attr) {
 
-        List<Pedidos> listaPedidosxRestaurante = repartidorRepository.findPedidosByRestaurante(searchField);
-        model.addAttribute("listaPedidosxDistrito", listaPedidosxRestaurante);
-
-        List<Pedidos> listaPedidosxDistrito = repartidorRepository.findPedidosByDistrito(searchField);
+        List<PedidosReporteDTO> listaPedidosxRestaurante = repartidorRepository.findPedidosByRestaurante(searchField);
+        List<PedidosReporteDTO> listaPedidosxDistrito = repartidorRepository.findPedidosByDistrito(searchField);
+        if (listaPedidosxRestaurante.isEmpty() && listaPedidosxDistrito.isEmpty()) {
+            attr.addFlashAttribute("msg", "No hay resultados asociados a la búsqueda.");
+        }else{
+        model.addAttribute("listaPedidosxRestaurante", listaPedidosxRestaurante);
         model.addAttribute("listaPedidosxDistrito", listaPedidosxDistrito);
 
-        return "repartidor/reporte1";
+        }
+        return"repartidor/repartidor_resultado_buscador";
+    }
+
+    @GetMapping("/Reportes")
+    public String reportes(Model model){
+        List<PedidosReporteDTO> listaReporte1 = repartidorRepository.findPedidosPorRepartidor();
+        model.addAttribute("listaReporte1", listaReporte1);
+        return "repartidor/repartidor_reportes";
     }
 
 

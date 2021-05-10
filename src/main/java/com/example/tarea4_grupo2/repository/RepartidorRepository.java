@@ -1,11 +1,10 @@
 package com.example.tarea4_grupo2.repository;
 
 import com.example.tarea4_grupo2.dto.PedidosDisponiblesDTO;
+import com.example.tarea4_grupo2.dto.PedidosReporteDTO;
 import com.example.tarea4_grupo2.dto.PlatosPorPedidoDTO;
 import com.example.tarea4_grupo2.dto.RepartidorComisionMensualDTO;
-import com.example.tarea4_grupo2.entity.Pedidos;
 import com.example.tarea4_grupo2.entity.Repartidor;
-import com.example.tarea4_grupo2.entity.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -15,17 +14,26 @@ public interface RepartidorRepository  extends JpaRepository<Repartidor, Integer
 
     Repartidor findRepartidorByIdusuariosEquals(int idusuario);
 
+    @Query(value="select p.idpedidos, p.montototal, p.comisionrepartidor, p.calificacionrepartidor, r.nombre, r.distrito\n" +
+            "from pedidos p\n" +
+            "inner join restaurante r on (p.restaurante_idrestaurante=r.idrestaurante)\n" +
+            "inner join usuarios u on (p.idrepartidor=u.idusuarios)\n"
+          //  "+ where p.idrepartidor=?1", nativeQuery = true)
+            ,nativeQuery = true)
+    List<PedidosReporteDTO> findPedidosPorRepartidor();
+    //List<Pedidos> findPedidosPorRepartidor(String idRepartidor);
+
     @Query(value = "select p.idpedidos, p.montototal, p.comisionrepartidor, p.calificacionrepartidor, r.nombre, r.distrito\n" +
             "from pedidos p\n" +
             "inner join restaurante r on (p.restaurante_idrestaurante=r.idrestaurante) where r.nombre like CONCAT(?1,'%')",
             nativeQuery = true)
-    List<Pedidos> findPedidosByRestaurante(String nombre);
+    List<PedidosReporteDTO> findPedidosByRestaurante(String nombreRestaurante);
 
     @Query(value = "select p.idpedidos, p.montototal, p.comisionrepartidor, p.calificacionrepartidor, r.nombre, r.distrito\n" +
             "from pedidos p\n" +
             "inner join restaurante r on (p.restaurante_idrestaurante=r.idrestaurante) where r.distrito like CONCAT(?1,'%')",
             nativeQuery = true)
-    List<Pedidos> findPedidosByDistrito(String distrito);
+    List<PedidosReporteDTO> findPedidosByDistrito(String distritoRestaurante);
 
     @Query(value = "SELECT sum(comisionrepartidor) as 'comision_mensual',month(fechahorapedido) as 'mes',year(fechahorapedido) as 'year'\n" +
             "FROM proyecto.pedidos \n" +

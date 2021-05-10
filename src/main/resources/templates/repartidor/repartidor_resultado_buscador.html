@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragment/fragment.html :: header( title = 'Pedidos disponibles')"></head>
+<head th:replace="fragment/fragment.html :: header( title = 'Resultado de búsqueda')"></head>
 <!-- body -->
 
 <body class="main-layout">
@@ -48,7 +48,11 @@
                     <div class="col-md-12">
                         <h1>Pedidos disponibles</h1>
                     </div>
-                    <div th:if="${msg != null}" th:text="${msg}" class="alert alert-success" role="alert">
+                    <div th:if="${msg != null}" th:text="${msg}" class="alert alert-success" role="alert"></div>
+                    <form method="post" th:action="@{/reportes/Buscador}">
+                        <input name="valorBuscado" class="form-control mb-3" type="text" placeholder="Ingrese el nombre del restaurante o distrito del restaurante"/>
+                    </form>
+                    <a class="btn btn-primary" th:href="@{'/reportes'}">Limpiar</a>
                 </div>
                 <div class="row table-users">
                     <!-- table -->
@@ -59,33 +63,57 @@
                                 <tr>
                                     <th scope="col"># PEDIDO</th>
                                     <th scope="col">RESTAURANTE</th>
-                                    <th scope="col">LUGAR DE RECOJO</th>
-                                    <th scope="col">LUGAR DE DESTINO</th>
+                                    <th scope="col">DISTRITO DEL RESTAURANTE</th>
+                                    <th scope="col">COMISIÓN</th>
+                                    <th scope="col">CALIFICACIÓN</th>
                                     <th scope="col">S/. TOTAL</th>
-                                    <th scope="col">Ver detalles</th>
                                     <th></th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr th:each="pedidoDisponible, info : ${listaPedidosDisponibles}">
+                                <tr th:each="pedidoDisponible, info : ${listaPedidosxRestaurante}">
                                     <td th:text="${info.index + 1}"></td>
-                                    <td th:text="${pedidoDisponible.getRestaurante()}"></td>
-                                    <td th:text="${pedidoDisponible.getDistritorestaurante()}"></td>
-                                    <td th:text="${pedidoDisponible.getDireccioncliente()}"></td>
-                                    <td th:text="${pedidoDisponible.getComision()}"></td>
-                                    <td th:text="${pedidoDisponible.getMonto()}"></td>
-                                    <td><a class="btn btn-primary"
-                                           th:href="@{'/repartidor/VerDetalles' + '?id=' + ${pedidoDisponible.getIdpedidos()}}">Ver
-                                        detalles</a></td>
-                                    <td><a class="btn btn-primary"
-                                           th:href="@{'/repartidor/AceptaPedido' + '?idpedido=' + ${pedidoDisponible.getIdpedidos()}}">Aceptar
-                                        pedido</a></td>
+                                    <td th:text="${pedidoDisponible.getNombre()}"></td>
+                                    <td th:text="${pedidoDisponible.getDistrito()}"></td>
+                                    <td th:text="${pedidoDisponible.getComisionrepartidor()}"></td>
+                                    <td th:text="${pedidoDisponible.getCalificacionrepartidor()}"></td>
+                                    <td th:text="${pedidoDisponible.getMontototal()}"></td>
                                 </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
-                    <!-- end of table -->
+
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th scope="col"># PEDIDO</th>
+                                    <th scope="col">RESTAURANTE</th>
+                                    <th scope="col">DISTRITO DEL RESTAURANTE</th>
+                                    <th scope="col">COMISIÓN</th>
+                                    <th scope="col">CALIFICACIÓN</th>
+                                    <th scope="col">S/. TOTAL</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="pedidoDisponible, info : ${listaPedidosxDistrito}">
+                                    <td th:text="${info.index + 1}"></td>
+                                    <td th:text="${pedidoDisponible.getNombre()}"></td>
+                                    <td th:text="${pedidoDisponible.getDistrito()}"></td>
+                                    <td th:text="${pedidoDisponible.getComisionrepartidor()}"></td>
+                                    <td th:text="${pedidoDisponible.getCalificacionrepartidor()}"></td>
+                                    <td th:text="${pedidoDisponible.getMontototal()}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- end of table. -->
+                    <li class="button_user"><a class="btn btn-primary" th:href="">Exportar reporte a Excel</a></li>
+
 
                     <div class="col-md-12">
                         <p>Anterior | 1 | 2 | 3 | Siguiente</p>
