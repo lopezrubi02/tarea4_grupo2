@@ -1,6 +1,7 @@
 package com.example.tarea4_grupo2.repository;
 
 import com.example.tarea4_grupo2.dto.PedidosDisponiblesDTO;
+import com.example.tarea4_grupo2.dto.PlatosPorPedidoDTO;
 import com.example.tarea4_grupo2.dto.RepartidorComisionMensualDTO;
 import com.example.tarea4_grupo2.dto.RepartidoresReportes_DTO;
 import com.example.tarea4_grupo2.entity.Pedidos;
@@ -49,5 +50,12 @@ public interface RepartidorRepository  extends JpaRepository<Repartidor, Integer
             "group by dr.idrepartidor\n" +
             "order by idrepartidor",nativeQuery = true)
     List<RepartidoresReportes_DTO> reporteRepartidores();
+
+    @Query(value = "select pe.idpedidos, pe.montototal, pe.comisionrepartidor, pe.restaurante_idrestaurante, php.cantidadplatos, pl.idplato, pl.nombre\n" +
+            "from pedidos_has_plato php \n" +
+            "inner join pedidos pe on (pe.idpedidos=php.pedidos_idpedidos)\n" +
+            "inner join plato pl on (pl.idplato=php.plato_idplato)\n" +
+            "where p.idpedidos= ?1", nativeQuery = true)
+    List<PlatosPorPedidoDTO> findListaPlatosPorPedido(int id);
 
 }
