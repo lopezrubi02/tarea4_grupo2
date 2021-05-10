@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface RestauranteRepository extends JpaRepository<Restaurante, Integer> {
-    Restaurante findRestauranteByIdadminrestEquals(int idAdmin);
+    //Restaurante findRestauranteByIdadminrestEquals(int idAdmin);
 
     @Query(value="select*from restaurante\n" +
             "where idadminrest=?1",nativeQuery = true)
