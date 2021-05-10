@@ -59,6 +59,7 @@ public class RepartidorController {
     public String pedidosDisponibles(RedirectAttributes attr, Model model) {
         List<PedidosDisponiblesDTO> listaPedidos = repartidorRepository.findListaPedidosDisponibles();
         if (listaPedidos.isEmpty()) {
+            attr.addFlashAttribute("msg", "No hay pedidos disponibles para mostrar.");
             return "redirect:/repartidor";
         } else {
             model.addAttribute("listaPedidosDisponibles", listaPedidos);
@@ -110,7 +111,6 @@ public class RepartidorController {
                 model.addAttribute("pedido", pedido);
                 Restaurante restaurante = restauranteOptional.get();
                 model.addAttribute("restaurante", restaurante);
-
                 return "repartidor/repartidor_pedido_en_progreso";
             } else {
                 attr.addFlashAttribute("msg", "Este pedido ya no está disponible :(");
@@ -147,24 +147,31 @@ public class RepartidorController {
         List<PedidosReporteDTO> listaPedidosxDistrito = repartidorRepository.findPedidosByDistrito(searchField);
         if (listaPedidosxRestaurante.isEmpty() && listaPedidosxDistrito.isEmpty()) {
             attr.addFlashAttribute("msg", "No hay resultados asociados a la búsqueda.");
+            return "redirect:/repartidor";
         }else{
         model.addAttribute("listaPedidosxRestaurante", listaPedidosxRestaurante);
         model.addAttribute("listaPedidosxDistrito", listaPedidosxDistrito);
-
-        }
         return"repartidor/repartidor_resultado_buscador";
+        }
+
     }
 
     @GetMapping("/Reportes")
-    public String reportes(Model model){
+    public String reportes(Model model, RedirectAttributes attr){
         List<PedidosReporteDTO> listaReporte1 = repartidorRepository.findPedidosPorRepartidor();
-        model.addAttribute("listaReporte1", listaReporte1);
-        return "repartidor/repartidor_reportes";
+        if (listaReporte1.isEmpty()) {
+            attr.addFlashAttribute("msg", "No hay resultados para mostrar.");
+            return "redirect:/repartidor";
+        }else{
+            model.addAttribute("listaReporte1", listaReporte1);
+            return "repartidor/repartidor_reportes";
+        }
+
     }
 
 
     @GetMapping(value={"/home", "", "/"})
-    public String homeRepartidor(@ModelAttribute("repartidor") Repartidor repartidor,Model model) {
+    public String homeRepartidor(@ModelAttribute("repartidor") Repartidor repartidor,Model model, RedirectAttributes attr) {
 
         int id=10;
 
