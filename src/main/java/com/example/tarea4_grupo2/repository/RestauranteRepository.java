@@ -10,6 +10,9 @@ import java.util.List;
 public interface RestauranteRepository extends JpaRepository<Restaurante, Integer> {
     Restaurante findRestauranteByIdadminrestEquals(int idAdmin);
 
+    @Query(value="select*from restaurante\n" +
+            "where idadminrest=?1",nativeQuery = true)
+    Restaurante obtenerperfilRest(int id);
 
     //Usado por adminsistema en reportes restaurante
     @Query(value = "select r.nombre as 'restnombre', u.nombre, u.apellidos, count(p.idpedidos) as 'pedidos', (sum(p.montototal) - sum(p.comisionrepartidor) - sum(p.comisionsistema)) as 'ventastotales' from restaurante r\n" +

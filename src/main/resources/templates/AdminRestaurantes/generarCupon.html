@@ -61,34 +61,40 @@
 
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
 
-                                <form method="post" th:action="@{/guardarCupon}" class="main_form">
+                                <form method="post" th:action="@{'/guardarCupon'}" class="main_form" th:object="${cupon}">
+                                    <input th:field="*{idcupones}" type="hidden"/>
+                                    <input th:field="*{restaurante}" type="hidden"/>
                                     <div class="row">
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <input type="hidden" name="correo" id="correo" value="ola" >
-                                            <input class="form-control" placeholder="Nombre del cupon" type="text" name="nombre" id="nombre">
+                                            <input class="form-control" th:field="*{nombre}" placeholder="Nombre del cupon" type="text" name="nombre" id="nombre">
+                                        </div>
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                            <input class="form-control" th:field="*{descripcion}" placeholder="Descripcion" type="text" name="descripcion" id="descripcion">
+                                        </div>
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                            <input class="form-control" th:field="*{valordescuento}" placeholder="Descuento (S/.)" type="text" name="valordescuento" id="valordescuento">
                                         </div>
                                         <form class="main_form">
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                                <label class="col-xl-12 col-lg-12 col-md-12 col-sm-12" for="startdate">Fecha de inicio</label>
-                                                <input class="form-control" type="date" id="startdate" name="startdate">
+                                                <label class="col-xl-12 col-lg-12 col-md-12 col-sm-12" for="fechainicio">Fecha de inicio</label>
+                                                <input class="form-control" type="date" th:field="${cupon.fechainicio}">
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                                <label class="col-xl-12 col-lg-12 col-md-12 col-sm-12" for="enddate">Fecha de fin</label>
-                                                <input class="form-control" type="date" id="enddate" name="enddate">
+                                                <label class="col-xl-12 col-lg-12 col-md-12 col-sm-12" for="fechafin">Fecha de fin</label>
+                                                <input class="form-control" type="date" th:field="${cupon.fechafin}">
                                             </div>
                                         </form>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <input class="form-control" placeholder="Descripcion" type="text" name="descripcion" id="descripcion">
+                                        <div class="form-group col-6" th:if="${cupon.idcupones}">
+                                            <label for="plato">Plato asociado</label>
+                                            <select class="form-control" th:field="*{plato}">
+                                                <option th:each="plato: ${listaPlatos}" th:value="${plato.idplato}" th:text="${plato.nombre}"></option>
+                                            </select>
                                         </div>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <input class="form-control" placeholder="Descuento (S/.)" type="text" name="descuento" id="descuento">
-                                        </div>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" style="margin-bottom: 15px">
-                                            <label class="col-xl-12 col-lg-12 col-md-12 col-sm-12" for="plato">Plato asociado</label>
-                                            <select class="custom-select" name="plato" id="plato">
-                                                <option value="1" >Hamburguesa Clasica</option>
-                                                <option value="2" >Helado</option>
-                                                <option value="3" >Nuggets</option>
+                                        <div class="form-group col-6" th:unless="${cupon.idcupones}">
+                                            <label for="plato">Plato asociado</label>
+                                            <select class="form-control" th:field="*{plato}">
+                                                <option th:each="plato: ${listaPlatos}" th:value="${plato.idplato}" th:text="${plato.nombre}"
+                                                        th:selected="${plato.idplato == cupon.plato}"></option>
                                             </select>
                                         </div>
                                         </br>

@@ -302,7 +302,7 @@ public class AdminController {
                                @RequestParam("apellidos") String apellidos,
                                @RequestParam("email" ) String email,
                                @RequestParam("dni") String dni,
-                               @RequestParam("telefono") Integer telefono,
+                               @RequestParam("telefono") String telefono,
                                @RequestParam("fechaNacimiento") String fechaNacimiento,
                                @RequestParam("sexo") String sexo,
                                @RequestParam("contraseniaHash") String contraseniaHash,
