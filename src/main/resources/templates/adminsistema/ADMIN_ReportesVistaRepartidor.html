@@ -153,11 +153,11 @@
                             <tbody>
                                 <tr th: th:each="repartidor, info: ${reporteLista}">
                                 <th scope="row" th:text="${info.index + 1}">1</th>
-                                <td th:text="${repartidor.nombre()+' '+repartidor.apellidos()}"></td>
-                                <td th:text="${repartidor.dni()}"></td>
-                                <td th:text="${repartidor.movilidad()}"></td>
-                                <td th:text="${repartidor.pedidos()}"></td>
-                                <td th:text="${repartidor.comision()}"></td>
+                                <td th:text="${repartidor.nombre+' '+repartidor.apellidos}"></td>
+                                <td th:text="${repartidor.dni}"></td>
+                                <td th:text="${repartidor.movilidad}"></td>
+                                <td th:text="${repartidor.pedidos}"></td>
+                                <td th:text="${repartidor.comision}"></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -191,18 +191,18 @@
 								<tbody>
 									<tr>
 									<th scope="row">1</th>
-									<td th:text="${mayorrep.nombre()+' '+mayorrep.apellidos()}"></td>
-									<td th:text="${mayorrep.dni()}"></td>
-									<td th:text="${mayorrep.pedidos()}"></td>
+									<td th:text="${mayorrep.nombre+' '+mayorrep.apellidos}"></td>
+									<td th:text="${mayorrep.dni}"></td>
+									<td th:text="${mayorrep.pedidos}"></td>
 									<td>Mas pedidos entregados</td>
 									</tr>
 								</tbody>
 								<tbody>
 									<tr>
 									<th scope="row">2</th>
-									<td th:text="${menorrep.nombre()+' '+menorrep.apellidos()}"></td>
-									<td th:text="${menorrep.dni()}"></td>
-									<td th:text="${menorrep.pedidos()}"></td>
+									<td th:text="${menorrep.nombre+' '+menorrep.apellidos}"></td>
+									<td th:text="${menorrep.dni}"></td>
+									<td th:text="${menorrep.pedidos}"></td>
 									<td>Menos Pedidos Entregados</td>
 									</tr>
 								</tbody>
