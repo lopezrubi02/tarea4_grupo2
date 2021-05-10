@@ -95,17 +95,30 @@ public class RepartidorController {
 
         if (pedidoElegido.isPresent()) {
             Pedidos pedido = pedidoElegido.get();
-            pedido.setEstadorepartidor("1"); //Estado de recogido
-            return "repartidor/repartidor_pedido_en_progreso";
-        } else {
-            attr.addFlashAttribute("Este pedido ya no está disponible :(");
-            return "redirect:/repartidor";
-        }
+            pedido.setEstadorepartidor("1"); //Estado de esperando recojo del restaurante
+            Optional<Usuario> usuarioOptional = usuarioRepository.findById(pedido.getIdcliente());
+            List<PlatosPorPedidoDTO> listaPlatosPorPedidoDTO = repartidorRepository.findListaPlatosPorPedido(idPedidoElegido);
+            Optional<Restaurante> restauranteOptional = restauranteRepository.findById(pedido.getRestaurante_idrestaurante());
+            if (restauranteOptional.isPresent() && usuarioOptional.isPresent()) {
+                Usuario usuario = usuarioOptional.get();
+                model.addAttribute("usuario", usuario);
+                model.addAttribute("listaPlatosPorPedidoDTO", listaPlatosPorPedidoDTO);
+                model.addAttribute("pedido", pedido);
+                Restaurante restaurante = restauranteOptional.get();
+                model.addAttribute("restaurante", restaurante);
+
+                return "repartidor/repartidor_pedido_en_progreso";
+            } else {
+                attr.addFlashAttribute("Este pedido ya no está disponible :(");
+                return "redirect:/repartidor";
+            }
+        }else{return "redirect:/repartidor";}
+
     }
 
     //El repartidor entrega el pedido al cliente
     @GetMapping("/ConfirmaEntrega")
-    public String confirmaEntrega(RedirectAttributes attr, @RequestParam("idpedidos") int idPedidoElegido, Model model){
+    public String confirmaEntrega(RedirectAttributes attr, @RequestParam("idpedido") int idPedidoElegido, Model model){
         Optional<Pedidos> pedidoElegido = pedidosRepository.findById(idPedidoElegido);
 
         if (pedidoElegido.isPresent()) {
