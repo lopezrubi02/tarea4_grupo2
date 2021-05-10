@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragment/fragment.html :: header( title = 'Reporte general')"></head>
+<head th:replace="fragment/fragment.html :: header( title = 'Resultado de búsqueda')"></head>
 <!-- body -->
 
 <body class="main-layout">
@@ -46,7 +46,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-12">
-                        <h1>Reportes</h1>
+                        <h1>Pedidos disponibles</h1>
                     </div>
                     <div th:if="${msg != null}" th:text="${msg}" class="alert alert-success" role="alert"></div>
                     <form method="post" th:action="@{/reportes/Buscador}">
@@ -71,7 +71,35 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr th:each="pedidoDisponible, info : ${listaReporte1}">
+                                <tr th:each="pedidoDisponible, info : ${listaPedidosxRestaurante}">
+                                    <td th:text="${info.index + 1}"></td>
+                                    <td th:text="${pedidoDisponible.getNombre()}"></td>
+                                    <td th:text="${pedidoDisponible.getDistrito()}"></td>
+                                    <td th:text="${pedidoDisponible.getComisionrepartidor()}"></td>
+                                    <td th:text="${pedidoDisponible.getCalificacionrepartidor()}"></td>
+                                    <td th:text="${pedidoDisponible.getMontototal()}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th scope="col"># PEDIDO</th>
+                                    <th scope="col">RESTAURANTE</th>
+                                    <th scope="col">DISTRITO DEL RESTAURANTE</th>
+                                    <th scope="col">COMISIÓN</th>
+                                    <th scope="col">CALIFICACIÓN</th>
+                                    <th scope="col">S/. TOTAL</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="pedidoDisponible, info : ${listaPedidosxDistrito}">
                                     <td th:text="${info.index + 1}"></td>
                                     <td th:text="${pedidoDisponible.getNombre()}"></td>
                                     <td th:text="${pedidoDisponible.getDistrito()}"></td>
@@ -84,12 +112,9 @@
                         </div>
                     </div>
                     <!-- end of table. -->
-
-                    <!--
-                    A continuacion la tabla de Majo:
+                    <li class="button_user"><a class="btn btn-primary" th:href="">Exportar reporte a Excel</a></li>
 
 
-                    -->
                     <div class="col-md-12">
                         <p>Anterior | 1 | 2 | 3 | Siguiente</p>
                     </div>
