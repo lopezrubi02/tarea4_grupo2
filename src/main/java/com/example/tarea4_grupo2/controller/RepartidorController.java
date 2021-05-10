@@ -142,8 +142,8 @@ public class RepartidorController {
     public String buscador(@RequestParam("valorBuscado") String searchField,
                            Model model, RedirectAttributes attr) {
 
-        List<PedidosReporteDTO> listaPedidosxRestaurante = repartidorRepository.findPedidosByRestaurante(searchField);
-        List<PedidosReporteDTO> listaPedidosxDistrito = repartidorRepository.findPedidosByDistrito(searchField);
+        List<Pedidos> listaPedidosxRestaurante = repartidorRepository.findPedidosByRestaurante(searchField);
+        List<Pedidos> listaPedidosxDistrito = repartidorRepository.findPedidosByDistrito(searchField);
         if (listaPedidosxRestaurante.isEmpty() && listaPedidosxDistrito.isEmpty()) {
             attr.addFlashAttribute("msg", "No hay resultados asociados a la búsqueda.");
             return "redirect:/repartidor";
