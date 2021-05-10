@@ -9,6 +9,7 @@ import com.example.tarea4_grupo2.repository.DireccionesRepository;
 import com.example.tarea4_grupo2.repository.PedidosRepository;
 import com.example.tarea4_grupo2.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,6 +37,14 @@ public class UsuarioController {
 
     @Autowired
     PedidosRepository pedidosRepository;
+
+    @GetMapping("/paginaprincipal")
+    public String paginaprincipal()
+    {
+        return "cliente/paginaPrincipal";
+    }
+
+
 
     @GetMapping("/nuevo")
     public String nuevoCliente(){
@@ -65,7 +74,11 @@ public class UsuarioController {
             usuario.setEmail(email);
             usuario.setTelefono(telefono);
             usuario.setSexo(sexo);
-            usuario.setContraseniaHash(contraseniaHash);
+
+            String contraseniahashbcrypt = BCrypt.hashpw(contraseniaHash, BCrypt.gensalt());
+
+
+            usuario.setContraseniaHash(contraseniahashbcrypt);
             usuario.setRol("Cliente");
             usuario.setCuentaActiva(1);
             usuario.setDni(dni);
@@ -143,7 +156,13 @@ public class UsuarioController {
         usuariodb.setEmail(usuarioRecibido.getEmail());
         usuariodb.setTelefono(usuarioRecibido.getTelefono());
         System.out.println("contra es" + usuarioRecibido.getContraseniaHash() + "     ****");
-        usuariodb.setContraseniaHash(usuarioRecibido.getContraseniaHash());
+
+        String contrarecibida = usuarioRecibido.getContraseniaHash();
+
+        String contraseniahashbcrypt = BCrypt.hashpw(contrarecibida, BCrypt.gensalt());
+
+
+        usuariodb.setContraseniaHash(contraseniahashbcrypt);
         usuarioRepository.save(usuariodb);
 
         return "redirect:/cliente/miperfil";
@@ -180,6 +199,45 @@ public class UsuarioController {
 
         return "redirect:/cliente/miperfil";
 
+    }
+
+    @GetMapping("/olvidecontrasenia")
+    public String olvidecontrasenia()
+    {
+        return "cliente/recuperarContra1";
+    }
+
+    @GetMapping("/recuperarcontrasenia")
+    public String recuperarcontra(){
+        return "cliente/recuperarContra2";
+    }
+
+    @PostMapping("/guardarnuevacontra")
+    public String nuevacontra(@RequestParam("contrasenia1") String contra1,
+                              @RequestParam("contrasenia2") String contra2){
+
+
+        int idusuario = 7;
+
+        Optional<Usuario> usarioopt = usuarioRepository.findById(idusuario);
+
+        Usuario usuariodb = usarioopt.get();
+
+        if(usuariodb.getIdusuarios()!=null){
+            if(contra1.equals(contra2)){
+
+
+                System.out.println(contra1);
+                String contraseniahashbcrypt = BCrypt.hashpw(contra1, BCrypt.gensalt());
+
+                usuariodb.setContraseniaHash(contraseniahashbcrypt);
+                usuarioRepository.save(usuariodb);
+
+            }
+        }
+
+
+        return "cliente/confirmarRecu";
     }
 
 }

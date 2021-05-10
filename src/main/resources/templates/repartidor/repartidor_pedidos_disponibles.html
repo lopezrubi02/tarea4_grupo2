@@ -56,7 +56,7 @@
                     <a th:href="@{'/repartidor'}">Home</a>
                 </li>
                 <li>
-                    <a href="repartidor_reportes.html">Reportes</a>
+                    <a th:href="@{'/repartidor/Reportes'}">Reportes</a>
                 </li>
                 <li>
                     <a th:href="@{'/repartidor/PedidosDisponibles'}">Notificaciones</a>
@@ -110,6 +110,7 @@
                     <div class="col-md-12">
                         <h1>Pedidos disponibles</h1>
                     </div>
+                    <div th:if="${msg != null}" th:text="${msg}" class="alert alert-success" role="alert">
                 </div>
                 <div class="row table-users">
                     <!-- table -->
