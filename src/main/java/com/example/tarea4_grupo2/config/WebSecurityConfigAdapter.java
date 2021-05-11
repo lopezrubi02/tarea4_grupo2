@@ -22,12 +22,13 @@ public class WebSecurityConfigAdapter extends org.springframework.security.confi
         httpSecurity.formLogin()
                 .loginPage("/loginAdmin") // for the Controlller
                 .loginProcessingUrl("/processLoginAdmin"); // for the POST request of the login form
-
         httpSecurity.logout();
 
         httpSecurity.authorizeRequests()
                 .antMatchers("/admin", "/admin/**").hasAuthority("AdminSistema")
+                .antMatchers("/cliente","/cliente/**").hasAuthority("Cliente")
                 .anyRequest().permitAll();
+
 
     }
 
