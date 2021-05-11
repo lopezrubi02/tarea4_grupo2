@@ -121,7 +121,15 @@
                                     <input class="form-control" placeholder="Celular" type="text" name="telefono" id="telefono">
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input class="form-control" placeholder="Fecha de Nacimiento" type="text" name="fechanacimiento" id="fechanacimiento">
+                                    <input class="form-control" placeholder="Fecha de Nacimiento" type="date" name="fechanacimiento" id="fechanacimiento">
+                                </div>
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                    <select class="form-control" id="sexo">
+                                        <option selected>Seleccione su sexo</option>
+                                        <option value="Masculino" text="Masculino">Masculino</option>
+                                        <option value="Femenino" text="Femenino">Femenino</option>
+                                    </select>
+
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <input class="form-control" placeholder="Fecha de Nacimiento" type="text" name="sexo" id="sexo">
@@ -133,13 +141,13 @@
                                     <input class="form-control" placeholder="Distrito" type="text" name="distrito" id="distrito">
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input class="form-control" placeholder="Contraseña" type="text" name="contrasenia1" id="contrasenia1">
+                                    <input class="form-control" type="password" placeholder="Contraseña"  name="contraseniaHash" id="contraseniaHash">
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input class="form-control" placeholder="Confirmar Contraseña" type="text" name="contrasenia2" id="contrasenia2">
-                                </div>						
+                                    <input class="form-control" type="password" placeholder="Confirmar Contraseña" name="password2" id="password2">
+                                </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <a class="send" type="submit">Registrar</a>
+                                    <button class="send" type="submit">Registrar</button>
                                 </div>
                             </div>
                         </form>
