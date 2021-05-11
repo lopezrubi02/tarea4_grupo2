@@ -74,7 +74,7 @@ public class RepartidorController {
 
         if (pedidoElegido.isPresent()) {
             Pedidos pedido = pedidoElegido.get();
-            pedido.setEstadorepartidor("0"); //Estado de esperando recojo del restaurante
+            pedido.setEstadorepartidor("aceptado"); //Estado de esperando recojo del restaurante
 
             List<PlatosPorPedidoDTO> listaPlatosPorPedidoDTO = repartidorRepository.findListaPlatosPorPedido(idPedidoElegido);
             Optional<Restaurante> restauranteOptional = restauranteRepository.findById(pedido.getRestaurante_idrestaurante());
@@ -92,7 +92,7 @@ public class RepartidorController {
             return "redirect:/repartidor";
         }
     }
-
+//pendiente, aceptado, recogido, entregado
     //El repartidor recoge el pedido del restaurante y el estado cambia a "por entregar".
     @GetMapping("/ConfirmaRecojo")
     public String confirmaRecojo(RedirectAttributes attr, @RequestParam("idpedido") int idPedidoElegido, Model model) {
@@ -100,7 +100,7 @@ public class RepartidorController {
 
         if (pedidoElegido.isPresent()) {
             Pedidos pedido = pedidoElegido.get();
-            pedido.setEstadorepartidor("1"); //Estado de esperando recojo del restaurante
+            pedido.setEstadorepartidor("recogido"); //Estado de esperando recojo del restaurante
             Optional<Usuario> usuarioOptional = usuarioRepository.findById(pedido.getIdcliente());
             List<PlatosPorPedidoDTO> listaPlatosPorPedidoDTO = repartidorRepository.findListaPlatosPorPedido(idPedidoElegido);
             Optional<Restaurante> restauranteOptional = restauranteRepository.findById(pedido.getRestaurante_idrestaurante());
@@ -129,7 +129,7 @@ public class RepartidorController {
 
         if (pedidoElegido.isPresent()) {
             Pedidos pedido = pedidoElegido.get();
-            pedido.setEstadorepartidor("2"); //Estado de entregado al cliente
+            pedido.setEstadorepartidor("entregado"); //Estado de entregado al cliente
             attr.addFlashAttribute("msg", "Se registró la entrega del pedido al cliente");
             return "redirect:/repartidor";
         } else {

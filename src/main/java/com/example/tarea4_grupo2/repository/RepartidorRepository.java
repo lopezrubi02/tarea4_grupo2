@@ -45,7 +45,7 @@ public interface RepartidorRepository  extends JpaRepository<Repartidor, Integer
             "            pedidos p\n" +
             "               inner join  restaurante r on (p.restaurante_idrestaurante = r.idrestaurante)\n" +
             "               inner join direcciones d on (p.direccionentrega = d.iddirecciones)\n" +
-            "where p.estadorepartidor = '0'", nativeQuery = true)
+            "where p.estadorepartidor = 'pendiente'", nativeQuery = true)
     List<PedidosDisponiblesDTO> findListaPedidosDisponibles();
 
     @Query(value = "select pe.idpedidos, pe.montototal, pe.comisionrepartidor, pe.restaurante_idrestaurante, php.cantidadplatos, pl.idplato, pl.nombre\n" +
