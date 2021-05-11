@@ -9,11 +9,11 @@ import java.util.List;
 
 public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
 /* Obtencion del Top 3 de Restaurantes*/
-    @Query(value = "select re.nombre as restaurante, count(*) as veces_asistida from proyecto.pedidos pe inner join proyecto.restaurante re on (re.idrestaurante = pe.restaurante_idrestaurante) where pe.idcliente = ?1 and year(pe.fechahorapedido) = ?2 and month(pe.fechahorapedido) = ?3 group by re.idrestaurante order by count(*) desc limit 0, 3", nativeQuery = true)
+    @Query(value = "select re.nombre as restaurante, count(*) as vecesasistida from proyecto.pedidos pe inner join proyecto.restaurante re on (re.idrestaurante = pe.restaurante_idrestaurante) where pe.idcliente = ?1 and year(pe.fechahorapedido) = ?2 and month(pe.fechahorapedido) = ?3 group by re.idrestaurante order by count(*) desc limit 0, 3", nativeQuery = true)
     List<Top3Restaurantes_ClienteDTO> obtenerTop3Restaurantes(int idcliente, int anio, int mes);
 /*Este es para hallar el dinero ahorrado*/
-    @Query(value = "select sum((pepla.cantidadplatos * p.precio) - pe.montototal) as diferencia from proyecto.pedidos pe inner join proyecto.pedidos_has_plato pepla on (pepla.pedidos_idpedidos = pe.idpedidos) inner join proyecto.plato p on (pepla.plato_idplato = p.idplato) where pe.idcliente = ?1 and year(pe.fechahorapedido) = ?2", nativeQuery = true)
-    DineroAhorrado_ClienteDTO dineroAhorrado(int idcliente, int anio);
+    @Query(value = "select sum((pepla.cantidadplatos * p.precio) - pe.montototal) as diferencia from proyecto.pedidos pe inner join proyecto.pedidos_has_plato pepla on (pepla.pedidos_idpedidos = pe.idpedidos) inner join proyecto.plato p on (pepla.plato_idplato = p.idplato) where pe.idcliente = ?1 and year(pe.fechahorapedido) = ?2 and month(pe.fechahorapedido) = ?3", nativeQuery = true)
+    DineroAhorrado_ClienteDTO dineroAhorrado(int idcliente, int anio, int mes);
 /*Obtención del Top 3 de Platos*/
     @Query(value = "select p.nombre as nombreplato, count(*) as vecespedido \n" +
             "from proyecto.pedidos pe \n" +

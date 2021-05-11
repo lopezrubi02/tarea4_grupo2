@@ -1,5 +1,6 @@
 package com.example.tarea4_grupo2.controller;
 
+import com.example.tarea4_grupo2.dto.DineroAhorrado_ClienteDTO;
 import com.example.tarea4_grupo2.dto.TiempoMedio_ClienteDTO;
 import com.example.tarea4_grupo2.dto.Top3Platos_ClientesDTO;
 import com.example.tarea4_grupo2.dto.Top3Restaurantes_ClienteDTO;
@@ -114,7 +115,7 @@ public class UsuarioController {
     public String reportesCliente(Model model, @RequestParam("idusuarios") int idusuarios,
                                   @RequestParam("anio") int anio,
                                   @RequestParam("mes") int mes, @ModelAttribute("cliente") Usuario cliente) {
-        idusuarios = 7;
+        idusuarios = 8;
         Optional<Usuario> optUsuario = usuarioRepository.findById(idusuarios);
         if (optUsuario.isPresent()) {
             cliente = optUsuario.get();
@@ -126,10 +127,14 @@ public class UsuarioController {
             for(Top3Restaurantes_ClienteDTO t : top3Restaurantes_clienteDTOS){
                 System.out.println(t.getRestaurante());
             }
+
+            DineroAhorrado_ClienteDTO dineroAhorrado_clienteDTO = pedidosRepository.dineroAhorrado(idusuarios, anio, mes);
+
             model.addAttribute("cliente", cliente);
             model.addAttribute("listaTop3Restaurantes",top3Restaurantes_clienteDTOS );
             model.addAttribute("listaTop3Platos", top3Platos_clientesDTOS);
             model.addAttribute("listaPromedioTiempo", tiempoMedio_clienteDTOS);
+            model.addAttribute("diferencia", dineroAhorrado_clienteDTO);
             model.addAttribute("listaHistorialConsumo", pedidosRepository.obtenerHistorialConsumo(idusuarios, anio, mes));
             return "cliente/reportes";
         } else {
@@ -154,7 +159,7 @@ public class UsuarioController {
     @GetMapping("/realizarpedido")
     public String realizarpedido(Model model) {
 
-        int idusuarioactual = 7;
+        int idusuarioactual = 8;
 
         List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuarioactual);
         List<Categorias> listacategorias = categoriasRepository.findAll();
@@ -167,7 +172,7 @@ public class UsuarioController {
 
     @GetMapping("/miperfil")
     public String miperfil(Model model) {
-        int idusuario = 7;
+        int idusuario = 8;
         List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuario);
         model.addAttribute("listadirecciones", listadireccionescliente);
         Optional<Usuario> optional = usuarioRepository.findById(idusuario);
@@ -218,7 +223,7 @@ public class UsuarioController {
     public String guardarnuevadireccion(@RequestParam("direccion") String direccion,
                                         @RequestParam("distrito") String distrito) {
 
-        int idusuario = 7;
+        int idusuario = 8;
 
         Direcciones direccioncrear = new Direcciones();
         direccioncrear.setDireccion(direccion);
@@ -247,7 +252,7 @@ public class UsuarioController {
                               @RequestParam("contrasenia2") String contra2){
 
 
-        int idusuario = 7;
+        int idusuario = 8;
 
         Optional<Usuario> usarioopt = usuarioRepository.findById(idusuario);
 

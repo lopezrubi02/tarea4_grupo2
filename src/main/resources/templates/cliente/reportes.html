@@ -114,7 +114,27 @@
     <div class="row">
       <div class="col-md-12">
         <div class="title">
-
+            <div class="row g-2">
+                <div class="col-md">
+            <div class="form-floating">
+                <select class="form-select" id="floatingSelectGrid3" aria-label="Floating label select example">
+                    <option selected>Todos</option>
+                    <option value="01">Enero</option>
+                    <option value="02">Febrero</option>
+                    <option value="03">Marzo</option>
+                    <option value="04">Abril</option>
+                    <option value="05">Mayo</option>
+                    <option value="06">Junio</option>
+                    <option value="07">Julio</option>
+                    <option value="08">Agosto</option>
+                    <option value="09">Septiembre</option>
+                    <option value="10">Octubre</option>
+                    <option value="11">Noviembre</option>
+                    <option value="12">Diciembre</option>
+                </select>
+                <label for="floatingSelectGrid3">Mes</label>
+            </div>
+                </div></div>
         </div>
       </div>
     </div>
@@ -129,12 +149,21 @@
             <form method="post" th:action="@{cliente/recepcionCliente}" th:object="${cliente}">
                 <input th:field="*{idusuarios}" type="hidden">
                 <div class="container">
-                <table class="center">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nombre Restaurante</th>
+                        <th>Veces que Asistió</th>
+                    </tr>
+                    </thead>
+                    <tbody>
                     <tr th:each="top3Rest, in : ${listaTop3Restaurantes}">
                         <td th:text="${in.index + 1}"></td>
                         <td th:text="${top3Rest.getRestaurante()}"></td>
                         <td th:text="${top3Rest.getVecesasistida()}"></td>
                     </tr>
+                    </tbody>
                 </table>
             </div>
             </form>
@@ -150,12 +179,21 @@
             <form method="post" th:action="@{cliente/recepcionCliente}" th:object="${cliente}">
                 <input th:field="*{idusuarios}" type="hidden">
 		<div class="container">
-		  <table class="center">
+		  <table class="table">
+              <thead>
+              <tr>
+                  <th>#</th>
+                  <th>Nombre Plato</th>
+                  <th>Veces que Pidió</th>
+              </tr>
+              </thead>
+              <tbody>
               <tr th:each="top3platos, in : ${listaTop3Platos}">
                   <td th:text="${in.index + 1}"></td>
                   <td th:text="${top3platos.getNombreplato()}"></td>
                   <td th:text="${top3platos.getVecespedido()}"></td>
               </tr>
+              </tbody>
 		  </table>
 		  </div>
             </form>
@@ -171,13 +209,23 @@
             <form method="post" th:action="@{cliente/recepcionCliente}" th:object="${cliente}">
                 <input th:field="*{idusuarios}" type="hidden">
 		<div class="container">
-		  <table class="center">
-              <tr th:each="historial, in : ${listaHistorialConsumo}">
-                  <td th:text="${in.index + 1}"></td>
-                  <td th:text="${historial.getNomrestaurante()}"></td>
-                  <td th:text="${historial.getAsistencia()}"></td>
-                  <td th:text="${historial.getConsumomensual()}"</td>
-              </tr>
+		  <table class="table">
+              <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nombre Restaurante</th>
+                    <th>Veces que Asistió</th>
+                    <th>Consumo mensual (en soles)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="historial, in : ${listaHistorialConsumo}">
+                     <td th:text="${in.index + 1}"></td>
+                     <td th:text="${historial.getNomrestaurante()}"></td>
+                     <td th:text="${historial.getAsistencia()}"></td>
+                     <td th:text="${historial.getConsumomensual()}"</td>
+                </tr>
+              </tbody>
 		  </table>
         </div>        </form></div>
       </div>
@@ -189,7 +237,7 @@
             </figure>
           </div>
 		<div class="container">
-			<p>Se ha ahorrado  soles</p>
+			<p th:text="|Se ha ahorrado ${diferencia.getDiferencia()} soles|"></p>
 		  </div>        
 		  </div>
       </div>
@@ -203,12 +251,21 @@
             <form method="post" th:action="@{cliente/recepcionCliente}" th:object="${cliente}">
                 <input th:field="*{idusuarios}" type="hidden">
 		        <div class="container">
-		        <table class="center">
+		        <table class="table">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nombre Restaurante</th>
+                        <th>Tiempo promedio (en minutos)</th>
+                    </tr>
+                    </thead>
+                    <tbody>
 		            <tr th:each="tiempoProm, in : ${listaPromedioTiempo}">
 			            <td th:text="${in.index + 1}"></td>
 			            <td th:text="${tiempoProm.getNombrerestaurante()}"></td>
 			            <td th:text="${tiempoProm.getTiempopromedio()}"></td>
 		            </tr>
+                    </tbody>
 		         </table>
 		        </div>
             </form>
