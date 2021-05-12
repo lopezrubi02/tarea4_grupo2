@@ -112,10 +112,10 @@ public class UsuarioController {
     }
 
     @GetMapping("/reportes")
-    public String reportesCliente(Model model, @RequestParam("idusuarios") int idusuarios,
-                                  @RequestParam("anio") int anio,
-                                  @RequestParam("mes") int mes, @ModelAttribute("cliente") Usuario cliente) {
-        idusuarios = 8;
+    public String reportesCliente(Model model, @ModelAttribute("cliente") Usuario cliente) {
+        int idusuarios = 8;
+        int anio = 2021;
+        int mes = 05;
         Optional<Usuario> optUsuario = usuarioRepository.findById(idusuarios);
         if (optUsuario.isPresent()) {
             cliente = optUsuario.get();
@@ -146,6 +146,7 @@ public class UsuarioController {
     public String recepcionCliente(@ModelAttribute("cliente") @Valid Usuario cliente, @RequestParam("idusuarios") int idusuarios,
                                    @RequestParam("anio") int anio,
                                    @RequestParam("mes") int mes, BindingResult bindingResult, Model model) {
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("listaTop3Restaurantes", pedidosRepository.obtenerTop3Restaurantes(idusuarios, anio, mes));
             model.addAttribute("listaTop3Platos", pedidosRepository.obtenerTop3Platos(idusuarios, anio, mes));
