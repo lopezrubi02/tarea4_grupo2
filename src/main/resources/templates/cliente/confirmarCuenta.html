@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <!-- basic -->
     <meta charset="utf-8">
@@ -12,13 +11,13 @@
     <title>Spicyo</title>
 
     <!-- bootstrap css -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <!-- owl css -->
-    <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}">
     <!-- style css -->
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
     <!-- responsive-->
-    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
     <!-- awesome fontfamily -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <!--[if lt IE 9]>
@@ -29,11 +28,11 @@
 
 <body class="main-layout">
     <!-- loader  -->
-    <div class="loader_bg">
-        <div class="loader"><img src="images/loading.gif" alt="" /></div>
+    <!--div class="loader_bg">
+        <div class="loader"><img th:src="@{/images/loading.gif}" alt="" /></div>
     </div>
 
-    <div class="wrapper">
+    <div class="wrapper"-->
     <!-- end loader -->
 
     
@@ -45,7 +44,7 @@
             <div class="row">
                 <div class="col-md-3">
                     <div class="full">
-                        <a class="logo" href="index.html"><img src="images/logo.png" alt="#" /></a>
+                        <a class="logo"><img th:src="@{/images/logo.png}" alt="#" /></a>
                     </div>
                 </div>
                 <div class="col-md-9">
@@ -60,11 +59,9 @@
         </div>
     </header>
 
-
 <div class="bg_bg">
 
 <!-- end about -->
-
 
     <!-- footer -->
     <fooetr>
@@ -75,7 +72,7 @@
 						<h2>Su cuenta ha sido creada exitosamente</h2>
 						<h2>En breve se le enviará un correo de confirmación de la cuenta</h2>
 						<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                        <a class="send" class="button" type="submit" href="paginaPrincipal.html">Ingresar a mi cuenta</a>
+                            <button class="send" type="submit" >Ingresar a mi cuenta</button>
 						</div>
 					</div>
 					
@@ -95,14 +92,14 @@
     </div>
     <div class="overlay"></div>
     <!-- Javascript files-->
-    <script src="js/jquery.min.js"></script>
-    <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap.bundle.min.js"></script>
-    <script src="js/owl.carousel.min.js"></script>
-    <script src="js/custom.js"></script>
-     <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
-    
-     <script src="js/jquery-3.0.0.min.js"></script>
+        <script th:href="@{/js/jquery.min.js}"></script>
+        <script th:href="@{/js/popper.min.js}"></script>
+        <script th:href="@{/js/bootstrap.bundle.min.js}"></script>
+        <script th:href="@{/js/owl.carousel.min.js}"></script>
+        <script th:href="@{/js/custom.js}"></script>
+        <script th:href="@{/js/jquery.mCustomScrollbar.concat.min.js}"></script>
+
+        <script th:href="@{/js/jquery-3.0.0.min.js}"></script>
    <script type="text/javascript">
         $(document).ready(function() {
             $("#sidebar").mCustomScrollbar({

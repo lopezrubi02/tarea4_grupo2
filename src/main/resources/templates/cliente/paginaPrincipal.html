@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 
 <head>
     <!-- basic -->
@@ -14,13 +15,13 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <!-- bootstrap css -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
     <!-- owl css -->
-    <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}">
     <!-- style css -->
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
     <!-- responsive-->
-    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
     <!-- awesome fontfamily -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <!--[if lt IE 9]>
@@ -31,36 +32,37 @@
 
 <body class="main-layout blog_page">
     <!-- loader  -->
-    <div class="loader_bg">
-        <div class="loader"><img src="images/loading.gif" alt="" /></div>
-    </div>
+    <!--div class="loader_bg">
+        <div class="loader"><img th:src="@{/images/loading.gif}" alt="" /></div>
 
+    </div-->
     <div class="wrapper">
     <!-- end loader -->
 <div class="sidebar">
-            <!-- Sidebar  -->
-            <nav id="sidebar">
+        <!-- Sidebar  -->
+        <nav id="sidebar">
 
-                <div id="dismiss">
-                    <i class="fa fa-arrow-left"></i>
-                </div>
+            <div id="dismiss">
+                <i class="fa fa-arrow-left"></i>
+            </div>
 
-                <ul class="list-unstyled components">
+            <ul class="list-unstyled components">
 
-                    <li class="active">
-                        <a href="">Home</a>
-                    </li>
-                    <li>
-                        <a href="about.html">Realizar pedido</a>
-                    </li>
-                    <li>
-                        <a href="recipe.html">Mis reportes</a>
-                    </li>
-                   
-                </ul>
+                <li class="active">
+                    <a th:href="@{'/cliente/paginaprincipal'}">Home</a>
+                </li>
+                <li>
+                    <a th:href="@{'/cliente/realizarpedido'}">Realizar pedido</a>
+                </li>
+                <li>
+                    <a th:href="@{'/cliente/reportes'}">Mis reportes</a>
+                </li>
 
-            </nav>
-        </div>
+            </ul>
+
+        </nav>
+</div>
+
     <div id="content">
     <!-- header -->
     <header>
@@ -68,21 +70,21 @@
             <div class="row">
                 <div class="col-md-3">
                     <div class="full">
-                        <a class="logo" href=""><img src="images/logo.png" alt="#" /></a>
+                        <a class="logo" href=""><img th:src="@{/images/logo.png}" alt="#" /></a>
                     </div>
                 </div>
                 <div class="col-md-9">
                     <div class="full">
                         <div class="right_header_info">
                             <ul>
-                                <li class="dinone"><a href="#">Mis reportes</a></li>
-                                <li class="dinone"><a href="#">Relizar pedido</a></li>
+                                <li class="dinone"><a th:href="@{'/cliente/reportes'}">Mis reportes</a></li>
+                                <li class="dinone"><a th:href="@{'/cliente/realizarpedido'}">Relizar pedido</a></li>
 								
-                                <li class="button_user"><a class="button active" href="#login.html">Mi perfil</a><a class="button" href="#">Cerrar sesión</a></li>
-                                <li><a href="#"><img style="margin-right: 15px;" src="images/carrito.png" width="45" height="45"></a></li>
+                                <li class="button_user"><a class="button active" th:href="@{'/cliente/miperfil'}">Mi perfil</a><a class="button" href="#">Cerrar sesión</a></li>
+                                <li><a href="#"><img style="margin-right: 15px;" th:src="@{/images/carrito.png}" width="45" height="45"></a></li>
                                 <li>
                                     <button type="button" id="sidebarCollapse">
-                                        <img src="images/menu_icon.png" alt="#">
+                                        <img th:src="@{/images/menu_icon.png}">
                                     </button>
                                 </li>
                             </ul>
@@ -112,7 +114,7 @@
     <div class="row">
       <div class="col-md-12">
         <div class="title">
-          <i><img src="images/title.png" alt="#"/></i>
+          <i><img th:src="@{/images/title.png}" alt="#"/></i>
           
           <span>¿Qué deseas hacer hoy?</span>
         </div>
@@ -122,8 +124,8 @@
 		  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mar_bottom">
 				<div class="blog_box">
 				  <div class="blog_img_box">
-					<figure><img src="images/reporte.png" alt="#"/>
-					 <a class="button" href="reportes.html"><span>Ver Reportes</span></a>
+					<figure><img th:src="@{/images/reporte.png}" alt="#"/>
+					 <a class="button" th:href="@{'/cliente/reportes'}"><span>Ver Reportes</span></a>
 					</figure>
 				  </div>
 				</div>
@@ -132,7 +134,7 @@
 				<div class="blog_box">
 				  <div  class="blog_img_box">
 					<figure><img src="https://image.freepik.com/vector-gratis/nueva-notificacion-mensaje-pedido-linea-smartphone-o-telefono-movil-vector-dibujos-animados-plana_101884-335.jpg" alt="#"/>
-					 <a class="button" href="#"><span>Realizar Pedido</span></a>
+					 <a class="button" th:href="@{'/cliente/realizarpedido'}"><span>Realizar Pedido</span></a>
 					</figure>
 				  </div>
 				</div>
@@ -140,7 +142,7 @@
 		  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mar_bottom">
 				<div class="blog_box">
 				  <div  class="blog_img_box">
-					<figure><img src="images/224-2245993_domicilios-de-comida-motorcycle-delivery-png-icon.png" alt="#"/>
+					<figure><img th:src="@{/images/224-2245993_domicilios-de-comida-motorcycle-delivery-png-icon.png}" alt="#"/>
 					 <a class="button" href="ultimopedido_cliente.html"><span>Mi último pedido</span></a>
 					</figure>
 				  </div>
@@ -153,30 +155,31 @@
 <!-- end blog -->
 
 
-    <!-- footer -->
-    <footer>
-        <div class="container">
+        <!-- footer -->
+        <fooetr>
             <div class="footer">
-				<div class="copyright">
-                    <p>© 2021 Todos los derechos reservados. Propiedad de "Troyanos de Software"</p>
+
+                <div class="copyright">
+                    <div class="container">
+                        <p>© 2021 Todos los derechos reservados</p>
+                    </div>
                 </div>
             </div>
-        </div>
-    </footer>
-    <!-- end footer -->
+        </fooetr>
+        <!-- end footer -->
 
     </div>
     </div>
     <div class="overlay"></div>
     <!-- Javascript files-->
-    <script src="js/jquery.min.js"></script>
-    <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap.bundle.min.js"></script>
-    <script src="js/owl.carousel.min.js"></script>
-    <script src="js/custom.js"></script>
-     <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
-    
-     <script src="js/jquery-3.0.0.min.js"></script>
+    <script th:href="@{/js/jquery.min.js}"></script>
+    <script th:href="@{/js/popper.min.js}"></script>
+    <script th:href="@{/js/bootstrap.bundle.min.js}"></script>
+    <script th:href="@{/js/owl.carousel.min.js}"></script>
+    <script th:href="@{/js/custom.js}"></script>
+    <script th:href="@{/js/jquery.mCustomScrollbar.concat.min.js}"></script>
+
+    <script th:href="@{/js/jquery-3.0.0.min.js}"></script>
    <script type="text/javascript">
         $(document).ready(function() {
             $("#sidebar").mCustomScrollbar({

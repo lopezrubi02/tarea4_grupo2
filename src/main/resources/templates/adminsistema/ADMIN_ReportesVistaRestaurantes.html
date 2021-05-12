@@ -150,41 +150,15 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                <th scope="row">1</th>
-                                <td>El Rincon que no Conoces</td>
-                                <td>Julio Izquierdo Ríos</td>
-                                <td>43</td>
-                                <td>825.50</td>
+                                <tr th:each="restaurante,info : ${reporteLista}">
+                                    <td scope="row" th:text="${info.index + 1}"></td>
+                                    <td th:text="${restaurante.restnombre}"></td>
+                                    <td th:text="${restaurante.nombre + ' ' + restaurante.apellidos}"></td>
+                                    <td th:text="${restaurante.pedidos}"></td>
+                                    <td th:text="${restaurante.ventastotales}"></td>
                                 </tr>
                             </tbody>
-							<tbody>
-                                <tr>
-                                <th scope="row">2</th>
-                                <td>Ritmo y Sabor</td>
-                                <td>Fiorella Arroyo Ugarte</td>
-                                <td>118</td>
-                                <td>1760</td>
-                                </tr>
-                            </tbody>
-							<tbody>
-                                <tr>
-                                <th scope="row">3</th>
-                                <td>Sabores Selvaticos</td>
-                                <td>Juan Mantequilla Ugarte</td>
-                                <td>78</td>
-                                <td>990</td>
-                                </tr>
-                            </tbody>
-							<tbody>
-                                <tr>
-                                <th scope="row">4</th>
-                                <td>Platinum Disc-Edicion Criolla</td>
-                                <td>Cristian Salvador</td>
-                                <td>41</td>
-                                <td>1880</td>
-                                </tr>
-                            </tbody>
+
                         </table>
                     </div>
                 </div>
@@ -216,18 +190,18 @@
 								<tbody>
 									<tr>
 									<th scope="row">1</th>
-									<td>La Olla Encantada </td>
-									<td>Lorena LLosa Gomez</td>
-									<td>3110.70</td>
+									<td th:text="${mayorrest.restnombre}"> </td>
+									<td th:text="${mayorrest.nombre + ' ' + mayorrest.apellidos}"></td>
+									<td th:text="${mayorrest.ventastotales}"></td>
 									<td>Restaurante con más ventas</td>
 									</tr>
 								</tbody>
 								<tbody>
 									<tr>
 									<th scope="row">2</th>
-									<td>Memento Mori??</td>
-									<td>Vincent Salazar Calderón</td>
-									<td>28.80</td>
+									<td th:text="${menorrest.restnombre}"></td>
+									<td th:text="${menorrest.nombre+' '+menorrest.apellidos}"></td>
+									<td th:text="${menorrest.ventastotales}"></td>
 									<td>Restaurante con menos Ventas</td>
 									</tr>
 								</tbody>

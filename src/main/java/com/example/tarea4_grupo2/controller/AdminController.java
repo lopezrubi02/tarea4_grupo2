@@ -1,13 +1,13 @@
 package com.example.tarea4_grupo2.controller;
 
+import com.example.tarea4_grupo2.dto.DeliveryReportes_DTO;
+import com.example.tarea4_grupo2.dto.RepartidoresReportes_DTO;
+import com.example.tarea4_grupo2.dto.RestauranteReportes_DTO;
 import com.example.tarea4_grupo2.entity.Direcciones;
 import com.example.tarea4_grupo2.entity.Repartidor;
 import com.example.tarea4_grupo2.entity.Restaurante;
 import com.example.tarea4_grupo2.entity.Usuario;
-import com.example.tarea4_grupo2.repository.DireccionesRepository;
-import com.example.tarea4_grupo2.repository.RepartidorRepository;
-import com.example.tarea4_grupo2.repository.RestauranteRepository;
-import com.example.tarea4_grupo2.repository.UsuarioRepository;
+import com.example.tarea4_grupo2.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -41,6 +41,9 @@ public class AdminController {
 
     @Autowired
     RestauranteRepository restauranteRepository;
+
+    @Autowired
+    PedidosRepository pedidosRepository;
 
     @GetMapping("/usuariosActuales")
     public String usuariosActuales(
@@ -241,6 +244,53 @@ public class AdminController {
         return "adminsistema/nuevasCuentas";
     }
 
+    @GetMapping("/newuser")
+    public String revisarCuenta(Model model,
+            @RequestParam(value = "id") int id){
+        Optional<Usuario> optional = usuarioRepository.findById(id);
+        if(optional.isPresent()){
+            Usuario usuario = optional.get();
+            if(usuario.getCuentaActiva()==0){
+
+                switch (usuario.getRol()){
+                    case "AdminRestaurante":
+                        model.addAttribute("usuario",usuario);
+                        Restaurante restaurante = restauranteRepository.findRestauranteByIdadminrestEquals(id);
+                        model.addAttribute("restaurante",restaurante);
+                        return "adminsistema/AceptarCuentaRestaurante";
+                    case "Repartidor":
+                        model.addAttribute("usuario",usuario);
+                        Repartidor repartidor = repartidorRepository.findRepartidorByIdusuariosEquals(id);
+                        List<Direcciones> listadirecciones = direccionesRepository.findAllByUsuariosIdusuariosEquals(id);
+                        model.addAttribute("repartidor",repartidor);
+                        model.addAttribute("lista",listadirecciones);
+                        return "adminsistema/AceptarCuentaRepartidor";
+                    default:
+                        return "redirect:/admin/nuevasCuentas";
+                }
+            }
+        }
+        return "redirect:/admin/nuevasCuentas";
+    }
+
+    @GetMapping("/aceptar")
+    public String aceptarCuenta(@RequestParam(value="id") int id,
+                                RedirectAttributes attr){
+        Optional<Usuario> optional = usuarioRepository.findById(id);
+        if(optional.isPresent()){
+            Usuario usuario = optional.get();
+            if(usuario.getCuentaActiva()==0){
+                    usuario.setCuentaActiva(1);
+                    usuarioRepository.save(usuario);
+                    attr.addFlashAttribute("msg","Cuenta aceptada exitosamente");
+                    return "redirect:/admin/nuevosUsuarios";
+                }
+            }
+        attr.addFlashAttribute("msg","Ha ocurrido un error,cuenta no aprobada");
+        return "redirect:/admin/nuevosUsuarios";
+    }
+
+
 
 
     @GetMapping("adminForm")
@@ -325,9 +375,70 @@ public class AdminController {
 
 
     @GetMapping("/RestaurantesReportes")
-    public String restaurantesReportes(){
-        List<Restaurante> restaurantesList = restauranteRepository.findAll();
-        return "adminsistema/ADMIN_ReportesVistaRestaurante";
+    public String restaurantesReportes(Model model){
+        List<RestauranteReportes_DTO> reporteLista = restauranteRepository.reportesRestaurantes();
+        model.addAttribute("reporteLista",reporteLista);
+
+        double max = 0;
+        int indicemayor = 0;
+        for (int i = 0; i < reporteLista.size(); i++) {
+            if (reporteLista.get(i).getVentastotales() > max) {
+                max = reporteLista.get(i).getVentastotales();
+                indicemayor = i;
+            }
+        }
+        double min = max;
+        int indicemenor = indicemayor;
+        for (int i = 0; i < reporteLista.size(); i++) {
+            if (reporteLista.get(i).getVentastotales() < min) {
+                min = reporteLista.get(i).getVentastotales();
+                indicemenor = i;
+            }
+        }
+        RestauranteReportes_DTO mayor = reporteLista.get(indicemayor);
+        RestauranteReportes_DTO menor = reporteLista.get(indicemenor);
+
+        model.addAttribute("mayorrest",mayor);
+        model.addAttribute("menorrest",menor);
+        //t.stream().mapToDouble(i -> i).max().getAsDouble()
+        return "adminsistema/ADMIN_ReportesVistaRestaurantes";
+    }
+
+    @GetMapping("/RepartidorReportes")
+    public String repartidorReportes(Model model){
+        List<RepartidoresReportes_DTO>  reporteLista = repartidorRepository.reporteRepartidores();
+        model.addAttribute("reporteLista",reporteLista);
+
+        int max = 0;
+        int indicemayor = 0;
+        for (int i = 0; i < reporteLista.size(); i++) {
+            if (reporteLista.get(i).getPedidos() > max) {
+                max = reporteLista.get(i).getPedidos();
+                indicemayor = i;
+            }
+        }
+        int min = max;
+        int indicemenor = indicemayor;
+        for (int i = 0; i < reporteLista.size(); i++) {
+            if (reporteLista.get(i).getPedidos() < min) {
+                min = reporteLista.get(i).getPedidos();
+                indicemenor = i;
+            }
+        }
+        RepartidoresReportes_DTO mayor = reporteLista.get(indicemayor);
+        RepartidoresReportes_DTO menor = reporteLista.get(indicemenor);
+
+        model.addAttribute("mayorrep",mayor);
+        model.addAttribute("menorrep",menor);
+
+        return "adminsistema/ADMIN_ReportesVistaRepartidor";
+    }
+
+    @GetMapping("/DeliveryReportes")
+    public String deliveryReportes(Model model){
+        List<DeliveryReportes_DTO> listaDeli = pedidosRepository.reportesDelivery();
+        model.addAttribute("listadeli",listaDeli);
+        return "adminsistema/ADMIN_ReportesVistaDelivery";
     }
 
 

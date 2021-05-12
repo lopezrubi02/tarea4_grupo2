@@ -36,6 +36,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
                          Date fecha, String sexo, String dni, String rol);
 
 
-
+    //para guardar direccion de usuario
+    Usuario findByDni(String dni);
     //Repartidor findByIdusuarios(int usuarios_idusuarios);
 }

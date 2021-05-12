@@ -8,14 +8,15 @@ public class Categorias {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int idcategorias;
+    private Integer idcategorias;
+
     private String nombrecategoria;
 
-    public int getIdcategorias() {
+    public Integer getIdcategorias() {
         return idcategorias;
     }
 
-    public void setIdcategorias(int idcategorias) {
+    public void setIdcategorias(Integer idcategorias) {
         this.idcategorias = idcategorias;
     }
 
