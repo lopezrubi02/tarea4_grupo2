@@ -152,8 +152,8 @@ public class AdminController {
                 case "AdminRestaurante":
                     model.addAttribute("usuario", usuario);
 
-                    Restaurante restaurante = restauranteRepository.findRestauranteByIdadminrestEquals(id);
-                    model.addAttribute("restaurante", restaurante);
+                    //Restaurante restaurante = restauranteRepository.findRestauranteByIdadminrestEquals(id);
+                    //model.addAttribute("restaurante", restaurante);
 
                     return "adminsistema/datosRestaurante";
 
@@ -255,8 +255,8 @@ public class AdminController {
                 switch (usuario.getRol()){
                     case "AdminRestaurante":
                         model.addAttribute("usuario",usuario);
-                        Restaurante restaurante = restauranteRepository.findRestauranteByIdadminrestEquals(id);
-                        model.addAttribute("restaurante",restaurante);
+                        //Restaurante restaurante = restauranteRepository.findRestauranteByIdadminrestEquals(id);
+                        //model.addAttribute("restaurante",restaurante);
                         return "adminsistema/AceptarCuentaRestaurante";
                     case "Repartidor":
                         model.addAttribute("usuario",usuario);
@@ -303,7 +303,7 @@ public class AdminController {
                                @RequestParam("apellidos") String apellidos,
                                @RequestParam("email" ) String email,
                                @RequestParam("dni") String dni,
-                               @RequestParam("telefono") Integer telefono,
+                               @RequestParam("telefono") String telefono,
                                @RequestParam("fechaNacimiento") String fechaNacimiento,
                                @RequestParam("sexo") String sexo,
                                @RequestParam("contraseniaHash") String contraseniaHash,

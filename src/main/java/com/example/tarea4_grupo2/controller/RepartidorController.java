@@ -225,7 +225,7 @@ public class RepartidorController {
 
     @PostMapping("/save_perfil")
     public String guardarPerfilRepartidor(@ModelAttribute("usuario") Usuario usuario,
-                                        @RequestParam("idusuario") int idusuario,@RequestParam("telefono") int telefono,
+                                        @RequestParam("idusuario") int idusuario,@RequestParam("telefono") String telefono,
                                           @RequestParam("direccion") String direccion,@RequestParam("password") String password
     ) {
 

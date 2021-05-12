@@ -37,41 +37,13 @@
 -->
 <div class="wrapper">
     <!-- end loader -->
-    <div class="sidebar">
-        <!-- Sidebar  -->
-        <nav id="sidebar">
-
-            <div id="dismiss">
-                <i class="fa fa-arrow-left"></i>
-            </div>
-        </nav>
-    </div>
 
     <div id="content">
         <!-- header -->
         <header>
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="full">
-                            <a class="logo" href="index.html"><img src="images/logo.png" alt="#" /></a>
-                        </div>
-                    </div>
-                    <div class="col-md-9">
-                        <div class="full">
-                            <div class="right_header_info">
-                                <ul>
-                                    <!-- TODO -->
-                                    <li class="button_user"><a class="button active" th:href="@{/cuentaAdmin}">Mi cuenta</a><a class="button" th:href="@{/login}">Logout</a></li>
-                                    <li>
-                                        <button type="button" id="sidebarCollapse">
-                                            <img src="images/menu_icon.png" alt="#">
-                                        </button>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+            <div class="container-fluid" >
+                <div style="text-align: center">
+                    <h2 style="color: white;font-size: xx-large">Registra tu restaurante</h2>
                 </div>
             </div>
         </header>
@@ -85,35 +57,23 @@
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-md-12">
-                                <h2>Llena el siguiente formulario</h2>
+                                <h2>Elige tus categorías</h2>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
-                                <form method="post" th:action="@{/categorias}" class="main_form" th:object="${restaurante}" enctype="multipart/form-data">
-                                    <div class="row">
-                                        <input class="form-control" type="hidden" th:field="*{usuario}">
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <input class="form-control" placeholder="Nombre del Restaurante" type="text" th:field="*{nombre}">
-                                        </div>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <input class="form-control" placeholder="RUC" type="text" th:field="*{ruc}">
-                                        </div>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <input class="form-control" placeholder="Direccion" type="text" th:field="*{direccion}">
-                                        </div>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <input class="form-control" placeholder="Distrito" type="text" th:field="*{distrito}">
-                                        </div>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <div style="position: relative"><input class="form-control-file" type="file" id="imagen" name="imagen" style="opacity: 0%;position: absolute">Adjuntar Imagen</div>
-                                        </div>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <button class="send" type="submit" >Registrar</button>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <a class="send" th:href="@{/sinrestaurante}" style="text-align: center">Regresar</a>
-                                                </div>
+                                <form method="post" th:action="@{/llenarcategoria}" th:object="${restaurante}" class="main_form">
+                                    <input type="hidden" id="cantidad" value="4">
+                                    <input type="hidden" th:field="*{idrestaurante}" th:value="${id}">
+                                    <div th:each="lista:${listacategorias}" class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                        <input type="checkbox" th:field="*{categoriasrestList}" th:value="${lista.getIdcategorias()}" th:text="${lista.getNombrecategoria()}">
+                                    </div>
+                                    <div>Seleccionados: <span id="seleccionados">0</span></div>
+                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <button class="send" type="submit" >Registrar</button>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <a class="send" th:href="@{'/borrarRestaurante'+'?id='+${id}}" style="text-align: center">Anular</a>
                                             </div>
                                         </div>
                                     </div>
@@ -121,7 +81,7 @@
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                                 <div class="img-box" align="center">
-                                    <figure><img src="/images/bembos.png" style="width:500px;height:500px"></figure>
+                                    <figure><img th:src="@{/imagen}" style="width:500px;height:500px"></figure>
                                 </div>
                                 <div style="text-align: center;font-size: 30px;color: black">Imagen del restaurante</div>
                             </div>
@@ -200,5 +160,43 @@
     </script>
 </div>
 </body>
+<script>
+    $(document).ready(function(){
 
+        // Evento que se ejecuta al soltar una tecla en el input
+        $("#cantidad").keydown(function(){
+            $("input[type=checkbox]").prop('checked', false);
+            $("#seleccionados").html("0");
+        });
+
+        // Evento que se ejecuta al pulsar en un checkbox
+        $("input[type=checkbox]").change(function(){
+
+            // Cogemos el elemento actual
+            var elemento=this;
+            var contador=0;
+            var lista=[];
+            // Recorremos todos los checkbox para contar los que estan seleccionados
+            $("input[type=checkbox]").each(function(){
+                if($(this).is(":checked"))
+                    contador++;
+            });
+
+            var cantidadMaxima=parseInt($("#cantidad").val()) || 0;
+
+            // Comprovamos si supera la cantidad máxima indicada
+            if(contador>cantidadMaxima)
+            {
+                alert("Has seleccionado mas checkbox que los indicados");
+
+                // Desmarcamos el ultimo elemento
+                $(elemento).prop('checked', false);
+                contador--;
+            }
+
+            $("#seleccionados").html(contador);
+
+        });
+    });
+</script>
 </html>

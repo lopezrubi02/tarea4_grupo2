@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="css/style.css">
     <!-- responsive-->
     <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/styleAdminRest.css">
     <!-- awesome fontfamily -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <!--[if lt IE 9]>
@@ -40,6 +41,13 @@
         <!-- header -->
         <header>
             <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="full">
+                            <a class="logo" href="index.html"><img src="images/logo.png" alt="#" /></a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </header>
 
@@ -53,13 +61,13 @@
                     <div class="container-fluid">
                         <div class="row" style="text-align: center">
                             <div class="col-xl-12" style="align-content: center;padding-top: 150px">
-                                    <div class="row">
-                                        <a style="margin: auto"><div style="color: black;font-size:xx-large"><u>Se ha enviado un mensaje de confirmación a su correo</u></div></a>
-                                    </div>
+                                <div class="row">
+                                    <a style="margin: auto"><div style="color: black;font-size:xx-large"><u>Se ha enviado un mensaje de confirmación a su correo</u></div></a>
+                                </div>
                             </div>
                         </div>
                         <div class="row" style="padding-top: 100px">
-                            <a class="send" type="submit" style="text-align: center" th:href="@{estado2}">Ingresar a mi cuenta</a>
+                            <a class="send2" type="submit" style="text-align: center" th:href="@{/login}">Ingresar a mi cuenta</a>
                         </div>
                     </div>
                     <br>
@@ -84,6 +92,7 @@
 
         </div>
     </div>
+</div>
     <div class="overlay"></div>
     <!-- Javascript files-->
     <script src="js/jquery.min.js"></script>

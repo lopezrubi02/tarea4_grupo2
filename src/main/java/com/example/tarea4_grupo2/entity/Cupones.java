@@ -2,7 +2,7 @@ package com.example.tarea4_grupo2.entity;
 
 
 import javax.persistence.*;
-import java.util.Date;
+import java.sql.Date;
 
 @Entity
 @Table(name="cupones")
@@ -22,14 +22,18 @@ public class Cupones {
     private float valordescuento;
 
     @Column(nullable = false)
-    private Date fechainicio;
+    private java.sql.Date fechainicio;
 
     @Column(nullable = false)
-    private Date fechafin;
+    private java.sql.Date fechafin;
 
     @ManyToOne
     @JoinColumn(name="restaurante_idrestaurante")
     private Restaurante restaurante;
+
+    @ManyToOne
+    @JoinColumn(name="idplato")
+    private Plato plato;
 
     public int getIdcupones() {
         return idcupones;
@@ -63,15 +67,15 @@ public class Cupones {
         this.valordescuento = valordescuento;
     }
 
-    public Date getFechainicio() {
+    public java.sql.Date getFechainicio() {
         return fechainicio;
     }
 
-    public void setFechainicio(Date fechainicio) {
+    public void setFechainicio(java.sql.Date fechainicio) {
         this.fechainicio = fechainicio;
     }
 
-    public Date getFechafin() {
+    public java.sql.Date getFechafin() {
         return fechafin;
     }
 
@@ -85,5 +89,13 @@ public class Cupones {
 
     public void setRestaurante(Restaurante restaurante) {
         this.restaurante = restaurante;
+    }
+
+    public Plato getPlato() {
+        return plato;
+    }
+
+    public void setPlato(Plato plato) {
+        this.plato = plato;
     }
 }

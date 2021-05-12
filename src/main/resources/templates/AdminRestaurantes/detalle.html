@@ -61,40 +61,14 @@
 
 <div class="wrapper">
     <!-- end loader -->
-    <div class="sidebar">
-        <!-- Sidebar  -->
-        <nav id="sidebar">
-
-            <div id="dismiss">
-                <i class="fa fa-arrow-left"></i>
-            </div>
-        </nav>
-    </div>
 
     <div id="content">
         <!-- header -->
         <header>
-            <div class="container-fluid">
+            <div class="container-fluid" >
                 <div class="row">
-                    <div class="col-md-3">
-                        <div class="full">
-                            <a class="logo" href="index.html"><img src="images/logo.png" alt="#" /></a>
-                        </div>
-                    </div>
-                    <div class="col-md-9">
-                        <div class="full">
-                            <div class="right_header_info">
-                                <ul>
-                                    <!-- TODO -->
-                                    <li class="button_user"><a class="button active" th:href="@{/cuentaAdmin}">Mi cuenta</a><a class="button" th:href="@{/login}">Logout</a></li>
-                                    <li>
-                                        <button type="button" id="sidebarCollapse">
-                                            <img src="images/menu_icon.png" alt="#">
-                                        </button>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
+                    <div class="col-md-11" style="text-align: right">
+                        <a style="color: white;font-size: x-large" th:href="@{/login}" ><u style="color: white">Cerrar sesion</u></a></li>
                     </div>
                 </div>
             </div>
@@ -103,7 +77,7 @@
         <!-- blog -->
         <div class="blog">
             <div class="container">
-                <h1>Pedidos</h1>
+                    <h1>Detalle</h1>
                 <div class="row table-users">
                     <!-- table -->
                     <div class="col-md-12">
@@ -112,25 +86,26 @@
                                 <thead >
                                 <tr>
                                     <th scope="col">PEDIDO</th>
-                                    <th scope="col">CLIENTE</th>
+                                    <th scope="col">NOMBRE</th>
+                                    <th scope="col">DESCRIPCION</th>
+                                    <th scope="col">CANTIDAD PLATOS</th>
                                     <th scope="col">DIRECCION</th>
                                     <th scope="col">DISTRITO</th>
                                     <th scope="col">MONTO TOTAL</th>
-                                    <th scope="col">FECHA PEDIDO</th>
-                                    <th></th>
+                                    <th scope="col">CUBIERTOS</th>
                                     <th></th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr th:each="pedidos:${listaPedidos}">
-                                    <td><a th:href="@{'/detallepedidos'+'?id='+${pedidos.getidpedidos()}}" th:text="${pedidos.getidpedidos()}"></a></td>
-                                    <td th:text="${pedidos.getcliente()}"></td>
-                                    <td th:text="${pedidos.getdireccion()}"></td>
-                                    <td th:text="${pedidos.getdistrito()}"></td>
-                                    <td th:text="${pedidos.getmontototal()}"></td>
-                                    <td th:text="${#dates.format(pedidos.getfechahorapedido(), 'dd-MM-yyyy')}"></td>
-                                    <td><a class="send" th:href="@{'/aceptarpedido'+'?id='+${pedidos.getidpedidos()}}" style="text-align: center;background: #d8b00f">Aceptar</a></td>
-                                    <td><a class="send" th:href="@{'/rechazarpedido'+'?id='+${pedidos.getidpedidos()}}" style="text-align: center;background: #d8b00f">Rechazar</a></td>
+                                <tr th:each="pedido:${detalle}">
+                                    <td th:text="${pedido.getidpedidos()}"></td>
+                                    <td th:text="${pedido.getnombre()}"></td>
+                                    <td th:text="${pedido.getdescripcion()}"></td>
+                                    <td th:text="${pedido.getcantidadplatos()}"></td>
+                                    <td th:text="${pedido.getdireccion()}"></td>
+                                    <td th:text="${pedido.getdistrito()}"></td>
+                                    <td th:text="${pedido.getmontototal()}"></td>
+                                    <td th:text="${pedido.getcubiertos()}"></td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -138,15 +113,8 @@
                     </div>
                     <!-- end of table -->
                 </div>
-                <div class="row">
-                    <div class="col-md-4">
-                    <a class="send" th:href="@{/perfil}" style="background: #d8b00f;text-align: center">Regresar</a>
-                    </div>
-                    <div class="col-md-4">
-                        <a class="send" th:href="@{/preparacion}" style="background: #d8b00f;text-align: center">En preparacion</a>
-                    </div>
-                </div>
-                </div>
+                <a class="send" th:href="@{/pedidos}" style="background: #d8b00f;text-align: center">Regresar</a>
+            </div>
         </div>
     </div>
     <!-- end blog -->

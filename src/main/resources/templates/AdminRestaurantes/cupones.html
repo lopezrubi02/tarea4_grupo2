@@ -35,163 +35,158 @@
 </div>
 -->
 <div class="wrapper">
-    <!-- end loader -->
+    <div class="sidebar">
+        <!-- Sidebar  -->
+        <nav id="sidebar">
+
+            <div id="dismiss">
+                <i class="fa fa-arrow-left"></i>
+            </div>
+        </nav>
+    </div>
 
     <div id="content">
         <!-- header -->
         <header>
-            <div class="container-fluid" >
-                <div style="text-align: center">
-                    <h2 style="color: white;font-size: xx-large">Crea tu cupon</h2>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="full">
+                            <a class="logo" href="index.html"><img src="images/logo.png" alt="#" /></a>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="full">
+                            <div class="right_header_info">
+                                <ul>
+                                    <!-- TODO -->
+                                    <li class="button_user"><a class="button active" th:href="@{/cuentaAdmin}">Mi cuenta</a><a class="button" th:href="@{/login}">Logout</a></li>
+                                    <li>
+                                        <button type="button" id="sidebarCollapse">
+                                            <img src="images/menu_icon.png" alt="#">
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </header>
-
-        <div class="bg_bg">
-
-            <!-- end about -->
-            <!-- footer -->
-            <footer>
-                <div class="footer">
-                    <div class="container-fluid">
-                        <div class="col-md-12">
-                            <h2>Llena el siguiente formulario</h2>
-                        </div>
-
-                        <div class="container-fluid">
-                            <table class="table-bordered" style="margin-bottom: 10px; margin-top: 10px">
-                                <thead>
-                                <tr>
-                                    <th>Nombre del cupon</th>
-                                    <th>Descripcion</th>
-                                    <th>Fecha de inicio</th>
-                                    <th>Fecha de fin</th>
-                                    <th>Plato asociado</th>
-                                    <th>Descuento (S/.)</th>
-                                    <th>¿Activo?</th>
-                                    <th></th>
-                                    <th></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>Martes de 2x1</td>
-                                    <td>Llevate dos hamburguesas al precio de una</td>
-                                    <td>25-04-2021</td>
-                                    <td>05-05-2021</td>
-                                    <td>Hamburguesa carretillera</td>
-                                    <td>13.9</td>
-                                    <td>Si</td>
-                                    <td><a class="btn btn-info" th:href="@{/crearCupon}">Editar cupon</a></td>
-                                    <td><a class="btn btn-danger" th:href="@{/perfil}">Borrar cupon</a></td>
-                                </tr>
-                                <tr>
-                                    <td>5x1 Helados</td>
-                                    <td>Paga 5 helados al precio de uno</td>
-                                    <td>25-04-2021</td>
-                                    <td>05-05-2021</td>
-                                    <td>Helado</td>
-                                    <td>13.9</td>
-                                    <td>Si</td>
-                                    <td><a class="btn btn-info" th:href="@{/crearCupon}">Editar cupon</a></td>
-                                    <td><a class="btn btn-danger" th:href="@{/perfil}">Borrar cupon</a></td>
-                                </tr>
-                                <tr>
-                                    <td>Trio Hamburguesas</td>
-                                    <td>Llevate 3 hamburguesas en el estilo que quieras al mismo precio de la clasica!</td>
-                                    <td>25-04-2021</td>
-                                    <td>05-05-2021</td>
-                                    <td>Hamburguesa clasica</td>
-                                    <td>13.9</td>
-                                    <td>Si</td>
-                                    <td><a class="btn btn-info" th:href="@{/crearCupon}">Editar cupon</a></td>
-                                    <td><a class="btn btn-danger" th:href="@{/perfil}">Borrar cupon</a></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <a class="send" th:href="@{/crearCupon}" style="text-align: center">Crear Cupon</a>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <a class="send" th:href="@{/perfil}" style="text-align: center">Regresar</a>
-                                    </div>
+    <footer>
+        <div class="blog">
+            <div class="row table-users">
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th scope="col">Nombre del cupon</th>
+                                <th scope="col">Descripcion</th>
+                                <th scope="col">Descuento (S/.)</th>
+                                <th scope="col">Fecha de inicio</th>
+                                <th scope="col">Fecha de fin</th>
+                                <th scope="col">Plato asociado</th>
+                                <th scope="col">¿Activo?</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="cupon,iterStat: ${listaCupones}">
+                                <td th:text="${cupon.nombre}"></td>
+                                <td th:text="${cupon.descripcion}"></td>
+                                <td th:text="${cupon.valordescuento}"></td>
+                                <td th:text="${#dates.format(cupon.fechainicio,'dd-MM-yyyy')}"></td>
+                                <td th:text="${cupon.fechafin}"></td>
+                                <td th:text="${cupon.plato.nombre}"></td>
+                                <td th:text="${listaDisponibilidad[__${iterStat.index}__]}">nada</td>
+                                <td><a class="btn btn-primary" th:href="@{'/editarCupon' + '?idcupon=' + ${cupon.idcupones}}">Editar cupon</a></td>
+                                <td><a class="btn btn-danger"  th:href="@{'/borrarCupon' + '?idcupon=' + ${cupon.idcupones}}">Borrar cupon</a></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <a class="send" th:href="@{/crearCupon}" style="text-align: center">Crear Cupon</a>
+                                </div>
+                                <div class="col-md-3">
+                                    <a class="send" th:href="@{/perfil}" style="text-align: center">Regresar</a>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="copyright">
-                        <div class="container">
-                            <p>© 2021 Todos los derechos reservados.</p>
-                        </div>
-                    </div>
                 </div>
-            </footer>
-            <!-- end footer -->
-
+            </div>
         </div>
-    </div>
+        <div class="copyright">
+            <div class="container">
+                <p>© 2021 Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+</div>
 
-    <div class="overlay"></div>
-    <!-- Javascript files-->
-    <script src="js/jquery.min.js"></script>
-    <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap.bundle.min.js"></script>
-    <script src="js/owl.carousel.min.js"></script>
-    <script src="js/custom.js"></script>
-    <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
-    <script src="js/jquery-3.0.0.min.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $("#sidebar").mCustomScrollbar({
-                theme: "minimal"
-            });
-
-            $('#dismiss, .overlay').on('click', function() {
-                $('#sidebar').removeClass('active');
-                $('.overlay').removeClass('active');
-            });
-
-            $('#sidebarCollapse').on('click', function() {
-                $('#sidebar').addClass('active');
-                $('.overlay').addClass('active');
-                $('.collapse.in').toggleClass('in');
-                $('a[aria-expanded=true]').attr('aria-expanded', 'false');
-            });
+<div class="overlay"></div>
+<!-- Javascript files-->
+<script src="js/jquery.min.js"></script>
+<script src="js/popper.min.js"></script>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script src="js/owl.carousel.min.js"></script>
+<script src="js/custom.js"></script>
+<script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+<script src="js/jquery-3.0.0.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#sidebar").mCustomScrollbar({
+            theme: "minimal"
         });
-    </script>
-    <style>
-        #owl-demo .item{
-            margin: 3px;
-        }
-        #owl-demo .item img{
-            display: block;
-            width: 100%;
-            height: auto;
-        }
-    </style>
-    <script>
-        $(document).ready(function() {
-            var owl = $('.owl-carousel');
-            owl.owlCarousel({
-                margin: 10,
-                nav: true,
-                loop: true,
-                responsive: {
-                    0: {
-                        items: 1
-                    },
-                    600: {
-                        items: 2
-                    },
-                    1000: {
-                        items: 5
-                    }
+
+        $('#dismiss, .overlay').on('click', function() {
+            $('#sidebar').removeClass('active');
+            $('.overlay').removeClass('active');
+        });
+
+        $('#sidebarCollapse').on('click', function() {
+            $('#sidebar').addClass('active');
+            $('.overlay').addClass('active');
+            $('.collapse.in').toggleClass('in');
+            $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+        });
+    });
+</script>
+<style>
+    #owl-demo .item{
+        margin: 3px;
+    }
+    #owl-demo .item img{
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+</style>
+<script>
+    $(document).ready(function() {
+        var owl = $('.owl-carousel');
+        owl.owlCarousel({
+            margin: 10,
+            nav: true,
+            loop: true,
+            responsive: {
+                0: {
+                    items: 1
+                },
+                600: {
+                    items: 2
+                },
+                1000: {
+                    items: 5
                 }
-            })
+            }
         })
-    </script>
+    })
+</script>
 </div>
 </body>
 
