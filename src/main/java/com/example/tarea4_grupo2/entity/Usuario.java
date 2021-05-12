@@ -30,10 +30,12 @@ public class Usuario {
     private String email;
     @Column(name = "contraseniahash",nullable = false)
     private String contraseniaHash;
+
     @Column(nullable = false)
     @NotBlank(message = "No puede estar vacío")
     @Size(max=9,message = "No puede tener más de 9 dígitos")
-    private String telefono;
+    private Integer telefono;
+
     @Column(name = "fechanacimiento",nullable = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date fechaNacimiento;
@@ -91,11 +93,11 @@ public class Usuario {
         this.contraseniaHash = contraseniaHash;
     }
 
-    public String getTelefono() {
+    public Integer getTelefono() {
         return telefono;
     }
 
-    public void setTelefono(String telefono) {
+    public void setTelefono(Integer telefono) {
         this.telefono = telefono;
     }
 

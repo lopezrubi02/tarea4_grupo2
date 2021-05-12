@@ -303,7 +303,7 @@ public class AdminController {
                                @RequestParam("apellidos") String apellidos,
                                @RequestParam("email" ) String email,
                                @RequestParam("dni") String dni,
-                               @RequestParam("telefono") String telefono,
+                               @RequestParam("telefono") Integer telefono,
                                @RequestParam("fechaNacimiento") String fechaNacimiento,
                                @RequestParam("sexo") String sexo,
                                @RequestParam("contraseniaHash") String contraseniaHash,
@@ -436,8 +436,8 @@ public class AdminController {
 
     @GetMapping("/DeliveryReportes")
     public String deliveryReportes(Model model){
-        List<DeliveryReportes_DTO> listaDeli = pedidosRepository.reportesDelivery();
-        model.addAttribute("listadeli",listaDeli);
+     //   List<DeliveryReportes_DTO> listaDeli = pedidosRepository.reportesDelivery();
+       // model.addAttribute("listadeli",listaDeli);
         return "adminsistema/ADMIN_ReportesVistaDelivery";
     }
 
