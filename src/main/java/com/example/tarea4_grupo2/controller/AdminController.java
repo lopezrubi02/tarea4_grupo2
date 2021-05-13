@@ -9,6 +9,7 @@ import com.example.tarea4_grupo2.entity.Restaurante;
 import com.example.tarea4_grupo2.entity.Usuario;
 import com.example.tarea4_grupo2.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -290,6 +291,27 @@ public class AdminController {
         return "redirect:/admin/nuevosUsuarios";
     }
 
+    @GetMapping("/correo")
+    public String envioCorreo(@RequestParam(value="id") int id,
+                              Model model){
+        model.addAttribute("id",id);
+        return "adminsistema/ADMIN_RazonDenegacionCuenta";
+    }
+
+    @GetMapping("/denegar")
+    public String denegarCuenta(@RequestParam(value="id") int id,RedirectAttributes attr){
+        Optional<Usuario> optional = usuarioRepository.findById(id);
+        if(optional.isPresent()){
+            Usuario usuario = optional.get();
+            usuario.setCuentaActiva(-1);
+            usuarioRepository.save(usuario);
+            attr.addFlashAttribute("msg","Cuenta denegada exitosamente");
+            return "redirect:/admin/nuevosUsuarios";
+        }
+        attr.addFlashAttribute("msg","Ocurrio un error al denegar la cuenta");
+        return "redirect:/admin/nuevosUsuarios";
+    }
+
 
 
 
@@ -318,7 +340,9 @@ public class AdminController {
             usuario.setEmail(email);
             usuario.setTelefono(telefono);
             usuario.setSexo(sexo);
-            usuario.setContraseniaHash(contraseniaHash);
+
+            String contraseniahashbcrypt = BCrypt.hashpw(contraseniaHash, BCrypt.gensalt());
+            usuario.setContraseniaHash(contraseniahashbcrypt);
             usuario.setRol("AdminSistema");
             usuario.setCuentaActiva(1);
             usuario.setDni(dni);
@@ -377,7 +401,7 @@ public class AdminController {
     @GetMapping("/RestaurantesReportes")
     public String restaurantesReportes(Model model){
         List<RestauranteReportes_DTO> reporteLista = restauranteRepository.reportesRestaurantes();
-        model.addAttribute("reporteLista",reporteLista);
+        model.addAttribute("reporteLista1",reporteLista);
 
         double max = 0;
         int indicemayor = 0;
@@ -407,7 +431,7 @@ public class AdminController {
     @GetMapping("/RepartidorReportes")
     public String repartidorReportes(Model model){
         List<RepartidoresReportes_DTO>  reporteLista = repartidorRepository.reporteRepartidores();
-        model.addAttribute("reporteLista",reporteLista);
+        model.addAttribute("reporteLista2",reporteLista);
 
         int max = 0;
         int indicemayor = 0;

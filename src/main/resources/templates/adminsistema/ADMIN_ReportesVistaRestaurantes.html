@@ -112,7 +112,7 @@
                 </div>
 				
             </div>
-			<br></br>
+			<br>
             <div class="row">
                 <div class="col-2">
                     <!-- search bar 
@@ -150,7 +150,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr th:each="restaurante,info : ${reporteLista}">
+                                <tr th:each="restaurante,info : ${reporteLista1}">
                                     <td scope="row" th:text="${info.index + 1}"></td>
                                     <td th:text="${restaurante.restnombre}"></td>
                                     <td th:text="${restaurante.nombre + ' ' + restaurante.apellidos}"></td>
@@ -169,8 +169,8 @@
                 </div>
 
             </div>
-			<br></br>
-			<br></br>
+			<br>
+			<br>
 			<div class="col-8">
                     <h3>Estadisticas</h3>
                 </div>
