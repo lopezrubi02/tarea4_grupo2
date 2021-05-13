@@ -185,7 +185,7 @@
                         <tbody>
                             <tr th:each="direccion, vEst : ${direccionesList}">
                                 <th scope="row" th:text="${vEst.index + 1}"></th>
-                                <td th:text="${direccion.getDistrito()}"></td>
+                                <td th:text="${direccion.distrito.nombredistrito}"></td>
                                 <td th:text="${direccion.getDireccion()}"></td>
 
                             </tr>
