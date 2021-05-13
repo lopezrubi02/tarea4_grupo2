@@ -180,7 +180,8 @@
 			</div>
 			<br></br> 
 		<div class="d-flex justify-content-end">
-						<button class="btn btn-dark" style="margin-left: 10px"href="#">Denegar Cuenta</button>
+						<!--utton class="btn btn-dark" style="margin-left: 10px"href="#">Denegar Cuenta</button-->
+            <li class="button_user"><a class="button active" th:href="@{'/admin/correo'+'?id='+${usuario.idusuarios}}" >Denegar Cuenta</a></li>
 						<!--button class="btn btn-warning" style="margin-left: 10px" th:href="@{'/admin/aceptar'+'?id='+${usuario.idusuarios}}">Aceptar Cuenta</button-->
             <li class="button_user"><a class="button active" th:href="@{'/admin/aceptar'+'?id='+${usuario.idusuarios}}" >Aceptar Cuenta</a></li>
 

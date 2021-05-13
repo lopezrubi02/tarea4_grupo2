@@ -11,11 +11,12 @@ public interface RestauranteRepository extends JpaRepository<Restaurante, Intege
     Restaurante findRestauranteByIdadminrestEquals(int idAdmin);
 
 
-    //Usado por adminsistema en reportes restaurante
+    //Usado por adminsistema en reportes restaurante ,cambiar por group by por id(pendiente)
     @Query(value = "select r.nombre as 'restnombre', u.nombre, u.apellidos, count(p.idpedidos) as 'pedidos', (sum(p.montototal) - sum(p.comisionrepartidor) - sum(p.comisionsistema)) as 'ventastotales' from restaurante r\n" +
             "inner join usuarios u on (r.idadminrest=u.idusuarios)\n" +
             "inner join pedidos p on (r.idrestaurante=p.restaurante_idrestaurante)\n" +
-            "order by 'restnombre';",nativeQuery = true)
+            "group by r.nombre " +
+            "order by r.nombre;",nativeQuery = true)
     List<RestauranteReportes_DTO> reportesRestaurantes();
 
 
