@@ -11,4 +11,6 @@ public interface DireccionesRepository extends JpaRepository<Direcciones, Intege
     List<Direcciones> findAllByUsuariosIdusuariosEquals(int idusuario);
 
     Direcciones findByUsuariosIdusuarios(int usuarios_idusuarios);
+
+    List<Direcciones> findAllByUsuariosIdusuariosAndActivoEquals(int idusuario,int activo);
 }

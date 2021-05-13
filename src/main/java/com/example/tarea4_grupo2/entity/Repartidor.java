@@ -18,6 +18,10 @@ public class Repartidor {
     @Column(name ="usuarios_idusuarios")
     private int idusuarios;
 
+    @ManyToOne
+    @JoinColumn(name = "iddistritoactual")
+    private Distritos distrito;
+
     /*@OneToOne
     @PrimaryKeyJoinColumn(name = "usuarios_idusuarios")
     Usuario usuarios;
@@ -50,7 +54,7 @@ public class Repartidor {
     private Float calificacionpromedio;
 
 
-    private String distritoactual;
+    //private String distritoactual;
 
 
 /*    public Usuario getUsuarios() {
@@ -102,11 +106,12 @@ public class Repartidor {
         this.licencia = licencia;
     }
 
-    public String getDistritoactual() {
-        return distritoactual;
+
+    public Distritos getDistrito() {
+        return distrito;
     }
 
-    public void setDistritoactual(String distritoActual) {
-        this.distritoactual = distritoActual;
+    public void setDistrito(Distritos distrito) {
+        this.distrito = distrito;
     }
 }

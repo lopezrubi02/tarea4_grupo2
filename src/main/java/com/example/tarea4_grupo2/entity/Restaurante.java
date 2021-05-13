@@ -1,29 +1,38 @@
 package com.example.tarea4_grupo2.entity;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "restaurante")
 public class Restaurante {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int idrestaurante;
+    private Integer idrestaurante;
+    @Column(nullable = false)
     private String direccion;
+    @Column(nullable = false)
     private String distrito;
+    @Column(nullable = false)
     private String ruc;
+    @Column(nullable = false)
     private String nombre;
-
     private Float calificacionpromedio;
+    @ManyToOne
+    @JoinColumn(name="idadminrest")
+    private Usuario usuario;
+    private byte[] foto;
+    @ManyToMany
+    @JoinTable(name="restaurante_has_categorias",
+            joinColumns = @JoinColumn(name="restaurante_idrestaurante"),
+            inverseJoinColumns = @JoinColumn(name="categorias_idcategorias"))
+    private List<Categorias> categoriasrestList;
 
-    private int idadminrest;
-    private Byte foto;
-
-    public int getIdrestaurante() {
+    public Integer getIdrestaurante() {
         return idrestaurante;
     }
 
-    public void setIdrestaurante(int idrestaurante) {
+    public void setIdrestaurante(Integer idrestaurante) {
         this.idrestaurante = idrestaurante;
     }
 
@@ -59,16 +68,6 @@ public class Restaurante {
         this.nombre = nombre;
     }
 
-
-    public int getIdadminrest() {
-        return idadminrest;
-    }
-
-    public void setIdadminrest(int idadminrest) {
-        this.idadminrest = idadminrest;
-    }
-
-
     public Float getCalificacionpromedio() {
         return calificacionpromedio;
     }
@@ -77,11 +76,27 @@ public class Restaurante {
         this.calificacionpromedio = calificacionpromedio;
     }
 
-    public Byte getFoto() {
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public byte[] getFoto() {
         return foto;
     }
 
-    public void setFoto(Byte foto) {
+    public void setFoto(byte[] foto) {
         this.foto = foto;
+    }
+
+    public List<Categorias> getCategoriasrestList() {
+        return categoriasrestList;
+    }
+
+    public void setCategoriasrestList(List<Categorias> categoriasrestList) {
+        this.categoriasrestList = categoriasrestList;
     }
 }

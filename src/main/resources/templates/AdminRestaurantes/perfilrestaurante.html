@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/owl.carousel.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/styleAdminRest">
     <!-- responsive-->
     <link rel="stylesheet" href="css/responsive.css">
     <!-- awesome fontfamily -->
@@ -29,14 +30,40 @@
 
 <div class="wrapper">
     <!-- end loader -->
+    <div class="sidebar">
+        <!-- Sidebar  -->
+        <nav id="sidebar">
+
+            <div id="dismiss">
+                <i class="fa fa-arrow-left"></i>
+            </div>
+        </nav>
+    </div>
 
     <div id="content">
         <!-- header -->
         <header>
-            <div class="container-fluid" >
+            <div class="container-fluid">
                 <div class="row">
-                    <div class="col-md-11" style="text-align: right">
-                        <a style="color: white;font-size: x-large" th:href="@{/login}" ><u style="color: white">Cerrar sesion</u></a></li>
+                    <div class="col-md-3">
+                        <div class="full">
+                            <a class="logo" href="index.html"><img src="images/logo.png" alt="#" /></a>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="full">
+                            <div class="right_header_info">
+                                <ul>
+                                    <!-- TODO -->
+                                    <li class="button_user"><a class="button active" th:href="@{/cuentaAdmin}">Mi cuenta</a><a class="button" th:href="@{/login}">Logout</a></li>
+                                    <li>
+                                        <button type="button" id="sidebarCollapse">
+                                            <img src="images/menu_icon.png" alt="#">
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -44,14 +71,13 @@
 
         <div class="bg_bg">
             <fooetr>
-                <div class="footer">
+                <div class="footer" style="background: white">
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                                 <div class="img-box" align="center">
-                                    <figure><img src="/images/bembos.png" style="width:500px;height:500px"></figure>
+                                    <figure><img th:src="@{/imagen}" style="width:500px;height:500px"></figure>
                                 </div>
-                                <div style="text-align: center;font-size: 30px;color: black">Imagen del restaurante</div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                                 <div class="container">
@@ -62,33 +88,33 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-xl-12">
-                                            <div style="font-size: large;color: black">Calificación general: 4.5 <img src="/images/estrella.png" style="width: 20px;height: 20px"></div>
+                                            <div th:each="c: ${calificacion}" style="font-size: large;color: black">Calificación general: <span th:text="${c.getcalificacionpromedio()}"></span> <img src="/images/pixlr-bg-result.png" style="width: 20px;height: 20px"></div>
                                         </div>
                                     </div>
                                     <div class="row" style="padding-top: 50px">
                                         <div class="col-md-6">
-                                            <a class="send" th:href="@{/calificaciones}" style="text-align: center">Ver calificaciones de usuarios</a>
+                                            <a class="send" th:href="@{/calificaciones}" style="text-align: center;max-width: 400px;background: #d8b00f">Ver calificaciones de usuarios</a>
                                         </div>
                                         <div class="col-md-3">
-                                            <a class="send" th:href="@{/reporte}" style="text-align: center">Ver reporte</a>
+                                            <a class="send" th:href="@{/reporte}" style="text-align: center;background: #d8b00f">Ver reporte</a>
                                         </div>
                                     </div>
                                     <div class="row" style="padding-top: 50px">
                                         <div class="col-md-3">
-                                            <a class="send" th:href="@{/pedidos}" style="text-align: center" >Ver pedidos</a>
+                                            <a class="send" th:href="@{/pedidos}" style="text-align: center;background: #d8b00f" >Ver pedidos</a>
                                         </div>
                                         <div class="col-md-3">
-                                            <a class="send" th:href="@{/menu}" style="text-align: center">Ver menu</a>
+                                            <a class="send" th:href="@{/menu}" style="text-align: center;background: #d8b00f">Ver menu</a>
                                         </div>
                                         <div class="col-md-3">
-                                            <a class="send" th:href="@{/cupones}" style="text-align: center">Mis cupones</a>
+                                            <a class="send" th:href="@{'/cupones' + '?idrestaurante=1'}" style="text-align: center;background: #d8b00f">Mis cupones</a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="copyright" style="padding-top: 50px">
+                    <div class="copyright" style="padding-top: 50px;background:#d8b00f">
                         <div class="container">
                             <p>© 2021 Todos los derechos reservados.</p>
                         </div>

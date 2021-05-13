@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <!-- basic -->
     <meta charset="utf-8">
@@ -9,16 +8,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
     <!-- site metas -->
-    <title>Register</title>
-
+    <title>Spicyo   </title>
     <!-- bootstrap css -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <!-- owl css -->
     <link rel="stylesheet" href="css/owl.carousel.min.css">
     <!-- style css -->
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" th:href="@{css/style.css}">
     <!-- responsive-->
     <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/styleAdminRest.css">
     <!-- awesome fontfamily -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <!--[if lt IE 9]>
@@ -26,75 +25,84 @@
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
 </head>
 <!-- body -->
-
 <body class="main-layout">
-
 <!-- loader  -->
-<!--<div class="loader_bg">
+<div class="loader_bg">
     <div class="loader"><img src="images/loading.gif" alt="" /></div>
 </div>
--->
 <div class="wrapper">
     <!-- end loader -->
-
     <div id="content">
         <!-- header -->
         <header>
-            <div class="container-fluid" >
-                <div style="text-align: center">
-                    <h2 style="color: black;font-size: xx-large">Regístrate como administrador de restaurante</h2>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="full">
+                            <a class="logo" href="index.html"><img src="images/logo.png" alt="#" /></a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </header>
-
         <div class="bg_bg">
-
             <!-- end about -->
+
             <!-- footer -->
             <fooetr>
                 <div class="footer">
                     <div class="container-fluid">
                         <div class="row">
-                            <div class="col-md-12">
-                                <h2>Llena el siguiente formulario</h2>
-                            </div>
-
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
-
-                                <form method="post" th:action="@{/validarpersona}" class="main_form">
+                                <form class="main_form" style="align-self: center" method="post" th:action="@{/guardaradmin}" th:object="${usuario}">
+                                    <div style="font-size: 40px;color: black;text-align: center">Llena el siguiente formulario</div>
+                                    <br>
                                     <div class="row">
+                                        <input class="form-control" type="hidden" id="rol" name="rol" value="AdministradorRestaurante">
+                                        <input class="form-control" type="hidden" id="cuentaactiva" name="cuentaactiva" value="0">
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <input class="form-control" placeholder="Nombre" type="text" name="nombre" id="nombre">
+                                            <div class="text-dark" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
+                                            <input class="form-control" placeholder="Nombre" type="text" th:field="*{nombre}">
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <input class="form-control" placeholder="Apellidos" type="text" name="apellidos" id="apellidos">
+                                            <div class="text-dark" th:if="${#fields.hasErrors('apellidos')}" th:errors="*{apellidos}"></div>
+                                            <input class="form-control" placeholder="Apellidos" type="text" th:field="*{apellidos}">
+
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <input class="form-control" placeholder="DNI" type="text" name="dni" id="dni">
+                                            <div class="text-dark" th:if="${#fields.hasErrors('dni')}" th:errors="*{dni}"></div>
+                                            <input class="form-control" placeholder="DNI" type="text" th:field="*{dni}">
+
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <input class="form-control" placeholder="Teléfono o Celular" type="text" name="telefono" id="telefono">
+                                            <div class="text-dark" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}"></div>
+                                            <input class="form-control" placeholder="Telefono" type="text" th:field="*{telefono}">
+
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <input class="form-control" placeholder="Fecha de Nacimiento" type="text" name="fechanac" id="fechanac">
+                                            <input class="form-control"  type="date" th:field="*{fechaNacimiento}">
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <input class="form-control" placeholder="Sexo" type="text" name="sexo" id="sexo">
+                                            <div class="text-dark" th:if="${#fields.hasErrors('sexo')}" th:errors="*{sexo}"></div>
+                                            <input class="form-control" placeholder="Sexo" type="text" th:field="*{sexo}">
+
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <input class="form-control" placeholder="Correo" type="text" name="correo" id="correo">
+                                            <div class="text-dark" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                                            <input class="form-control" placeholder="Correo" type="text" th:field="*{email}">
+
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <input class="form-control" placeholder="Contraseña" type="password" name="password" id="password">
+                                            <div class="text-dark" th:if="${#fields.hasErrors('contraseniahash')}" th:errors="*{contraseniaHash}"></div>
+                                            <input class="form-control" placeholder="Contraseña" type="password" th:field="*{contraseniaHash}">
+
                                         </div>
-                                        </br>
-                                        </br>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <div class="row">
-                                                <div class="col-md-3">
-                                                    <a class="send" th:href="@{/correoconfirmar}" style="text-align: center" >Registrarse</a>
+                                                <div class="col-md-4">
+                                                    <button class="send" type="submit" style="text-align: center" >Registrarse</button>
                                                 </div>
-                                                <div class="col-md-3">
+                                                <div class="col-md-4">
                                                     <a class="send" th:href="@{/login}" style="text-align: center">Regresar</a>
                                                 </div>
                                             </div>
@@ -102,18 +110,18 @@
                                     </div>
                                 </form>
                             </div>
-                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12" style="align-content: center">
                                 <br>
                                 <br>
                                 <br>
-                                <div class="img-box" align="center" style="padding-bottom: 20px">
-                                    <figure><img src="/images/persona.png" style="height: 500px;width: 500px"></figure>
+                                <br>
+                                <div class="img-box" align="left" style="padding-bottom: 20px;padding-top: 90px">
+                                    <figure style="align-content: center"><img th:src="@{/images/persona.png}" style="height: 700px;width: 500px;padding-top: 80px"></figure>
                                 </div>
-                                <div style="text-align: center;font-size: 30px;color: black">Imagen del administrador</div>
                             </div>
                         </div>
-
                     </div>
+                    <br>
                     <div class="copyright">
                         <div class="container">
                             <p>© 2021 Todos los derechos reservados.</p>
@@ -122,10 +130,8 @@
                 </div>
             </fooetr>
             <!-- end footer -->
-
         </div>
     </div>
-
     <div class="overlay"></div>
     <!-- Javascript files-->
     <script src="js/jquery.min.js"></script>
@@ -134,6 +140,7 @@
     <script src="js/owl.carousel.min.js"></script>
     <script src="js/custom.js"></script>
     <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+
     <script src="js/jquery-3.0.0.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
@@ -154,6 +161,7 @@
             });
         });
     </script>
+
     <style>
         #owl-demo .item{
             margin: 3px;
@@ -164,6 +172,8 @@
             height: auto;
         }
     </style>
+
+
     <script>
         $(document).ready(function() {
             var owl = $('.owl-carousel');

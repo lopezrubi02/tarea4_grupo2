@@ -153,8 +153,8 @@ public class AdminController {
                 case "AdminRestaurante":
                     model.addAttribute("usuario", usuario);
 
-                    Restaurante restaurante = restauranteRepository.findRestauranteByIdadminrestEquals(id);
-                    model.addAttribute("restaurante", restaurante);
+                    //Restaurante restaurante = restauranteRepository.findRestauranteByIdadminrestEquals(id);
+                    //model.addAttribute("restaurante", restaurante);
 
                     return "adminsistema/datosRestaurante";
 
@@ -294,8 +294,8 @@ public class AdminController {
                 switch (usuario.getRol()){
                     case "AdminRestaurante":
                         model.addAttribute("usuario",usuario);
-                        Restaurante restaurante = restauranteRepository.findRestauranteByIdadminrestEquals(id);
-                        model.addAttribute("restaurante",restaurante);
+                        //Restaurante restaurante = restauranteRepository.findRestauranteByIdadminrestEquals(id);
+                        //model.addAttribute("restaurante",restaurante);
                         return "adminsistema/AceptarCuentaRestaurante";
                     case "Repartidor":
                         model.addAttribute("usuario",usuario);
@@ -498,8 +498,8 @@ public class AdminController {
 
     @GetMapping("/DeliveryReportes")
     public String deliveryReportes(Model model){
-        List<DeliveryReportes_DTO> listaDeli = pedidosRepository.reportesDelivery();
-        model.addAttribute("listadeli",listaDeli);
+     //   List<DeliveryReportes_DTO> listaDeli = pedidosRepository.reportesDelivery();
+       // model.addAttribute("listadeli",listaDeli);
         return "adminsistema/ADMIN_ReportesVistaDelivery";
     }
 

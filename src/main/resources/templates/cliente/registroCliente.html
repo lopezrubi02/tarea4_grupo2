@@ -57,36 +57,6 @@
     <div class="wrapper">
     <!-- end loader -->
 
-     <div class="sidebar">
-            <!-- Sidebar  -->
-            <nav id="sidebar">
-
-                <div id="dismiss">
-                    <i class="fa fa-arrow-left"></i>
-                </div>
-
-                <ul class="list-unstyled components">
-
-                    <li >
-                        <a href="index.html">Home</a>
-                    </li>
-                    <li>
-                        <a href="about.html">About</a>
-                    </li>
-                    <li>
-                        <a href="recipe.html">Recipe</a>
-                    </li>
-                    <li>
-                        <a href="blog.html">Blog</a>
-                    </li>
-                    <li class="active">
-                        <a href="contact.html">Contact Us</a>
-                    </li>
-                </ul>
-
-            </nav>
-        </div>
-
     <div id="content">
     <!-- header -->
     <header>
@@ -101,12 +71,7 @@
                     <div class="full">
                         <div class="right_header_info">
                             <ul>
-                                <li><img style="margin-right: 15px;" th:src="@{/images/search_icon.png}" alt="#"></li>
-                                <li>
-                                    <button type="button" id="sidebarCollapse">
-                                        <img th:src="@{/images/menu_icon.png}" alt="#">
-                                    </button>
-                                </li>
+                                <li class="button_user"><a class="button active" href="">Iniciar sesión</a><a class="button" href="#">Soy parte de la empresa</a></li>
                             </ul>
                         </div>
                     </div>
@@ -124,43 +89,64 @@
                 <div class="row">
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                       
-                        <form class="main_form" method="post" th:action="@{/cliente/guardarNuevo}">
+                        <form class="main_form" method="post" action="#" th:action="@{/guardarNuevo}" th:object="${usuario}" style="padding-bottom: 30px;">
                             <div class="row">
+                                <div class="text-dark" th:if="${#fields.globalErrors()}" ></div>
+
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input class="form-control" placeholder="Correo" type="text" name="email" id="email">
+                                    <label>Correo</label>
+                                    <input class="form-control" placeholder="Correo" type="text" th:field="*{email}">
+                                    <div class="text-dark" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input class="form-control" placeholder="Nombres" type="text" name="nombres" id="nombres">
+                                    <label>Nombres</label>
+                                    <input class="form-control" placeholder="Nombres" type="text" th:field="*{nombre}">
+                                    <div class="text-dark" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input class="form-control" placeholder="Apellidos" type="text" name="apellidos" id="apellidos">
+                                    <label>Apellidos</label>
+                                    <input class="form-control" placeholder="Apellidos" type="text" th:field="*{apellidos}">
+                                    <div class="text-dark" th:if="${#fields.hasErrors('apellidos')}" th:errors="*{apellidos}"></div>
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input class="form-control" placeholder="DNI" type="text" name="dni" id="dni">
+                                    <label>DNI</label>
+                                    <input class="form-control" placeholder="DNI" type="text" th:field="*{dni}">
+                                    <div class="text-dark" th:if="${#fields.hasErrors('dni')}" th:errors="*{dni}"></div>
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input class="form-control" placeholder="Celular" type="text" name="telefono" id="telefono">
+                                    <label>Teléfono</label>
+                                    <input class="form-control" placeholder="Celular" type="number" th:field="*{telefono}">
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input placeholder="Fecha de nacimiento"  type="date" class="form-control" name="fechaNacimiento">
+                                    <label>Fecha de Nacimiento</label>
+                                    <input placeholder="Fecha de nacimiento"  type="date" class="form-control" th:field="*{fechaNacimiento}">
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                        <select type="text" class="form-select" name="sexo" style="width: 100%;">
-                                            <option selected>Seleccione su sexo</option>
-                                            <option value="Masculino" text="Masculino">Masculino</option>
-                                            <option value="Femenino" text="Femenino">Femenino</option>
+                                    <label>Sexo</label>
+                                        <select type="text" class="form-select" th:field="*{sexo}" style="width: 100%;">
+                                            <option th:value="Masculino" text="Masculino">Masculino</option>
+                                            <option th:value="Femenino" text="Femenino">Femenino</option>
                                         </select>
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                    <label>Dirección</label>
                                     <input class="form-control" placeholder="Dirección" type="text" name="direccion" id="direccion">
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input class="form-control" placeholder="Distrito" type="text" name="distrito" id="distrito">
+                                    <label>Distrito</label>
+                                    <select type="text" class="form-select" name="iddistrito" style="width: 100%;">
+                                        <option th:each="distrito : ${listadistritos}"
+                                        th:text="${distrito.nombredistrito}"
+                                        th:value="${distrito.iddistritos}">Masculino</option>
+                                    </select>
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input class="form-control" placeholder="Contraseña" type="password" name="contraseniaHash" id="contraseniaHash">
+                                    <label>Contraseña</label>
+                                    <input class="form-control" placeholder="Contraseña" type="password" th:field="*{contraseniaHash}">
+                                    <!--div class="text-dark" th:if="${#fields.hasErrors('contraseniaHash')}" th:errors="*{contraseniaHash}"></div-->
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                    <label>Confirmar contraseña</label>
                                     <input class="form-control" placeholder="Confirmar Contraseña" type="password" name="password2" id="password2">
                                 </div>						
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
@@ -175,15 +161,15 @@
                         </div>
                     </div>
                 </div>
-            <div class="copyright">
-                <div class="container">
-                    <p>© 2021 Todos los derechos reservados. Propiedad de "Troyanos de Software"</p>
-                </div>
+
+        </div>
+        </div>
+        <div class="copyright">
+            <div class="container">
+                <p>© 2021 Todos los derechos reservados. Propiedad de "Troyanos de Software"</p>
             </div>
         </div>
-        </div>
     </footer>
-    <!-- end footer -->
 
     </div>
     </div>
