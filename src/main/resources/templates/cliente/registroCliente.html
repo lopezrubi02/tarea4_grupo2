@@ -89,38 +89,43 @@
                 <div class="row">
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                       
-                        <form class="main_form" method="post" th:action="@{/cliente/guardarNuevo}" style="padding-bottom: 30px;">
+                        <form class="main_form" method="post" action="#" th:action="@{/guardarNuevo}" th:object="${usuario}" style="padding-bottom: 30px;">
                             <div class="row">
+                                <div class="text-dark" th:if="${#fields.globalErrors()}" ></div>
+
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <label>Correo</label>
-                                    <input class="form-control" placeholder="Correo" type="text" name="email" id="email">
+                                    <input class="form-control" placeholder="Correo" type="text" th:field="*{email}">
+                                    <div class="text-dark" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <label>Nombres</label>
-                                    <input class="form-control" placeholder="Nombres" type="text" name="nombres" id="nombres">
+                                    <input class="form-control" placeholder="Nombres" type="text" th:field="*{nombre}">
+                                    <div class="text-dark" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <label>Apellidos</label>
-                                    <input class="form-control" placeholder="Apellidos" type="text" name="apellidos" id="apellidos">
+                                    <input class="form-control" placeholder="Apellidos" type="text" th:field="*{apellidos}">
+                                    <div class="text-dark" th:if="${#fields.hasErrors('apellidos')}" th:errors="*{apellidos}"></div>
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <label>DNI</label>
-                                    <input class="form-control" placeholder="DNI" type="text" name="dni" id="dni">
+                                    <input class="form-control" placeholder="DNI" type="text" th:field="*{dni}">
+                                    <div class="text-dark" th:if="${#fields.hasErrors('dni')}" th:errors="*{dni}"></div>
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <label>Teléfono</label>
-                                    <input class="form-control" placeholder="Celular" type="text" name="telefono" id="telefono">
+                                    <input class="form-control" placeholder="Celular" type="number" th:field="*{telefono}">
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <label>Fecha de Nacimiento</label>
-                                    <input placeholder="Fecha de nacimiento"  type="date" class="form-control" name="fechaNacimiento">
+                                    <input placeholder="Fecha de nacimiento"  type="date" class="form-control" th:field="*{fechaNacimiento}">
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <label>Sexo</label>
-                                        <select type="text" class="form-select" name="sexo" style="width: 100%;">
-                                            <option selected>Seleccione su sexo</option>
-                                            <option value="Masculino" text="Masculino">Masculino</option>
-                                            <option value="Femenino" text="Femenino">Femenino</option>
+                                        <select type="text" class="form-select" th:field="*{sexo}" style="width: 100%;">
+                                            <option th:value="Masculino" text="Masculino">Masculino</option>
+                                            <option th:value="Femenino" text="Femenino">Femenino</option>
                                         </select>
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
@@ -130,16 +135,15 @@
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <label>Distrito</label>
                                     <select type="text" class="form-select" name="iddistrito" style="width: 100%;">
-                                        <option selected>Seleccione su Distrito</option>
                                         <option th:each="distrito : ${listadistritos}"
                                         th:text="${distrito.nombredistrito}"
                                         th:value="${distrito.iddistritos}">Masculino</option>
-
                                     </select>
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <label>Contraseña</label>
-                                    <input class="form-control" placeholder="Contraseña" type="password" name="contraseniaHash" id="contraseniaHash">
+                                    <input class="form-control" placeholder="Contraseña" type="password" th:field="*{contraseniaHash}">
+                                    <!--div class="text-dark" th:if="${#fields.hasErrors('contraseniahash')}" th:errors="*{contraseniaHash}"></div-->
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <label>Confirmar contraseña</label>
@@ -166,22 +170,6 @@
             </div>
         </div>
     </footer>
-    <!-- end footer -->
-
-
-        <!--
-        <fooetr>
-            <div class="footer">
-
-                <div class="copyright">
-                    <div class="container">
-                        <p>© 2021 Todos los derechos reservados</p>
-                    </div>
-                </div>
-            </div>
-        </fooetr>
-
-        -->
 
     </div>
     </div>

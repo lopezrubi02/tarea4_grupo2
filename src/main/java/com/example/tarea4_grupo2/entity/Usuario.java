@@ -3,8 +3,7 @@ package com.example.tarea4_grupo2.entity;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -16,41 +15,53 @@ public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idusuarios;
+
     @Column(nullable = false)
     @NotBlank(message = "No puede estar vacío")
     @Size(max=45,message = "Los nombres no puede tener más de 45 caracteres")
     private String nombre;
+
     @Column(nullable = false)
     @NotBlank(message = "No puede estar vacío")
     @Size(max=45,message = "Los apellidos no puede tener más de 45 caracteres")
     private String apellidos;
+
     @Column(nullable = false)
+    @Email
     @NotBlank(message = "No puede estar vacío")
     @Size(max=45, message = "El email no puede tener más de 45 caracteres")
     private String email;
+
     @Column(name = "contraseniahash",nullable = false)
+    @NotBlank(message = "No puede estar vacío")
     private String contraseniaHash;
 
     @Column(nullable = false)
-    @NotBlank(message = "No puede estar vacío")
-    @Size(max=9,message = "No puede tener más de 9 dígitos")
+    @NotNull(message = "No puede estar vacío")
+    @Min(value=9,message="El teléfono no puede tener más de 9 dígitos")
     private Integer telefono;
 
     @Column(name = "fechanacimiento",nullable = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date fechaNacimiento;
+
     @Column(nullable = false)
     @NotBlank(message = "No puede estar vacío")
     private String sexo;
+
     @Column(nullable = false)
     @NotBlank(message = "No puede estar vacío")
     @Size(max=8,message = "No puede tenr más de 8 dígitos")
     private String dni;
+
     private Integer comisionventa;
+
     @Column(nullable = false)
     private String rol;
+
     @Column(name = "cuentaactiva")
     private Integer cuentaActiva;
+
     private LocalDateTime ultimafechaingreso;
 
     public Integer getIdusuarios() {

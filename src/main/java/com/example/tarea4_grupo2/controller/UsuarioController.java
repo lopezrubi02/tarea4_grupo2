@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-
 public class UsuarioController {
 
     @Autowired
@@ -45,7 +44,7 @@ public class UsuarioController {
 
 
     @GetMapping("/nuevocliente")
-    public String nuevoCliente(Model model)
+    public String nuevoCliente(Model model,@ModelAttribute("usuario") Usuario usuario)
     {
         List<Distritos> listadistritos = distritosRepository.findAll();
         model.addAttribute("listadistritos",listadistritos);
@@ -53,67 +52,60 @@ public class UsuarioController {
     }
 
     @PostMapping("/guardarNuevo")
-    public String guardarCliente(@RequestParam("nombres") String nombres,
-                                 @RequestParam("apellidos") String apellidos,
-                                 @RequestParam("email") String email,
-                                 @RequestParam("dni") String dni,
-                                 @RequestParam("telefono") Integer telefono,
-                                 @RequestParam("fechaNacimiento") String fechaNacimiento,
-                                 @RequestParam("sexo") String sexo,
-                                 @RequestParam("direccion") String direccion,
+    public String guardarCliente(@RequestParam("direccion") String direccion,
                                  @RequestParam("iddistrito") int iddistrito,
-                                 @RequestParam("contraseniaHash") String contraseniaHash,
                                  @RequestParam("password2") String pass2,
-                                 Model model) {
+                                 Model model,
+                                 @ModelAttribute("usuario") @Valid Usuario usuario,
+                                 BindingResult bindingResult) {
 
-        System.out.println(nombres + apellidos + email + dni + telefono + fechaNacimiento);
-//        System.out.println(fechaNacimiento);
-        if (contraseniaHash.equals(pass2)) {
-            Usuario usuario = new Usuario();
-            usuario.setNombre(nombres);
-            usuario.setApellidos(apellidos);
-            usuario.setEmail(email);
-            usuario.setTelefono(telefono);
-            usuario.setSexo(sexo);
+        if(bindingResult.hasErrors()){
+            System.out.println("hay algun error");
+            List<Distritos> listadistritos = distritosRepository.findAll();
+            model.addAttribute("listadistritos",listadistritos);
+            System.out.println(bindingResult.getFieldErrors());
+            System.out.println(pass2);
+            System.out.println(usuario.getContraseniaHash());
+            return "cliente/registroCliente";
+        }else{
+            System.out.println("mo hay error de binding");
+            System.out.println(pass2);
+            System.out.println(usuario.getContraseniaHash());
+            System.out.println("#####################################33");
+            if (usuario.getContraseniaHash().equals(pass2)) {
+                System.out.println(pass2);
+                System.out.println(usuario.getContraseniaHash());
+                String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
 
-            String contraseniahashbcrypt = BCrypt.hashpw(contraseniaHash, BCrypt.gensalt());
 
+                usuario.setContraseniaHash(contraseniahashbcrypt);
+                usuario.setRol("Cliente");
+                usuario.setCuentaActiva(1);
 
-            usuario.setContraseniaHash(contraseniahashbcrypt);
-            usuario.setRol("Cliente");
-            usuario.setCuentaActiva(1);
-            usuario.setDni(dni);
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            try {
-                usuario.setFechaNacimiento(sdf.parse(fechaNacimiento));
-                System.out.println(fechaNacimiento);
-            } catch (ParseException e) {
-                e.printStackTrace();
+                usuarioRepository.save(usuario);
+                System.out.println("guarda");
+
+                Usuario usuarionuevo = usuarioRepository.findByDni(usuario.getDni());
+
+                int idusuarionuevo = usuarionuevo.getIdusuarios();
+
+                Direcciones direccionactual = new Direcciones();
+                direccionactual.setDireccion(direccion);
+                Optional<Distritos> distritoopt = distritosRepository.findById(iddistrito);
+                Distritos distritosactual = distritoopt.get();
+
+                direccionactual.setDistrito(distritosactual);
+                direccionactual.setUsuariosIdusuarios(idusuarionuevo);
+                direccionactual.setActivo(1);
+                direccionesRepository.save(direccionactual);
+
+                return "cliente/confirmarCuenta";
+            } else {
+                List<Distritos> listadistritos = distritosRepository.findAll();
+                model.addAttribute("listadistritos",listadistritos);
                 return "cliente/registroCliente";
             }
-            usuarioRepository.save(usuario);
-            System.out.println("guarda");
-            Usuario usuarionuevo = usuarioRepository.findByDni(dni);
-
-            int idusuarionuevo = usuarionuevo.getIdusuarios();
-
-            Direcciones direccionactual = new Direcciones();
-            direccionactual.setDireccion(direccion);
-            //direccionactual.setDistrito(distrito);
-
-            Optional<Distritos> distritoopt = distritosRepository.findById(iddistrito);
-            Distritos distritosactual = distritoopt.get();
-
-            direccionactual.setDistrito(distritosactual);
-            direccionactual.setUsuariosIdusuarios(idusuarionuevo);
-            direccionactual.setActivo(1);
-            direccionesRepository.save(direccionactual);
-
-            return "cliente/confirmarCuenta";
-        } else {
-            return "cliente/registroCliente";
         }
-
     }
 
     @GetMapping("/cliente/reportes")
