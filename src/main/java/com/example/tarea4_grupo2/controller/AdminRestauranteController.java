@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -38,16 +39,10 @@ public class AdminRestauranteController {
     PedidosRepository pedidosRepository;
     @Autowired
     CategoriasRepository categoriasRepository;
-
-    @GetMapping("/login")
-    public String loginAdmin(){
-        return "AdminRestaurantes/login";
-    }
-
-    @GetMapping("/register")
-    public String registerAdmin(@ModelAttribute("usuario") Usuario usuario){
-        return "AdminRestaurantes/register";
-    }
+    @Autowired
+    DistritosRepository distritosRepository;
+    @Autowired
+    DireccionesRepository direccionesRepository;
 
     @PostMapping("/categorias")
     public String esperaConfirmacion(@ModelAttribute("restaurante") Restaurante restaurante,@RequestParam("imagen") MultipartFile file,Model model) throws IOException {
@@ -95,16 +90,6 @@ public class AdminRestauranteController {
     public String correoConfirmar(){
 
         return "AdminRestaurantes/correo";
-    }
-    @PostMapping("/guardaradmin")
-    public String guardarAdmin(@ModelAttribute("usuario") @Valid Usuario usuario, BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
-            return "AdminRestaurantes/register";
-        }
-        else {
-            usuarioRepository.save(usuario);
-        }
-        return"AdminRestaurantes/correo";
     }
 
     @GetMapping("/imagen")
