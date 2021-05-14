@@ -1,6 +1,8 @@
 package com.example.tarea4_grupo2.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.util.List;
 
 @Entity
@@ -10,10 +12,15 @@ public class Restaurante {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idrestaurante;
     @Column(nullable = false)
+    @NotBlank(message = "No puede estar en blanco")
     private String direccion;
     @Column(nullable = false)
+    @NotBlank(message = "No puede estar en blanco")
+    @Pattern(regexp = "^[0-9]*$",message = "Solo pueden ser numeros")
     private String ruc;
     @Column(nullable = false)
+    @Pattern(regexp = "^[a-zA-Z]*$",message = "Solo pueden ser letras")
+    @NotBlank(message = "No puede estar en blanco")
     private String nombre;
     private Float calificacionpromedio;
     @ManyToOne

@@ -2,6 +2,7 @@ package com.example.tarea4_grupo2.controller;
 
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
+import jdk.nashorn.internal.objects.AccessorPropertyDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -56,7 +57,7 @@ public class AdminRestauranteController {
             Optional<Restaurante> restauranteOpt = restauranteRepository.buscarRestaurantePorIdAdmin(id);
             System.out.println("TRACE2");
             if(restauranteOpt.isPresent()){
-                System.out.println("AQUI");
+
                 return "AdminRestaurantes/espera";
             }else{
                 System.out.println("ALLA");
@@ -74,26 +75,38 @@ public class AdminRestauranteController {
             return null;
         }
     }
-
+/* Se encuentra en login controller
     @GetMapping("/register")
     public String registerAdmin(@ModelAttribute("usuario") Usuario usuario){
-
         return "AdminRestaurantes/register";
     }
-
+*/
     @PostMapping("/categorias")
-    public String esperaConfirmacion(@ModelAttribute("restaurante") Restaurante restaurante,@RequestParam("imagen") MultipartFile file,Model model) throws IOException {
-        try {
-            restaurante.setFoto(file.getBytes());
-            System.out.println(file.getContentType());
-        } catch (IOException e) {
-            e.printStackTrace();
+    public String esperaConfirmacion(@ModelAttribute("restaurante") @Valid Restaurante restaurante,BindingResult bindingResult,
+                                     @RequestParam("imagen") MultipartFile file,
+                                     Model model,
+                                     HttpSession session) throws IOException {
+        if(bindingResult.hasErrors()){
+            Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+            restaurante.setUsuario(sessionUser);
+            model.addAttribute("listadistritos",distritosRepository.findAll());
+            model.addAttribute("restaurante",restaurante);
+            return "AdminRestaurantes/registerRestaurante";
         }
+        else {
 
-        restauranteRepository.save(restaurante);
-        model.addAttribute("id",restaurante.getIdrestaurante());
-        model.addAttribute("listacategorias",categoriasRepository.findAll());
-        return "AdminRestaurantes/categorias";
+            try {
+                restaurante.setFoto(file.getBytes());
+                restaurante.setFotocontenttype(file.getContentType());
+                restaurante.setFotonombre(file.getOriginalFilename());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            restauranteRepository.save(restaurante);
+            model.addAttribute("id", restaurante.getIdrestaurante());
+            model.addAttribute("listacategorias", categoriasRepository.findAll());
+            return "AdminRestaurantes/categorias";
+        }
     }
     @PostMapping("/estado")
     public String estadoAdmin(@RequestParam("correo") String correo) {
@@ -105,17 +118,17 @@ public class AdminRestauranteController {
     }
 
     @GetMapping("/registerRestaurante")
-    public String registerRestaurante(@ModelAttribute("restaurante")Restaurante restaurante, Model model){
-        Usuario usuario = new Usuario();
-        usuario.setIdusuarios(14);
-        restaurante.setUsuario(usuario);
+    public String registerRestaurante(@ModelAttribute("restaurante")Restaurante restaurante, Model model,HttpSession session){
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        restaurante.setUsuario(sessionUser);
+        model.addAttribute("listadistritos",distritosRepository.findAll());
         model.addAttribute("restaurante",restaurante);
         return "AdminRestaurantes/registerRestaurante";
     }
 
     @GetMapping("/sinrestaurante")
     public String sinRestaurante(){
-        return "AdminRestaurantes/restaurante";
+        return "AdminRestaurantes/sinRestaurante";
     }
 
     @PostMapping("/validarpersona")
@@ -130,12 +143,13 @@ public class AdminRestauranteController {
     }
 
     @GetMapping("/imagen")
-    public ResponseEntity<byte[]> imagenRestaurante(Model model) {
-        Optional<Restaurante> optional = restauranteRepository.findById(6);
+    public ResponseEntity<byte[]> imagenRestaurante(@RequestParam("id")int id) {
+
+        Optional<Restaurante> optional = restauranteRepository.findById(id);
         if (optional.isPresent()) {
             byte[] imagen = optional.get().getFoto();
             HttpHeaders httpHeaders=new HttpHeaders();
-            httpHeaders.setContentType(MediaType.parseMediaType("image/png"));
+            httpHeaders.setContentType(MediaType.parseMediaType(optional.get().getFotocontenttype()));
             return new ResponseEntity<>(imagen,httpHeaders, HttpStatus.OK);
         }
         return null;
@@ -390,9 +404,11 @@ public class AdminRestauranteController {
         return "AdminRestaurantes/cuenta";
     }
     @GetMapping("/borrarRestaurante")
-    public String borrarRestaurante(@RequestParam("id")int id){
+    public String borrarRestaurante(HttpSession session){
+        Usuario user= (Usuario) session.getAttribute("usuarioLogueado");
+        int id=restauranteRepository.buscarRestaurantePorIdAdmin(user.getIdusuarios()).get().getIdrestaurante();
         restauranteRepository.deleteById(id);
-        return "redirect:/sinrestaurante";
+        return "redirect:/adminrest/sinrestaurante";
     }
     @PostMapping("/llenarcategoria")
     public String llenarcategorias(@ModelAttribute("restaurante") Restaurante restaurante,Model model){
