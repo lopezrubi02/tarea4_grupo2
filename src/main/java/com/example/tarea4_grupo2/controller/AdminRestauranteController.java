@@ -47,7 +47,7 @@ public class AdminRestauranteController {
 
     @GetMapping("/login")
     public String loginAdmin(Model model, HttpSession session){
-        //TODO HACER LA LOGICA DE RETORNAR 3 VISTAS
+
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int id = sessionUser.getIdusuarios();
         System.out.println(id);
