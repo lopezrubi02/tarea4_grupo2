@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -39,6 +40,10 @@ public class AdminRestauranteController {
     PedidosRepository pedidosRepository;
     @Autowired
     CategoriasRepository categoriasRepository;
+    @Autowired
+    DistritosRepository distritosRepository;
+    @Autowired
+    DireccionesRepository direccionesRepository;
 
     @GetMapping("/login")
     public String loginAdmin(Model model, HttpSession session){
@@ -90,12 +95,11 @@ public class AdminRestauranteController {
         model.addAttribute("listacategorias",categoriasRepository.findAll());
         return "AdminRestaurantes/categorias";
     }
-
     @PostMapping("/estado")
     public String estadoAdmin(@RequestParam("correo") String correo) {
         //Se valida con el correo si en la bd aparece como usuario aceptado o en espera y tendría dos posibles salidas
         if(correo!=""){
-            return "sinRestaurante";
+            return "AdminRestaurantes/restaurante";
         }
         return "redirect:/login";
     }
@@ -111,28 +115,18 @@ public class AdminRestauranteController {
 
     @GetMapping("/sinrestaurante")
     public String sinRestaurante(){
-        return "sinRestaurante";
+        return "AdminRestaurantes/restaurante";
     }
 
     @PostMapping("/validarpersona")
     public String validarPersona(){
-        return "sinRestaurante";
+        return "AdminRestaurantes/restaurante";
     }
 
     @GetMapping("/correoconfirmar")
     public String correoConfirmar(){
 
         return "AdminRestaurantes/correo";
-    }
-    @PostMapping("/guardaradmin")
-    public String guardarAdmin(@ModelAttribute("usuario") @Valid Usuario usuario, BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
-            return "AdminRestaurantes/register";
-        }
-        else {
-            usuarioRepository.save(usuario);
-        }
-        return"AdminRestaurantes/correo";
     }
 
     @GetMapping("/imagen")
