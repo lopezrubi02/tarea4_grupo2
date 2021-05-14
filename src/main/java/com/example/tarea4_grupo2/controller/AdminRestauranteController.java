@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.sql.Date;
@@ -40,12 +41,38 @@ public class AdminRestauranteController {
     CategoriasRepository categoriasRepository;
 
     @GetMapping("/login")
-    public String loginAdmin(){
-        return "AdminRestaurantes/login";
+    public String loginAdmin(Model model, HttpSession session){
+        //TODO HACER LA LOGICA DE RETORNAR 3 VISTAS
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int id = sessionUser.getIdusuarios();
+        System.out.println(id);
+        if(sessionUser.getCuentaActiva() == 2){
+            System.out.println("TRACE1");
+            Optional<Restaurante> restauranteOpt = restauranteRepository.buscarRestaurantePorIdAdmin(id);
+            System.out.println("TRACE2");
+            if(restauranteOpt.isPresent()){
+                System.out.println("AQUI");
+                return "AdminRestaurantes/espera";
+            }else{
+                System.out.println("ALLA");
+                return "AdminRestaurantes/sinRestaurante";
+            }
+        }else if(sessionUser.getCuentaActiva() == 1){
+            System.out.println("TRACE3");
+            Optional<Restaurante> restauranteOpt = restauranteRepository.buscarRestaurantePorIdAdmin(id);
+            if(restauranteOpt.isPresent()){
+                return "AdminRestaurantes/perfilrestaurante";
+            }else{
+                return "AdminRestaurantes/sinRestaurante";
+            }
+        }else{
+            return null;
+        }
     }
 
     @GetMapping("/register")
     public String registerAdmin(@ModelAttribute("usuario") Usuario usuario){
+
         return "AdminRestaurantes/register";
     }
 
@@ -63,11 +90,12 @@ public class AdminRestauranteController {
         model.addAttribute("listacategorias",categoriasRepository.findAll());
         return "AdminRestaurantes/categorias";
     }
+
     @PostMapping("/estado")
     public String estadoAdmin(@RequestParam("correo") String correo) {
         //Se valida con el correo si en la bd aparece como usuario aceptado o en espera y tendría dos posibles salidas
         if(correo!=""){
-            return "AdminRestaurantes/restaurante";
+            return "sinRestaurante";
         }
         return "redirect:/login";
     }
@@ -83,12 +111,12 @@ public class AdminRestauranteController {
 
     @GetMapping("/sinrestaurante")
     public String sinRestaurante(){
-        return "AdminRestaurantes/restaurante";
+        return "sinRestaurante";
     }
 
     @PostMapping("/validarpersona")
     public String validarPersona(){
-        return "AdminRestaurantes/restaurante";
+        return "sinRestaurante";
     }
 
     @GetMapping("/correoconfirmar")

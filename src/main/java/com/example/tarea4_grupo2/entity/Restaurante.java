@@ -12,8 +12,6 @@ public class Restaurante {
     @Column(nullable = false)
     private String direccion;
     @Column(nullable = false)
-    private String distrito;
-    @Column(nullable = false)
     private String ruc;
     @Column(nullable = false)
     private String nombre;
@@ -22,6 +20,13 @@ public class Restaurante {
     @JoinColumn(name="idadminrest")
     private Usuario usuario;
     private byte[] foto;
+    private String fotonombre;
+    private String fotocontenttype;
+
+    @ManyToOne
+    @JoinColumn(name="iddistrito")
+    private Distritos distrito;
+
     @ManyToMany
     @JoinTable(name="restaurante_has_categorias",
             joinColumns = @JoinColumn(name="restaurante_idrestaurante"),
@@ -42,14 +47,6 @@ public class Restaurante {
 
     public void setDireccion(String direccion) {
         this.direccion = direccion;
-    }
-
-    public String getDistrito() {
-        return distrito;
-    }
-
-    public void setDistrito(String distrito) {
-        this.distrito = distrito;
     }
 
     public String getRuc() {
@@ -90,6 +87,30 @@ public class Restaurante {
 
     public void setFoto(byte[] foto) {
         this.foto = foto;
+    }
+
+    public String getFotonombre() {
+        return fotonombre;
+    }
+
+    public void setFotonombre(String fotonombre) {
+        this.fotonombre = fotonombre;
+    }
+
+    public String getFotocontenttype() {
+        return fotocontenttype;
+    }
+
+    public void setFotocontenttype(String fotocontenttype) {
+        this.fotocontenttype = fotocontenttype;
+    }
+
+    public Distritos getDistrito() {
+        return distrito;
+    }
+
+    public void setDistrito(Distritos distrito) {
+        this.distrito = distrito;
     }
 
     public List<Categorias> getCategoriasrestList() {
