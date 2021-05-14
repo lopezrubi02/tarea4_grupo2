@@ -14,13 +14,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
 
 @Controller
-public class UsuarioController {
+public class UsuarioController{
 
     @Autowired
     UsuarioRepository usuarioRepository;

@@ -39,4 +39,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     //para guardar direccion de usuario
     Usuario findByDni(String dni);
     //Repartidor findByIdusuarios(int usuarios_idusuarios);
+
+    public Usuario findByEmail(String email);
 }
