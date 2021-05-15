@@ -21,6 +21,11 @@ public interface RestauranteRepository extends JpaRepository<Restaurante, Intege
             "order by 'restnombre';",nativeQuery = true)
     List<RestauranteReportes_DTO> reportesRestaurantes();
 
-
+    //seleccionar restaurantes por categoria
+    @Query(value = "select r.idrestaurante,r.direccion,r.ruc,r.nombre,r.calificacionpromedio,r.idadminrest,r.foto, r.fotonombre, r.fotocontenttype, r.iddistrito\n" +
+            " from proyecto.restaurante r\n" +
+            "inner join proyecto.restaurante_has_categorias rc\n" +
+            "on rc.restaurante_idrestaurante = r.idrestaurante where rc.categorias_idcategorias=?1",nativeQuery = true)
+    List<Restaurante> listarestxcategoria (int categorias_idcategorias);
 
 }

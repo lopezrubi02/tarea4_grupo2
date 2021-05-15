@@ -169,17 +169,79 @@ public class UsuarioController {
         model.addAttribute("listacategorias", listacategorias);
         model.addAttribute("listadirecciones", listadireccionescliente);
         model.addAttribute("listarestaurantes",listarestaurantes);
-
-        int idrest = 1;
-        Optional<Restaurante> restopt = restauranteRepository.findById(idrest);
-        Restaurante rest = restopt.get();
-
-        System.out.println(rest.getCategoriasrestList());
-        List<Categorias> categoriasrest = rest.getCategoriasrestList();
-        System.out.println(categoriasrest.get(1).getNombrecategoria());
+;
 
         return "cliente/realizar_pedido_cliente";
     }
+
+
+     @GetMapping("cliente/filtrocategoria")
+     public String filtrosrestaurantes1(Model model,
+     @RequestParam(value = "idcategoriarest" ,defaultValue = "0") int idcategoriarest
+                                        ){
+         System.out.println(idcategoriarest);
+         System.out.println("*******************************");
+
+
+         Optional<Categorias> catopt = categoriasRepository.findById(idcategoriarest);
+         if(catopt.isPresent()){
+             List<Restaurante> listarestauranteseleccionado = restauranteRepository.listarestxcategoria(idcategoriarest);
+             int idusuarioactual = 8;
+
+             List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuarioactual);
+             List<Categorias> listacategorias = categoriasRepository.findAll();
+             List<Restaurante> listarestaurantes = restauranteRepository.findAll();
+             model.addAttribute("listacategorias", listacategorias);
+             model.addAttribute("listadirecciones", listadireccionescliente);
+
+
+             if(idcategoriarest!=0){
+                 model.addAttribute("listarestaurantes",listarestauranteseleccionado);
+             }else{
+                 model.addAttribute("listarestaurantes",listarestaurantes);
+             }
+
+             return "cliente/realizar_pedido_cliente";
+         }else{
+             return "redirect:/cliente/realizarpedido";
+         }
+
+     }
+
+
+        /** restaurante a ordenar **/
+
+     @GetMapping("/cliente/restaurantexordenar")
+     public String restaurantexordenar(@RequestParam("idrestaurante") int idrestaurante, Model model){
+
+         System.out.println(idrestaurante);
+         System.out.println("**************************");
+
+         Optional<Restaurante> restopt = restauranteRepository.findById(idrestaurante);
+
+        if(restopt.isPresent()){
+            Restaurante rest = restopt.get();
+
+            if (rest!=null){
+
+                model.addAttribute("restaurantexordenar",rest);
+
+                return "cliente/restaurante_orden_cliente";
+
+            }else{
+                return "redirect:/cliente/realizarpedido";
+            }
+        }else{
+            return "redirect:/cliente/realizarpedido";
+
+        }
+
+
+     }
+
+
+
+    /** Mi perfil **/
 
     @GetMapping("/cliente/miperfil")
     public String miperfil(Model model) {

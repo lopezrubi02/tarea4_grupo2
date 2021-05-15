@@ -137,13 +137,19 @@
         <div class="title">
 			<!--filtro -->
 			<h3 style="text-align: left">Filtros</h3>
-						<div class="row g-2">
-			  <div class="col-md">
+            <!-- form de filtros -->
+            <div class="row g-2">
+                <form class="input-group mb-lg-3" method="post" th:action="@{cliente/filtrosrestaurantes}"><!-- COMPLETAR -->
+                    <div class="col-md">
 				<div class="form-floating">
-				  <select class="form-select" id="floatingSelectGrid2" aria-label="Floating label select example" onchange="window.location=this.option[this.selectedIndex].value" name="categoriarest">
-					<option th:each = "categoria : ${listacategorias}"
+				  <select class="form-select" id="floatingSelectGrid2" aria-label="Floating label select example" onchange="window.location=this.options[this.selectedIndex].value">
+                      <option selected="true" disabled="disabled">Filtrar por categoría</option>
+                      <option th:text="Todas"
+                            th:value=" 'filtrocategoria?idcategoriarest=0'">Todos</option>
+                      <option
+                            th:each = "categoria : ${listacategorias}"
                     th:text="${categoria.getNombrecategoria()}"
-                    th:value="${categoria.getIdcategorias()}">Todos</option>
+                    th:value=" 'filtrocategoria?idcategoriarest=' + ${categoria.getIdcategorias()}">Todos</option>
 				  </select>
 				  <label for="floatingSelectGrid2">Categoría</label>
 				</div>
@@ -173,6 +179,8 @@
 				  <label for="floatingSelectGrid4">Calificación promedio</label>
 				</div>
 			  </div>
+                </form>
+                <!-- form -->
 			</div>
 			  <!--i><img src="images/title.png" alt="#"/></i>
 			  <h2>Our Blog</h2>
@@ -184,11 +192,10 @@
           <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mar_bottom" th:each="restaurante : ${listarestaurantes}">
             <div class="blog_box">
               <div class="blog_img_box">
-                <figure><img th:src="@{/images/blog_img1.png}" width="70" height="70"/>
-
-                </figure>
+                <figure><img th:src="@{/images/blog_img1.png}" width="70" height="70"/></figure>
               </div>
-              <h3 th:text="${restaurante.nombre}">Chifa Imperial</h3>
+              <a th:href=" '/cliente/restaurantexordenar?idrestaurante=' + ${restaurante.idrestaurante}">
+                  <h3 th:text="${restaurante.nombre}">Chifa Imperial</h3></a>
               <p>
                   <span th:each="categoriarest : ${restaurante.categoriasrestList}"
                         th:text="${categoriarest.nombrecategoria} + ', '">
