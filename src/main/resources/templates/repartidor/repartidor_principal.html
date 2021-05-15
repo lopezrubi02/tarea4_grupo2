@@ -80,7 +80,6 @@
                         <h1 th:text="${usuario.nombre} + ${ usuario.apellidos}"></h1>
                     </div>
                 </div>
-                <div th:if="${msg != null}" th:text="${msg}" class="alert alert-success" role="alert"></div>
 
                 <hr>
                 <div class="row">
@@ -94,8 +93,11 @@
                               th:object="${repartidor}">
                             <input th:field="*{idusuarios}" type="hidden">
                             <div class="form-group">
-                                <label>Distrito donde se encuentra</label>
-                                <input type="text" class="form-control" th:field="*{distritoactual}">
+                                <label class="form-label">Distrito</label>
+                                <select th:field="*{iddistritoactual}" class="form-select" name="distrito" style="width: 100%;">
+                                    <option th:each="distrito : ${listadistritos}" th:value="${distrito.iddistritos}"
+                                            th:text="${distrito.nombredistrito}"></option>
+                                </select>
                             </div>
 
                             <div class="form-group">

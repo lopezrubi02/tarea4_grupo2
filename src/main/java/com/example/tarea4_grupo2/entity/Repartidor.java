@@ -10,27 +10,59 @@ public class Repartidor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idrepartidor;
 
+
     private String movilidad;
+    
     private String placa;
     private String licencia;
-    private Byte foto;
+    private String fotonombre;
+    private String fotocontenttype;
+    private byte[] foto;
 
     @Column(name ="usuarios_idusuarios")
     private int idusuarios;
 
-    @ManyToOne
-    @JoinColumn(name = "iddistritoactual")
-    private Distritos distrito;
+    private boolean disponibilidad;
+    private Float calificacionpromedio;
+
+
+    private int iddistritoactual;
+
+    public String getFotonombre() {
+        return fotonombre;
+    }
+
+    public String getFotocontenttype() {
+        return fotocontenttype;
+    }
+
+    public byte[] getFoto() {
+        return foto;
+    }
+
+    public int getIddistritoactual() {
+        return iddistritoactual;
+    }
+
+    public void setIddistritoactual(int iddistritoactual) {
+        this.iddistritoactual = iddistritoactual;
+    }
+
 
     /*@OneToOne
     @PrimaryKeyJoinColumn(name = "usuarios_idusuarios")
     Usuario usuarios;
 */
-    public Byte getFoto() {
-        return foto;
+
+    public void setFotonombre(String fotonombre) {
+        this.fotonombre = fotonombre;
     }
 
-    public void setFoto(Byte foto) {
+    public void setFotocontenttype(String fotocontenttype) {
+        this.fotocontenttype = fotocontenttype;
+    }
+
+    public void setFoto(byte[] foto) {
         this.foto = foto;
     }
 
@@ -49,12 +81,6 @@ public class Repartidor {
     public void setCalificacionpromedio(Float calificacionpromedio) {
         this.calificacionpromedio = calificacionpromedio;
     }
-
-    private boolean disponibilidad;
-    private Float calificacionpromedio;
-
-
-    //private String distritoactual;
 
 
 /*    public Usuario getUsuarios() {
@@ -104,14 +130,5 @@ public class Repartidor {
 
     public void setLicencia(String licencia) {
         this.licencia = licencia;
-    }
-
-
-    public Distritos getDistrito() {
-        return distrito;
-    }
-
-    public void setDistrito(Distritos distrito) {
-        this.distrito = distrito;
     }
 }
