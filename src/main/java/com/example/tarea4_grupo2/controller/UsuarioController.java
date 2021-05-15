@@ -40,6 +40,8 @@ public class UsuarioController {
     @Autowired
     RestauranteRepository restauranteRepository;
 
+    @Autowired
+    PlatoRepository platoRepository;
 
     @GetMapping("/cliente/paginaprincipal")
     public String paginaprincipal() {
@@ -223,9 +225,15 @@ public class UsuarioController {
             Restaurante rest = restopt.get();
 
             if (rest!=null){
+                int cantreviews = restauranteRepository.cantreviews(idrestaurante);
+                System.out.println(cantreviews);
+                System.out.println("**************************");
+
+                List<Plato> platosxrest = platoRepository.buscarPlatosPorIdRestauranteDisponilidadActivo(idrestaurante);
 
                 model.addAttribute("restaurantexordenar",rest);
-
+                model.addAttribute("cantreviews",cantreviews);
+                model.addAttribute("platosxrest",platosxrest);
                 return "cliente/restaurante_orden_cliente";
 
             }else{

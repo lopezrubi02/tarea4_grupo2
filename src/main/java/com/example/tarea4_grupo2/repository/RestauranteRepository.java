@@ -28,4 +28,8 @@ public interface RestauranteRepository extends JpaRepository<Restaurante, Intege
             "on rc.restaurante_idrestaurante = r.idrestaurante where rc.categorias_idcategorias=?1",nativeQuery = true)
     List<Restaurante> listarestxcategoria (int categorias_idcategorias);
 
+    //contar cantidad de reviews dadas al restaurante
+    @Query(value = "select count(idpedidos) from pedidos where restaurante_idrestaurante=?1 and calificacionrestaurante <> 'null'",nativeQuery = true)
+    Integer cantreviews(int restaurante_idrestaurante);
+
 }
