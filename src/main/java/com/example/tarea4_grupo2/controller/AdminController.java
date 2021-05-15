@@ -9,6 +9,7 @@ import com.example.tarea4_grupo2.entity.Restaurante;
 import com.example.tarea4_grupo2.entity.Usuario;
 import com.example.tarea4_grupo2.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -210,17 +211,58 @@ public class AdminController {
     }
 
     @GetMapping("/nuevosUsuarios")
-    public String nuevosUsuarios(Model model,@RequestParam(value = "rolSelected" ,defaultValue = "Todos")String rol){
+    public String nuevosUsuarios(Model model,@RequestParam(value = "rolSelected" ,defaultValue = "Todos")String rol,
+                                 @RequestParam(value = "searchField" ,defaultValue = "") String buscar,
+                                 @RequestParam(name = "page", defaultValue = "1") String requestedPage,
+                                RedirectAttributes attr){
+
+        float numberOfUsersPerPage = 4;
+        int page = Integer.parseInt(requestedPage);
+
         List<Usuario> usuarioList;
-        if(rol.equals("Repartidor") || rol.equals("AdminRestaurante") ){
+
+        if(!buscar.equals("")){
+            String buscar2 = "%"+buscar+"%";
+            usuarioList = usuarioRepository.buscarGestionCuentasNuevas(buscar2);
+        } else if(rol.equals("Repartidor") || rol.equals("AdminRestaurante") ){
             usuarioList = usuarioRepository.findAllByRolAndCuentaActiva(rol,0);
         }else{
             usuarioList = usuarioRepository.cuentasNuevas();
         }
+        model.addAttribute("rolSelected",rol);
 
-        //usuarioList = usuarioRepository.findAllByCuentaActivaEquals(0);
-        model.addAttribute("listaUsuariosNuevos",usuarioList);
+        String nombreRol;
+        if(rol.equals("Repartidor")){
+            nombreRol = "Repartidores";
+        }else if(rol.equals("AdminRestaurante")){
+            nombreRol = "Restaurantes";
+        }else{
+            nombreRol = "Todos";
+        }
+        model.addAttribute("nombreRol",nombreRol);
 
+        //todo agregado para lograr paginacion
+        if(usuarioList.size() == 0){
+            attr.addFlashAttribute("No se encontraron resultados para su busqueda");
+            return "redirect:/admin/nuevasCuentas";
+        }
+
+        int numberOfPages = (int) Math.ceil(usuarioList.size() / numberOfUsersPerPage);
+        if (page > numberOfPages) {
+            page = numberOfPages;
+        } // validation
+
+        int start = (int) numberOfUsersPerPage * (page - 1);
+        int end = (int) (start + numberOfUsersPerPage);
+
+        List<Usuario> lisOfUsersPage = usuarioList.subList(start, Math.min(end, usuarioList.size()));
+
+        model.addAttribute("listaUsuariosNuevos", lisOfUsersPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("maxNumberOfPages", numberOfPages);
+        model.addAttribute("searchField", buscar);
+
+        //model.addAttribute("listaUsuariosNuevos",usuarioList);
         return "adminsistema/nuevasCuentas";
     }
 
@@ -230,18 +272,15 @@ public class AdminController {
     @PostMapping("/buscadorNuevos")
     public String buscarNuevos(@RequestParam(value = "searchField" ,defaultValue = "") String buscar,
                                @RequestParam(value = "rolSelected" ,defaultValue = "Todos")String rol,
+                               RedirectAttributes attr,
                                Model model){
-        List<Usuario> usuarioList;
         System.out.println("El rol es: " + rol);
-        if(rol.equals("Repartidor") || rol.equals("AdminRestaurant")){
-            usuarioList = usuarioRepository.findAllByRolAndNombreAndCuentaActiva(rol,buscar,0);
-        }else{
-            buscar = "%"+buscar+"%";
-            usuarioList = usuarioRepository.buscarGestionCuentasNuevas(buscar);
-        }
-        model.addAttribute("listaUsuariosNuevos",usuarioList);
-        model.addAttribute(rol,"rolSelected");
-        return "adminsistema/nuevasCuentas";
+        model.addAttribute("rolSelected",rol);
+        attr.addAttribute("searchField", buscar);
+
+        //model.addAttribute("listaUsuariosNuevos",usuarioList);
+        //return "adminsistema/nuevasCuentas";
+        return "redirect:/admin/nuevosUsuarios";
     }
 
     @GetMapping("/newuser")
@@ -290,6 +329,27 @@ public class AdminController {
         return "redirect:/admin/nuevosUsuarios";
     }
 
+    @GetMapping("/correo")
+    public String envioCorreo(@RequestParam(value="id") int id,
+                              Model model){
+        model.addAttribute("id",id);
+        return "adminsistema/ADMIN_RazonDenegacionCuenta";
+    }
+
+    @GetMapping("/denegar")
+    public String denegarCuenta(@RequestParam(value="id") int id,RedirectAttributes attr){
+        Optional<Usuario> optional = usuarioRepository.findById(id);
+        if(optional.isPresent()){
+            Usuario usuario = optional.get();
+            usuario.setCuentaActiva(-1);
+            usuarioRepository.save(usuario);
+            attr.addFlashAttribute("msg","Cuenta denegada exitosamente");
+            return "redirect:/admin/nuevosUsuarios";
+        }
+        attr.addFlashAttribute("msg","Ocurrio un error al denegar la cuenta");
+        return "redirect:/admin/nuevosUsuarios";
+    }
+
 
 
 
@@ -318,7 +378,9 @@ public class AdminController {
             usuario.setEmail(email);
             usuario.setTelefono(telefono);
             usuario.setSexo(sexo);
-            usuario.setContraseniaHash(contraseniaHash);
+
+            String contraseniahashbcrypt = BCrypt.hashpw(contraseniaHash, BCrypt.gensalt());
+            usuario.setContraseniaHash(contraseniahashbcrypt);
             usuario.setRol("AdminSistema");
             usuario.setCuentaActiva(1);
             usuario.setDni(dni);
@@ -377,7 +439,7 @@ public class AdminController {
     @GetMapping("/RestaurantesReportes")
     public String restaurantesReportes(Model model){
         List<RestauranteReportes_DTO> reporteLista = restauranteRepository.reportesRestaurantes();
-        model.addAttribute("reporteLista",reporteLista);
+        model.addAttribute("reporteLista1",reporteLista);
 
         double max = 0;
         int indicemayor = 0;
@@ -407,7 +469,7 @@ public class AdminController {
     @GetMapping("/RepartidorReportes")
     public String repartidorReportes(Model model){
         List<RepartidoresReportes_DTO>  reporteLista = repartidorRepository.reporteRepartidores();
-        model.addAttribute("reporteLista",reporteLista);
+        model.addAttribute("reporteLista2",reporteLista);
 
         int max = 0;
         int indicemayor = 0;

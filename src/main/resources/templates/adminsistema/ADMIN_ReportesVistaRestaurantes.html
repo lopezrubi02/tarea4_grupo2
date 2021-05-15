@@ -77,9 +77,9 @@
                     <div class="full">
                         <div class="right_header_info">
                             <ul>
-                                <li class="dinone"><a href="#">Usuarios Actuales</a></li>
-                                <li class="dinone"><a href="GestionCuentasPrincipal.html">Gestión de nuevas cuentas</a></li>
-                                <li class="dinone"><a href="ADMIN_Reportes.html">Reportes</a></li>
+                                <li class="dinone"><a th:href="@{usuariosActuales}">Usuarios Actuales</a></li>
+                                <li class="dinone"><a th:href="@{gestionCuentas}">Gestión de nuevas cuentas</a></li>
+                                <li class="dinone"><a th:href="@{reportes}">Reportes</a></li>
                                 <!-- TODO -->
                                 <li class="button_user"><a class="button active" href="#login.html">Mi cuenta</a><a class="button" href="#">Logout</a></li>
                                 <li>
@@ -112,7 +112,7 @@
                 </div>
 				
             </div>
-			<br></br>
+			<br>
             <div class="row">
                 <div class="col-2">
                     <!-- search bar 
@@ -150,7 +150,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr th:each="restaurante,info : ${reporteLista}">
+                                <tr th:each="restaurante,info : ${reporteLista1}">
                                     <td scope="row" th:text="${info.index + 1}"></td>
                                     <td th:text="${restaurante.restnombre}"></td>
                                     <td th:text="${restaurante.nombre + ' ' + restaurante.apellidos}"></td>
@@ -169,8 +169,8 @@
                 </div>
 
             </div>
-			<br></br>
-			<br></br>
+			<br>
+			<br>
 			<div class="col-8">
                     <h3>Estadisticas</h3>
                 </div>

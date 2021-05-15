@@ -5,6 +5,7 @@ public interface RepartidoresReportes_DTO {
     String getApellidos();
     String getDni();
     String getMovilidad();
+    int getIdrepartidor();
     int getPedidos();
     int getComision();
 
