@@ -37,6 +37,10 @@ public class UsuarioController {
     @Autowired
     DistritosRepository distritosRepository;
 
+    @Autowired
+    RestauranteRepository restauranteRepository;
+
+
     @GetMapping("/cliente/paginaprincipal")
     public String paginaprincipal() {
         return "cliente/paginaPrincipal";
@@ -161,9 +165,18 @@ public class UsuarioController {
 
         List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuarioactual);
         List<Categorias> listacategorias = categoriasRepository.findAll();
+        List<Restaurante> listarestaurantes = restauranteRepository.findAll();
         model.addAttribute("listacategorias", listacategorias);
         model.addAttribute("listadirecciones", listadireccionescliente);
+        model.addAttribute("listarestaurantes",listarestaurantes);
 
+        int idrest = 1;
+        Optional<Restaurante> restopt = restauranteRepository.findById(idrest);
+        Restaurante rest = restopt.get();
+
+        System.out.println(rest.getCategoriasrestList());
+        List<Categorias> categoriasrest = rest.getCategoriasrestList();
+        System.out.println(categoriasrest.get(1).getNombrecategoria());
 
         return "cliente/realizar_pedido_cliente";
     }

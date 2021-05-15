@@ -11,8 +11,15 @@ public class Restaurante {
     private Integer idrestaurante;
     @Column(nullable = false)
     private String direccion;
-    @Column(nullable = false)
-    private String distrito;
+
+
+    //@Column(nullable = false)
+    //private String distrito;
+
+    @OneToOne
+    @JoinColumn(name = "iddistrito")
+    private Distritos distrito;
+
     @Column(nullable = false)
     private String ruc;
     @Column(nullable = false)
@@ -44,11 +51,11 @@ public class Restaurante {
         this.direccion = direccion;
     }
 
-    public String getDistrito() {
+    public Distritos getDistrito() {
         return distrito;
     }
 
-    public void setDistrito(String distrito) {
+    public void setDistrito(Distritos distrito) {
         this.distrito = distrito;
     }
 

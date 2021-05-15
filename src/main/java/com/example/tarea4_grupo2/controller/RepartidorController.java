@@ -198,7 +198,7 @@ public class RepartidorController {
 
 
 
-        repartidorEnlabasededatos.setDistritoactual(repartidorRecibido.getDistritoactual());
+        //repartidorEnlabasededatos.setDistritoactual(repartidorRecibido.getDistritoactual());
 
         repartidorRepository.save(repartidorEnlabasededatos);
 

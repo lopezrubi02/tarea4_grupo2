@@ -180,77 +180,25 @@
         </div>
       </div>
     </div>
-    <div class="row">
-      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mar_bottom">
-        <div class="blog_box">
-          <div class="blog_img_box">
-            <figure><img th:src="@{/images/blog_img1.png}" width="70" height="70"/>
-             
-            </figure>
+        <div class="row">
+          <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mar_bottom" th:each="restaurante : ${listarestaurantes}">
+            <div class="blog_box">
+              <div class="blog_img_box">
+                <figure><img th:src="@{/images/blog_img1.png}" width="70" height="70"/>
+
+                </figure>
+              </div>
+              <h3 th:text="${restaurante.nombre}">Chifa Imperial</h3>
+              <p th:each="categoriarest : ${restaurante.categoriasrestList}"
+                th:text="${categoriarest.nombrecategoria}">Chifa </p>
+            </div>
+              </br>
           </div>
-          <h3>Chifa Imperial</h3>
-          <p>Chifa </p>
+
+
         </div>
-      </div>
-       <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mar_bottom">
-        <div class="blog_box">
-          <div class="blog_img_box">
-            <figure><img th:src="@{/images/blog_img2.png}" width="70" height="70"/>
-             
-            </figure>
-          </div>
-          <h3>McDonald's</h3>
-          <p>Hamburguesas</p>
-        </div>
-      </div>
-       <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
-        <div class="blog_box">
-          <div class="blog_img_box">
-            <figure><img th:src="@{/images/blog_img3.png}" width="70" height="70"/>
-             
-            </figure>
-          </div>
-          <h3>PizzaHut</h3>
-          <p>Pizzas y pastas</p>
-        </div>
-      </div>
-		</div>
-		</br>
-		<div class="row">
-      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mar_bottom">
-        <div class="blog_box">
-          <div class="blog_img_box">
-            <figure><img th:src="@{/images/blog_img1.png}" width="70" height="70"/>
-             
-            </figure>
-          </div>
-          <h3>Chifa del Pueblo</h3>
-          <p>Chifa </p>
-        </div>
-      </div>
-       <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mar_bottom">
-        <div class="blog_box">
-          <div class="blog_img_box">
-            <figure><img th:src="@{/images/blog_img2.png}" width="70" height="70"/>
-             
-            </figure>
-          </div>
-          <h3>Bembos</h3>
-          <p>Hamburguesas</p>
-        </div>
-      </div>
-       <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
-        <div class="blog_box">
-          <div class="blog_img_box">
-            <figure><img th:src="@{/images/blog_img3.png}" width="70" height="70"/>
-             
-            </figure>
-          </div>
-          <h3>Pizza Raúl</h3>
-          <p>Pizzas y pastas</p>
-        </div>
-      </div>
-		</div>
+            </br>
+
   </div>
 </div>
 <!-- end blog -->
