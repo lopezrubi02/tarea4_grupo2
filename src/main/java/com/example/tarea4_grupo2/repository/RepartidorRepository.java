@@ -23,7 +23,7 @@ public interface RepartidorRepository  extends JpaRepository<Repartidor, Integer
           //  +"inner join usuarios u on (p.idrepartidor=u.idusuarios)\n"
           //  "+ where p.idrepartidor=?1", nativeQuery = true)
             ,nativeQuery = true)
-    List<PedidosReporteDto> findPedidosPorRepartidor();
+    List<PedidosReporteDTO> findPedidosPorRepartidor();
     //List<Pedidos> findPedidosPorRepartidor(String idRepartidor);
 
     @Query(value = "select p.idpedidos, p.montototal, p.comisionrepartidor, p.calificacionrepartidor, r.nombre, r.distrito\n" +

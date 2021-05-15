@@ -61,7 +61,7 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
             "inner join plato pt on pt.idplato = pl.plato_idplato\n" +
             "where p.estadorestaurante = 'entregado'and p.restaurante_idrestaurante = ?1\n" +
             "order by p.fechahorapedido asc", nativeQuery = true)
-    List<PedidosReporteDto> listaPedidosReporteporFechamasantigua(Integer id);
+    List<PedidosReporteDTO> listaPedidosReporteporFechamasantigua(Integer id);
 
     @Query(value = "select\n" +
             "    p.idpedidos as numeropedido,\n" +
@@ -84,7 +84,7 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
             "            or p.montototal like %?1% or pt.nombre like %?1%\n" +
             "            or m.metodo like %?1% or d.distrito like %?1%)\n" +
             "    order by p.fechahorapedido asc", nativeQuery = true)
-    List<PedidosReporteDto> buscarPorReporte(String name, Integer id);
+    List<PedidosReporteDTO> buscarPorReporte(String name, Integer id);
 
     @Query(value = "select \n" +
             "MONTHNAME(p.fechahorapedido) as mes,\n" +

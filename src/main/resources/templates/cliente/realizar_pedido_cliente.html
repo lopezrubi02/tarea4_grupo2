@@ -140,7 +140,7 @@
 						<div class="row g-2">
 			  <div class="col-md">
 				<div class="form-floating">
-				  <select class="form-select" id="floatingSelectGrid2" aria-label="Floating label select example">
+				  <select class="form-select" id="floatingSelectGrid2" aria-label="Floating label select example" onchange="window.location=this.option[this.selectedIndex].value" name="categoriarest">
 					<option th:each = "categoria : ${listacategorias}"
                     th:text="${categoria.getNombrecategoria()}"
                     th:value="${categoria.getIdcategorias()}">Todos</option>
@@ -189,8 +189,11 @@
                 </figure>
               </div>
               <h3 th:text="${restaurante.nombre}">Chifa Imperial</h3>
-              <p th:each="categoriarest : ${restaurante.categoriasrestList}"
-                th:text="${categoriarest.nombrecategoria}">Chifa </p>
+              <p>
+                  <span th:each="categoriarest : ${restaurante.categoriasrestList}"
+                        th:text="${categoriarest.nombrecategoria} + ', '">
+                  </span>
+              </p>
             </div>
               </br>
           </div>
