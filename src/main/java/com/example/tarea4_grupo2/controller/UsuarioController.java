@@ -99,7 +99,7 @@ public class UsuarioController {
 
             Direcciones direccionactual = new Direcciones();
             direccionactual.setDireccion(direccion);
-            direccionactual.setDistrito(distrito);
+            //direccionactual.setDistrito(distrito);
             direccionactual.setUsuariosIdusuarios(idusuarionuevo);
 
             direccionesRepository.save(direccionactual);
@@ -228,7 +228,7 @@ public class UsuarioController {
 
         Direcciones direccioncrear = new Direcciones();
         direccioncrear.setDireccion(direccion);
-        direccioncrear.setDistrito(distrito);
+        //direccioncrear.setDistrito(distrito);
         direccioncrear.setUsuariosIdusuarios(idusuario);
 
         direccionesRepository.save(direccioncrear);

@@ -1,220 +1,252 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<head>
-    <!-- basic -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- mobile metas -->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
-    <!-- site metas -->
-    <title>Spicyo</title>
+    <head>
+        <!--link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous"-->
 
-    <!-- bootstrap css -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <!-- owl css -->
-    <link rel="stylesheet" href="css/owl.carousel.min.css">
-    <!-- style css -->
-    <link rel="stylesheet" href="css/style.css">
-    <!-- responsive-->
-    <link rel="stylesheet" href="css/responsive.css">
-    <!-- awesome fontfamily -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
-</head>
-<!-- body -->
+        <!-- basic -->
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <!-- mobile metas -->
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+        <!-- site metas -->
+        <title>Spicyo</title>
+        <meta name="keywords" content="">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <!-- bootstrap css -->
+        <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+        <!-- owl css -->
+        <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}">
+        <!-- style css -->
+        <link rel="stylesheet" th:href="@{/css/style.css}">
+        <!-- responsive-->
+        <link rel="stylesheet" th:href="@{/css/responsive.css}">
+        <!-- awesome fontfamily -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
+        <style>
+            .form-select:focus {
+                border-color: #ffffff !important;
+                box-shadow: 0 0 0 .2rem rgba(255, 255, 255, .25);
+            }
+            .form-select {
+                border: #fff solid 2px;
+                border-radius: inherit;
+                margin-bottom: 25px;
+                padding: 15px 20px;
+                font-family: poppins;
+            }
+            .form-select:focus {
+                box-shadow: inherit;
+                border: #fff solid 2px !important;
+            }
+        </style>
+    </head>
+    <!-- body -->
 
-<body class="main-layout">
-    <!-- loader  -->
-    <div class="loader_bg">
-        <div class="loader"><img src="images/loading.gif" alt="" /></div>
-    </div>
+    <body class="main-layout Contact_page">
+        <!-- loader  -->
+        <!--div class="loader_bg">
+            <div class="loader"><img th:src="@{/images/loading.gif}" alt="" /></div>
+        </div-->
 
-    <div class="wrapper">
-    <!-- end loader -->
+        <div class="wrapper">
+            <!-- end loader -->
 
-    
+            <div class="sidebar">
+                <!-- Sidebar  -->
+                <nav id="sidebar">
 
-    <div id="content">
-    <!-- header -->
-    <header>
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="full">
-                        <a class="logo" href="index.html"><img src="images/logo.png" alt="#" /></a>
+                    <div id="dismiss">
+                        <i class="fa fa-arrow-left"></i>
                     </div>
-                </div>
-                <div class="col-md-9">
-                    <div class="full">
-                        <div class="right_header_info">
-                            <ul>
-                               <li class="button_user"><a class="button active" href="#">Tengo una cuenta</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+
+                    <ul class="list-unstyled components">
+
+                        <li >
+                            <a href="index.html">Home</a>
+                        </li>
+                        <li>
+                            <a href="about.html">About</a>
+                        </li>
+                        <li>
+                            <a href="recipe.html">Recipe</a>
+                        </li>
+                        <li>
+                            <a href="blog.html">Blog</a>
+                        </li>
+                        <li class="active">
+                            <a href="contact.html">Contact Us</a>
+                        </li>
+                    </ul>
+
+                </nav>
             </div>
-        </div>
-    </header>
 
-
-<div class="bg_bg">
-
-<!-- end about -->
-
-
-    <!-- footer -->
-    <fooetr>
-        <div class="footer">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-12">
-                        <h2>Información del repartidor</h2>
-                    </div>
-                    
-                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
-                        <form class="main_form" method="post" th:action="@{'/repartidor/save3'}"
-                              th:object="${repartidor}">
-                            <div class="row" >
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input class="form-control" placeholder="Correo" th:field="*{email}">
-                                </div>
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input class="form-control" placeholder="Nombres " th:field="*{nombre}">
-                                </div>
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input class="form-control" placeholder="Apellidos " th:field="*{apellidos}">
-                                </div>
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input class="form-control" placeholder="DNI" th:field="*{dni}">
-                                </div>
-                                <div class="col-xl-8 col-lg-12 col-md-12 col-sm-12">
-                                    <a class="form-control" type="text" name="sexo">Sexo</a>
-                                </div>
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <select class="mb-4 col-xl-12 col-lg-12 col-md-12 col-sm-12" name="select">
-                                      <option value="femenino">Femenino</option>
-                                      <option value="masculino" selected>Masculino</option>
-                                    </select>
-                                </div>
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input class="form-control" placeholder="Número de teléfono" type="text" name="telefono">
-                                </div>
-                                <div class="col-xl-8 col-lg-12 col-md-12 col-sm-12">
-                                    <a class="form-control" type="text" name="fechadenacimiento">Fecha de nacimiento</a>
-                                </div>
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12"><input class="form-control" type="date" id="party" name="party" min="2003-04-23" max="2021-04-23" required><span class="validity"></span>
-                                </div>
-                                <div class="col-xl-8 col-lg-12 col-md-12 col-sm-12">
-                                    <a class="form-control" type="text" name="foto">Foto</a>
-                                </div>
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input class="form-control" placeholder="Foto" type="file" name="foto">
-                                </div>
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input class="form-control" placeholder="Dirección" type="text" name="direccion">
-                                </div>
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input class="form-control" placeholder="Contraseña" type="text" name="contrasenia">
-                                </div>
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input class="form-control" placeholder="Confirmar contrasenia" type="text" name="contrasenia2">
-                                </div>
-                                </br>
-                                </br>
-                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <button class="send" type="submit">Registrar</button>
+            <div id="content">
+                <!-- header -->
+                <header>
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="full">
+                                    <a class="logo" href="index.html"><img th:src="@{/images/logo.png}" alt="#" /></a>
                                 </div>
                             </div>
-                        </form>
-                    </div>
-                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
-                        <div class="img-box">
-                            <figure><img src="images/img.jpg" alt="img" /></figure>
+                            <div class="col-md-9">
+                                <div class="full">
+                                    <div class="right_header_info">
+                                        <ul>
+                                            <li><img style="margin-right: 15px;" th:src="@{/images/search_icon.png}" alt="#"></li>
+                                            <li>
+                                                <button type="button" id="sidebarCollapse">
+                                                    <img th:src="@{/images/menu_icon.png}" alt="#">
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            
-            </div>
-            <div class="copyright">
-                <div class="container">
-                    <p>© 2021 Todos los derechos reservados.</p>
-                </div>
+                </header>
+                <!-- end header -->
+                <!-- footer -->
+
+
+                <footer>
+                    <div class="footer">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+
+                                    <form class="main_form" method="post" th:action="@{/repartidor/save3}"
+                                          enctype="multipart/form-data" th:object="${usuario}">
+                                        <div class="row">
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <input class="form-control" placeholder="Correo" type="text" th:field="*{email}">
+                                                <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                                            </div>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <input class="form-control" placeholder="Nombres" type="text" th:field="*{nombre}">
+                                                <div class="text-danger" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
+                                            </div>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <input class="form-control" placeholder="Apellidos" type="text" th:field="*{apellidos}">
+                                                <div class="text-danger" th:if="${#fields.hasErrors('apellidos')}" th:errors="*{apellidos}"></div>
+                                            </div>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <input class="form-control" placeholder="DNI" type="text" th:field="*{dni}">
+                                                <div class="text-danger" th:if="${#fields.hasErrors('dni')}" th:errors="*{dni}"></div>
+                                            </div>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <input class="form-control" placeholder="Celular" type="text" th:field="*{telefono}">
+                                                <div class="text-danger" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}"></div>
+                                            </div>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <label class="form-label">Fecha de nacimiento</label>
+                                                <input placeholder="Fecha de nacimiento"  type="date" class="form-control" th:field="*{fechaNacimiento}">
+                                                <div class="text-danger" th:if="${#fields.hasErrors('fechaNacimiento')}" th:errors="*{fechaNacimiento}"></div>
+                                            </div>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <label class="form-label">Sexo</label>
+                                                <select type="text" class="form-select" th:field="*{sexo}" style="width: 100%;">
+                                                    <option value="Masculino" text="Masculino">Masculino</option>
+                                                    <option value="Femenino" text="Femenino">Femenino</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <input class="form-control" placeholder="Dirección" type="text" name="direccion" id="direccion">
+                                            </div>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <label class="form-label">Distrito</label>
+                                                <select class="form-select" name="distrito" style="width: 100%;">
+                                                    <option th:each="distrito : ${listadistritos}" th:value="${distrito.iddistritos}"
+                                                            th:text="${distrito.nombredistrito}"></option>
+                                                </select>
+                                            </div>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <input class="form-control" placeholder="Contraseña" type="password" th:field="*{contraseniaHash}">
+                                                <div class="text-danger" th:if="${#fields.hasErrors('contraseniaHash')}" th:errors="*{contraseniaHash}"></div>
+                                            </div>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <input class="form-control" placeholder="Confirmar Contraseña" type="password" name="password2" id="password2">
+                                                <div class="text-danger" th:if="${#fields.hasErrors('contraseniaHash')}" th:errors="*{contraseniaHash}"></div>
+                                            </div>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <label>Movilidad</label>
+                                                <select type="text" class="form-select" id="movilidad" name="movilidad" style="width: 100%;">
+                                                    <option value="moto" text="Moto">Moto</option>
+                                                    <option value="bicimoto" text="Bicimoto">Bicimoto</option>
+                                                    <option value="bicicleta" text="Bicicleta">Bicicleta</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <label for="archivo">Foto</label>
+                                                <input type="file" class="form-control" id="archivo" name="archivo"/>
+                                                <div th:if="${msg != null}" th:text="${msg}" class="alert alert-danger" role="alert"></div>
+                                            </div>
+
+                                            
+
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <button class="send" type="submit" >Registrar</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                                    <div class="img-box">
+                                        <figure><img th:src="@{/images/unnamed.png}" alt="img" /></figure>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="copyright">
+                                <div class="container">
+                                    <p>© 2021 Todos los derechos reservados. Propiedad de "Troyanos de Software"</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+                <!-- end footer -->
+
             </div>
         </div>
-    </fooetr>
-    <!-- end footer -->
+        <div class="overlay"></div>
+        <!-- Javascript files-->
+        <script th:href="@{/js/jquery.min.js}"></script>
+        <script th:href="@{/js/popper.min.js}"></script>
+        <script th:href="@{/js/bootstrap.bundle.min.js}"></script>
+        <script th:href="@{/js/owl.carousel.min.js}"></script>
+        <script th:href="@{/js/custom.js}"></script>
+        <script th:href="@{/js/jquery.mCustomScrollbar.concat.min.js}"></script>
 
-    </div>
-    </div>
-    <div class="overlay"></div>
-    <!-- Javascript files-->
-    <script src="js/jquery.min.js"></script>
-    <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap.bundle.min.js"></script>
-    <script src="js/owl.carousel.min.js"></script>
-    <script src="js/custom.js"></script>
-     <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
-    
-     <script src="js/jquery-3.0.0.min.js"></script>
-   <script type="text/javascript">
-        $(document).ready(function() {
-            $("#sidebar").mCustomScrollbar({
-                theme: "minimal"
+        <script th:href="@{/js/jquery-3.0.0.min.js}"></script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $("#sidebar").mCustomScrollbar({
+                    theme: "minimal"
+                });
+
+                $('#dismiss, .overlay').on('click', function() {
+                    $('#sidebar').removeClass('active');
+                    $('.overlay').removeClass('active');
+                });
+
+                $('#sidebarCollapse').on('click', function() {
+                    $('#sidebar').addClass('active');
+                    $('.overlay').addClass('active');
+                    $('.collapse.in').toggleClass('in');
+                    $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+                });
             });
+        </script>
 
-            $('#dismiss, .overlay').on('click', function() {
-                $('#sidebar').removeClass('active');
-                $('.overlay').removeClass('active');
-            });
-
-            $('#sidebarCollapse').on('click', function() {
-                $('#sidebar').addClass('active');
-                $('.overlay').addClass('active');
-                $('.collapse.in').toggleClass('in');
-                $('a[aria-expanded=true]').attr('aria-expanded', 'false');
-            });
-        });
-    </script>
-
-    <style>
-    #owl-demo .item{
-        margin: 3px;
-    }
-    #owl-demo .item img{
-        display: block;
-        width: 100%;
-        height: auto;
-    }
-    </style>
-
-     
-      <script>
-         $(document).ready(function() {
-           var owl = $('.owl-carousel');
-           owl.owlCarousel({
-             margin: 10,
-             nav: true,
-             loop: true,
-             responsive: {
-               0: {
-                 items: 1
-               },
-               600: {
-                 items: 2
-               },
-               1000: {
-                 items: 5
-               }
-             }
-           })
-         })
-      </script>
-
-</body>
+    </body>
 
 </html>

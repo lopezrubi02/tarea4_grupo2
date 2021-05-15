@@ -10,7 +10,9 @@ public class Direcciones {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int iddirecciones;
     private String direccion;
-    private String distrito;
+    @ManyToOne
+    @JoinColumn(name = "iddistrito")
+    private Distritos distrito;
     private int usuariosIdusuarios;
 
     public int getIddirecciones() {
@@ -29,11 +31,11 @@ public class Direcciones {
         this.direccion = direccion;
     }
 
-    public String getDistrito() {
+    public Distritos getDistrito() {
         return distrito;
     }
 
-    public void setDistrito(String distrito) {
+    public void setDistrito(Distritos distrito) {
         this.distrito = distrito;
     }
 

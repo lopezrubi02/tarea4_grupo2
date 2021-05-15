@@ -6,11 +6,18 @@ import com.example.tarea4_grupo2.dto.PlatosPorPedidoDTO;
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.Valid;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +30,9 @@ public class RepartidorController {
 
     @Autowired
     RepartidorRepository repartidorRepository;
+
+    @Autowired
+    DistritosRepository distritosRepository;
 
     @Autowired
     DireccionesRepository direccionesRepository;
@@ -170,18 +180,17 @@ public class RepartidorController {
 
 
     @GetMapping(value={"/home", "", "/"})
-    public String homeRepartidor(@ModelAttribute("repartidor") Repartidor repartidor,Model model, RedirectAttributes attr) {
-
+    public String homeRepartidor(@ModelAttribute("repartidor") Repartidor repartidor,
+                                 Model model, RedirectAttributes attr) {
         int id=10;
-
         Optional<Usuario> optional = usuarioRepository.findById(id);
-
         if (optional.isPresent()) {
             Usuario usuario = optional.get();
             model.addAttribute("usuario", usuario);
 
             Repartidor repartidor2 = repartidorRepository.findRepartidorByIdusuariosEquals(id);
             model.addAttribute("repartidor", repartidor2);
+            model.addAttribute("listadistritos",distritosRepository.findAll());
         }
         return "repartidor/repartidor_principal";
     }
@@ -195,7 +204,7 @@ public class RepartidorController {
 
         //repartidorEnlabasededatos.setMovilidad(optionalRepartidor.getMovilidad());
         repartidorEnlabasededatos.setDisponibilidad(repartidorRecibido.isDisponibilidad());
-        repartidorEnlabasededatos.setDistritoactual(repartidorRecibido.getDistritoactual());
+        repartidorEnlabasededatos.setIddistritoactual(repartidorRecibido.getIddistritoactual());
 
         repartidorRepository.save(repartidorEnlabasededatos);
 
@@ -277,8 +286,90 @@ public class RepartidorController {
     }
 
     @GetMapping("/new3")
-    public String nuevoRepartidor3(@ModelAttribute("repartidor") Usuario repartidor) {
+    public String nuevoRepartidor3(@ModelAttribute("usuario") Usuario usuario,
+                                   BindingResult bindingResult, Model model) {
+        model.addAttribute("listadistritos", distritosRepository.findAll());
         return "repartidor/registro_parte3";
+    }
+
+    @PostMapping("/save3")
+    public String guardarRepartidor3(@ModelAttribute("usuario") @Valid Usuario usuario,
+                                     BindingResult bindingResult,
+                                     @RequestParam("direccion") String direccion,
+                                     @RequestParam("distrito") Distritos distrito,
+                                     @RequestParam("password2") String pass2,
+                                     @RequestParam("movilidad") String movilidad,
+                                     @RequestParam("archivo") MultipartFile file,
+                                     Model model) {
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("listadistritos", distritosRepository.findAll());
+            return "repartidor/registro_parte3";
+        }
+
+        if (usuario.getContraseniaHash().equals(pass2)) {
+            Usuario usuario2 = new Usuario();
+            usuario2.setNombre(usuario.getNombre());
+            usuario2.setApellidos(usuario.getApellidos());
+            usuario2.setEmail(usuario.getEmail());
+            usuario2.setTelefono(usuario.getTelefono());
+            usuario2.setSexo(usuario.getSexo());
+
+            String contraseniahashbcrypt = BCrypt.hashpw(usuario2.getContraseniaHash(), BCrypt.gensalt());
+
+            usuario.setContraseniaHash(contraseniahashbcrypt);
+            usuario.setRol("Repartidor");
+            usuario.setCuentaActiva(0);
+            usuario.setDni(usuario.getDni());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+            usuario2.setFechaNacimiento(usuario.getFechaNacimiento());
+                //System.out.println(fechaNacimiento);
+
+            Direcciones direccionactual = new Direcciones();
+            direccionactual.setDireccion(direccion);
+            direccionactual.setDistrito(distrito);
+            direccionactual.setUsuariosIdusuarios(usuario.getIdusuarios());
+
+            direccionesRepository.save(direccionactual);
+
+            if (file.isEmpty()) {
+                model.addAttribute("msg", "Debe subir un archivo");
+                return "repartidor/new3";
+            }
+            String fileName = file.getOriginalFilename();
+            if (fileName.contains("..")) {
+                model.addAttribute("msg", "No se permiten '..' en el archivo");
+                return "repartidor/new3";
+            }
+            try {
+                Repartidor repartidor= new Repartidor();
+                repartidor.setIdusuarios(usuario.getIdusuarios());
+                repartidor.setFoto(file.getBytes());
+                repartidor.setFotonombre(fileName);
+                repartidor.setFotocontenttype(file.getContentType());
+                repartidorRepository.save(repartidor);
+                return "redirect:/repartidor/new1";
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                model.addAttribute("msg", "ocurrió un error al subir el archivo");
+                return "repartidor/new3";
+            }
+
+            //usuarioRepository.save(usuario);
+            //Usuario usuarionuevo = usuarioRepository.findByDni(usuario.getDni());
+            //int idusuarionuevo = usuarionuevo.getIdusuarios();
+
+            //return "redirect:/repartidor/new1";
+        } else {
+            return "repartidor/new3";
+        }
+
+
+
+
+
     }
 
     //@GetMapping("/reportes")

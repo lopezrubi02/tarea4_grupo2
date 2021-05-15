@@ -4,6 +4,10 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -16,14 +20,21 @@ public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idusuarios;
+    @NotBlank(message = "El nombre no puede ser nulo")
     private String nombre;
+    @NotBlank(message = "El apellido no puede ser nulo")
     private String apellidos;
+    @NotBlank(message = "El email no puede ser nulo")
+    //@Email
     private String email;
 
     @Column(name = "contraseniahash")
+    @Pattern(regexp="(?=.*[0-9])(?=.*[a-z])(?=\\S+$).{8,}", message = "La contraseña no es válida debe contener números y letras y tener al menos 8 caracteres")
     private String contraseniaHash;
+    @Digits(integer = 9,fraction = 0,message = "El teléfono no es válido")
     private Integer telefono;
     private String sexo;
+    @Digits(integer = 8,fraction = 0,message = "El dni no es válido")
     private String dni;
     private Integer comisionventa;
     private String rol;
