@@ -21,7 +21,7 @@
 <body class="main-layout">
 
 <div class="loader_bg">
-    <div class="loader"><img src="images/loading.gif" alt="" /></div>
+    <div class="loader"><img src="/images/loading.gif" alt="" /></div>
 </div>
 
 <div class="wrapper">
@@ -70,7 +70,7 @@
                         <div class="row justify-content-center">
                             <div class="col-xl-12" style="align-content: center">
                                 <div class="container" style="text-align: center">
-                                    <h1>Bienvenido, XXXXX</h1>
+                                    <h1 th:text="|Bienvenido ${session.usuarioLogueado.nombre} ${session.usuarioLogueado.apellidos}|"></h1>
                                     <div class="row" style="padding-top: 50px">
                                         <h2>Aun no has registrado tu restaurante</h2>
                                     </div>
@@ -78,7 +78,7 @@
                             </div>
                         </div>
                         <div class="row" style="padding-top: 100px">
-                            <a class="send" type="submit" th:href="@{/registerRestaurante}" style="text-align: center; max-width: 200px">Registre su restaurante</a>
+                            <a class="send" type="submit" th:href="@{/adminrest/registerRestaurante}" style="text-align: center; max-width: 200px">Registre su restaurante</a>
                         </div>
                     </div>
                     <div class="copyright">
