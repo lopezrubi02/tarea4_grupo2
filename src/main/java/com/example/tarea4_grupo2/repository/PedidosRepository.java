@@ -52,46 +52,36 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
             "where r.idrestaurante=?1 and p.estadorestaurante='pendiente'",nativeQuery = true)
     List<PedidosAdminRestDto> listaPedidos(Integer id);
 
-    @Query(value = "select \n" +
-            "p.idpedidos as numeropedido,\n" +
-            "p.fechahorapedido as fechahorapedido, \n" +
-            "u.nombre as nombre, \n" +
-            "u.apellidos as apellidos,\n" +
-            "p.montototal as montototal, \n" +
-            "pt.nombre as nombreplato,\n" +
-            "m.metodo as metodo, \n" +
-            "d.distrito as distrito\n" +
-            "from pedidos p \n" +
+    @Query(value = "select p.idpedidos as numeropedido, p.fechahorapedido as fechahorapedido, \n" +
+            "u.nombre as nombre, u.apellidos as apellidos, p.montototal as montototal, pt.nombre as nombreplato,\n" +
+            "m.metodo as metodo, d.nombredistrito as distrito\n" +
+            " from pedidos p\n" +
+            " inner join usuarios u on u.idusuarios = p.idcliente \n" +
+            " inner join direcciones dir on dir.iddirecciones = p.direccionentrega\n" +
+            "  inner join distritos d on d.iddistritos = dir.iddistrito\n" +
+            " inner join metodospago m on m.idmetodospago = p.idmetodopago\n" +
+            " inner join pedidos_has_plato pl on pl.pedidos_idpedidos = p.idpedidos\n" +
+            " inner join plato pt on pt.idplato = pl.plato_idplato\n" +
+            " where p.estadorestaurante = 'entregado' and p.restaurante_idrestaurante = ?1\n" +
+            "  order by p.fechahorapedido asc", nativeQuery = true)
+    List<PedidosReporteDTO> listaPedidosReporteporFechamasantigua(Integer id);
+
+    @Query(value = "select p.idpedidos as numeropedido, p.fechahorapedido as fechahorapedido, \n" +
+            "u.nombre as nombre, u.apellidos as apellidos, p.montototal as montototal, pt.nombre as nombreplato,\n" +
+            "m.metodo as metodo, d.nombredistrito as distrito\n" +
+            "from pedidos p\n" +
             "inner join usuarios u on u.idusuarios = p.idcliente \n" +
-            "inner join direcciones d on d.iddirecciones = p.direccionentrega \n" +
+            "inner join direcciones dir on dir.iddirecciones = p.direccionentrega\n" +
+            "inner join distritos d on d.iddistritos = dir.iddistrito\n" +
             "inner join metodospago m on m.idmetodospago = p.idmetodopago\n" +
             "inner join pedidos_has_plato pl on pl.pedidos_idpedidos = p.idpedidos\n" +
             "inner join plato pt on pt.idplato = pl.plato_idplato\n" +
-            "where p.estadorestaurante = 'entregado'and p.restaurante_idrestaurante = ?1\n" +
+            "where p.estadorestaurante = 'entregado' and p.restaurante_idrestaurante = ?2\n" +
+            "and (p.idpedidos like %?1% or p.fechahorapedido like %?1%\n" +
+            "or u.nombre like %?1% or u.apellidos like %?1%\n" +
+            "or p.montototal like %?1% or pt.nombre like %?1%\n" +
+            "or m.metodo like %?1% or d.nombredistrito like %?1%)\n" +
             "order by p.fechahorapedido asc", nativeQuery = true)
-    List<PedidosReporteDTO> listaPedidosReporteporFechamasantigua(Integer id);
-
-    @Query(value = "select\n" +
-            "    p.idpedidos as numeropedido,\n" +
-            "    p.fechahorapedido as fechahorapedido,\n" +
-            "    u.nombre as nombre,\n" +
-            "    u.apellidos as apellidos,\n" +
-            "    p.montototal as montototal,\n" +
-            "    pt.nombre as nombreplato,\n" +
-            "    m.metodo as metodo,\n" +
-            "    d.distrito as distrito\n" +
-            "    from pedidos p\n" +
-            "    inner join usuarios u on u.idusuarios = p.idcliente\n" +
-            "    inner join direcciones d on d.iddirecciones = p.direccionentrega\n" +
-            "    inner join metodospago m on m.idmetodospago = p.idmetodopago\n" +
-            "    inner join pedidos_has_plato pl on pl.pedidos_idpedidos = p.idpedidos\n" +
-            "    inner join plato pt on pt.idplato = pl.plato_idplato\n" +
-            "    where p.estadorestaurante = 'entregado' and p.restaurante_idrestaurante = ?2\n" +
-            "    and (p.idpedidos like %?1% or p.fechahorapedido like %?1%\n" +
-            "            or u.nombre like %?1% or u.apellidos like %?1%\n" +
-            "            or p.montototal like %?1% or pt.nombre like %?1%\n" +
-            "            or m.metodo like %?1% or d.distrito like %?1%)\n" +
-            "    order by p.fechahorapedido asc", nativeQuery = true)
     List<PedidosReporteDTO> buscarPorReporte(String name, Integer id);
 
     @Query(value = "select \n" +

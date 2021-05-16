@@ -1,10 +1,8 @@
 package com.example.tarea4_grupo2.controller;
 
 import com.example.tarea4_grupo2.dto.ComentariosDto;
-import com.example.tarea4_grupo2.dto.DatosDTO;
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
-import jdk.nashorn.internal.objects.AccessorPropertyDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -190,7 +188,7 @@ public class AdminRestauranteController {
             model.addAttribute("plato",plato);
             return "AdminRestaurantes/newPlato";
         }else{
-            return "redirect:/menu";
+            return "redirect:/adminrest/menu";
         }
     }
 
@@ -199,11 +197,11 @@ public class AdminRestauranteController {
         if (plato.getIdplato() == 0) {
             attr.addFlashAttribute("msg", "Plato creado exitosamente");
             platoRepository.save(plato);
-            return "redirect:/menu";
+            return "redirect:/adminrest/menu";
         } else {
             platoRepository.save(plato);
             attr.addFlashAttribute("msg", "Plato actualizado exitosamente");
-            return "redirect:/menu";
+            return "redirect:/adminrest/menu";
         }
     }
 
@@ -213,10 +211,16 @@ public class AdminRestauranteController {
         Optional<Plato> optionalPlato = platoRepository.findById(id);
 
         if(optionalPlato.isPresent()){
-            platoRepository.deleteById(id);
-            attr.addFlashAttribute("msg", "Producto borrado exitosamente");
+            Plato platoBorrar = optionalPlato.get();
+            if(platoBorrar.getIdplato() != 0){
+                platoBorrar.setActivo(0);
+                platoRepository.save(platoBorrar);
+                attr.addFlashAttribute("msg", "Producto borrado exitosamente");
+            }
+            return "redirect:/adminrest/menu";
+        }else{
+            return "redirect:/adminrest/menu";
         }
-        return "redirect:/menu";
     }
 
     /************************CUPONES************************/
@@ -257,7 +261,7 @@ public class AdminRestauranteController {
         model.addAttribute("listaDisponibilidad", listaDisponibilidad);
         model.addAttribute("currentPage", page);
         model.addAttribute("maxNumberOfPages", numberOfPages);
-        return "AdminRestaurantes/cupones";
+        return "/AdminRestaurantes/cupones";
     }
 
     @GetMapping("/crearCupon")
@@ -308,12 +312,12 @@ public class AdminRestauranteController {
         if (cupon.getIdcupones() == 0) {
             cuponesRepository.save(cupon);
             attr.addFlashAttribute("msg", "Cupon creado exitosamente");
-            return "redirect:/cupones";
+            return "redirect:/adminrest/cupones";
 
         } else {
             cuponesRepository.save(cupon);
             attr.addFlashAttribute("msg", "Cupon actualizado exitosamente");
-            return "redirect:/cupones";
+            return "redirect:/adminrest/cupones";
         }
     }
 
