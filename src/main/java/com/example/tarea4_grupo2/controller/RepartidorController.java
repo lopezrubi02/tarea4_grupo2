@@ -147,15 +147,17 @@ public class RepartidorController {
     public String buscador(@RequestParam("valorBuscado") String searchField,
                            Model model, RedirectAttributes attr) {
 
-        List<PedidosReporteDTO> listaPedidosxRestaurante = repartidorRepository.findPedidosByRestaurante(searchField);
-        List<PedidosReporteDTO> listaPedidosxDistrito = repartidorRepository.findPedidosByDistrito(searchField);
-        if (listaPedidosxRestaurante.isEmpty() && listaPedidosxDistrito.isEmpty()) {
+        //List<PedidosReporteDTO> listaPedidosxRestaurante = repartidorRepository.findPedidosByRestaurante(searchField);
+        //List<PedidosReporteDTO> listaPedidosxDistrito = repartidorRepository.findPedidosByDistrito(searchField);
+        List <PedidosReporteDTO> ListaFindReporte = repartidorRepository.findReporte(searchField);
+        if (ListaFindReporte.isEmpty()) {
             attr.addFlashAttribute("msg", "No hay resultados asociados a la búsqueda.");
             return "redirect:/repartidor";
         }else{
-        model.addAttribute("listaPedidosxRestaurante", listaPedidosxRestaurante);
-        model.addAttribute("listaPedidosxDistrito", listaPedidosxDistrito);
-        return"repartidor/repartidor_resultado_buscador";
+            //model.addAttribute("listaPedidosxRestaurante", listaPedidosxRestaurante);
+            //model.addAttribute("listaPedidosxDistrito", listaPedidosxDistrito);
+            model.addAttribute("ListaFindReporte", ListaFindReporte);
+            return "repartidor/repartidor_resultado_buscador";
         }
     }
 

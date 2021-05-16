@@ -46,6 +46,11 @@
         <div class="blog">
             <div class="container">
                 <h1>Reportes</h1>
+                <div th:if="${msg != null}" th:text="${msg}" class="alert alert-success" role="alert"></div>
+                <form method="post" th:action="@{/repartidor/Buscador}">
+                    <input name="valorBuscado" class="form-control mb-3" type="text" placeholder="Ingrese el nombre del restaurante o distrito del restaurante"/>
+                </form>
+
                 <table class="table">
                     <thead>
                     <tr>
@@ -63,13 +68,12 @@
                     <tr th:each="pedidoDisponible, info : ${listaReporte1}">
                         <td th:text="${info.index + 1}"></td>
                         <td th:text="${pedidoDisponible.getNombre()}"></td>
-                        <td th:text="${pedidoDisponible.getDistrito()}"></td>
-                        <td th:text="${pedidoDisponible.getDireccionCliente()}"></td>
-                        <td th:text="${pedidoDisponible.getDistritoCliente()}"></td>
+                        <td th:text="${pedidoDisponible.getRestaurantedistrito()}"></td>
+                        <td th:text="${pedidoDisponible.getClientedireccion()}"></td>
+                        <td th:text="${pedidoDisponible.getClientedistrito()}"></td>
                         <td th:text="${pedidoDisponible.getComisionrepartidor()} + '.0'"></td>
                         <td th:text="${pedidoDisponible.getMontototal()}"></td>
                         <td th:text="${pedidoDisponible.getCalificacionrepartidor()}"></td>
-                    </tr>
                     </tbody>
                 </table>
 

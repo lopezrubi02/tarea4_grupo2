@@ -6,7 +6,7 @@ public interface PedidosReporteDTO {
     int getComisionrepartidor();
     int getCalificacionrepartidor();
     String getNombre();
-    String getDistrito();
-    String getDireccionCliente();
-    String getDistritoCliente();
+    String getRestaurantedistrito();
+    String getClientedireccion();
+    String getClientedistrito();
 }
