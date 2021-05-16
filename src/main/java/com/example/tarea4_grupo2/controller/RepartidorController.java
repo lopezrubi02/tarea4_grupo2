@@ -34,23 +34,26 @@ public class RepartidorController {
     RestauranteRepository restauranteRepository;
 
     @GetMapping("/VerDetalles")
-    public String verDetalles(Model model, @RequestParam("id") int id) {
-        Optional<Pedidos> optionalPedidos = pedidosRepository.findById(id);
+    public String verDetalles(Model model, @RequestParam("id") int id, RedirectAttributes attr) {
+        Optional<Pedidos> pedidoElegido = pedidosRepository.findById(id);
 
-        if (optionalPedidos.isPresent()) {
-            Pedidos pedido = optionalPedidos.get();
-            List<PlatosPorPedidoDTO> listaPlatosPorPedidoDTO = repartidorRepository.findListaPlatosPorPedido(id);
-            Optional<Restaurante> restauranteOptional = restauranteRepository.findById(pedido.getRestaurante_idrestaurante());
-            if (restauranteOptional.isPresent()) {
-                model.addAttribute("listaPlatosPorPedidoDTO", listaPlatosPorPedidoDTO);
-                model.addAttribute("pedido", pedido);
-                Restaurante restaurante = restauranteOptional.get();
-                model.addAttribute("restaurante", restaurante);
-                return "repartidor/repartidor_detalles_pedido";
-            } else {
-                return "redirect:/repartidor";
-            }
+        if (pedidoElegido.isPresent()) {
+            Pedidos pedido = pedidoElegido.get();
+            pedido.setEstadorepartidor("aceptado"); //Estado de esperando recojo del restaurante
+            model.addAttribute("pedido", pedido);
+
+            Restaurante restaurante = restauranteRepository.findRestauranteById(pedido.getRestaurante_idrestaurante());
+            model.addAttribute("restaurante", restaurante);
+
+            Direcciones direccion = direccionesRepository.findDireccionById(pedido.getDireccionentrega());
+            model.addAttribute("direccion", direccion);
+
+            List<PlatosPorPedidoDTO> listaPlatosPorPedidoDTO = repartidorRepository.findListaPlatosPorPedido(pedido.getIdpedidos());
+            model.addAttribute("listaPlatosPorPedidoDTO", listaPlatosPorPedidoDTO);
+
+            return "repartidor/repartidor_detalles_pedido";
         } else {
+            attr.addFlashAttribute("msg", "Este pedido ya no está disponible :(");
             return "redirect:/repartidor";
         }
     }
@@ -101,6 +104,36 @@ public class RepartidorController {
 
         if (pedidoElegido.isPresent()) {
             Pedidos pedido = pedidoElegido.get();
+            pedido.setEstadorepartidor("recogido"); //Estado de esperando ser entregado al cliente
+            model.addAttribute("pedido", pedido);
+
+            Usuario usuario = usuarioRepository.findUsuarioById(pedido.getIdcliente());
+            model.addAttribute("usuario", usuario);
+
+            Restaurante restaurante = restauranteRepository.findRestauranteById(pedido.getRestaurante_idrestaurante());
+            model.addAttribute("restaurante", restaurante);
+
+            Direcciones direccion = direccionesRepository.findDireccionById(pedido.getDireccionentrega());
+            model.addAttribute("direccion", direccion);
+
+            List<PlatosPorPedidoDTO> listaPlatosPorPedidoDTO = repartidorRepository.findListaPlatosPorPedido(pedido.getIdpedidos());
+            model.addAttribute("listaPlatosPorPedidoDTO", listaPlatosPorPedidoDTO);
+
+            return "repartidor/repartidor_pedido_en_progreso";
+        } else {
+            attr.addFlashAttribute("msg", "Este pedido ya no está disponible :(");
+            return "redirect:/repartidor";
+        }
+
+    }
+
+    //El repartidor entrega el pedido al cliente
+    @GetMapping("/ConfirmaEntrega")
+    public String confirmaEntrega(RedirectAttributes attr, @RequestParam("idpedido") int idPedidoElegido, Model model) {
+        Optional<Pedidos> pedidoElegido = pedidosRepository.findById(idPedidoElegido);
+
+        if (pedidoElegido.isPresent()) {
+            Pedidos pedido = pedidoElegido.get();
             pedido.setEstadorepartidor("recogido"); //Estado de esperando recojo del restaurante
             Optional<Usuario> usuarioOptional = usuarioRepository.findById(pedido.getIdcliente());
             List<PlatosPorPedidoDTO> listaPlatosPorPedidoDTO = repartidorRepository.findListaPlatosPorPedido(idPedidoElegido);
@@ -118,23 +151,6 @@ public class RepartidorController {
                 return "redirect:/repartidor";
             }
         } else {
-            return "redirect:/repartidor";
-        }
-
-    }
-
-    //El repartidor entrega el pedido al cliente
-    @GetMapping("/ConfirmaEntrega")
-    public String confirmaEntrega(RedirectAttributes attr, @RequestParam("idpedido") int idPedidoElegido, Model model) {
-        Optional<Pedidos> pedidoElegido = pedidosRepository.findById(idPedidoElegido);
-
-        if (pedidoElegido.isPresent()) {
-            Pedidos pedido = pedidoElegido.get();
-            pedido.setEstadorepartidor("entregado"); //Estado de entregado al cliente
-            attr.addFlashAttribute("msg", "Se registró la entrega del pedido al cliente");
-            return "redirect:/repartidor";
-        } else {
-            attr.addFlashAttribute("msg", "Este pedido ya no está disponible :(");
             return "redirect:/repartidor";
         }
     }

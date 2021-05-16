@@ -65,7 +65,7 @@
                         <td th:text="${pedidoDisponible.getRestaurante()}"></td>
                         <td th:text="${pedidoDisponible.getDistritorestaurante()}"></td>
                         <td th:text="${pedidoDisponible.getDireccioncliente()}"></td>
-                        <td th:text="${pedidoDisponible.getComision()} + '.00'"></td>
+                        <td th:text="${pedidoDisponible.getComision()} + '.0'"></td>
                         <td th:text="${pedidoDisponible.getMonto()}"></td>
                         <td><a class="btn btn-primary"
                                th:href="@{'/repartidor/VerDetalles' + '?id=' + ${pedidoDisponible.getIdpedidos()}}">Ver
