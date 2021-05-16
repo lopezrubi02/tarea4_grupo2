@@ -94,6 +94,49 @@
                         <div class="row">
                             <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 about_img_boxpdnt">
                                 <figure><img th:src="@{/images/perfil-hombre-dibujos-animados_18591-58484 (1).jpg}" alt="#/"></figure>
+                                <form th:action="@{'/adminrest/guardarrestedit'}" th:object="${restaurante}">
+                                    <div class="about_box" style="height: 620px">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                            <label>Nombre del restaurante</label>
+                                            <input class="form-control" th:field="*{nombre}" th:value="*{nombre}" type="text">
+                                        </div>
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                            <label>RUC del restaurante</label>
+                                            <input class="form-control" th:field="*{ruc}" th:value="*{ruc}" type="text" disabled>
+                                        </div>
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                            <label>Direccion del restaurante</label>
+                                            <input class="form-control" th:field="*{direccion}" th:value="*{direccion}" type="text">
+                                        </div>
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                            <label>Distrito</label>
+                                            <select type="text" class="form-select" th:field="*{distrito.iddistritos}"style="width: 100%;">
+                                                <option th:each="lista : ${listadistritos}"
+                                                        th:text="${lista.nombredistrito}"
+                                                        th:value="${lista.iddistritos}"
+                                                        th:selected="${lista.nombredistrito==restaurante.distrito.nombredistrito}"></option>
+                                            </select>
+                                        </div>
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                            <div style="position: relative;padding-top: 25px"><input class="form-control-file" type="file" id="imagen" name="imagen" style="opacity: 0%;position: absolute">Adjuntar Imagen</div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div style="padding-left: 15px;padding-top: 25px">
+                                                    <button class="send" type="submit"
+                                                            style="font-size: 16px;background: #d8b00f;width: 200px">Guardar cambios</button>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3"></div>
+                                            <div class="col-md-3">
+                                                <div style="padding-left: 15px;padding-top: 25px">
+                                                    <button class="send" th:href="@{/adminrest/perfil}"
+                                                            style="font-size: 16px;background: #d8b00f;width: 200px">Categorias</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                                 <form method="post" th:action="@{'/adminrest/guardaradminedit'}" th:object="${usuario}">
@@ -124,7 +167,7 @@
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <label>Fecha de nacimiento</label>
-                                                <input class="form-control" type="date" th:value="${datos.fechanacimiento}"  disabled>
+                                                <input class="form-control" type="date" th:value="${datos.fechanacimiento}" disabled>
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <label>Mis direcciones</label><br/><a th:href="@{'/adminrest/agregardireccion'}"> Agregar nueva dirección</a>
@@ -151,9 +194,20 @@
                                                 <label>Confirmar contraseña</label>
                                                 <input placeholder="Confirmar contraseña" class="form-control" type="password" id="pass2" name="pass2">
                                             </div>
-                                            <div style="padding-left: 15px">
-                                            <button class="send button" type="submit"
-                                                    style="font-size: 16px;background: #d8b00f;">Guardar cambios</button>
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <div style="padding-left: 15px;padding-top: 25px">
+                                                        <button class="send" type="submit"
+                                                                style="font-size: 16px;background: #d8b00f;width: 200px">Guardar cambios</button>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3"></div>
+                                                <div class="col-md-3">
+                                                    <div style="padding-left: 15px;padding-top: 25px">
+                                                        <button class="send" th:href="@{/adminrest/perfil}"
+                                                                style="font-size: 16px;background: #d8b00f;width: 200px">Regresar</button>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

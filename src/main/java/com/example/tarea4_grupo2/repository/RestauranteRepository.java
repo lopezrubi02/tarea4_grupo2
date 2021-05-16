@@ -26,4 +26,7 @@ public interface RestauranteRepository extends JpaRepository<Restaurante, Intege
     @Query(value="select * from restaurante where idadminrest = ?1 limit 1", nativeQuery = true)
     Optional<Restaurante> buscarRestaurantePorIdAdmin(Integer id);
 
+    @Query(value="select ruc from restaurante where idadminrest=?1",nativeQuery = true)
+    int buscarRuc(int id);
+
 }

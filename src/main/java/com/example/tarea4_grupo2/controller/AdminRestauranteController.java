@@ -445,6 +445,7 @@ public class AdminRestauranteController {
         model.addAttribute("restaurante",restauranteRepository.obtenerperfilRest(user.getIdusuarios()));
         model.addAttribute("usuario",usuarioRepository.findById(user.getIdusuarios()).get());
         model.addAttribute("datos",usuarioRepository.obtenerDatos(user.getIdusuarios()));
+        model.addAttribute("listadistritos",distritosRepository.findAll());
         return "AdminRestaurantes/cuenta";
     }
     @GetMapping("/borrarRestaurante")
