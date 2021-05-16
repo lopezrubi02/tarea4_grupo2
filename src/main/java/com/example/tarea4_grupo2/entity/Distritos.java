@@ -1,13 +1,16 @@
 package com.example.tarea4_grupo2.entity;
 
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "distritos")
 public class Distritos {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int iddistritos;
+
     private String nombredistrito;
 
     public int getIddistritos() {

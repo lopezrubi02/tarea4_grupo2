@@ -2,12 +2,8 @@ package com.example.tarea4_grupo2.entity;
 
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.format.annotation.DateTimeFormat;
-
 import javax.persistence.*;
-import javax.validation.constraints.Digits;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -16,35 +12,55 @@ import java.util.Date;
 @Entity
 @Table(name = "usuarios")
 public class Usuario {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idusuarios;
-    @NotBlank(message = "El nombre no puede ser nulo")
+
+    @Column(nullable = false)
+    @NotBlank(message = "No puede estar vacío")
+    @Size(max=45,message = "Los nombres no puede tener más de 45 caracteres")
     private String nombre;
-    @NotBlank(message = "El apellido no puede ser nulo")
+
+    @Column(nullable = false)
+    @NotBlank(message = "No puede estar vacío")
+    @Size(max=45,message = "Los apellidos no puede tener más de 45 caracteres")
     private String apellidos;
-    @NotBlank(message = "El email no puede ser nulo")
-    //@Email
+
+    @Column(nullable = false)
+    @Email
+    @NotBlank(message = "No puede estar vacío")
+    @Size(max=45, message = "El email no puede tener más de 45 caracteres")
     private String email;
 
-    @Column(name = "contraseniahash")
-    @Pattern(regexp="(?=.*[0-9])(?=.*[a-z])(?=\\S+$).{8,}", message = "La contraseña no es válida debe contener números y letras y tener al menos 8 caracteres")
+    @Column(name = "contraseniahash",nullable = false)
+    @NotBlank(message = "No puede estar vacío")
     private String contraseniaHash;
-    @Digits(integer = 9,fraction = 0,message = "El teléfono no es válido")
+
+    @Column(nullable = false)
+    @NotNull(message = "No puede estar vacío")
+    @Min(value=9,message="El teléfono no puede tener más de 9 dígitos")
     private Integer telefono;
+
+    @Column(name = "fechanacimiento",nullable = false)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date fechaNacimiento;
+
+    @Column(nullable = false)
+    @NotBlank(message = "No puede estar vacío")
     private String sexo;
-    @Digits(integer = 8,fraction = 0,message = "El dni no es válido")
+
+    @Column(nullable = false)
+    @NotBlank(message = "No puede estar vacío")
+    @Size(max=8,message = "No puede tenr más de 8 dígitos")
     private String dni;
+
     private Integer comisionventa;
+
+    @Column(nullable = false)
     private String rol;
 
     @Column(name = "cuentaactiva")
     private Integer cuentaActiva;
-
-    @Column(name = "fechanacimiento")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date fechaNacimiento;
 
     private LocalDateTime ultimafechaingreso;
 

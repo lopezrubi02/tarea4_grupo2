@@ -1,7 +1,7 @@
 package com.example.tarea4_grupo2.controller;
 
 import com.example.tarea4_grupo2.dto.PedidosDisponiblesDTO;
-import com.example.tarea4_grupo2.dto.PedidosReporteDTO;
+import com.example.tarea4_grupo2.dto.PedidosReporteDto;
 import com.example.tarea4_grupo2.dto.PlatosPorPedidoDTO;
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
@@ -167,7 +167,7 @@ public class RepartidorController {
 
     @GetMapping("/Reportes")
     public String reportes(Model model, RedirectAttributes attr){
-        List<PedidosReporteDTO> listaReporte1 = repartidorRepository.findPedidosPorRepartidor();
+        List<PedidosReporteDto> listaReporte1 = repartidorRepository.findPedidosPorRepartidor();
         if (listaReporte1.isEmpty()) {
             attr.addFlashAttribute("msg", "No hay resultados para mostrar.");
             return "redirect:/repartidor";

@@ -70,19 +70,6 @@
                                             <input th:field="*{precio}" class="form-control" placeholder="Precio" type="text" name="precio" id="precio">
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:if="${plato.idplato}">
-                                            <label for="cupones">Cupon asociado 1</label>
-                                            <select class="form-control" th:field="*{cupones}">
-                                                <option th:each="cupon: ${listaCupones}" th:value="${cupon.idcupones}" th:text="${cupon.nombre}"></option>
-                                            </select>
-                                        </div>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:unless="${plato.idplato}">
-                                            <label for="cupones">Cupon asociado 2</label>
-                                            <select class="form-control" th:field="*{cupones}">
-                                                <option th:each="cupon: ${listaCupones}" th:value="${cupon.idcupones}" th:text="${cupon.nombre}"
-                                                        th:selected="${cupon.idcupones == plato.cupones}" style="color: #0b2e13"></option>
-                                            </select>
-                                        </div>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:if="${plato.idplato}">
                                             <label for="disponibilidad">Disponible?</label>
                                             <select class="form-control" th:field="*{disponibilidad}">
                                                 <option value="1">Disponible</option>
@@ -96,10 +83,10 @@
                                         </br>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <div class="row">
-                                                <div class="col-md-3">
+                                                <div class="col-md-4">
                                                     <button class="send" type="submit">Registrar</button>
                                                 </div>
-                                                <div class="col-md-3">
+                                                <div class="col-md-4">
                                                     <a class="send" th:href="@{/menu}" style="text-align: center">Regresar</a>
                                                 </div>
                                             </div>
@@ -111,7 +98,6 @@
                                 <div class="img-box" align="center">
                                     <figure><img src="/images/bembos.png" style="width:500px;height:500px"></figure>
                                 </div>
-                                <div style="text-align: center;font-size: 30px;color: black">Imagen del restaurante</div>
                             </div>
                         </div>
                     </div>

@@ -18,6 +18,8 @@
     <!-- owl css -->
     <link rel="stylesheet" href="css/owl.carousel.min.css">
     <!-- style css -->
+    <link rel="stylesheet" href="css/styleAdminRest.css">
+    <!-- style css -->
     <link rel="stylesheet" href="css/style.css">
     <!-- responsive-->
     <link rel="stylesheet" href="css/responsive.css">
@@ -61,35 +63,34 @@
 
         </nav>
     </div>
-
-    <div id="content">
-        <!-- header -->
-        <header>
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="full">
-                            <a th:href="@{/perfil}"><img style="height: 120px;position: relative;" src="images/anthony_logo.jpg"/></a>
+        <div id="content">
+            <!-- header -->
+            <header>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="full">
+                                <a class="logo" href="index.html"><img src="images/logo.png" alt="#" /></a>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-9">
-                        <div class="full">
-                            <div class="right_header_info">
-                                <ul>
-                                    <li class="dinone">Contáctanos : <img style="margin-right: 15px;margin-left: 15px;" src="images/phone_icon.png" alt="#"><a href="#">987-654-3210</a></li>
-                                    <li class="dinone"><img style="margin-right: 15px;height: 21px;position: relative;top: -2px;" src="images/location_icon.png" alt="#"><a href="#">Av. Universitaria 1801 , San Miguel</a></li>
-                                    <li>
-                                        <button type="button" id="sidebarCollapse">
-                                            <img src="images/menu_icon.png" alt="#">
-                                        </button>
-                                    </li>
-                                </ul>
+                        <div class="col-md-9">
+                            <div class="full">
+                                <div class="right_header_info">
+                                    <ul>
+                                        <!-- TODO -->
+                                        <li class="button_user"><a class="button active" th:href="@{/cuentaAdmin}">Mi cuenta</a><a class="button" th:href="@{/login}">Logout</a></li>
+                                        <li>
+                                            <button type="button" id="sidebarCollapse">
+                                                <img src="images/menu_icon.png" alt="#">
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </header>
+            </header>
         <!-- end header -->
 
         <div class="yellow_bg">
@@ -106,25 +107,22 @@
             </div>
         </div>
         <!-- section -->
-        <section class="resip_section">
+        <section class="lqq-section">
             <div class="container">
-                <div class="col-md-12">
-                    <div class="title">
-                        <h2 style="color:white">Combos</h2>
-                    </div>
-                </div>
                 <div class="row">
-                    <a class="btn btn-primary mt-4 mb-4" th:href="@{/crearPlato}">Nuevo Plato</a>
+                    <a class="send" style="text-align: center; margin-left: 15px" th:href="@{/crearPlato}">Nuevo Plato</a>
                     <div class="col-md-12">
                         <div class="owl-carousel owl-theme">
                             <div class="item" th:each="plato : ${listaPlatos}">
                                 <div class="product_blog_img">
-                                    <a th:href="@{/crearPlato}"><img src="images/bembos1.png" alt="#" /></a>
+                                    <a th:href="@{'/editarPlato' + '?idplato=' + ${plato.idplato}}"><img src="images/bembos1.png" alt="#" /></a>
                                 </div>
                                 <div class="product_blog_cont">
-                                    <h3 th:text="${plato.nombre}"></h3>
-                                    <h4 th:text="${plato.descripcion}"></h4>
-                                    <h4 th:text="${plato.precio}"><span class="theme_color">S/.</span></h4>
+                                    <h3 style="color: #1f1f1f" th:text="${plato.nombre}"></h3>
+                                    <span style="color: #002752">Descripción:</span><h4 style="color: #1f1f1f" th:text="${plato.descripcion}"></h4>
+                                    <span style="color: #002752">Precio: S/.</span><h4 style="color: #1f1f1f" th:text="${plato.precio}"></h4>
+                                    <span style="color: #002752">Tiene stock?</span><h4 style="color: #1f1f1f" th:text="${plato.disponibilidad == 1? 'Si':'No'}"></h4>
+                                    <a class="btn btn-light mt-4 mb-4" th:href="@{'/borrarPlato' + '?idplato=' + ${plato.idplato}}">Borrar plato</a>
                                 </div>
                             </div>
                         </div>

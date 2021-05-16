@@ -12,9 +12,13 @@ public class Direcciones {
     private int iddirecciones;
     @NotBlank(message = "La direccion no puede ser nulo")
     private String direccion;
+//    private String distrito;
+    private int activo;
+
     @ManyToOne
     @JoinColumn(name = "iddistrito")
     private Distritos distrito;
+
     private int usuariosIdusuarios;
 
     public int getIddirecciones() {
@@ -47,5 +51,13 @@ public class Direcciones {
 
     public void setUsuariosIdusuarios(int usuarios_idusuarios) {
         this.usuariosIdusuarios = usuarios_idusuarios;
+    }
+
+    public int getActivo() {
+        return activo;
+    }
+
+    public void setActivo(int activo) {
+        this.activo = activo;
     }
 }

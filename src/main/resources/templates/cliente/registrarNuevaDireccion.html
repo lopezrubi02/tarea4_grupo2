@@ -24,6 +24,23 @@
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
+    <style>
+        .form-select:focus {
+            border-color: #ffffff !important;
+            box-shadow: 0 0 0 .2rem rgba(255, 255, 255, .25);
+        }
+        .form-select {
+            border: #fff solid 2px;
+            border-radius: inherit;
+            margin-bottom: 25px;
+            padding: 15px 20px;
+            font-family: poppins;
+        }
+        .form-select:focus {
+            box-shadow: inherit;
+            border: #fff solid 2px !important;
+        }
+    </style>
 </head>
 <!-- body -->
 
@@ -116,7 +133,13 @@
                                             <input class="form-control" placeholder="Ingrese la nueva dirección" type="text" name="direccion">
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <input class="form-control" placeholder="Ingrese el distrito" type="text" name="distrito">
+                                            <select type="text" class="form-select" name="iddistrito" style="width: 100%;">
+                                                <option selected>Seleccione su Distrito</option>
+                                                <option th:each="distrito : ${listadistritos}"
+                                                        th:text="${distrito.nombredistrito}"
+                                                        th:value="${distrito.iddistritos}">Masculino</option>
+
+                                            </select>
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <button class="send" type="submit">Agregar</button>
