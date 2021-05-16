@@ -1,6 +1,8 @@
 package com.example.tarea4_grupo2.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.util.List;
 
 @Entity
@@ -10,18 +12,28 @@ public class Restaurante {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idrestaurante;
     @Column(nullable = false)
+    @NotBlank(message = "No puede estar en blanco")
     private String direccion;
     @Column(nullable = false)
-    private String distrito;
-    @Column(nullable = false)
+    @NotBlank(message = "No puede estar en blanco")
+    @Pattern(regexp = "^[0-9]*$",message = "Solo pueden ser numeros")
     private String ruc;
     @Column(nullable = false)
+    @Pattern(regexp = "^[a-zA-Z]*$",message = "Solo pueden ser letras")
+    @NotBlank(message = "No puede estar en blanco")
     private String nombre;
     private Float calificacionpromedio;
     @ManyToOne
     @JoinColumn(name="idadminrest")
     private Usuario usuario;
     private byte[] foto;
+    private String fotonombre;
+    private String fotocontenttype;
+
+    @ManyToOne
+    @JoinColumn(name="iddistrito")
+    private Distritos distrito;
+
     @ManyToMany
     @JoinTable(name="restaurante_has_categorias",
             joinColumns = @JoinColumn(name="restaurante_idrestaurante"),
@@ -42,14 +54,6 @@ public class Restaurante {
 
     public void setDireccion(String direccion) {
         this.direccion = direccion;
-    }
-
-    public String getDistrito() {
-        return distrito;
-    }
-
-    public void setDistrito(String distrito) {
-        this.distrito = distrito;
     }
 
     public String getRuc() {
@@ -90,6 +94,30 @@ public class Restaurante {
 
     public void setFoto(byte[] foto) {
         this.foto = foto;
+    }
+
+    public String getFotonombre() {
+        return fotonombre;
+    }
+
+    public void setFotonombre(String fotonombre) {
+        this.fotonombre = fotonombre;
+    }
+
+    public String getFotocontenttype() {
+        return fotocontenttype;
+    }
+
+    public void setFotocontenttype(String fotocontenttype) {
+        this.fotocontenttype = fotocontenttype;
+    }
+
+    public Distritos getDistrito() {
+        return distrito;
+    }
+
+    public void setDistrito(Distritos distrito) {
+        this.distrito = distrito;
     }
 
     public List<Categorias> getCategoriasrestList() {

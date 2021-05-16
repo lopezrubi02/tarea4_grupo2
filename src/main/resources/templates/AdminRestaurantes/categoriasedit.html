@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <!-- basic -->
     <meta charset="utf-8">
@@ -9,12 +10,14 @@
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
     <!-- site metas -->
     <title>Register</title>
+
     <!-- bootstrap css -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <!-- owl css -->
     <link rel="stylesheet" href="/css/owl.carousel.min.css">
     <!-- style css -->
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/styleAdminRest.css">
     <!-- responsive-->
     <link rel="stylesheet" href="/css/responsive.css">
     <!-- awesome fontfamily -->
@@ -23,9 +26,15 @@
     <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
 </head>
+<!-- body -->
 
 <body class="main-layout">
 
+<!-- loader  -->
+<!--<div class="loader_bg">
+    <div class="loader"><img src="images/loading.gif" alt="" /></div>
+</div>
+-->
 <div class="wrapper">
     <!-- end loader -->
 
@@ -34,7 +43,7 @@
         <header>
             <div class="container-fluid" >
                 <div style="text-align: center">
-                    <h2 style="color: white;font-size: xx-large" th:text="${plato.idplato == 0? 'Agregar plato' : 'Editar plato'}">Registra un plato</h2>
+                    <h2 style="color: white;font-size: xx-large">Registra tu restaurante</h2>
                 </div>
             </div>
         </header>
@@ -48,49 +57,23 @@
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-md-12">
-                                <h2>Ingresa los siguientes datos</h2>
+                                <h2>Elige tus categorías</h2>
                             </div>
-
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
-
-                                <form method="post" th:action="@{/adminrest/guardarPlato}" th:object="${plato}" class="main_form">
-                                    <input type="hidden" name="idplato" id="idplato" th:value="*{idplato}">
-                                    <input type="hidden" name="activo" id="activo" th:value="1">
-                                    <div class="row">
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <label for="nombre">Nombre del plato</label>
-                                            <input th:field="*{nombre}" class="form-control" placeholder="Nombre del plato" type="text" name="nombre" id="nombre">
-                                        </div>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <label for="descripcion">Descripcion del plato</label>
-                                            <input th:field="*{descripcion}" class="form-control" placeholder="Descripcion del plato" type="text" name="descripcion" id="descripcion">
-                                        </div>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <label for="precio">Precio del plato</label>
-                                            <input th:field="*{precio}" class="form-control" placeholder="Precio" type="text" name="precio" id="precio">
-                                        </div>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:if="${plato.idplato}">
-                                            <label for="disponibilidad">Disponible?</label>
-                                            <select class="form-control" th:field="*{disponibilidad}">
-                                                <option value="1">Disponible</option>
-                                                <option value="0">Agotado</option>
-                                            </select>
-                                            <input type="hidden" name="restaurante" th:field="*{restaurante}">
-                                        </div>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:unless="${plato.idplato}">
-                                            <input type="hidden" name="disponibilidad" id="disponibilidad" th:value="1">
-                                            <input type="hidden" name="restaurante" id="restaurante" th:value="${iddelrestaurante}">
-                                        </div>
-                                        </br>
-                                        </br>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <button class="send" type="submit">Registrar</button>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <a class="send" th:href="@{/adminrest/menu}" style="text-align: center">Regresar</a>
-                                                </div>
+                                <form method="post" th:action="@{/adminrest/guardarcategoriaedit}" th:object="${restaurante}" class="main_form">
+                                    <input type="hidden" id="cantidad" value="4">
+                                    <input type="hidden" th:field="*{idrestaurante}" th:value="${id}">
+                                    <div th:each="lista:${listacategorias}" class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                        <input type="checkbox" th:field="*{categoriasrestList}" th:value="${lista.getIdcategorias()}" th:text="${lista.getNombrecategoria()}">
+                                    </div>
+                                    <div>Seleccionados: <span id="seleccionados">0</span></div>
+                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <button class="send" type="submit" >Registrar</button>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <a class="send" th:href="@{/adminrest/cuentaAdmin}" style="text-align: center">Regresar</a>
                                             </div>
                                         </div>
                                     </div>
@@ -98,8 +81,9 @@
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                                 <div class="img-box" align="center">
-                                    <figure><img src="/images/bembos.png" style="width:500px;height:500px"></figure>
+                                    <figure><img th:src="@{'/adminrest/imagen'+'?id='+${id}}" style="width:500px;height:500px"></figure>
                                 </div>
+                                <div style="text-align: center;font-size: 30px;color: black">Imagen del restaurante</div>
                             </div>
                         </div>
                     </div>
@@ -176,5 +160,43 @@
     </script>
 </div>
 </body>
+<script>
+    $(document).ready(function(){
 
+        // Evento que se ejecuta al soltar una tecla en el input
+        $("#cantidad").keydown(function(){
+            $("input[type=checkbox]").prop('checked', false);
+            $("#seleccionados").html("0");
+        });
+
+        // Evento que se ejecuta al pulsar en un checkbox
+        $("input[type=checkbox]").change(function(){
+
+            // Cogemos el elemento actual
+            var elemento=this;
+            var contador=0;
+            var lista=[];
+            // Recorremos todos los checkbox para contar los que estan seleccionados
+            $("input[type=checkbox]").each(function(){
+                if($(this).is(":checked"))
+                    contador++;
+            });
+
+            var cantidadMaxima=parseInt($("#cantidad").val()) || 0;
+
+            // Comprovamos si supera la cantidad máxima indicada
+            if(contador>cantidadMaxima)
+            {
+                alert("Has seleccionado mas checkbox que los indicados");
+
+                // Desmarcamos el ultimo elemento
+                $(elemento).prop('checked', false);
+                contador--;
+            }
+
+            $("#seleccionados").html(contador);
+
+        });
+    });
+</script>
 </html>

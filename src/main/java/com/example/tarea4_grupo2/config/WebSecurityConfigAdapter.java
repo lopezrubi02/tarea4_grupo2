@@ -20,13 +20,18 @@ public class WebSecurityConfigAdapter extends org.springframework.security.confi
     protected void configure(HttpSecurity httpSecurity) throws Exception{
 
         httpSecurity.formLogin()
-                .loginPage("/loginAdmin") // for the Controlller
-                .loginProcessingUrl("/processLoginAdmin"); // for the POST request of the login form
-        httpSecurity.logout();
+                .loginPage("/login") // for the Controlller
+                .loginProcessingUrl("/processLogin") // for the POST request of the login form
+                .defaultSuccessUrl("/redirectByRol",true);
+        httpSecurity.logout()
+                .logoutSuccessUrl("/loginAdmin")
+                .deleteCookies("JSESSIONID")
+                .invalidateHttpSession(true);
 
         httpSecurity.authorizeRequests()
                 .antMatchers("/admin", "/admin/**").hasAuthority("AdminSistema")
              //   .antMatchers("/cliente","/cliente/**").hasAuthority("Cliente")
+                .antMatchers("/adminrest","/adminrest/**").hasAuthority("AdminRestaurante")
                 .anyRequest().permitAll();
 
 
@@ -37,11 +42,8 @@ public class WebSecurityConfigAdapter extends org.springframework.security.confi
         auth.jdbcAuthentication()
                 .dataSource(dataSource)
                 .passwordEncoder(new BCryptPasswordEncoder())
-
-                .usersByUsernameQuery("select email, contraseniahash, cuentaactiva from usuarios WHERE email = ?")
-                .authoritiesByUsernameQuery("select email, rol from usuarios where cuentaactiva=1 and email = ?");
-
-
+                .usersByUsernameQuery("select email, contraseniahash, cuentaactiva from usuarios WHERE email =?")
+                .authoritiesByUsernameQuery("select u.email, u.rol from usuarios u where u.email=? and u.cuentaactiva!=-1");
     }
 
 }

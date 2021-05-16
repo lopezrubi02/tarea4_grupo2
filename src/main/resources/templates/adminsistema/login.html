@@ -54,7 +54,7 @@
                     <div class="full">
                         <div class="right_header_info">
                             <ul>
-                               <li class="button_user"><a class="button active" href="#">Crear una cuenta</a><a class="button" href="#">Soy partner</a></li>
+                               <li class="button_user"><a class="button active" th:href="@{/eleccion}">Crear una cuenta</a><a class="button" href="#">Soy partner</a></li>
                             </ul>
                         </div>
                     </div>
@@ -83,7 +83,7 @@
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
 
 
-						<form class="main_form" method="post" th:action="@{/processLoginAdmin}">
+						<form class="main_form" method="post" th:action="@{/processLogin}">
                             <div class="row">
 
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
@@ -93,10 +93,10 @@
                                 </div>
 
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input class="form-control" placeholder="Correo" type="text" name="username">
+                                    <input class="form-control" placeholder="Correo" type="text" id="username" name="username">
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input class="form-control" placeholder="Contraseña" type="password" name="password">
+                                    <input class="form-control" placeholder="Contraseña" type="text" id="password" name="password">
                                 </div>
 								
 								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">

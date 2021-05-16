@@ -8,12 +8,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
     <title>Register</title>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/owl.carousel.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/styleAdminRest">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/styleAdminRest">
     <!-- responsive-->
-    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="/css/responsive.css">
     <!-- awesome fontfamily -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <!--[if lt IE 9]>
@@ -25,7 +25,7 @@
 <body class="main-layout">
 
 <div class="loader_bg">
-    <div class="loader"><img src="images/loading.gif" alt="" /></div>
+    <div class="loader"><img src="/images/loading.gif" alt="" /></div>
 </div>
 
 <div class="wrapper">
@@ -47,7 +47,7 @@
                 <div class="row">
                     <div class="col-md-3">
                         <div class="full">
-                            <a class="logo" href="index.html"><img src="images/logo.png" alt="#" /></a>
+                            <a class="logo" href="index.html"><img src="/images/logo.png" alt="#" /></a>
                         </div>
                     </div>
                     <div class="col-md-9">
@@ -55,10 +55,17 @@
                             <div class="right_header_info">
                                 <ul>
                                     <!-- TODO -->
-                                    <li class="button_user"><a class="button active" th:href="@{/cuentaAdmin}">Mi cuenta</a><a class="button" th:href="@{/login}">Logout</a></li>
+
+                                    <li class="button_user">
+                                        <a class="button active" th:href="@{/cuentaAdmin}">Mi cuenta</a>
+                                        <form th:action="@{/logout}" method="post">
+                                            <button class="button" type="submit">Logout</button>
+                                        </form>
+                                    </li>
+
                                     <li>
                                         <button type="button" id="sidebarCollapse">
-                                            <img src="images/menu_icon.png" alt="#">
+                                            <img src="/images/menu_icon.png" alt="#">
                                         </button>
                                     </li>
                                 </ul>
@@ -76,7 +83,7 @@
                         <div class="row">
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                                 <div class="img-box" align="center">
-                                    <figure><img th:src="@{/imagen}" style="width:500px;height:500px"></figure>
+                                    <figure><img th:src="@{/adminrest/imagen}" style="width:500px;height:500px"></figure>
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
@@ -93,21 +100,21 @@
                                     </div>
                                     <div class="row" style="padding-top: 50px">
                                         <div class="col-md-6">
-                                            <a class="send" th:href="@{/calificaciones}" style="text-align: center;max-width: 400px;background: #d8b00f">Ver calificaciones de usuarios</a>
+                                            <a class="send" th:href="@{/adminrest/calificaciones}" style="text-align: center;max-width: 400px;background: #d8b00f">Ver calificaciones de usuarios</a>
                                         </div>
                                         <div class="col-md-3">
-                                            <a class="send" th:href="@{/reporte}" style="text-align: center;background: #d8b00f">Ver reporte</a>
+                                            <a class="send" th:href="@{/adminrest/reporte}" style="text-align: center;background: #d8b00f">Ver reporte</a>
                                         </div>
                                     </div>
                                     <div class="row" style="padding-top: 50px">
                                         <div class="col-md-3">
-                                            <a class="send" th:href="@{/pedidos}" style="text-align: center;background: #d8b00f" >Ver pedidos</a>
+                                            <a class="send" th:href="@{/adminrest/pedidos}" style="text-align: center;background: #d8b00f" >Ver pedidos</a>
                                         </div>
                                         <div class="col-md-3">
-                                            <a class="send" th:href="@{/menu}" style="text-align: center;background: #d8b00f">Ver menu</a>
+                                            <a class="send" th:href="@{/adminrest/menu}" style="text-align: center;background: #d8b00f">Ver menu</a>
                                         </div>
                                         <div class="col-md-3">
-                                            <a class="send" th:href="@{'/cupones' + '?idrestaurante=1'}" style="text-align: center;background: #d8b00f">Mis cupones</a>
+                                            <a class="send" th:href="@{'/adminrest/cupones'}" style="text-align: center;background: #d8b00f">Mis cupones</a>
                                         </div>
                                     </div>
                                 </div>
@@ -127,13 +134,13 @@
     </div>
 
     <div class="overlay"></div>
-    <script src="js/jquery.min.js"></script>
-    <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap.bundle.min.js"></script>
-    <script src="js/owl.carousel.min.js"></script>
-    <script src="js/custom.js"></script>
-    <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
-    <script src="js/jquery-3.0.0.min.js"></script>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/popper.min.js"></script>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/owl.carousel.min.js"></script>
+    <script src="/js/custom.js"></script>
+    <script src="/js/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="/js/jquery-3.0.0.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             $("#sidebar").mCustomScrollbar({

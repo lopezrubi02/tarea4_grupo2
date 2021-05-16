@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface RestauranteRepository extends JpaRepository<Restaurante, Integer> {
     Restaurante findRestauranteByIdadminrestEquals(int idAdmin);
@@ -22,6 +23,10 @@ public interface RestauranteRepository extends JpaRepository<Restaurante, Intege
             "order by r.nombre;",nativeQuery = true)
     List<RestauranteReportes_DTO> reportesRestaurantes();
 
+    @Query(value="select * from restaurante where idadminrest = ?1 limit 1", nativeQuery = true)
+    Optional<Restaurante> buscarRestaurantePorIdAdmin(Integer id);
 
+    @Query(value="select ruc from restaurante where idadminrest=?1",nativeQuery = true)
+    String buscarRuc(int id);
 
 }

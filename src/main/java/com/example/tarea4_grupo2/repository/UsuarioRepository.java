@@ -1,5 +1,6 @@
 package com.example.tarea4_grupo2.repository;
 
+import com.example.tarea4_grupo2.dto.DatosDTO;
 import com.example.tarea4_grupo2.entity.Repartidor;
 import com.example.tarea4_grupo2.entity.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -34,9 +35,11 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
             "values(?1,?2,?3,?4,sha2(?5,256),?6,?7,?8,?9,?10);",nativeQuery = true)
     Usuario nuevoUsuario(int id, String nombre, String apellido, String email, String contra, int telefono,
                          Date fecha, String sexo, String dni, String rol);
-
-
     //para guardar direccion de usuario
     Usuario findByDni(String dni);
     //Repartidor findByIdusuarios(int usuarios_idusuarios);
+    public Usuario findByEmail(String email);
+    @Query(value="select nombre,apellidos,dni,fechanacimiento from usuarios where idusuarios=?1",nativeQuery = true)
+    DatosDTO obtenerDatos(int id);
+
 }

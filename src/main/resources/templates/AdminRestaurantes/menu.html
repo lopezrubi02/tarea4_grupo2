@@ -14,15 +14,15 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <!-- bootstrap css -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
     <!-- owl css -->
-    <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <link rel="stylesheet" href="/css/owl.carousel.min.css">
     <!-- style css -->
-    <link rel="stylesheet" href="css/styleAdminRest.css">
+    <link rel="stylesheet" href="/css/styleAdminRest.css">
     <!-- style css -->
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
     <!-- responsive-->
-    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="/css/responsive.css">
     <!-- awesome fontfamily -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <!--[if lt IE 9]>
@@ -34,7 +34,7 @@
 <body class="main-layout Recipes_page">
 <!-- loader  -->
 <div class="loader_bg">
-    <div class="loader"><img src="images/loading.gif" alt="" /></div>
+    <div class="loader"><img src="/images/loading.gif" alt="" /></div>
 </div>
 
 <div class="wrapper">
@@ -51,13 +51,13 @@
             <ul class="list-unstyled components">
 
                 <li >
-                    <a th:href="@{/perfil}">Perfil</a>
+                    <a th:href="@{/adminrest/perfil}">Perfil</a>
                 </li>
                 <li>
-                    <a th:href="@{/cupones}">Cupones</a>
+                    <a th:href="@{/adminrest/cupones}">Cupones</a>
                 </li>
                 <li class="active">
-                    <a th:href="@{/calificaciones}">Calificaciones</a>
+                    <a th:href="@{/adminrest/calificaciones}">Calificaciones</a>
                 </li>
             </ul>
 
@@ -70,7 +70,7 @@
                     <div class="row">
                         <div class="col-md-3">
                             <div class="full">
-                                <a class="logo" href="index.html"><img src="images/logo.png" alt="#" /></a>
+                                <a class="logo" href="index.html"><img src="/images/logo.png" alt="#" /></a>
                             </div>
                         </div>
                         <div class="col-md-9">
@@ -78,10 +78,10 @@
                                 <div class="right_header_info">
                                     <ul>
                                         <!-- TODO -->
-                                        <li class="button_user"><a class="button active" th:href="@{/cuentaAdmin}">Mi cuenta</a><a class="button" th:href="@{/login}">Logout</a></li>
+                                        <li class="button_user"><a class="button active" th:href="@{/cuentaAdmin}">Mi cuenta</a><a class="button" th:href="@{/logout}">Logout</a></li>
                                         <li>
                                             <button type="button" id="sidebarCollapse">
-                                                <img src="images/menu_icon.png" alt="#">
+                                                <img src="/images/menu_icon.png" alt="#">
                                             </button>
                                         </li>
                                     </ul>
@@ -98,8 +98,6 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="title">
-                            <br>
-                            <br>
                             <h2>Nuestro menu</h2>
                         </div>
                     </div>
@@ -110,19 +108,21 @@
         <section class="lqq-section">
             <div class="container">
                 <div class="row">
-                    <a class="send" style="text-align: center; margin-left: 15px" th:href="@{/crearPlato}">Nuevo Plato</a>
+                    <a class="send" style="text-align: center; margin-left: 15px" th:href="@{/adminrest/crearPlato}">Nuevo Plato</a>
                     <div class="col-md-12">
                         <div class="owl-carousel owl-theme">
                             <div class="item" th:each="plato : ${listaPlatos}">
                                 <div class="product_blog_img">
-                                    <a th:href="@{'/editarPlato' + '?idplato=' + ${plato.idplato}}"><img src="images/bembos1.png" alt="#" /></a>
+                                    <a th:href="@{'/adminrest/editarPlato' + '?idplato=' + ${plato.idplato}}"><img src="/images/bembos1.png" alt="#" /></a>
                                 </div>
-                                <div class="product_blog_cont">
+                                <div class="product_blog_cont" style="align-content: center">
                                     <h3 style="color: #1f1f1f" th:text="${plato.nombre}"></h3>
                                     <span style="color: #002752">Descripción:</span><h4 style="color: #1f1f1f" th:text="${plato.descripcion}"></h4>
                                     <span style="color: #002752">Precio: S/.</span><h4 style="color: #1f1f1f" th:text="${plato.precio}"></h4>
-                                    <span style="color: #002752">Tiene stock?</span><h4 style="color: #1f1f1f" th:text="${plato.disponibilidad == 1? 'Si':'No'}"></h4>
-                                    <a class="btn btn-light mt-4 mb-4" th:href="@{'/borrarPlato' + '?idplato=' + ${plato.idplato}}">Borrar plato</a>
+                                    <span style="color: #002752">¿Tiene stock?</span><h4 style="color: #1f1f1f" th:text="${plato.disponibilidad == 1? 'Si':'No'}"></h4>
+                                    <div class="row" style="margin-bottom: 0px">
+                                        <a class="send" style="background:#d8b00f; margin-bottom: 0px; float: bottom" th:href="@{'/adminrest/borrarPlato' + '?idplato=' + ${plato.idplato}}">Borrar plato</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -135,14 +135,14 @@
             <div class="container-fluid">
                 <div>
                     <div class="footer_logo">
-                        <a th:href="@{/perfil}"><img src="images/anthony_logo.jpg" alt="#" /></a>
+                        <a th:href="@{/adminrest/perfil}"><img src="/images/anthony_logo.jpg" alt="#" /></a>
                     </div>
                 </div>
                 <div class="col-md-12">
                     <ul class="lik">
-                        <li> <a th:href="@{/perfil}">Perfil</a></li>
-                        <li> <a th:href="@{/cupones}">Cupones</a></li>
-                        <li> <a th:href="@{/calificaciones}">Calificaciones</a></li>
+                        <li> <a th:href="@{/adminrest/perfil}">Perfil</a></li>
+                        <li> <a th:href="@{/adminrest/cupones}">Cupones</a></li>
+                        <li> <a th:href="@{/adminrest/calificaciones}">Calificaciones</a></li>
                     </ul>
                 </div>
             </div>
@@ -152,14 +152,14 @@
 </div>
 <div class="overlay"></div>
 <!-- Javascript files-->
-<script src="js/jquery.min.js"></script>
-<script src="js/popper.min.js"></script>
-<script src="js/bootstrap.bundle.min.js"></script>
-<script src="js/owl.carousel.min.js"></script>
-<script src="js/custom.js"></script>
-<script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/popper.min.js"></script>
+<script src="/js/bootstrap.bundle.min.js"></script>
+<script src="/js/owl.carousel.min.js"></script>
+<script src="/js/custom.js"></script>
+<script src="/js/jquery.mCustomScrollbar.concat.min.js"></script>
 
-<script src="js/jquery-3.0.0.min.js"></script>
+<script src="/js/jquery-3.0.0.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function() {
         $("#sidebar").mCustomScrollbar({
