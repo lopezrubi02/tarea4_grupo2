@@ -75,24 +75,22 @@ public class RepartidorController {
         if (pedidoElegido.isPresent()) {
             Pedidos pedido = pedidoElegido.get();
             pedido.setEstadorepartidor("aceptado"); //Estado de esperando recojo del restaurante
+            model.addAttribute("pedido", pedido);
 
-            List<PlatosPorPedidoDTO> listaPlatosPorPedidoDTO = repartidorRepository.findListaPlatosPorPedido(idPedidoElegido);
-            Optional<Restaurante> restauranteOptional = restauranteRepository.findById(pedido.getRestaurante_idrestaurante());
-            if (restauranteOptional.isPresent()) {
-                model.addAttribute("listaPlatosPorPedidoDTO", listaPlatosPorPedidoDTO);
-                model.addAttribute("pedido", pedido);
-                Restaurante restaurante = restauranteOptional.get();
-                model.addAttribute("restaurante", restaurante);
-                return "repartidor/repartidor_recojo_de_producto";
-            } else {
-                attr.addFlashAttribute("msg", "Este pedido ya no está disponible :(");
-                return "redirect:/repartidor";
-            }
+            Restaurante restaurante = restauranteRepository.findRestauranteById(pedido.getRestaurante_idrestaurante());
+            model.addAttribute("restaurante", restaurante);
+
+            List<PlatosPorPedidoDTO> listaPlatosPorPedidoDTO = repartidorRepository.findListaPlatosPorPedido(pedido.getIdpedidos());
+            model.addAttribute("listaPlatosPorPedidoDTO", listaPlatosPorPedidoDTO);
+
+            return "repartidor/repartidor_recojo_de_producto";
         } else {
+            attr.addFlashAttribute("msg", "Este pedido ya no está disponible :(");
             return "redirect:/repartidor";
         }
     }
-//pendiente, aceptado, recogido, entregado
+
+    //pendiente, aceptado, recogido, entregado
     //El repartidor recoge el pedido del restaurante y el estado cambia a "por entregar".
     @GetMapping("/ConfirmaRecojo")
     public String confirmaRecojo(RedirectAttributes attr, @RequestParam("idpedido") int idPedidoElegido, Model model) {
@@ -158,7 +156,8 @@ public class RepartidorController {
 
     @GetMapping("/Reportes")
     public String reportes(Model model, RedirectAttributes attr){
-        List<PedidosReporteDTO> listaReporte1 = repartidorRepository.findPedidosPorRepartidor();
+        int id = 10;
+        List<PedidosReporteDTO> listaReporte1 = repartidorRepository.findPedidosPorRepartidor(id);
         if (listaReporte1.isEmpty()) {
             attr.addFlashAttribute("msg", "No hay resultados para mostrar.");
             return "redirect:/repartidor";

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragment/fragment.html :: header( title = 'Pedidos disponibles')"></head>
-<!-- body -->
+<head th:replace="fragment/fragment.html :: header( title = 'Spicy')"></head>
+
 
 <body class="main-layout">
 <!-- loader  -->
@@ -21,6 +21,7 @@
             </div>
 
             <ul class="list-unstyled components">
+
                 <li>
                     <a th:href="@{'/repartidor'}">Home</a>
                 </li>
@@ -40,62 +41,48 @@
         <header th:replace="fragment/fragment.html :: navbar"></header>
         <!-- end header -->
 
-
         <!-- blog -->
         <div class="blog">
             <div class="container">
-                <div class="row">
-                    <div class="col-md-12">
-                        <h1>Pedidos disponibles</h1>
-                    </div>
-                    <div th:if="${msg != null}" th:text="${msg}" class="alert alert-success" role="alert">
-                </div>
-                <div class="row table-users">
-                    <!-- table -->
-                    <div class="col-md-12">
-                        <div class="table-responsive">
-                            <table class="table table-striped">
-                                <thead>
-                                <tr>
-                                    <th scope="col"># PEDIDO</th>
-                                    <th scope="col">RESTAURANTE</th>
-                                    <th scope="col">LUGAR DE RECOJO</th>
-                                    <th scope="col">LUGAR DE DESTINO</th>
-                                    <th scope="col">S/. TOTAL</th>
-                                    <th scope="col">Ver detalles</th>
-                                    <th></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr th:each="pedidoDisponible, info : ${listaPedidosDisponibles}">
-                                    <td th:text="${info.index + 1}"></td>
-                                    <td th:text="${pedidoDisponible.getRestaurante()}"></td>
-                                    <td th:text="${pedidoDisponible.getDistritorestaurante()}"></td>
-                                    <td th:text="${pedidoDisponible.getDireccioncliente()}"></td>
-                                    <td th:text="${pedidoDisponible.getComision()}"></td>
-                                    <td th:text="${pedidoDisponible.getMonto()}"></td>
-                                    <td><a class="btn btn-primary"
-                                           th:href="@{'/repartidor/VerDetalles' + '?id=' + ${pedidoDisponible.getIdpedidos()}}">Ver
-                                        detalles</a></td>
-                                    <td><a class="btn btn-primary"
-                                           th:href="@{'/repartidor/AceptaPedido' + '?idpedido=' + ${pedidoDisponible.getIdpedidos()}}">Aceptar
-                                        pedido</a></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <!-- end of table -->
 
-                    <div class="col-md-12">
-                        <p>Anterior | 1 | 2 | 3 | Siguiente</p>
-                    </div>
+                <div th:if="${msg != null}" th:text="${msg}" class="alert alert-danger" role="alert"></div>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col"># PEDIDO</th>
+                        <th scope="col">RESTAURANTE</th>
+                        <th scope="col">LUGAR DE RECOJO</th>
+                        <th scope="col">LUGAR DE DESTINO</th>
+                        <th scope="col">COMISIÓN S/.</th>
+                        <th scope="col">S/. TOTAL</th>
+                        <th scope="col">Ver detalles</th>
+                        <th scope="col"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="pedidoDisponible, info : ${listaPedidosDisponibles}">
+                        <td th:text="${info.index + 1}"></td>
+                        <td th:text="${pedidoDisponible.getRestaurante()}"></td>
+                        <td th:text="${pedidoDisponible.getDistritorestaurante()}"></td>
+                        <td th:text="${pedidoDisponible.getDireccioncliente()}"></td>
+                        <td th:text="${pedidoDisponible.getComision()} + '.00'"></td>
+                        <td th:text="${pedidoDisponible.getMonto()}"></td>
+                        <td><a class="btn btn-primary"
+                               th:href="@{'/repartidor/VerDetalles' + '?id=' + ${pedidoDisponible.getIdpedidos()}}">Ver
+                            detalles</a></td>
+                        <td><a class="btn btn-primary"
+                               th:href="@{'/repartidor/AceptaPedido' + '?idpedido=' + ${pedidoDisponible.getIdpedidos()}}">Aceptar
+                            pedido</a></td>
+                    </tr>
+                    </tbody>
+                </table>
 
-                </div>
+
             </div>
         </div>
     </div>
     <!-- end blog -->
+
 
     <!-- footer -->
     <fooetr>
@@ -116,14 +103,14 @@
 </div>
 <div class="overlay"></div>
 <!-- Javascript files-->
-<script src="js/jquery.min.js"></script>
-<script src="js/popper.min.js"></script>
-<script src="js/bootstrap.bundle.min.js"></script>
-<script src="js/owl.carousel.min.js"></script>
-<script src="js/custom.js"></script>
-<script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/popper.min.js}"></script>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/owl.carousel.min.js}"></script>
+<script th:src="@{/js/custom.js}"></script>
+<script th:src="@{/js/jquery.mCustomScrollbar.concat.min.js}"></script>
 
-<script src="js/jquery-3.0.0.min.js"></script>
+<script th:src="@{/js/jquery-3.0.0.min.js}"></script>
 <script type="text/javascript">
     $(document).ready(function () {
         $("#sidebar").mCustomScrollbar({
@@ -142,6 +129,12 @@
             $('a[aria-expanded=true]').attr('aria-expanded', 'false');
         });
     });
+
+    //    Make a whole row as clickeable
+    function rowClicked(value) {
+        location.href = "/admin/user?id=" + value;
+    }
+
 </script>
 
 <style>

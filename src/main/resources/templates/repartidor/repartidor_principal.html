@@ -46,7 +46,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-12">
-                        <h1 th:text="${usuario.nombre} + ${ usuario.apellidos}"></h1>
+                        <h1 th:text="${usuario.nombre} + ${usuario.apellidos}"></h1>
                     </div>
                 </div>
                 <div th:if="${msg != null}" th:text="${msg}" class="alert alert-danger" role="alert"></div>
