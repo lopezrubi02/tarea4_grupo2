@@ -1,51 +1,19 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-
-    <head>
-        <!-- basic -->
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <!-- mobile metas -->
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="viewport" content="initial-scale=1, maximum-scale=1">
-        <!-- site metas -->
-        <title>Spicyo</title>
-        <meta name="keywords" content="">
-        <meta name="description" content="">
-        <meta name="author" content="">
-        <!-- bootstrap css -->
-        <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
-        <!-- owl css -->
-        <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}"/>
-        <!-- style css -->
-        <link rel="stylesheet" th:href="@{/css/styleAdminView.css}" />
-        <!-- responsive-->
-        <link rel="stylesheet" th:href="@{/css/responsive.css}" />
-        <!-- awesome fontfamily -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
-
-        <style>
-            select.form-control:not([size]):not([multiple]){
-                height: auto;
-            }
-        </style>
-    </head>
-
+    <!-- bhead -->
+    <head th:insert="fragment/fragment.html :: header( title = 'Spicy')"></head>
     <!-- body -->
 
-    <body class="main-layout">
+    <body class="main-layout about_page">
         <!-- loader  -->
-        <div class="loader_bg">
-            <div class="loader"><img src="images/loading.gif" alt="" /></div>
-        </div>
+        <!--div class="loader_bg">
+            <div class="loader"><img th:src="@{/images/loading.gif}" alt="" /></div>
+
+        </div-->
 
         <div class="wrapper">
             <!-- end loader -->
-
             <div class="sidebar">
                 <!-- Sidebar  -->
                 <nav id="sidebar">
@@ -56,44 +24,47 @@
 
                     <ul class="list-unstyled components">
 
-                        <li >
-                            <a href="repartidor_principal.html">Home</a>
+                        <li>
+                            <a th:href="@{'/repartidor'}">Home</a>
                         </li>
                         <li>
-                            <a href="repartidor_reportes.html">Reportes</a>
+                            <a th:href="@{'/repartidor/Reportes'}">Reportes</a>
                         </li>
-                        <li >
+                        <li>
                             <a th:href="@{'/repartidor/PedidosDisponibles'}">Notificaciones</a>
                         </li>
+
                     </ul>
 
                 </nav>
             </div>
 
+
             <div id="content">
+
                 <!-- header -->
                 <header>
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="full">
-                                    <a class="logo" href="index.html"><img src="images/logo.png" alt="#" /></a>
+                                    <a class="logo" href=""><img th:src="@{/images/logo.png}" alt="#" /></a>
                                 </div>
                             </div>
                             <div class="col-md-9">
                                 <div class="full">
                                     <div class="right_header_info">
                                         <ul>
-
-                                            <li class="dinone"><a href="repartidor_principal.html">Home</a></li>
+                                            <li class="dinone"><a th:href="@{'/repartidor'}">Home</a></li>
                                             <li class="dinone"><a href="repartidor_reportes.html">Reportes</a></li>
                                             <li class="dinone"><a th:href="@{'/repartidor/PedidosDisponibles'}">Notificaciones</a></li>
 
                                             <!-- TODO -->
-                                            <li class="button_user"><a class="button active" href="#login.html">Mi cuenta</a><a class="button" href="#">Logout</a></li>
+                                            <li class="button_user"><a class="button active" href="#login.html">Mi cuenta</a><a
+                                                    class="button" href="#">Logout</a></li>
                                             <li>
                                                 <button type="button" id="sidebarCollapse">
-                                                    <img th:src="@{/images/menu_icon.png}" >
+                                                    <img th:src="@{/images/menu_icon.png}" alt="#">
                                                 </button>
                                             </li>
                                         </ul>
@@ -105,148 +76,118 @@
                 </header>
                 <!-- end header -->
 
-                <!-- blog -->
-                <div class="about">
+                <div class="yellow_bg">
                     <div class="container">
-                            <div class="about_box">
-                                <div>
-                                    <div class="row">
-                                        <div class="col-12 col-lg-6 text-center" style="margin-bottom: 4vh;">
-                                            <h1 style="color:white;">Mi Perfil</h1>
-                                                        <!-- imagen -->
-                                                        <img th:src="@{/images/userImage.jpg}" class="img-responsive">
-                                                    </div>
-                                        <div class="col-12 col-lg-6">
-                                            <!-- datos -->
-                                            <div class="col-md-12">
-                                                            <div class="card user-data">
-                                                                <div class="card-body">
-                                                                    <div class="row">
-                                                                        <div class="col-sm-3">
-                                                                            <h6 class="mb-0">Nombre</h6>
-                                                                        </div>
-                                                                        <div class="col-sm-9 text-secondary" th:text="${usuario.nombre}"></div>
-                                                                    </div>
-                                                                    <hr>
-                                                                    <div class="row">
-                                                                        <div class="col-sm-3">
-                                                                            <h6 class="mb-0">Apellido</h6>
-                                                                        </div>
-                                                                        <div class="col-sm-9 text-secondary" th:text="${usuario.apellidos}"></div>
-                                                                    </div>
-                                                                    <hr>
-                                                                    <div class="row">
-                                                                        <div class="col-sm-3">
-                                                                            <h6 class="mb-0">Email</h6>
-                                                                        </div>
-                                                                        <div class="col-sm-9 text-secondary" th:text="${usuario.getEmail()}"></div>
-                                                                    </div>
-                                                                    <hr>
-                                                                    <div class="row">
-                                                                        <div class="col-sm-3">
-                                                                            <h6 class="mb-0">DNI</h6>
-                                                                        </div>
-                                                                        <div class="col-sm-9 text-secondary" th:text="${usuario.getDni()}"></div>
-                                                                    </div>
-                                                                    <hr>
-                                                                    <div class="row">
-                                                                        <div class="col-sm-3">
-                                                                            <h6 class="mb-0">Fecha de nacimiento</h6>
-                                                                        </div>
-                                                                        <div class="col-sm-9 text-secondary"
-                                                                             th:text="${#dates.format(usuario.fechaNacimiento, 'dd-MM-yyyy')}"></div>
-                                                                    </div>
-                                                                    <hr>
-                                                                    <div class="row">
-                                                                        <div class="col-sm-3">
-                                                                            <h6 class="mb-0">Sexo</h6>
-                                                                        </div>
-                                                                        <div class="col-sm-9 text-secondary" th:text="${usuario.getSexo()}"></div>
-                                                                    </div>
-                                                                    <hr>
-                                                                <form method="post" th:action="@{'/repartidor/save_perfil'}" >
-                                                                    <input th:value="${usuario.idusuarios}" name="idusuario"
-                                                                           id="idusuario" type="hidden">
-                                                                    <div class="row">
-                                                                        <div class="col-sm-3">
-                                                                            <h6 class="mb-0">Telefono</h6>
-                                                                        </div>
-                                                                        <input class="col-sm-9 text-secondary" placeholder="************" type="text"
-                                                                               th:value="${usuario.telefono}" name="telefono"
-                                                                                id="telefono">
-                                                                    </div>
-                                                                    <hr>
-                                                                    <div class="row">
-                                                                        <div class="col-sm-3">
-                                                                            <h6 class="mb-0">Dirección</h6>
-                                                                        </div>
-                                                                        <input class="col-sm-9 text-secondary"  type="text"
-                                                                               th:value="${direcciones.getDireccion()}" name="direccion"
-                                                                               id="direccion">
-                                                                    </div>
-                                                                    <hr>
-                                                                    <div class="row">
-                                                                        <div class="col-sm-3">
-                                                                            <h6 class="mb-0">Contraseña</h6>
-                                                                        </div>
-                                                                        <input class="col-sm-9 text-secondary" placeholder="************" type="password"
-                                                                               th:value="${usuario.contraseniaHash}" name="password"
-                                                                               id="password">
-                                                                    </div>
-                                                                    <hr>
-                                                                    <div class="row">
-                                                                        <div class="col-sm-3">
-                                                                            <h6 class="mb-0">Confirmar Contraseña</h6>
-                                                                        </div>
-                                                                        <input class="col-sm-9 text-secondary" placeholder="************" type="password"
-                                                                               th:value="${usuario.contraseniaHash}" name="password2" id="password2">
-                                                                    </div>
-                                                                    <hr>
-                                                                    <a th:href="@{'/repartidor'}" class="btn btn-danger">Cancelar</a>
-                                                                    <button type="submit" class="btn btn-primary" >Registrar</button>
-                                                                </form>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                        </div>
-                                    </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="title">
+                                    <h2>Mi Perfil</h2>
 
-                                    <a href="repartidor_principal.html">Regresar <i class="fa fa-long-arrow-right" aria-hidden="true"></i></a>
                                 </div>
-                            </div>
-                    </div>
-                </div>
-            </div>
-            <!-- end blog -->
-
-
-            <!-- footer -->
-            <fooetr>
-                <div class="footer">
-                    <div class="container-fluid">
-                        <div class="copyright">
-                            <div class="container">
-                                <p>© 2050 All Rights Reserved</p>
                             </div>
                         </div>
                     </div>
-
                 </div>
-            </fooetr>
-            <!-- end footer -->
+                <!-- about -->
+                <div class="about">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 about_img_boxpdnt">
+                                        <figure><img th:src="@{/images/perfil-hombre-dibujos-animados_18591-58484 (1).jpg}" alt="#/"></figure>
+                                    </div>
+                                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                            <label>Correo</label>
+                                            <div class="form-control" type="text" th:text="${usuario.email}"></div>
+                                        </div>
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                            <label>Nombres</label>
+                                            <div class="form-control"type="text" th:text="${usuario.nombre}"></div>
+                                        </div>
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                            <label>Apellidos</label>
+                                            <div class="form-control"type="text" th:text="${usuario.apellidos}"></div>
+                                        </div>
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                            <label>DNI</label>
+                                            <div class="form-control" type="text" th:text="${usuario.dni}"></div>
+                                        </div>
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                            <label>Fecha de nacimiento</label>
+                                            <div class="form-control" type="date" th:text="${usuario.fechaNacimiento}"></div>
+                                        </div>
+                                        <form method="post" th:action="@{'/repartidor/save_perfil'}" >
+                                            <input th:value="${usuario.idusuarios}" name="idusuario"
+                                                   id="idusuario" type="hidden">
 
-        </div>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <label>Telefono</label>
+                                                <input class="form-control" type="text" th:value="${usuario.telefono}"
+                                                       name="telefono"
+                                                       id="telefono">
+                                            </div>
+                                            <div class="text-danger" th:if="${#fields.hasErrors('usuario.telefono')}"
+                                                 th:errors="*{usuario.telefono}"></div>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <label>Dirección</label>
+                                                <input class="form-control" type="text" th:value="${direcciones.direccion}" name="direccion"
+                                                       id="direccion">
+                                                <div class="text-danger" th:if="${#fields.hasErrors('direcciones.direccion')}"
+                                                     th:errors="*{direcciones.direccion}"></div>
+                                            </div>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <label>Contraseña</label>
+                                                <input class="form-control" type="password" th:value="${usuario.contraseniaHash}" name="password"
+                                                       id="password">
+                                                <div class="text-danger" th:if="${#fields.hasErrors('usuario.contraseniaHash')}"
+                                                     th:errors="*{usuario.contraseniaHash}"></div>
+                                            </div>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <label>Confirmar contraseña</label>
+                                                <input class="form-control" type="password"  name="password2"
+                                                       id="password2">
+                                                <div class="text-danger" th:if="${#fields.hasErrors('usuario.contraseniaHash')}"
+                                                     th:errors="*{usuario.contraseniaHash}"></div>
+                                            </div>
+                                            <a th:href="@{'/repartidor'}" class="btn btn-danger">Cancelar</a>
+                                            <button type="submit" class="btn btn-primary" >Registrar</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end about -->
+
+
+                <!-- footer -->
+                <fooetr>
+                    <div class="footer">
+
+                        <div class="copyright">
+                            <div class="container">
+                                <p>© 2021 Todos los derechos reservados</p>
+                            </div>
+                        </div>
+                    </div>
+                </fooetr>
+                <!-- end footer -->
+
+            </div>
         </div>
         <div class="overlay"></div>
         <!-- Javascript files-->
-        <script th:src="@{/js/jquery.min.js}" ></script>
-        <script th:src="@{/js/popper.min.js}" ></script>
-        <script th:src="@{/js/bootstrap.bundle.min.js}" ></script>
-        <script th:src="@{/js/owl.carousel.min.js}" ></script>
-        <script th:src="@{/js/custom.js}" ></script>
-        <script th:src="@{/js/jquery.mCustomScrollbar.concat.min.js}" ></script>
+        <script th:href="@{/js/jquery.min.js}"></script>
+        <script th:href="@{/js/popper.min.js}"></script>
+        <script th:href="@{/js/bootstrap.bundle.min.js}"></script>
+        <script th:href="@{/js/owl.carousel.min.js}"></script>
+        <script th:href="@{/js/custom.js}"></script>
+        <script th:href="@{/js/jquery.mCustomScrollbar.concat.min.js}"></script>
 
-        <script th:src="@{/js/jquery-3.0.0.min.js}" ></script>
+        <script th:href="@{/js/jquery-3.0.0.min.js}"></script>
         <script type="text/javascript">
             $(document).ready(function() {
                 $("#sidebar").mCustomScrollbar({
@@ -265,46 +206,6 @@
                     $('a[aria-expanded=true]').attr('aria-expanded', 'false');
                 });
             });
-
-            //    Make a whole row as clickeable
-            function rowClicked(value) {
-                location.href = "/admin/user?id=" + value;
-            }
-
-        </script>
-
-        <style>
-            #owl-demo .item{
-                margin: 3px;
-            }
-            #owl-demo .item img{
-                display: block;
-                width: 100%;
-                height: auto;
-            }
-        </style>
-
-
-        <script>
-            $(document).ready(function() {
-                var owl = $('.owl-carousel');
-                owl.owlCarousel({
-                    margin: 10,
-                    nav: true,
-                    loop: true,
-                    responsive: {
-                        0: {
-                            items: 1
-                        },
-                        600: {
-                            items: 2
-                        },
-                        1000: {
-                            items: 5
-                        }
-                    }
-                })
-            })
         </script>
 
     </body>

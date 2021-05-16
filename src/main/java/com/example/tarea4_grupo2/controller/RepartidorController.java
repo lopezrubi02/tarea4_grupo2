@@ -203,7 +203,8 @@ public class RepartidorController {
 
         //repartidorEnlabasededatos.setMovilidad(optionalRepartidor.getMovilidad());
         repartidorEnlabasededatos.setDisponibilidad(repartidorRecibido.isDisponibilidad());
-        repartidorEnlabasededatos.setIddistritoactual(repartidorRecibido.getIddistritoactual());
+       // Distritos nuevo=distritosRepository.findById(repartidorRecibido.getDistritos())
+        repartidorEnlabasededatos.setDistritos(repartidorRecibido.getDistritos());
 
         repartidorRepository.save(repartidorEnlabasededatos);
 
@@ -232,41 +233,49 @@ public class RepartidorController {
     }
 
     @PostMapping("/save_perfil")
-    public String guardarPerfilRepartidor(@ModelAttribute("usuario") Usuario usuario,
-                                        @RequestParam("idusuario") int idusuario,@RequestParam("telefono") int telefono,
-                                          @RequestParam("direccion") String direccion,@RequestParam("password") String password
+    public String guardarPerfilRepartidor(@ModelAttribute("usuario") @Valid Usuario usuario,
+                                          BindingResult bindingResult,
+                                          @ModelAttribute("direcciones") Direcciones direcciones,
+                                          @ModelAttribute("repartidor") Repartidor repartidor,
+                                        @RequestParam("idusuario") int idusuario,
+                                          @RequestParam("telefono") int telefono,
+                                          @RequestParam("direccion") @Valid String direccion,
+                                          BindingResult bindingResult2,
+                                          @RequestParam("password") String password,
+                                          @RequestParam("password2") String password2,
+                                          Model model
     ) {
 
-        Optional<Usuario> usuario1= usuarioRepository.findById(idusuario);
 
-        if(usuario1.isPresent()){
-            usuario=usuario1.get();
-            usuario.setTelefono(telefono);
-            usuario.setContraseniaHash(password);
-            usuarioRepository.save(usuario);
 
-            Direcciones dnueva = direccionesRepository.findByUsuariosIdusuarios(usuario.getIdusuarios());
-            dnueva.setDireccion(direccion);
-            direccionesRepository.save(dnueva);
+        if (password.equals(password2)) {
+            Optional<Usuario> usuario1= usuarioRepository.findById(idusuario);
+
+            if(usuario1.isPresent()){
+                usuario=usuario1.get();
+                usuario.setTelefono(telefono);
+
+                String contraseniahashbcrypt1 = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
+
+                String contraseniahashbcrypt = BCrypt.hashpw(password, BCrypt.gensalt());
+
+                if(contraseniahashbcrypt1.equalsIgnoreCase(contraseniahashbcrypt)){
+                    usuario.setContraseniaHash(contraseniahashbcrypt);
+                }
+                usuarioRepository.save(usuario);
+
+                Direcciones dnueva = direccionesRepository.findByUsuariosIdusuarios(usuario.getIdusuarios());
+                dnueva.setDireccion(direccion);
+                direccionesRepository.save(dnueva);
+                return "redirect:/repartidor/perfil";
+            }
+        }else{
+            return "redirect:/repartidor/perfil";
         }
-
         return "redirect:/repartidor/perfil";
     }
 
-    @GetMapping("/new1")
-    public String nuevoRepartidor1(@ModelAttribute("repartidor") Repartidor repartidor) {
-        return "repartidor/registro_parte1";
-    }
 
-    @PostMapping("/save1")
-    public String guardarRepartidor1(@RequestParam("movilidad") String movilidad, Model model) {
-
-        Repartidor repartidor=new Repartidor();
-        repartidor.setMovilidad(movilidad);
-        model.addAttribute("repartidor",repartidor);
-
-        return "redirect:/repartidor/new2";
-    }
 
     @GetMapping("/new2")
     public String nuevoRepartidor2(@ModelAttribute("repartidor") Repartidor repartidor,
@@ -355,12 +364,12 @@ public class RepartidorController {
                 repartidor.setFoto(file.getBytes());
                 repartidor.setFotonombre(fileName);
                 repartidor.setFotocontenttype(file.getContentType());
-                repartidor.setIddistritoactual(1);
+                repartidor.setDistritos(distrito);
                 repartidor.setDisponibilidad(false);
                 repartidor.setMovilidad(movilidad);
                 repartidorRepository.save(repartidor);
 
-                if(movilidad.equalsIgnoreCase("bicileta")){
+                if(movilidad.equalsIgnoreCase("bicicleta")){
                     return "redirect:/repartidor/home";
                 }else{
                     //form de placa y licencia

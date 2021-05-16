@@ -94,7 +94,7 @@
                             <input th:field="*{idusuarios}" type="hidden">
                             <div class="form-group">
                                 <label class="form-label">Distrito</label>
-                                <select th:field="*{iddistritoactual}" class="form-select" name="distrito" style="width: 100%;">
+                                <select th:field="*{distritos}" class="form-select" name="distrito" style="width: 100%;">
                                     <option th:each="distrito : ${listadistritos}" th:value="${distrito.iddistritos}"
                                             th:text="${distrito.nombredistrito}"></option>
                                 </select>

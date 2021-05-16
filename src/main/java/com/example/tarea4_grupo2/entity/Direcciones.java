@@ -1,6 +1,7 @@
 package com.example.tarea4_grupo2.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "direcciones")
@@ -9,6 +10,7 @@ public class Direcciones {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int iddirecciones;
+    @NotBlank(message = "La direccion no puede ser nulo")
     private String direccion;
     @ManyToOne
     @JoinColumn(name = "iddistrito")
