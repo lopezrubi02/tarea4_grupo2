@@ -271,20 +271,23 @@ public class UsuarioController {
              model.addAttribute("idrestaurante",idrestaurante);
              return "cliente/detalles_plato";
          }else{
-            return "redirect:/cliente/restaurantexordenar";
+            return "redirect:/cliente/restaurantexordenar?idrestaurante=" + idrestaurante;
          }
     }
 
     @PostMapping("/cliente/platopedido")
     public String platopedido(@RequestParam("cubierto") int cubiertos,
                               @RequestParam("cantidad") int cantidad,
-                              @RequestParam("descripcion") String descripcion){
+                              @RequestParam("descripcion") String descripcion,
+                              @RequestParam(value = "idrestaurante") int idrestaurante){
 
         System.out.println(cubiertos);
         System.out.println("**********************+");
         System.out.println(cantidad);
         System.out.println(descripcion);
-        return "redirect:/cliente/restaurantexordenar";
+        System.out.println(idrestaurante);
+        System.out.println("gggggggggggggggggg");
+        return "redirect:/cliente/restaurantexordenar?idrestaurante=" + idrestaurante;
 
     }
 

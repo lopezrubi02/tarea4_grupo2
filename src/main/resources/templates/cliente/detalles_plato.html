@@ -115,8 +115,8 @@
                                     </br>
 									<a style="color: white;" th:text="'S/. ' + ${platoseleccionado.precio}">Precio: 20 soles</a>
 								</div>
-								<form class="main_form" method="post" th:action="@{/cliente/platopedido}">
-									<div class="row">
+								<form class="main_form" method="post" th:action="@{'/cliente/platopedido?idrestaurante=' + ${idrestaurante}}">
+                                    <div class="row">
 										<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
 											<div class="form-floating">
 											  <select class="form-select" id="floatingSelectGrid" aria-label="Floating label select example" name="cubierto">
@@ -136,7 +136,7 @@
 										</div>
 										<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <li class="button_user">
-                                                <a class="button active" th:href="'/cliente/restaurantexordenar?idrestaurante=' + ${idrestaurante}">Cancelar</a>
+                                                <a class="button active" th:href="'/cliente/restaurantexordenar?idrestaurante=' + ${platoseleccionado.restaurante.idrestaurante}">Cancelar</a>
                                                 <button style="background: #16181b; color: white; border-color: #16181b" type="submit">Agregar</button>
                                             </li>
                                         </div>
