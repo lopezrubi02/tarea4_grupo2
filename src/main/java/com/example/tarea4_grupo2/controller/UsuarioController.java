@@ -143,10 +143,23 @@ public class UsuarioController {
     }
 
     @PostMapping("/recepcionCliente")
-    public String recepcionCliente(@ModelAttribute("cliente") @Valid Usuario cliente, @RequestParam("idusuarios") int idusuarios,
-                                   @RequestParam("anio") int anio,
-                                   @RequestParam("mes") int mes, BindingResult bindingResult, Model model) {
-
+    public String recepcionCliente(@ModelAttribute("cliente") @Valid Usuario cliente,
+                                   @RequestParam("idusuarios") int idusuarios,
+                                   @RequestParam("fechahorapedido") String fechahorapedido, BindingResult bindingResult, Model model) {
+        String[] fecha = fechahorapedido.split("-", 2);
+        System.out.println(fecha);
+        String a = fecha[0];
+        String m = fecha[1];
+        idusuarios = 8;
+        int anio = Integer.parseInt(a);
+        int mes = Integer.parseInt(m);
+        System.out.println(anio);
+        System.out.println(mes);
+        System.out.println(idusuarios);
+        //string -> (fechahorapedido)
+        //se divide en mes y año (haciendo un split -> arreglo de string)****
+        ///sout del split
+        //parseo a enteros
         if (bindingResult.hasErrors()) {
             model.addAttribute("listaTop3Restaurantes", pedidosRepository.obtenerTop3Restaurantes(idusuarios, anio, mes));
             model.addAttribute("listaTop3Platos", pedidosRepository.obtenerTop3Platos(idusuarios, anio, mes));
