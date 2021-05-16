@@ -1,7 +1,7 @@
 package com.example.tarea4_grupo2.controller;
 
 import com.example.tarea4_grupo2.dto.PedidosDisponiblesDTO;
-import com.example.tarea4_grupo2.dto.PedidosReporteDTO;
+import com.example.tarea4_grupo2.dto.PedidosReporteDTOz;
 import com.example.tarea4_grupo2.dto.PlatosPorPedidoDTO;
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
