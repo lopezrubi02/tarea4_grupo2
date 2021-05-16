@@ -22,9 +22,6 @@ public class Restaurante {
     @JoinColumn(name="idadminrest")
     private Usuario usuario;
     private byte[] foto;
-    private String fotonombre;
-    private String fotocontenttype;
-
     @ManyToMany
     @JoinTable(name="restaurante_has_categorias",
             joinColumns = @JoinColumn(name="restaurante_idrestaurante"),
@@ -102,6 +99,9 @@ public class Restaurante {
     public void setCategoriasrestList(List<Categorias> categoriasrestList) {
         this.categoriasrestList = categoriasrestList;
     }
+
+    private String fotonombre;
+    private String fotocontenttype;
     public String getFotonombre() {
         return fotonombre;
     }
@@ -117,6 +117,5 @@ public class Restaurante {
     public void setFotocontenttype(String fotocontenttype) {
         this.fotocontenttype = fotocontenttype;
     }
-
 
 }

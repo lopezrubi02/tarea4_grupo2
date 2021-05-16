@@ -11,8 +11,7 @@ public class LoginController {
     @GetMapping("/loginAdmin")
     public String loginForm(
             @RequestParam(value = "error", required = false) String error,
-            Model model
-    ){
+            Model model){
         return "adminsistema/login";
     }
 
