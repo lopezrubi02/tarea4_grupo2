@@ -439,13 +439,14 @@ public class AdminRestauranteController {
     }
 
     @GetMapping("/cuentaAdmin")
-    public String cuenta(@ModelAttribute("usuario") Usuario usuario, Model model,HttpSession session){
+    public String cuenta(@ModelAttribute("restaurante") Restaurante restaurante, @ModelAttribute("usuario") Usuario usuario, Model model,HttpSession session){
         Usuario user=(Usuario)session.getAttribute("usuarioLogueado");
         model.addAttribute("listadirecciones",direccionesRepository.findAllByUsuariosIdusuariosAndActivoEquals(user.getIdusuarios(),1));
         model.addAttribute("restaurante",restauranteRepository.obtenerperfilRest(user.getIdusuarios()));
         model.addAttribute("usuario",usuarioRepository.findById(user.getIdusuarios()).get());
         model.addAttribute("datos",usuarioRepository.obtenerDatos(user.getIdusuarios()));
         model.addAttribute("listadistritos",distritosRepository.findAll());
+        model.addAttribute("ruc",restauranteRepository.buscarRuc(user.getIdusuarios()));
         return "AdminRestaurantes/cuenta";
     }
     @GetMapping("/borrarRestaurante")
@@ -475,6 +476,8 @@ public class AdminRestauranteController {
             model.addAttribute("datos",usuarioRepository.obtenerDatos(usuario.getIdusuarios()));
             model.addAttribute("listadirecciones",direccionesRepository.findAllByUsuariosIdusuariosAndActivoEquals(usuario.getIdusuarios(),1));
             model.addAttribute("restaurante",restauranteRepository.obtenerperfilRest(usuario.getIdusuarios()));
+            model.addAttribute("ruc",restauranteRepository.buscarRuc(usuario.getIdusuarios()));
+            model.addAttribute("listadistritos",distritosRepository.findAll());
             return "AdminRestaurantes/cuenta";
             }
         else {
@@ -483,38 +486,53 @@ public class AdminRestauranteController {
                 user.setTelefono(usuario.getTelefono());
                 user.setContraseniaHash(BCrypt.hashpw(usuario.getContraseniaHash(),BCrypt.gensalt()));
                 usuarioRepository.save(user);
-                return "redirect:/adminrest/perfil";
+                return "redirect:/adminrest/cuentaAdmin";
             }
             else{
                 model.addAttribute("msg","Contraseñas no son iguales");
                 model.addAttribute("listadirecciones",direccionesRepository.findAllByUsuariosIdusuariosAndActivoEquals(user.getIdusuarios(),1));
                 model.addAttribute("restaurante",restauranteRepository.obtenerperfilRest(user.getIdusuarios()));
                 model.addAttribute("datos",usuarioRepository.obtenerDatos(user.getIdusuarios()));
+                model.addAttribute("ruc",restauranteRepository.buscarRuc(usuario.getIdusuarios()));
+                model.addAttribute("listadistritos",distritosRepository.findAll());
                 return "AdminRestaurantes/cuenta";
             }
         }
     }
     @PostMapping("/guardarrestedit")
-    public String editarPerfilRest(@ModelAttribute("restaurante") Restaurante restaurante,@RequestParam("imagen") MultipartFile file,Model model){
-        try {
-            restaurante.setFoto(file.getBytes());
-            System.out.println(file.getContentType());
-        } catch (IOException e) {
-            e.printStackTrace();
+    public String editPerfilUsuario(@ModelAttribute("restaurante") @Valid Restaurante restaurante,
+                                    BindingResult bindingResult,
+                                    HttpSession session,
+                                    Model model){
+        Usuario user=(Usuario) session.getAttribute("usuarioLogueado");
+        if(bindingResult.hasFieldErrors("nombre")||bindingResult.hasFieldErrors("direccion")){
+            model.addAttribute("datos",usuarioRepository.obtenerDatos(user.getIdusuarios()));
+            model.addAttribute("listadirecciones",direccionesRepository.findAllByUsuariosIdusuariosAndActivoEquals(user.getIdusuarios(),1));
+            model.addAttribute("ruc",restauranteRepository.buscarRuc(user.getIdusuarios()));
+            model.addAttribute("listadistritos",distritosRepository.findAll());
+            model.addAttribute("usuario",user);
+            return "AdminRestaurantes/cuentarest";
         }
-
-        restauranteRepository.save(restaurante);
-        model.addAttribute("id",restaurante.getIdrestaurante());
+        Restaurante rest=restauranteRepository.buscarRestaurantePorIdAdmin(user.getIdusuarios()).get();
+        rest.setNombre(restaurante.getNombre());
+        rest.setDireccion(restaurante.getDireccion());
+        restauranteRepository.save(rest);
+        return"redirect:/adminrest/cuentaAdmin";
+    }
+    @GetMapping("/categoriaedit")
+    public String llenarcategoriasedit(@ModelAttribute("restaurante") Restaurante restaurante,Model model,HttpSession session){
+        Usuario usuario= (Usuario) session.getAttribute("usuarioLogueado");
+        model.addAttribute("restaurante",restauranteRepository.buscarRestaurantePorIdAdmin(usuario.getIdusuarios()));
         model.addAttribute("listacategorias",categoriasRepository.findAll());
         return "AdminRestaurantes/categoriasedit";
     }
-    @PostMapping("/llenarcategoriaedit")
-    public String llenarcategoriasedit(@ModelAttribute("restaurante") Restaurante restaurante,Model model){
-        Optional<Restaurante> optional = restauranteRepository.findById(restaurante.getIdrestaurante());
-        optional.get().setCategoriasrestList(restaurante.getCategoriasrestList());
-        restauranteRepository.save(optional.get());
-        model.addAttribute("id",optional.get().getIdrestaurante());
-        return "AdminRestaurantes/perfil";
+    @PostMapping("/guardarcategoriaedit")
+    public String nuevascategorias(@ModelAttribute("restaurante") Restaurante restaurante, HttpSession session){
+        Usuario usuario=(Usuario) session.getAttribute("usuarioLogueado");
+        Restaurante rest= restauranteRepository.buscarRestaurantePorIdAdmin(usuario.getIdusuarios()).get();
+        rest.setCategoriasrestList(restaurante.getCategoriasrestList());
+        restauranteRepository.save(rest);
+        return "redirect:/adminrest/cuentaAdmin";
     }
     @GetMapping("/agregardireccion")
     public String agregardireccion(Model model) {
