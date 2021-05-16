@@ -118,7 +118,7 @@
                 <div class="col-md">
                     <form class="form-group mb-3" method="post" th:action="@{/cliente/recepcionCliente}">
                         <div class="input-group-append">
-                            <input placeholder="Fecha Seleccionada"  type="month" class="form-control" name="fechaSeleccionada">
+                            <input type="month" id="start" name="fechahorapedido">
                             <button class="btn btn-warning" type="submit">Buscar</button>
                             <button class="btn btn-dark" th:href="@{/clientes/reportes}">Limpiar</button>
                         </div>
@@ -135,8 +135,7 @@
              <span>Top 3 de Restaurantes</span>
             </figure>
           </div>
-            <form method="post" th:action="@{cliente/recepcionCliente}" th:object="${cliente}">
-                <input th:field="*{idusuarios}" type="hidden">
+
                 <div class="container">
                 <table class="table">
                     <thead>
@@ -155,18 +154,17 @@
                     </tbody>
                 </table>
             </div>
-            </form>
+
         </div>
       </div>
        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mar_bottom">
         <div class="blog_box">
           <div class="blog_img_box">
             <figure><img th:src="@{/images/64bb5e41f11d3c3463f4bdc4c773d62d-plato-de-pollo-by-vexels.png}" alt="#"/>
-             <span>Top 3 de platos más vendidos</span>
+             <span>Top 3 de platos más pedidos</span>
             </figure>
           </div>
-            <form method="post" th:action="@{cliente/recepcionCliente}" th:object="${cliente}">
-                <input th:field="*{idusuarios}" type="hidden">
+
 		<div class="container">
 		  <table class="table">
               <thead>
@@ -185,7 +183,7 @@
               </tbody>
 		  </table>
 		  </div>
-            </form>
+
 		  </div>
       </div>
        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
@@ -195,8 +193,7 @@
              <span>Historial de consumo por restaurante y total</span>
             </figure>
           </div>
-            <form method="post" th:action="@{cliente/recepcionCliente}" th:object="${cliente}">
-                <input th:field="*{idusuarios}" type="hidden">
+
 		<div class="container">
 		  <table class="table">
               <thead>
@@ -212,11 +209,13 @@
                      <td th:text="${in.index + 1}"></td>
                      <td th:text="${historial.getNomrestaurante()}"></td>
                      <td th:text="${historial.getAsistencia()}"></td>
-                     <td th:text="${historial.getConsumomensual()}"</td>
+                     <td th:text="${historial.getConsumomensual()}"></td>
                 </tr>
               </tbody>
 		  </table>
-        </div>        </form></div>
+        </div>
+
+        </div>
       </div>
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mar_bottom">
         <div class="blog_box">
@@ -237,8 +236,7 @@
              <span>Tiempo medio por delivery</span>
             </figure>
           </div>
-            <form method="post" th:action="@{cliente/recepcionCliente}" th:object="${cliente}">
-                <input th:field="*{idusuarios}" type="hidden">
+
 		        <div class="container">
 		        <table class="table">
                     <thead>
@@ -257,7 +255,7 @@
                     </tbody>
 		         </table>
 		        </div>
-            </form>
+
 		  </div>
       </div>
 	</div>
@@ -267,15 +265,16 @@
 
 
     <!-- footer -->
-    <footer>
-        <div class="container">
-            <div class="footer">
-				<div class="copyright">
-                    <p>© 2021 Todos los derechos reservados. Propiedad de "Troyanos de Software"</p>
+    <fooetr>
+        <div class="footer">
+
+            <div class="copyright">
+                <div class="container">
+                    <p>© 2021 Todos los derechos reservados</p>
                 </div>
             </div>
         </div>
-    </footer>
+    </fooetr>
     <!-- end footer -->
 
     </div>

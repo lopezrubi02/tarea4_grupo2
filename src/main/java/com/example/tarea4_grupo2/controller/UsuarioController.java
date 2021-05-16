@@ -112,13 +112,13 @@ public class UsuarioController {
     }
 
     @GetMapping("/reportes")
-    public String reportesCliente(Model model, @ModelAttribute("cliente") Usuario cliente) {
+    public String reportesCliente(Model model) {
         int idusuarios = 8;
         int anio = 2021;
         int mes = 05;
         Optional<Usuario> optUsuario = usuarioRepository.findById(idusuarios);
         if (optUsuario.isPresent()) {
-            cliente = optUsuario.get();
+            Usuario cliente = optUsuario.get();
 
             List<Top3Restaurantes_ClienteDTO> top3Restaurantes_clienteDTOS = pedidosRepository.obtenerTop3Restaurantes(idusuarios, anio, mes);
             List<Top3Platos_ClientesDTO> top3Platos_clientesDTOS = pedidosRepository.obtenerTop3Platos(idusuarios, anio, mes);
@@ -129,7 +129,7 @@ public class UsuarioController {
             }
 
             DineroAhorrado_ClienteDTO dineroAhorrado_clienteDTO = pedidosRepository.dineroAhorrado(idusuarios, anio, mes);
-
+            System.out.println(dineroAhorrado_clienteDTO.getDiferencia());
             model.addAttribute("cliente", cliente);
             model.addAttribute("listaTop3Restaurantes",top3Restaurantes_clienteDTOS );
             model.addAttribute("listaTop3Platos", top3Platos_clientesDTOS);
@@ -143,9 +143,10 @@ public class UsuarioController {
     }
 
     @PostMapping("/recepcionCliente")
-    public String recepcionCliente(@ModelAttribute("cliente") @Valid Usuario cliente,
-                                   @RequestParam("idusuarios") int idusuarios,
-                                   @RequestParam("fechahorapedido") String fechahorapedido, BindingResult bindingResult, Model model) {
+    public String recepcionCliente(@RequestParam("fechahorapedido") String fechahorapedido,
+                                   Model model) {
+        int idusuarios = 7;
+        System.out.println(fechahorapedido);
         String[] fecha = fechahorapedido.split("-", 2);
         System.out.println(fecha);
         String a = fecha[0];
@@ -156,15 +157,21 @@ public class UsuarioController {
         System.out.println(anio);
         System.out.println(mes);
         System.out.println(idusuarios);
+        System.out.println("**************************************");
         //string -> (fechahorapedido)
         //se divide en mes y año (haciendo un split -> arreglo de string)****
         ///sout del split
         //parseo a enteros
-        if (bindingResult.hasErrors()) {
+        Optional<Usuario> clienteopt = usuarioRepository.findById(idusuarios);
+        if (clienteopt.isPresent()) {
             model.addAttribute("listaTop3Restaurantes", pedidosRepository.obtenerTop3Restaurantes(idusuarios, anio, mes));
             model.addAttribute("listaTop3Platos", pedidosRepository.obtenerTop3Platos(idusuarios, anio, mes));
             model.addAttribute("listaPromedioTiempo", pedidosRepository.obtenerTiemposPromedio(idusuarios, anio, mes));
             model.addAttribute("listaHistorialConsumo", pedidosRepository.obtenerHistorialConsumo(idusuarios, anio, mes));
+            DineroAhorrado_ClienteDTO dineroAhorrado_clienteDTO = pedidosRepository.dineroAhorrado(idusuarios, anio, mes);
+            //System.out.println(dineroAhorrado_clienteDTO.getDiferencia());
+            System.out.println("gggggggggggggggggggggggggggg");
+            model.addAttribute("diferencia", dineroAhorrado_clienteDTO);
             System.out.println("IDCliente: " + idusuarios + "Mes: " + mes + "Anio: " + anio);
         }
         return "cliente/reportes";
