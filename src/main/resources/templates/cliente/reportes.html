@@ -116,28 +116,14 @@
         <div class="title">
             <div class="row g-2">
                 <div class="col-md">
-                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                        <input placeholder="Fecha Seleccionada"  type="date" class="form-control" name="fechaSeleccionada">
-                    </div>
-                    <div class="form-floating">
-                <select class="form-select" id="floatingSelectGrid3" aria-label="Floating label select example">
-                    <option selected>Todos</option>
-                    <option value="01">Enero</option>
-                    <option value="02">Febrero</option>
-                    <option value="03">Marzo</option>
-                    <option value="04">Abril</option>
-                    <option value="05">Mayo</option>
-                    <option value="06">Junio</option>
-                    <option value="07">Julio</option>
-                    <option value="08">Agosto</option>
-                    <option value="09">Septiembre</option>
-                    <option value="10">Octubre</option>
-                    <option value="11">Noviembre</option>
-                    <option value="12">Diciembre</option>
-                </select>
-                <label for="floatingSelectGrid3">Mes</label>
-            </div>
-                </div></div>
+                    <form class="form-group mb-3" method="post" th:action="@{/cliente/recepcionCliente}">
+                        <div class="input-group-append">
+                            <input placeholder="Fecha Seleccionada"  type="month" class="form-control" name="fechaSeleccionada">
+                            <button class="btn btn-warning" type="submit">Buscar</button>
+                            <button class="btn btn-dark" th:href="@{/clientes/reportes}">Limpiar</button>
+                        </div>
+                    </form>
+                   </div>
         </div>
       </div>
     </div>

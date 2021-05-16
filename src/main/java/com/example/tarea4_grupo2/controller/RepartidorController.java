@@ -196,8 +196,7 @@ public class RepartidorController {
     }
 
     @PostMapping("/save_principal")
-    public String guardarHomeRepartidor(
-            Repartidor repartidorRecibido) {
+    public String guardarHomeRepartidor(Repartidor repartidorRecibido) {
 
         Repartidor optionalRepartidor = repartidorRepository.findRepartidorByIdusuariosEquals(repartidorRecibido.getIdusuarios());
         Repartidor repartidorEnlabasededatos = optionalRepartidor;
@@ -270,19 +269,25 @@ public class RepartidorController {
     }
 
     @GetMapping("/new2")
-    public String nuevoRepartidor2(@ModelAttribute("repartidor") Repartidor repartidor) {
+    public String nuevoRepartidor2(@ModelAttribute("repartidor") Repartidor repartidor,
+                                   @RequestParam("id") int id, Model model) {
+        Repartidor repartidor1=repartidorRepository.findRepartidorByIdusuariosEquals(id);
+        model.addAttribute("repartidor",repartidor1);
         return "repartidor/registro_parte2";
     }
 
     @PostMapping("/save2")
     public String guardarRepartidor2(Repartidor repartidor,@RequestParam("placa") String placa,
-                                     @RequestParam("licencia") String licencia      ) {
+                                     @RequestParam("licencia") String licencia  ,
+                                     @RequestParam("idusuarios") String id) {
 
-        repartidor.setPlaca(placa);
-        repartidor.setLicencia(licencia);
-        repartidorRepository.save(repartidor);
+        int id1=Integer.parseInt(id);
+        Repartidor repartidor1=repartidorRepository.findRepartidorByIdusuariosEquals(id1);
+        repartidor1.setPlaca(placa);
+        repartidor1.setLicencia(licencia);
+        repartidorRepository.save(repartidor1);
 
-        return "repartidor/new3";
+        return "redirect:/repartidor/home";
     }
 
     @GetMapping("/new3")
@@ -300,7 +305,7 @@ public class RepartidorController {
                                      @RequestParam("password2") String pass2,
                                      @RequestParam("movilidad") String movilidad,
                                      @RequestParam("archivo") MultipartFile file,
-                                     Model model) {
+                                     Model model, RedirectAttributes attributes) {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("listadistritos", distritosRepository.findAll());
@@ -315,46 +320,59 @@ public class RepartidorController {
             usuario2.setTelefono(usuario.getTelefono());
             usuario2.setSexo(usuario.getSexo());
 
-            String contraseniahashbcrypt = BCrypt.hashpw(usuario2.getContraseniaHash(), BCrypt.gensalt());
+            String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
+            System.out.println(contraseniahashbcrypt);
 
-            usuario.setContraseniaHash(contraseniahashbcrypt);
-            usuario.setRol("Repartidor");
-            usuario.setCuentaActiva(0);
-            usuario.setDni(usuario.getDni());
+            usuario2.setContraseniaHash(contraseniahashbcrypt);
+            usuario2.setRol("Repartidor");
+            usuario2.setCuentaActiva(0);
+            usuario2.setDni(usuario.getDni());
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
             usuario2.setFechaNacimiento(usuario.getFechaNacimiento());
+            usuarioRepository.save(usuario2);
                 //System.out.println(fechaNacimiento);
 
             Direcciones direccionactual = new Direcciones();
             direccionactual.setDireccion(direccion);
             direccionactual.setDistrito(distrito);
-            direccionactual.setUsuariosIdusuarios(usuario.getIdusuarios());
+            direccionactual.setUsuariosIdusuarios(usuario2.getIdusuarios());
 
             direccionesRepository.save(direccionactual);
 
             if (file.isEmpty()) {
                 model.addAttribute("msg", "Debe subir un archivo");
-                return "repartidor/new3";
+                return "repartidor/registro_parte3";
             }
             String fileName = file.getOriginalFilename();
             if (fileName.contains("..")) {
                 model.addAttribute("msg", "No se permiten '..' en el archivo");
-                return "repartidor/new3";
+                return "repartidor/registro_parte3";
             }
             try {
                 Repartidor repartidor= new Repartidor();
-                repartidor.setIdusuarios(usuario.getIdusuarios());
+                repartidor.setIdusuarios(usuario2.getIdusuarios());
                 repartidor.setFoto(file.getBytes());
                 repartidor.setFotonombre(fileName);
                 repartidor.setFotocontenttype(file.getContentType());
+                repartidor.setIddistritoactual(1);
+                repartidor.setDisponibilidad(false);
+                repartidor.setMovilidad(movilidad);
                 repartidorRepository.save(repartidor);
-                return "redirect:/repartidor/new1";
+
+                if(movilidad.equalsIgnoreCase("bicileta")){
+                    return "redirect:/repartidor/home";
+                }else{
+                    //form de placa y licencia
+                    attributes.addAttribute("id",usuario2.getIdusuarios());
+                    return "redirect:/repartidor/new2";
+                }
+
 
             } catch (IOException e) {
                 e.printStackTrace();
                 model.addAttribute("msg", "ocurrió un error al subir el archivo");
-                return "repartidor/new3";
+                return "repartidor/registro_parte3";
             }
 
             //usuarioRepository.save(usuario);
@@ -363,7 +381,7 @@ public class RepartidorController {
 
             //return "redirect:/repartidor/new1";
         } else {
-            return "repartidor/new3";
+            return "repartidor/registro_parte3";
         }
 
 
