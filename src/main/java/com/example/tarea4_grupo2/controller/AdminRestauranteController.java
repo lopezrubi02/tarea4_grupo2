@@ -49,29 +49,38 @@ public class AdminRestauranteController {
     @GetMapping("/login")
     public String loginAdmin(Model model, HttpSession session){
 
+        /**Se obtiene Id de Usuario**/
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int id = sessionUser.getIdusuarios();
         System.out.println(id);
+        /********************************/
+
         if(sessionUser.getCuentaActiva() == 2){
+
             System.out.println("TRACE1");
             Optional<Restaurante> restauranteOpt = restauranteRepository.buscarRestaurantePorIdAdmin(id);
             System.out.println("TRACE2");
-            if(restauranteOpt.isPresent()){
 
+            if(restauranteOpt.isPresent()){
                 return "AdminRestaurantes/espera";
             }else{
                 System.out.println("ALLA");
                 return "AdminRestaurantes/sinRestaurante";
             }
+
         }else if(sessionUser.getCuentaActiva() == 1){
+
             System.out.println("TRACE3");
             Optional<Restaurante> restauranteOpt = restauranteRepository.buscarRestaurantePorIdAdmin(id);
+
             if(restauranteOpt.isPresent()){
                 return "AdminRestaurantes/perfilrestaurante";
             }else{
                 return "AdminRestaurantes/sinRestaurante";
             }
+
         }else{
+            //TODO Retornar una vista de rechazado//
             return null;
         }
     }
@@ -144,8 +153,12 @@ public class AdminRestauranteController {
 
     @GetMapping("/imagen")
     public ResponseEntity<byte[]> imagenRestaurante(@RequestParam("id")int id,HttpSession session) {
+
+        /**Se obtiene Id de Restaurante**/
         Usuario user=(Usuario) session.getAttribute("usuarioLogueado");
         Integer id_rest=restauranteRepository.buscarRestaurantePorIdAdmin(user.getIdusuarios()).get().getIdrestaurante();
+        /********************************/
+
         Optional<Restaurante> optional = restauranteRepository.findById(id_rest);
         if (optional.isPresent()) {
             byte[] imagen = optional.get().getFoto();
@@ -167,15 +180,28 @@ public class AdminRestauranteController {
     /************************PLATOS************************/
 
     @GetMapping("/menu")
-    public String verMenu(Model model){
-        Integer idrestaurante = 1;
+    public String verMenu(Model model, HttpSession session){
+
+        /**Se obtiene Id de Restaurante**/
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
+        /********************************/
+
+        model.addAttribute("iddelrestaurante", idrestaurante);
         model.addAttribute("listaPlatos", platoRepository.buscarPlatosPorIdRestaurante(idrestaurante));
         return "AdminRestaurantes/menu";
     }
 
     @GetMapping("/crearPlato")
-    public String crearPlato(@ModelAttribute("plato") Plato plato, Model model){
+    public String crearPlato(@ModelAttribute("plato") Plato plato, Model model, HttpSession session){
+
+        /**Se obtiene Id de Restaurante**/
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
+        /********************************/
+
         model.addAttribute("plato",plato);
+        model.addAttribute("iddelrestaurante", idrestaurante);
         return "AdminRestaurantes/newPlato";
     }
 
