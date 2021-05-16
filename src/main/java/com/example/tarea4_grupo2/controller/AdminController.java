@@ -153,8 +153,8 @@ public class AdminController {
                 case "AdminRestaurante":
                     model.addAttribute("usuario", usuario);
 
-                    //Restaurante restaurante = restauranteRepository.findRestauranteByIdadminrestEquals(id);
-                    //model.addAttribute("restaurante", restaurante);
+                    Restaurante restaurante = restauranteRepository.findRestauranteByIdadminrestEquals(id);
+                    model.addAttribute("restaurante", restaurante);
 
                     return "adminsistema/datosRestaurante";
 
@@ -211,58 +211,17 @@ public class AdminController {
     }
 
     @GetMapping("/nuevosUsuarios")
-    public String nuevosUsuarios(Model model,@RequestParam(value = "rolSelected" ,defaultValue = "Todos")String rol,
-                                 @RequestParam(value = "searchField" ,defaultValue = "") String buscar,
-                                 @RequestParam(name = "page", defaultValue = "1") String requestedPage,
-                                RedirectAttributes attr){
-
-        float numberOfUsersPerPage = 4;
-        int page = Integer.parseInt(requestedPage);
-
+    public String nuevosUsuarios(Model model,@RequestParam(value = "rolSelected" ,defaultValue = "Todos")String rol){
         List<Usuario> usuarioList;
-
-        if(!buscar.equals("")){
-            String buscar2 = "%"+buscar+"%";
-            usuarioList = usuarioRepository.buscarGestionCuentasNuevas(buscar2);
-        } else if(rol.equals("Repartidor") || rol.equals("AdminRestaurante") ){
+        if(rol.equals("Repartidor") || rol.equals("AdminRestaurante") ){
             usuarioList = usuarioRepository.findAllByRolAndCuentaActiva(rol,0);
         }else{
             usuarioList = usuarioRepository.cuentasNuevas();
         }
-        model.addAttribute("rolSelected",rol);
 
-        String nombreRol;
-        if(rol.equals("Repartidor")){
-            nombreRol = "Repartidores";
-        }else if(rol.equals("AdminRestaurante")){
-            nombreRol = "Restaurantes";
-        }else{
-            nombreRol = "Todos";
-        }
-        model.addAttribute("nombreRol",nombreRol);
+        //usuarioList = usuarioRepository.findAllByCuentaActivaEquals(0);
+        model.addAttribute("listaUsuariosNuevos",usuarioList);
 
-        //todo agregado para lograr paginacion
-        if(usuarioList.size() == 0){
-            attr.addFlashAttribute("No se encontraron resultados para su busqueda");
-            return "redirect:/admin/nuevasCuentas";
-        }
-
-        int numberOfPages = (int) Math.ceil(usuarioList.size() / numberOfUsersPerPage);
-        if (page > numberOfPages) {
-            page = numberOfPages;
-        } // validation
-
-        int start = (int) numberOfUsersPerPage * (page - 1);
-        int end = (int) (start + numberOfUsersPerPage);
-
-        List<Usuario> lisOfUsersPage = usuarioList.subList(start, Math.min(end, usuarioList.size()));
-
-        model.addAttribute("listaUsuariosNuevos", lisOfUsersPage);
-        model.addAttribute("currentPage", page);
-        model.addAttribute("maxNumberOfPages", numberOfPages);
-        model.addAttribute("searchField", buscar);
-
-        //model.addAttribute("listaUsuariosNuevos",usuarioList);
         return "adminsistema/nuevasCuentas";
     }
 
@@ -272,15 +231,18 @@ public class AdminController {
     @PostMapping("/buscadorNuevos")
     public String buscarNuevos(@RequestParam(value = "searchField" ,defaultValue = "") String buscar,
                                @RequestParam(value = "rolSelected" ,defaultValue = "Todos")String rol,
-                               RedirectAttributes attr,
                                Model model){
+        List<Usuario> usuarioList;
         System.out.println("El rol es: " + rol);
-        model.addAttribute("rolSelected",rol);
-        attr.addAttribute("searchField", buscar);
-
-        //model.addAttribute("listaUsuariosNuevos",usuarioList);
-        //return "adminsistema/nuevasCuentas";
-        return "redirect:/admin/nuevosUsuarios";
+        if(rol.equals("Repartidor") || rol.equals("AdminRestaurant")){
+            usuarioList = usuarioRepository.findAllByRolAndNombreAndCuentaActiva(rol,buscar,0);
+        }else{
+            buscar = "%"+buscar+"%";
+            usuarioList = usuarioRepository.buscarGestionCuentasNuevas(buscar);
+        }
+        model.addAttribute("listaUsuariosNuevos",usuarioList);
+        model.addAttribute(rol,"rolSelected");
+        return "adminsistema/nuevasCuentas";
     }
 
     @GetMapping("/newuser")
@@ -294,8 +256,8 @@ public class AdminController {
                 switch (usuario.getRol()){
                     case "AdminRestaurante":
                         model.addAttribute("usuario",usuario);
-                        //Restaurante restaurante = restauranteRepository.findRestauranteByIdadminrestEquals(id);
-                        //model.addAttribute("restaurante",restaurante);
+                        Restaurante restaurante = restauranteRepository.findRestauranteByIdadminrestEquals(id);
+                        model.addAttribute("restaurante",restaurante);
                         return "adminsistema/AceptarCuentaRestaurante";
                     case "Repartidor":
                         model.addAttribute("usuario",usuario);
@@ -498,8 +460,8 @@ public class AdminController {
 
     @GetMapping("/DeliveryReportes")
     public String deliveryReportes(Model model){
-     //   List<DeliveryReportes_DTO> listaDeli = pedidosRepository.reportesDelivery();
-       // model.addAttribute("listadeli",listaDeli);
+        List<DeliveryReportes_DTO> listaDeli = pedidosRepository.reportesDelivery();
+        model.addAttribute("listadeli",listaDeli);
         return "adminsistema/ADMIN_ReportesVistaDelivery";
     }
 
