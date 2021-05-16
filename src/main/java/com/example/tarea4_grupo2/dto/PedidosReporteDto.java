@@ -2,7 +2,7 @@ package com.example.tarea4_grupo2.dto;
 
 import java.util.Date;
 
-public interface PedidosReporteDTO {
+public interface PedidosReporteDto {
     int getnumeropedido();
     Date getfechahorapedido();
     String getnombre();
