@@ -145,9 +145,10 @@ public class AdminRestauranteController {
     }
 
     @GetMapping("/imagen")
-    public ResponseEntity<byte[]> imagenRestaurante(@RequestParam("id")int id) {
-
-        Optional<Restaurante> optional = restauranteRepository.findById(id);
+    public ResponseEntity<byte[]> imagenRestaurante(@RequestParam("id")int id,HttpSession session) {
+        Usuario user=(Usuario) session.getAttribute("usuarioLogueado");
+        Integer id_rest=restauranteRepository.buscarRestaurantePorIdAdmin(user.getIdusuarios()).get().getIdrestaurante();
+        Optional<Restaurante> optional = restauranteRepository.findById(id_rest);
         if (optional.isPresent()) {
             byte[] imagen = optional.get().getFoto();
             HttpHeaders httpHeaders=new HttpHeaders();
