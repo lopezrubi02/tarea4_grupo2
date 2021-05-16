@@ -7,7 +7,6 @@ import com.example.tarea4_grupo2.dto.RepartidorComisionMensualDTO;
 import com.example.tarea4_grupo2.dto.RepartidoresReportes_DTO;
 import com.example.tarea4_grupo2.entity.Pedidos;
 import com.example.tarea4_grupo2.entity.Repartidor;
-import com.example.tarea4_grupo2.entity.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -23,7 +22,7 @@ public interface RepartidorRepository  extends JpaRepository<Repartidor, Integer
           //  +"inner join usuarios u on (p.idrepartidor=u.idusuarios)\n"
           //  "+ where p.idrepartidor=?1", nativeQuery = true)
             ,nativeQuery = true)
-    List<PedidosReporteDTO> findPedidosPorRepartidor();
+    List<PedidosReporteDto> findPedidosPorRepartidor();
     //List<Pedidos> findPedidosPorRepartidor(String idRepartidor);
 
     @Query(value = "select p.idpedidos, p.montototal, p.comisionrepartidor, p.calificacionrepartidor, r.nombre, r.distrito\n" +

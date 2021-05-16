@@ -176,6 +176,18 @@ public class UsuarioController {
         return "cliente/realizar_pedido_cliente";
     }
 
+    @PostMapping("/cliente/filtrarnombre")
+    public String filtronombre(Model model,
+                               @RequestParam(value = "searchField" ,defaultValue = "") String buscar){
+        //TODO mandar a la vista los platos buscados
+        System.out.println(buscar);
+        List<Plato> listaplatos = platoRepository.buscarPlatoxNombre(buscar);
+        List<Restaurante> listarestaurantes = restauranteRepository.buscarRestaurantexNombre(buscar);
+        model.addAttribute("listarestaurantesbuscado",listarestaurantes);
+        model.addAttribute("listaplatosbuscado",listaplatos);
+        return "redirect:/cliente/realizarpedido";
+    }
+
 
      @GetMapping("cliente/filtrocategoria")
      public String filtrosrestaurantes1(Model model,
@@ -241,13 +253,40 @@ public class UsuarioController {
             }
         }else{
             return "redirect:/cliente/realizarpedido";
-
         }
-
 
      }
 
+    @GetMapping("/cliente/platoxpedir")
+    public String platoxpedir(Model model,
+                              @RequestParam("idplato") int idplatopedir,
+                              @RequestParam("idrestaurante") int idrestaurante){
 
+         Optional<Plato> platoopt = platoRepository.findById(idplatopedir);
+         Optional<Restaurante> restopt = restauranteRepository.findById(idrestaurante);
+
+         if(platoopt.isPresent() && restopt.isPresent()){
+             Plato platoseleccionado = platoopt.get();
+             model.addAttribute("platoseleccionado",platoseleccionado);
+             model.addAttribute("idrestaurante",idrestaurante);
+             return "cliente/detalles_plato";
+         }else{
+            return "redirect:/cliente/restaurantexordenar";
+         }
+    }
+
+    @PostMapping("/cliente/platopedido")
+    public String platopedido(@RequestParam("cubierto") int cubiertos,
+                              @RequestParam("cantidad") int cantidad,
+                              @RequestParam("descripcion") String descripcion){
+
+        System.out.println(cubiertos);
+        System.out.println("**********************+");
+        System.out.println(cantidad);
+        System.out.println(descripcion);
+        return "redirect:/cliente/restaurantexordenar";
+
+    }
 
     /** Mi perfil **/
 

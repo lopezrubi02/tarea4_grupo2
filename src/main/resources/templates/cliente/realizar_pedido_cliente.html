@@ -104,13 +104,17 @@
 				<div class="title">
 			  <!--el input de buscar plato jutno a la dirección de entrega -->
 				<div class="row g-2">
-					<div class="col-md">
+                    <form class="input-group" method="post" th:action="@{/cliente/filtrarnombre}" style="width: 50%"><!-- COMPLETAR -->
+                        <div class="col-md">
+
 						<div class="form-floating">
-							<input type="email" class="form-control" id="floatingInputGrid" placeholder="Buscar plato o restaurante" >
-						<label for="floatingInputGrid">Buscar plato o restaurante</label>
+							<!--input type="email" class="form-control" id="floatingInputGrid" placeholder="Buscar plato o restaurante" -->
+                            <input name="searchField" class="form-control" id="floatingInputGrid" type="text" placeholder="Buscar plato o restaurante" th:text="${searchField}"/>
+                            <label for="floatingInputGrid">Buscar plato o restaurante</label>
 						</div>
-			  </div>
-			  <div class="col-md">
+			        </div>
+                    </form>
+			        <div class="col-md">
 				<div class="form-floating">
 				  <select class="form-select" id="floatingSelectGrid1" aria-label="Floating label select example">
 					<option th:each="direccion : ${listadirecciones}"

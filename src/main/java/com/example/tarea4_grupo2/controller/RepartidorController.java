@@ -157,7 +157,7 @@ public class RepartidorController {
 
     @GetMapping("/Reportes")
     public String reportes(Model model, RedirectAttributes attr){
-        List<PedidosReporteDTO> listaReporte1 = repartidorRepository.findPedidosPorRepartidor();
+        List<PedidosReporteDto> listaReporte1 = repartidorRepository.findPedidosPorRepartidor();
         if (listaReporte1.isEmpty()) {
             attr.addFlashAttribute("msg", "No hay resultados para mostrar.");
             return "redirect:/repartidor";
