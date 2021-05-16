@@ -203,6 +203,9 @@ public class RepartidorController {
 
         //repartidorEnlabasededatos.setMovilidad(optionalRepartidor.getMovilidad());
         repartidorEnlabasededatos.setDisponibilidad(repartidorRecibido.isDisponibilidad());
+
+
+
         repartidorEnlabasededatos.setIddistritoactual(repartidorRecibido.getIddistritoactual());
 
         repartidorRepository.save(repartidorEnlabasededatos);

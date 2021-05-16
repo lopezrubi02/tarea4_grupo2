@@ -25,8 +25,9 @@ public class Repartidor {
     private boolean disponibilidad;
     private Float calificacionpromedio;
 
-
-    private int iddistritoactual;
+    @ManyToOne
+    @JoinColumn(name = "iddistrito")
+    private Distritos distrito;
 
     public String getFotonombre() {
         return fotonombre;
