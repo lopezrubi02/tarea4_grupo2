@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/fragment.html :: header( title = 'Spicy')"></head>
+<head th:insert="fragment/fragment.html :: header( title = 'Spicy')"></head>
 <!-- body -->
 
 <body class="main-layout">
@@ -102,7 +102,7 @@
 
                             <div class="form-group">
                                 <label>Disponibilidad</label>
-                                <select th:field="*{disponibilidad}" class="form-control">
+                                <select th:field="*{disponibilidad}"  class="form-select" style="width: 100%;">
                                     <option th:value="true" th:text="Disponible"></option>
                                     <option th:value="false" th:text="Ocupado"></option>
                                 </select>
