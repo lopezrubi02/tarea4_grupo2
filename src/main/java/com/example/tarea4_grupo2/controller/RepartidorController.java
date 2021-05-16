@@ -1,8 +1,6 @@
 package com.example.tarea4_grupo2.controller;
 
-import com.example.tarea4_grupo2.dto.PedidosDisponiblesDTO;
-import com.example.tarea4_grupo2.dto.PedidosReporteDTO;
-import com.example.tarea4_grupo2.dto.PlatosPorPedidoDTO;
+import com.example.tarea4_grupo2.dto.*;
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -135,7 +133,7 @@ public class RepartidorController {
             Pedidos pedido = pedidoElegido.get();
             pedido.setEstadorepartidor("entregado"); //Estado de esperando ser entregado al cliente
             model.addAttribute("pedido", pedido);
-            attr.addFlashAttribute("msg", "Se registró la entrega del pedido. ¡Gracias!");
+            attr.addFlashAttribute("msgVerde", "Se registró la entrega del pedido. ¡Gracias!");
         } else {
             attr.addFlashAttribute("msg", "Este pedido ya no está disponible :(");
         }
@@ -146,10 +144,10 @@ public class RepartidorController {
     @PostMapping("/Buscador")
     public String buscador(@RequestParam("valorBuscado") String searchField,
                            Model model, RedirectAttributes attr) {
-
+        int id=10;
         //List<PedidosReporteDTO> listaPedidosxRestaurante = repartidorRepository.findPedidosByRestaurante(searchField);
         //List<PedidosReporteDTO> listaPedidosxDistrito = repartidorRepository.findPedidosByDistrito(searchField);
-        List <PedidosReporteDTO> ListaFindReporte = repartidorRepository.findReporte(searchField);
+        List <PedidosReporteDTOs> ListaFindReporte = repartidorRepository.findReporte(searchField, id);
         if (ListaFindReporte.isEmpty()) {
             attr.addFlashAttribute("msg", "No hay resultados asociados a la búsqueda.");
             return "redirect:/repartidor";
@@ -164,12 +162,16 @@ public class RepartidorController {
     @GetMapping("/Reportes")
     public String reportes(Model model, RedirectAttributes attr){
         int id = 10;
-        List<PedidosReporteDTO> listaReporte1 = repartidorRepository.findPedidosPorRepartidor(id);
+        List<PedidosReporteDTOs> listaReporte1 = repartidorRepository.findPedidosPorRepartidor(id);
+        List<RepartidorComisionMensualDTO> listaComisionMensual = repartidorRepository.obtenerComisionPorMes(id);
         if (listaReporte1.isEmpty()) {
             attr.addFlashAttribute("msg", "No hay resultados para mostrar.");
             return "redirect:/repartidor";
         }else{
+            //Lista1
             model.addAttribute("listaReporte1", listaReporte1);
+            //Lista2
+            model.addAttribute("listaComisionMensual", listaComisionMensual);
             return "repartidor/repartidor_reportes";
         }
     }

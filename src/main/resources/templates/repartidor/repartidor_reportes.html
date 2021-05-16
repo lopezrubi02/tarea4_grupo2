@@ -77,8 +77,26 @@
                     </tbody>
                 </table>
 
-            </div>
 
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">MES</th>
+                        <th scope="col">AÑO</th>
+                        <th scope="col">COMISIÓN MENSUAL</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="comision : ${listaComisionMensual}">
+                        <td th:text="${comision.getMes()}"></td>
+                        <td th:text="${comision.getYear()}"></td>
+                        <td th:text="${comision.getComision_mensual()}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+
+
+            </div>
         </div>
     </div>
     <!-- end blog -->
