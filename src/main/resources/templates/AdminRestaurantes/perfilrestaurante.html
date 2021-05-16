@@ -55,7 +55,7 @@
                             <div class="right_header_info">
                                 <ul>
                                     <!-- TODO -->
-                                    <li class="button_user"><a class="button active" th:href="@{/cuentaAdmin}">Mi cuenta</a><a class="button" th:href="@{/logout}">Logout</a></li>
+                                    <li class="button_user"><a class="button active" th:href="@{/adminrest/cuentaAdmin}">Mi cuenta</a><a class="button" th:href="@{/logout}">Logout</a></li>
                                     <li>
                                         <button type="button" id="sidebarCollapse">
                                             <img src="/images/menu_icon.png" alt="#">
@@ -107,7 +107,7 @@
                                             <a class="send" th:href="@{/adminrest/menu}" style="text-align: center;background: #d8b00f">Ver menu</a>
                                         </div>
                                         <div class="col-md-3">
-                                            <a class="send" th:href="@{'/adminrest/cupones' + '?idrestaurante=1'}" style="text-align: center;background: #d8b00f">Mis cupones</a>
+                                            <a class="send" th:href="@{/adminrest/cupones}" style="text-align: center;background: #d8b00f">Mis cupones</a>
                                         </div>
                                     </div>
                                 </div>

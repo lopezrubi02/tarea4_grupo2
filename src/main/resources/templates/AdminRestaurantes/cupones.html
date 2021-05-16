@@ -12,13 +12,13 @@
     <title>Register</title>
 
     <!-- bootstrap css -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
     <!-- owl css -->
-    <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <link rel="stylesheet" href="/css/owl.carousel.min.css">
     <!-- style css -->
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
     <!-- responsive-->
-    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="/css/responsive.css">
     <!-- awesome fontfamily -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <!--[if lt IE 9]>
@@ -52,7 +52,7 @@
                 <div class="row">
                     <div class="col-md-3">
                         <div class="full">
-                            <a class="logo" href="index.html"><img src="images/logo.png" alt="#" /></a>
+                            <a class="logo" href="index.html"><img src="/images/logo.png" alt="#" /></a>
                         </div>
                     </div>
                     <div class="col-md-9">
@@ -63,7 +63,7 @@
                                     <li class="button_user"><a class="button active" th:href="@{/cuentaAdmin}">Mi cuenta</a><a class="button" th:href="@{/login}">Logout</a></li>
                                     <li>
                                         <button type="button" id="sidebarCollapse">
-                                            <img src="images/menu_icon.png" alt="#">
+                                            <img src="/images/menu_icon.png" alt="#">
                                         </button>
                                     </li>
                                 </ul>
@@ -101,18 +101,50 @@
                                 <td th:text="${cupon.fechafin}"></td>
                                 <td th:text="${cupon.plato.nombre}"></td>
                                 <td th:text="${listaDisponibilidad[__${iterStat.index}__]}">nada</td>
-                                <td><a class="btn btn-primary" th:href="@{'/editarCupon' + '?idcupon=' + ${cupon.idcupones}}">Editar cupon</a></td>
-                                <td><a class="btn btn-danger"  th:href="@{'/borrarCupon' + '?idcupon=' + ${cupon.idcupones}}">Borrar cupon</a></td>
+                                <td><a class="btn btn-primary" th:href="@{'/adminrest/editarCupon' + '?idcupon=' + ${cupon.idcupones}}">Editar cupon</a></td>
+                                <td><a class="btn btn-danger"  th:href="@{'/adminrest/borrarCupon' + '?idcupon=' + ${cupon.idcupones}}">Borrar cupon</a></td>
                             </tr>
                             </tbody>
                         </table>
+                        <!-- paginacion -->
+                        <div class="row">
+                            <nav aria-label="Page navigation example" class = "mx-auto">
+                                <ul class="pagination justify-content-center">
+
+                                    <!--  BOTON ANTERIOR -->
+                                    <li class="page-item disabled" th:if="${currentPage eq 1 }">
+                                        <span class="page-link">Anterior</span>
+                                    </li>
+                                    <li class="page-item" th:unless="${currentPage eq 1}">
+                                        <a class="page-link"
+                                           th:href="@{/adminrest/cupones(page=${currentPage - 1})}">Anterior</a>
+                                    </li>
+
+                                    <!-- BOTONES NUMEROS -->
+                                    <li th:each="i : ${#numbers.sequence( 1, maxNumberOfPages )}"
+                                        th:class="${ i == currentPage ? 'page-item active .bg-secondary' : 'page-item' }">
+                                        <a class="page-link"  th:href="@{/adminrest/cupones(page=${i})}"
+                                           th:text="${i}"
+                                        ></a>
+                                    </li>
+
+                                    <!--  BOTON SIGUIENTE -->
+                                    <li class="page-item disabled" th:if="${currentPage eq maxNumberOfPages }">
+                                        <span class="page-link">Anterior</span>
+                                    </li>
+                                    <li class="page-item" th:unless="${currentPage eq maxNumberOfPages}">
+                                        <a class="page-link" th:href="@{/adminrest/cupones(page=${currentPage + 1})}">Siguiente</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                             <div class="row">
                                 <div class="col-md-3">
-                                    <a class="send" th:href="@{/crearCupon}" style="text-align: center">Crear Cupon</a>
+                                    <a class="send" th:href="@{/adminrest/crearCupon}" style="text-align: center;background: #d8b00f">Crear Cupon</a>
                                 </div>
                                 <div class="col-md-3">
-                                    <a class="send" th:href="@{/perfil}" style="text-align: center">Regresar</a>
+                                    <a class="send" th:href="@{/adminrest/perfil}" style="text-align: center;background: #d8b00f">Regresar</a>
                                 </div>
                             </div>
                         </div>
@@ -130,13 +162,13 @@
 
 <div class="overlay"></div>
 <!-- Javascript files-->
-<script src="js/jquery.min.js"></script>
-<script src="js/popper.min.js"></script>
-<script src="js/bootstrap.bundle.min.js"></script>
-<script src="js/owl.carousel.min.js"></script>
-<script src="js/custom.js"></script>
-<script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
-<script src="js/jquery-3.0.0.min.js"></script>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/popper.min.js"></script>
+<script src="/js/bootstrap.bundle.min.js"></script>
+<script src="/js/owl.carousel.min.js"></script>
+<script src="/js/custom.js"></script>
+<script src="/js/jquery.mCustomScrollbar.concat.min.js"></script>
+<script src="/js/jquery-3.0.0.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function() {
         $("#sidebar").mCustomScrollbar({

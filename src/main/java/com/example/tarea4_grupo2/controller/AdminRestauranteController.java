@@ -1,5 +1,7 @@
 package com.example.tarea4_grupo2.controller;
 
+import com.example.tarea4_grupo2.dto.ComentariosDto;
+import com.example.tarea4_grupo2.dto.DatosDTO;
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
 import jdk.nashorn.internal.objects.AccessorPropertyDescriptor;
@@ -220,12 +222,22 @@ public class AdminRestauranteController {
     /************************CUPONES************************/
 
     @GetMapping("/cupones")
-    public String verCupones(Model model, @RequestParam(value = "idrestaurante", required = false) Integer idrestaurante){
-        idrestaurante = 1;
+    public String verCupones(Model model,@RequestParam(name = "page", defaultValue = "1") String requestedPage){
+        float numberOfUsersPerPage = 7;
+        int page = Integer.parseInt(requestedPage);
+        int idrestaurante = 1;
         List<Cupones> listaCupones = cuponesRepository.buscarCuponesPorIdRestaurante(idrestaurante);
         List<String> listaDisponibilidad = new ArrayList<String>();
+        int numberOfPages = (int) Math.ceil(listaCupones.size() / numberOfUsersPerPage);
+        if (page > numberOfPages) {
+            page = numberOfPages;
+        } // validation
 
-        for (Cupones i: listaCupones){
+        int start = (int) numberOfUsersPerPage * (page - 1);
+        int end = (int) (start + numberOfUsersPerPage);
+
+        List<Cupones> listOfCuponesPage = listaCupones.subList(start, Math.min(end, listaCupones.size()));
+        for (Cupones i: listOfCuponesPage){
             Date inicio = i.getFechainicio();
             Date fin = i.getFechafin();
             Date ahora = Date.valueOf(LocalDate.now());
@@ -241,11 +253,11 @@ public class AdminRestauranteController {
             }
 
         }
-
-        model.addAttribute("listaCupones", listaCupones);
+        model.addAttribute("listaCupones", listOfCuponesPage);
         model.addAttribute("listaDisponibilidad", listaDisponibilidad);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("maxNumberOfPages", numberOfPages);
         return "AdminRestaurantes/cupones";
-
     }
 
     @GetMapping("/crearCupon")
@@ -308,17 +320,46 @@ public class AdminRestauranteController {
     /************************CALIFICACIONES************************/
 
     @GetMapping("/calificaciones")
-    public String verCalificaciones(Model model){
+    public String verCalificaciones(Model model, @RequestParam(name = "page", defaultValue = "1") String requestedPage,
+                                    @RequestParam(name = "searchfield", defaultValue = "") String searchField){
+        float numberOfUsersPerPage = 7;
+        int page = Integer.parseInt(requestedPage);
+        //falta cambiar el id de acuerdo a la sesion pero por mientras se dejará ahi
         Integer id = 1;
-        model.addAttribute("listaCalificacion",pedidosRepository.comentariosUsuarios(id));
+        List<ComentariosDto> comentariosList;
+        if(searchField.equals("")){
+            comentariosList= pedidosRepository.comentariosUsuarios(id);
+        }
+        else{
+            comentariosList= pedidosRepository.buscarComentariosUsuarios(searchField,id);
+        }
+        // si no se encuentra nada, se redirige a la lista general
+        if(comentariosList.size() == 0){
+            return "redirect:/adminrest/calificaciones";
+        }
+
+        int numberOfPages = (int) Math.ceil(comentariosList.size() / numberOfUsersPerPage);
+        if (page > numberOfPages) {
+            page = numberOfPages;
+        } // validation
+
+        int start = (int) numberOfUsersPerPage * (page - 1);
+        int end = (int) (start + numberOfUsersPerPage);
+
+        List<ComentariosDto> lisOfComentariosPage = comentariosList.subList(start, Math.min(end, comentariosList.size()));
+
+        model.addAttribute("listaComentarios", lisOfComentariosPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("maxNumberOfPages", numberOfPages);
+        model.addAttribute("searchfield",searchField);
         return "AdminRestaurantes/calificaciones";
     }
 
     @PostMapping("/buscarCalificaciones")
-    public String buscarCalificaciones(@RequestParam("name") String name, Model model){
-        Integer id = 1;
-        model.addAttribute("listaCalificacion",pedidosRepository.buscarComentariosUsuarios(name,id));
-        return "AdminRestaurantes/calificaciones";
+    public String buscarCalificaciones(@RequestParam("searchfield") String searchField,
+                                       RedirectAttributes attr){
+        attr.addAttribute("searchfield",searchField);
+        return "redirect:/adminrest/calificaciones";
     }
 
     /************************REPORTE************************/
@@ -398,9 +439,12 @@ public class AdminRestauranteController {
     }
 
     @GetMapping("/cuentaAdmin")
-    public String cuenta(@RequestParam("id") int id,Model model){
-        model.addAttribute("restaurante",restauranteRepository.obtenerperfilRest(id));
-        model.addAttribute("usuario",usuarioRepository.findById(id).get());
+    public String cuenta(@ModelAttribute("usuario") Usuario usuario, Model model,HttpSession session){
+        Usuario user=(Usuario)session.getAttribute("usuarioLogueado");
+        model.addAttribute("listadirecciones",direccionesRepository.findAllByUsuariosIdusuariosAndActivoEquals(user.getIdusuarios(),1));
+        model.addAttribute("restaurante",restauranteRepository.obtenerperfilRest(user.getIdusuarios()));
+        model.addAttribute("usuario",usuarioRepository.findById(user.getIdusuarios()).get());
+        model.addAttribute("datos",usuarioRepository.obtenerDatos(user.getIdusuarios()));
         return "AdminRestaurantes/cuenta";
     }
     @GetMapping("/borrarRestaurante")
@@ -419,14 +463,35 @@ public class AdminRestauranteController {
         return "AdminRestaurantes/espera";
     }
     @PostMapping("/guardaradminedit")
-    public String editPerfilUsuario(@ModelAttribute("usuario") @Valid Usuario usuario, BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
+    public String editPerfilUsuario(@ModelAttribute("usuario") @Valid Usuario usuario,
+                                    BindingResult bindingResult,
+                                    @RequestParam("pass2") String pass2,
+                                    HttpSession session,
+                                    Model model){
+        Usuario user=(Usuario) session.getAttribute("usuarioLogueado");
+        System.out.println(usuario.getNombre());
+        if(bindingResult.hasFieldErrors("email")||bindingResult.hasFieldErrors("telefono")|| bindingResult.hasFieldErrors("contraseniaHash")){
+            model.addAttribute("datos",usuarioRepository.obtenerDatos(usuario.getIdusuarios()));
+            model.addAttribute("listadirecciones",direccionesRepository.findAllByUsuariosIdusuariosAndActivoEquals(usuario.getIdusuarios(),1));
+            model.addAttribute("restaurante",restauranteRepository.obtenerperfilRest(usuario.getIdusuarios()));
             return "AdminRestaurantes/cuenta";
-        }
+            }
         else {
-            usuarioRepository.save(usuario);
+            if(usuario.getContraseniaHash().equals(pass2)){
+                user.setEmail(usuario.getEmail());
+                user.setTelefono(usuario.getTelefono());
+                user.setContraseniaHash(BCrypt.hashpw(usuario.getContraseniaHash(),BCrypt.gensalt()));
+                usuarioRepository.save(user);
+                return "redirect:/adminrest/perfil";
+            }
+            else{
+                model.addAttribute("msg","Contraseñas no son iguales");
+                model.addAttribute("listadirecciones",direccionesRepository.findAllByUsuariosIdusuariosAndActivoEquals(user.getIdusuarios(),1));
+                model.addAttribute("restaurante",restauranteRepository.obtenerperfilRest(user.getIdusuarios()));
+                model.addAttribute("datos",usuarioRepository.obtenerDatos(user.getIdusuarios()));
+                return "AdminRestaurantes/cuenta";
+            }
         }
-        return "redirect:/perfil";
     }
     @PostMapping("/guardarrestedit")
     public String editarPerfilRest(@ModelAttribute("restaurante") Restaurante restaurante,@RequestParam("imagen") MultipartFile file,Model model){
@@ -450,4 +515,41 @@ public class AdminRestauranteController {
         model.addAttribute("id",optional.get().getIdrestaurante());
         return "AdminRestaurantes/perfil";
     }
+    @GetMapping("/agregardireccion")
+    public String agregardireccion(Model model) {
+
+        List<Distritos> listadistritos = distritosRepository.findAll();
+        model.addAttribute("listadistritos",listadistritos);
+
+        return "AdminRestaurantes/agregardireccion";
+    }
+    @PostMapping("/guardardireccion")
+    public String guardarnuevadireccion(@RequestParam("direccion") String direccion,
+                                        @RequestParam("iddistrito") int iddistrito,
+                                        HttpSession session) {
+
+        Usuario user=(Usuario) session.getAttribute("usuarioLogueado");
+        int idusuario=user.getIdusuarios();
+        Direcciones direccioncrear = new Direcciones();
+        direccioncrear.setDireccion(direccion);
+        //direccioncrear.setDistrito(distrito);
+        Optional<Distritos> distritoopt = distritosRepository.findById(iddistrito);
+        Distritos distritonuevo = distritoopt.get();
+        direccioncrear.setDistrito(distritonuevo);
+        direccioncrear.setUsuariosIdusuarios(idusuario);
+        direccioncrear.setActivo(1);
+        direccionesRepository.save(direccioncrear);
+        return "redirect:/adminrest/perfil";
+    }
+    @GetMapping("/borrardireccion")
+    public String borrarDireccion(@RequestParam("iddireccion") int iddireccion){
+        Optional<Direcciones> direccionopt = direccionesRepository.findById(iddireccion);
+        Direcciones direccionborrar = direccionopt.get();
+        if(direccionborrar != null){
+            direccionborrar.setActivo(0);
+            direccionesRepository.save(direccionborrar);
+        }
+        return "redirect:/adminrest/perfil";
+    }
 }
+

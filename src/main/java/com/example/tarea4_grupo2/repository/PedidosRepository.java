@@ -138,7 +138,7 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
 
     @Query(value="select \n" +
             "avg(p.calificacionrestaurante) as calificacionpromedio\n" +
-            "from pedidos p where p.restaurante_idrestaurante = 1", nativeQuery = true)
+            "from pedidos p where p.restaurante_idrestaurante = ?1", nativeQuery = true)
     List<AvgCalifDto>calificacionPromedio(Integer id);
 
     @Query(value="select p.idpedidos,pl.nombre,php.descripcion,php.cantidadplatos,php.cubiertos,d.direccion,d.distrito,p.montototal from pedidos p\n" +
