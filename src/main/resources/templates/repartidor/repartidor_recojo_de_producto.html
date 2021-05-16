@@ -41,43 +41,45 @@
         <header th:replace="fragment/fragment.html :: navbar"></header>
         <!-- end header -->
 
+
         <!-- blog -->
         <div class="blog">
             <div class="container">
-                <div class="col-md-12">
-                    <h1 th:text="Pedido esperando recojo"></h1>
-                </div>
-
-                <div>
-                    <p th:text="'Restaurante: ' + ${restaurante.getNombre()}"></p>
-                    <p th:text="'Dirección de recojo: ' + ${restaurante.getDireccion()} +'. ' ${restaurante.getDistrito()}"></p>
-                    <p th:text="'Total: S/.' + ${ pedido.getMontototal()}"></p>
-                    <p th:text="'Comisión: S/. ' + ${pedido.getComisionrepartidor()}"></p>
-                </div>
-
-                <table class="table">
-                    <thead>
+                <p th:text="'Restaurante: ' + ${restaurante.getNombre()}"></p>
+                <p th:text="'Dirección de recojo: ' + ${restaurante.getDireccion()}"></p>
+                <p th:text="'Distrito de recojo: ' + ${restaurante.getDistrito()}"></p>
+                <p th:text="'Direccion de destino: ' + ${direccion.getDireccion()}"></p>
+                <p th:text="'Distrito de destino: ' + ${direccion.getDistrito()}"></p>
+                <p th:text="'Total: S/.' + ${ pedido.getMontototal()}"></p>
+                <p th:text="'Comisión: S/. ' + ${pedido.getComisionrepartidor()}"></p>
+            </div>
+            <div class="container">
+            <table class="table">
+                <thead>
                     <tr>
                         <th scope="col"># ITEM</th>
                         <th scope="col">CANT.</th>
                         <th scope="col">DETALLE</th>
                     </tr>
-                    </thead>
-                    <tbody>
+                </thead>
+                <tbody>
                     <tr th:each="detallesPlatosPorPedidoDTO, info : ${listaPlatosPorPedidoDTO}">
                         <td th:text="${info.index + 1}"></td>
                         <td th:text="${detallesPlatosPorPedidoDTO.getCantidadplatos()}"></td>
                         <td th:text="${detallesPlatosPorPedidoDTO.getNombre()}"></td>
                     </tr>
-                    </tbody>
-                </table>
-
+                </tbody>
+            </table>
                 <td><a class="btn btn-primary" th:href="@{'/repartidor/ConfirmaRecojo' + '?idpedido=' + ${pedido.getIdpedidos()}}">Confirmar Recojo</a></td>
 
             </div>
+
         </div>
     </div>
     <!-- end blog -->
+
+
+
 
 
     <!-- footer -->

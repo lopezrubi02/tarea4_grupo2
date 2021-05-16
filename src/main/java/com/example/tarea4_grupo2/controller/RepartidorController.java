@@ -80,6 +80,9 @@ public class RepartidorController {
             Restaurante restaurante = restauranteRepository.findRestauranteById(pedido.getRestaurante_idrestaurante());
             model.addAttribute("restaurante", restaurante);
 
+            Direcciones direccion = direccionesRepository.findDireccionById(pedido.getDireccionentrega());
+            model.addAttribute("direccion", direccion);
+
             List<PlatosPorPedidoDTO> listaPlatosPorPedidoDTO = repartidorRepository.findListaPlatosPorPedido(pedido.getIdpedidos());
             model.addAttribute("listaPlatosPorPedidoDTO", listaPlatosPorPedidoDTO);
 
