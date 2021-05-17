@@ -95,7 +95,10 @@ public class LoginController {
             return "redirect:/admin/gestionCuentas";
         } else if(rol.equals("Repartidor")) {
             return "redirect:/repartidor/home";
-        }else{
+        }else if(rol.equals("Cliente")){
+            return "redirect:/cliente/paginaprincipal";
+        }
+        else{
             System.out.println(rol);
             return "adminsistema/login";
         }

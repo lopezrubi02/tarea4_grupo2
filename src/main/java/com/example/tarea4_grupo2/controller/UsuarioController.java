@@ -3,6 +3,7 @@ package com.example.tarea4_grupo2.controller;
 import com.example.tarea4_grupo2.dto.*;
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -12,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -47,12 +49,16 @@ public class UsuarioController {
     @Autowired
     PlatoRepository platoRepository;
 
+    @Autowired
+    PedidoHasPlatoRepository pedidoHasPlatoRepository;
+
     @GetMapping("/cliente/paginaprincipal")
     public String paginaprincipal() {
 
         return "cliente/paginaPrincipal";
     }
 
+    /** Registro cliente**/
 
     @GetMapping("/nuevocliente")
     public String nuevoCliente(Model model,@ModelAttribute("usuario") Usuario usuario)
@@ -120,10 +126,14 @@ public class UsuarioController {
     }
 
     @GetMapping("/cliente/reportes")
-    public String reportesCliente(Model model) {
-        int idusuarios = 8;
+    public String reportesCliente(Model model,
+                                  RedirectAttributes redirectAttributes,
+                                  HttpSession session) {
+        //int idusuarios = 8;
 //        int anio = 2021;
   //      int mes = 05;
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuarios=sessionUser.getIdusuarios();
 
         java.util.Date fecha = new Date();
         LocalDate localDate = LocalDate.now();
@@ -171,8 +181,13 @@ public class UsuarioController {
 
     @PostMapping("/cliente/recepcionCliente")
     public String recepcionCliente(@RequestParam("fechahorapedido") String fechahorapedido,
-                                   Model model, RedirectAttributes redirectAttributes) {
-        int idusuarios = 7;
+                                   RedirectAttributes redirectAttributes,
+                                   Model model,
+                                   HttpSession session) {
+        //int idusuarios = 7;
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuarios=sessionUser.getIdusuarios();
+
         System.out.println(fechahorapedido);
         String[] fecha = fechahorapedido.split("-", 2);
         System.out.println(fecha);
@@ -223,18 +238,23 @@ public class UsuarioController {
         return "cliente/reportes";
     }
 
-    @GetMapping("/cliente/realizarpedido")
-    public String realizarpedido(Model model) {
+    /** Realizar pedido **/
 
-        int idusuarioactual = 8;
+    @GetMapping("/cliente/realizarpedido")
+    public String realizarpedido(Model model, HttpSession session) {
+
+        //int idusuarioactual = 7;
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuarioactual=sessionUser.getIdusuarios();
 
         List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuarioactual);
         List<Categorias> listacategorias = categoriasRepository.findAll();
         List<Restaurante> listarestaurantes = restauranteRepository.findAll();
+        Direcciones direccionseleccionada = listadireccionescliente.get(1);
         model.addAttribute("listacategorias", listacategorias);
         model.addAttribute("listadirecciones", listadireccionescliente);
         model.addAttribute("listarestaurantes",listarestaurantes);
-;
+        model.addAttribute("direccionseleccionada",direccionseleccionada);
 
         return "cliente/realizar_pedido_cliente";
     }
@@ -243,7 +263,7 @@ public class UsuarioController {
     public String filtronombre(Model model,
                                @RequestParam(value = "searchField" ,defaultValue = "") String buscar){
         //TODO mandar a la vista los platos buscados
-        System.out.println(buscar);
+    //    System.out.println(buscar);
         List<Plato> listaplatos = platoRepository.buscarPlatoxNombre(buscar);
         List<Restaurante> listarestaurantes = restauranteRepository.buscarRestaurantexNombre(buscar);
         model.addAttribute("listarestaurantesbuscado",listarestaurantes);
@@ -251,19 +271,50 @@ public class UsuarioController {
         return "redirect:/cliente/realizarpedido";
     }
 
+    @GetMapping("/cliente/direccionxenviar")
+    public String direccionxenviar(Model model,
+                                   @RequestParam(value = "direccionxenviar", defaultValue = "0") int direccionxenviar,
+                                   HttpSession session){
+        //int idusuarioactual= 7;
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuarioactual=sessionUser.getIdusuarios();
+
+        Optional<Direcciones> direccionopt = direccionesRepository.findById(direccionxenviar);
+        if(direccionopt.isPresent()){
+            Direcciones direccionseleccionada = direccionopt.get();
+            List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuarioactual);
+            List<Categorias> listacategorias = categoriasRepository.findAll();
+            List<Restaurante> listarestaurantes = restauranteRepository.findAll();
+            model.addAttribute("listacategorias", listacategorias);
+            model.addAttribute("listadirecciones", listadireccionescliente);
+            model.addAttribute("listarestaurantes",listarestaurantes);
+            model.addAttribute("iddireccionxenviar",direccionxenviar);
+            System.out.println(direccionxenviar);
+            model.addAttribute("direccionseleccionada",direccionseleccionada);
+            return "cliente/realizar_pedido_cliente";
+        }else{
+            return "redirect:/cliente/realizarpedido";
+
+        }
+    }
+
 
      @GetMapping("/cliente/filtrocategoria")
      public String filtrosrestaurantes1(Model model,
-     @RequestParam(value = "idcategoriarest" ,defaultValue = "0") int idcategoriarest
+     @RequestParam(value = "idcategoriarest" ,defaultValue = "0") int idcategoriarest,
+                                        HttpSession session
                                         ){
-         System.out.println(idcategoriarest);
-         System.out.println("*******************************");
+  //       System.out.println(idcategoriarest);
+    //     System.out.println("*******************************");
 
 
          Optional<Categorias> catopt = categoriasRepository.findById(idcategoriarest);
          if(catopt.isPresent()){
              List<Restaurante> listarestauranteseleccionado = restauranteRepository.listarestxcategoria(idcategoriarest);
-             int idusuarioactual = 8;
+             //int idusuarioactual = 7;
+
+             Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+             int idusuarioactual=sessionUser.getIdusuarios();
 
              List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuarioactual);
              List<Categorias> listacategorias = categoriasRepository.findAll();
@@ -289,26 +340,29 @@ public class UsuarioController {
         /** restaurante a ordenar **/
 
      @GetMapping("/cliente/restaurantexordenar")
-     public String restaurantexordenar(@RequestParam("idrestaurante") int idrestaurante, Model model){
+     public String restaurantexordenar(@RequestParam("idrestaurante") int idrestaurante, Model model,
+                                       @RequestParam("direccionxenviar") int iddireccionxenviar
+                                     ){
 
-         System.out.println(idrestaurante);
-         System.out.println("**************************");
+     //    System.out.println(idrestaurante);
+       //  System.out.println("**************************");
 
          Optional<Restaurante> restopt = restauranteRepository.findById(idrestaurante);
-
+        //Optional<Direcciones> direccionopt )
         if(restopt.isPresent()){
             Restaurante rest = restopt.get();
 
             if (rest!=null){
                 int cantreviews = restauranteRepository.cantreviews(idrestaurante);
-                System.out.println(cantreviews);
-                System.out.println("**************************");
+       //         System.out.println(cantreviews);
+         //       System.out.println("**************************");
 
                 List<Plato> platosxrest = platoRepository.buscarPlatosPorIdRestauranteDisponilidadActivo(idrestaurante);
 
                 model.addAttribute("restaurantexordenar",rest);
                 model.addAttribute("cantreviews",cantreviews);
                 model.addAttribute("platosxrest",platosxrest);
+                model.addAttribute("iddireccionxenviar",iddireccionxenviar);
                 return "cliente/restaurante_orden_cliente";
 
             }else{
@@ -323,7 +377,8 @@ public class UsuarioController {
     @GetMapping("/cliente/platoxpedir")
     public String platoxpedir(Model model,
                               @RequestParam("idplato") int idplatopedir,
-                              @RequestParam("idrestaurante") int idrestaurante){
+                              @RequestParam("idrestaurante") int idrestaurante,
+                              @RequestParam("direccionxenviar") int iddireccionxpedir){
 
          Optional<Plato> platoopt = platoRepository.findById(idplatopedir);
          Optional<Restaurante> restopt = restauranteRepository.findById(idrestaurante);
@@ -332,6 +387,7 @@ public class UsuarioController {
              Plato platoseleccionado = platoopt.get();
              model.addAttribute("platoseleccionado",platoseleccionado);
              model.addAttribute("idrestaurante",idrestaurante);
+             model.addAttribute("iddireccionxpedir",iddireccionxpedir);
              return "cliente/detalles_plato";
          }else{
             return "redirect:/cliente/restaurantexordenar?idrestaurante=" + idrestaurante;
@@ -339,26 +395,96 @@ public class UsuarioController {
     }
 
     @PostMapping("/cliente/platopedido")
-    public String platopedido(@RequestParam("cubierto") int cubiertos,
+    public String platopedido(@RequestParam("cubierto") boolean cubiertos,
                               @RequestParam("cantidad") int cantidad,
                               @RequestParam("descripcion") String descripcion,
-                              @RequestParam(value = "idrestaurante") int idrestaurante){
+                              @RequestParam(value = "idrestaurante") int idrestaurante,
+                              @RequestParam("idplato") int idplato,
+                              @RequestParam("direccionxpedir") int iddireccionxpedir,
+                              HttpSession session,
+                              Model model){
 
-        System.out.println(cubiertos);
-        System.out.println("**********************+");
-        System.out.println(cantidad);
-        System.out.println(descripcion);
-        System.out.println(idrestaurante);
-        System.out.println("gggggggggggggggggg");
-        return "redirect:/cliente/restaurantexordenar?idrestaurante=" + idrestaurante;
+         //int idusuario = 7;
 
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuario=sessionUser.getIdusuarios();
+
+         Optional<Restaurante> restauranteopt = restauranteRepository.findById(idrestaurante);
+         Optional<Plato> platoopt = platoRepository.findById(idplato);
+
+         if(platoopt.isPresent() && restauranteopt.isPresent()){
+
+             Plato platoelegido = platoopt.get();
+             Optional<Usuario> usuarioopt = usuarioRepository.findById(idusuario);
+             Usuario usuarioactual = usuarioopt.get();
+
+             int idcliente = usuarioactual.getIdusuarios();
+             System.out.println("idcliente");
+             System.out.println(idcliente);
+             System.out.println(cubiertos);
+             System.out.println("**********************+");
+             System.out.println(cantidad);
+             System.out.println(descripcion);
+             System.out.println("idrestaurante: ");
+             System.out.println(idrestaurante);
+             System.out.println("gggggggggggggggggg");
+            // List<PedidoHasPlato> pedidoHasPlatoList =  pedidoHasPlatoRepository.findAll();
+             //System.out.println(pedidoHasPlatoList.get(1).getPlato().getIdplato());
+            // System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaa");
+             System.out.println("idplato:");
+             System.out.println(idplato);
+
+             System.out.println(iddireccionxpedir);
+             Pedidos pedidos = new Pedidos();
+             pedidos.setIdcliente(idcliente);
+             pedidos.setRestaurante_idrestaurante(idrestaurante);
+             pedidos.setIdmetodopago(1);
+             pedidos.setIdrepartidor(11);
+             pedidos.setDireccionentrega(iddireccionxpedir);
+             pedidosRepository.save(pedidos);
+
+             List<Pedidos> listapedidoscliente = pedidosRepository.listapedidoxcliente(idcliente,idrestaurante);
+             int tam = listapedidoscliente.size();
+             Pedidos ultimopedido = listapedidoscliente.get(tam-1);
+             int idultimopedido = ultimopedido.getIdpedidos();
+
+             PedidoHasPlato pedidoHasPlato = new PedidoHasPlato();
+             pedidoHasPlato.getId();
+             pedidoHasPlato.setPlato(platoelegido);
+             pedidoHasPlato.setPedido(pedidos);
+             if(descripcion!=null){
+                 pedidoHasPlato.setDescripcion(descripcion);
+             }
+             pedidoHasPlato.setCantidadplatos(cantidad);
+             pedidoHasPlato.setCubiertos(cubiertos);
+
+//             pedidoHasPlatoRepository.save(pedidoHasPlato);
+
+             PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey();
+             pedidoHasPlatoKey.setPlatoidplato(idplato);
+            pedidoHasPlatoKey.setPedidosidpedidos(idultimopedido);
+
+             return "redirect:/cliente/restaurantexordenar?idrestaurante=" + idrestaurante;
+         }else{
+             return "redirect:/cliente/realizarpedido";
+         }
+
+    }
+
+    @GetMapping("/cliente/carritoproductos")
+    public String carritoproductos(){
+         return "cliente/carrito_productos";
     }
 
     /** Mi perfil **/
 
     @GetMapping("/cliente/miperfil")
-    public String miperfil(Model model) {
-        int idusuario = 8;
+    public String miperfil(Model model, HttpSession session) {
+        //int idusuario = 7;
+
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuario=sessionUser.getIdusuarios();
+
         List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosAndActivoEquals(idusuario,1);
         model.addAttribute("listadirecciones", listadireccionescliente);
         Optional<Usuario> optional = usuarioRepository.findById(idusuario);
@@ -416,9 +542,13 @@ public class UsuarioController {
 
     @PostMapping("/cliente/guardarnuevadireccion")
     public String guardarnuevadireccion(@RequestParam("direccion") String direccion,
-                                        @RequestParam("iddistrito") int iddistrito) {
+                                        @RequestParam("iddistrito") int iddistrito,
+                                        HttpSession session) {
 
-        int idusuario = 8;
+        //int idusuario = 7;
+
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuario=sessionUser.getIdusuarios();
 
         Direcciones direccioncrear = new Direcciones();
         direccioncrear.setDireccion(direccion);
@@ -450,10 +580,14 @@ public class UsuarioController {
 
     @PostMapping("/cliente/guardarnuevacontra")
     public String nuevacontra(@RequestParam("contrasenia1") String contra1,
-                              @RequestParam("contrasenia2") String contra2){
+                              @RequestParam("contrasenia2") String contra2,
+                              HttpSession session){
 
 
-        int idusuario = 8;
+        //int idusuario = 7;
+
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuario=sessionUser.getIdusuarios();
 
         Optional<Usuario> usarioopt = usuarioRepository.findById(idusuario);
 
