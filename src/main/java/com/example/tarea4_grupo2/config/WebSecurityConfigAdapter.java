@@ -24,9 +24,11 @@ public class WebSecurityConfigAdapter extends org.springframework.security.confi
                 .loginProcessingUrl("/processLogin") // for the POST request of the login form
                 .defaultSuccessUrl("/redirectByRol",true);
         httpSecurity.logout()
-                .logoutSuccessUrl("/loginAdmin")
+                .logoutSuccessUrl("/login")
                 .deleteCookies("JSESSIONID")
                 .invalidateHttpSession(true);
+
+
 
         httpSecurity.authorizeRequests()
                 .antMatchers("/admin", "/admin/**").hasAuthority("AdminSistema")
