@@ -153,7 +153,8 @@ public class AdminController {
                 case "AdminRestaurante":
                     model.addAttribute("usuario", usuario);
 
-                    Restaurante restaurante = restauranteRepository.findRestauranteByIdadminrestEquals(id);
+                    Restaurante restaurante = restauranteRepository.findRestauranteByUsuario_Idusuarios(id);
+
                     model.addAttribute("restaurante", restaurante);
 
                     return "adminsistema/datosRestaurante";
@@ -256,7 +257,9 @@ public class AdminController {
                 switch (usuario.getRol()){
                     case "AdminRestaurante":
                         model.addAttribute("usuario",usuario);
-                        Restaurante restaurante = restauranteRepository.findRestauranteByIdadminrestEquals(id);
+
+                        Restaurante restaurante = restauranteRepository.findRestauranteByUsuario_Idusuarios(id);
+
                         model.addAttribute("restaurante",restaurante);
                         return "adminsistema/AceptarCuentaRestaurante";
                     case "Repartidor":

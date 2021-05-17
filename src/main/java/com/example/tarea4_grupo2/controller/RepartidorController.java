@@ -2,7 +2,7 @@ package com.example.tarea4_grupo2.controller;
 
 import com.example.tarea4_grupo2.dto.*;
 import com.example.tarea4_grupo2.dto.PedidosDisponiblesDTO;
-import com.example.tarea4_grupo2.dto.PedidosReporteDto;
+import com.example.tarea4_grupo2.dto.PedidosReporteDTOs;
 import com.example.tarea4_grupo2.dto.PlatosPorPedidoDTO;
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
@@ -34,6 +34,9 @@ public class RepartidorController {
 
     @Autowired
     DireccionesRepository direccionesRepository;
+
+    @Autowired
+    DistritosRepository distritosRepository;
 
     @Autowired
     PedidosRepository pedidosRepository;
@@ -146,8 +149,8 @@ public class RepartidorController {
             attr.addFlashAttribute("msgVerde", "Se registró la entrega del pedido. ¡Gracias!");
         } else {
             attr.addFlashAttribute("msg", "Este pedido ya no está disponible :(");
-            return "redirect:/repartidor";
         }
+        return "redirect:/repartidor";
     }
 
     //Filtra por Restaurante o Distrito
