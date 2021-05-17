@@ -38,7 +38,7 @@
     <div class="wrapper">
     <!-- end loader -->
 
-     <div class="sidebar">
+     <div th:replace="fragments/adminSistema.html:: slider" class="sidebar">
             <!-- Sidebar  -->
             <nav id="sidebar">
 
@@ -61,12 +61,12 @@
                 </ul>
 
             </nav>
-        </div>
+     </div>
 
     <div id="content">
     <!-- header -->
     <header>
-        <div class="container-fluid">
+        <div th:replace="fragments/adminSistema.html:: barra" class="container-fluid">
             <div class="row">
                 <div class="col-md-3">
                     <div class="full">
@@ -107,7 +107,7 @@
                     <h1>Gestión de nuevas cuentas</h1>
                 </div>
                 <div class="col-md-8">
-                    <button th:if="${msg != null}" th:text="${msg}" class="btn btn-dark" role="alert"></button>
+                    <button th:if="${msg != null}" th:text="${msg}" class="btn btn-warning" role="alert"></button>
                 </div>
             </div>
             <hr>
@@ -119,7 +119,7 @@
 					<button type="button " class="btn btn-dark btn-lg btn-block" th:href="@{nuevosUsuarios}">Solicitud de Nuevas Cuentas</button></a>
                 </div>
 				
-                <div class="col-12 col-md-6">
+                <div th:if="${idAdmin == 1}"class="col-12 col-md-6">
 					<!-- imagen -->
                     <div align="center"><img th:src="@{/images/Foto-NuevoAdmin.png}" th:href="@{adminForm}" width="348" height="348"></div>
 					<a th:href="@{adminForm}">

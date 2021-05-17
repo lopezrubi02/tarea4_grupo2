@@ -24,14 +24,17 @@ public class WebSecurityConfigAdapter extends org.springframework.security.confi
                 .loginProcessingUrl("/processLogin") // for the POST request of the login form
                 .defaultSuccessUrl("/redirectByRol",true);
         httpSecurity.logout()
-                .logoutSuccessUrl("/loginAdmin")
+                .logoutSuccessUrl("/login")
                 .deleteCookies("JSESSIONID")
                 .invalidateHttpSession(true);
+
+
 
         httpSecurity.authorizeRequests()
                 .antMatchers("/admin", "/admin/**").hasAuthority("AdminSistema")
              //   .antMatchers("/cliente","/cliente/**").hasAuthority("Cliente")
                 .antMatchers("/adminrest","/adminrest/**").hasAuthority("AdminRestaurante")
+                .antMatchers("/repartidor","/repartidor/**").hasAuthority("Repartidor")
                 .anyRequest().permitAll();
 
 
