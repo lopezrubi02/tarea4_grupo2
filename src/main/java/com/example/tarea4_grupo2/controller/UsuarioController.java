@@ -44,7 +44,6 @@ public class UsuarioController {
     PlatoRepository platoRepository;
 
     @GetMapping("/cliente/paginaprincipal")
-    @GetMapping("/paginaprincipal")
     public String paginaprincipal() {
         return "cliente/paginaPrincipal";
     }
