@@ -101,7 +101,6 @@
                <div class="col-md-12">
                   <div class="title">
                      <h2>Reportes</h2>
-                    
                   </div>
                </div>
             </div>
@@ -114,6 +113,8 @@
     <div class="row">
       <div class="col-md-12">
         <div class="title">
+            <div th:if="${alerta != null}" th:text="${alerta}" class="alert alert-warning" role="alert"></div>
+            <div th:if="${alerta2 != null}" th:text="${alerta2}" class="alert alert-warning" role="alert"></div>
             <div class="row g-2">
                 <div class="col-md">
                     <form class="form-group mb-3" method="post" th:action="@{/cliente/recepcionCliente}">
