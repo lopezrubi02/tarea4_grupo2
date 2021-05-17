@@ -12,14 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.validation.Valid;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -170,7 +169,9 @@ public class AdminController {
 
     @GetMapping("/miCuenta")
     public String miCuenta(
-            Model model){
+            Model model,
+            @ModelAttribute("usuario") @Valid Usuario usuarioRecibido,
+            BindingResult bindingResult){
         // TODO se harcodeo el id del actual usuario logeado
         int id = 1;
 
@@ -183,24 +184,33 @@ public class AdminController {
 
     @PostMapping("/miCuenta")
     public String updateAdminInfo(
-            Usuario usuarioRecibido,
-            RedirectAttributes redirectAttributes
+            @ModelAttribute("usuario") @Valid Usuario usuarioRecibido,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes,
+            Model model
     ){
 
-        // se obtiene el usuario en la base de datos para actualizar solo los campos que han cambiado
-        Optional<Usuario> optionalUsuario = usuarioRepository.findById(usuarioRecibido.getIdusuarios());
-        Usuario usuarioEnlabasededatos = optionalUsuario.get();
+        if(bindingResult.hasErrors()) {
+            System.out.println(" ============ ERROR ============");
 
-        usuarioEnlabasededatos.setNombre(usuarioRecibido.getNombre());
-        usuarioEnlabasededatos.setEmail(usuarioRecibido.getEmail());
-        usuarioEnlabasededatos.setDni(usuarioRecibido.getDni());
-        usuarioEnlabasededatos.setTelefono(usuarioRecibido.getTelefono());
-        usuarioEnlabasededatos.setFechaNacimiento(usuarioRecibido.getFechaNacimiento());
-        usuarioEnlabasededatos.setSexo(usuarioRecibido.getSexo());
 
-        usuarioRepository.save(usuarioEnlabasededatos);
+            return "adminsistema/miCuenta";
+        } else {
+            // se obtiene el usuario en la base de datos para actualizar solo los campos que han cambiado
+            Optional<Usuario> optionalUsuario = usuarioRepository.findById(usuarioRecibido.getIdusuarios());
+            Usuario usuarioEnlabasededatos = optionalUsuario.get();
 
-        return "redirect:/admin/usuariosActuales";
+            usuarioEnlabasededatos.setNombre(usuarioRecibido.getNombre());
+            usuarioEnlabasededatos.setEmail(usuarioRecibido.getEmail());
+            usuarioEnlabasededatos.setDni(usuarioRecibido.getDni());
+            usuarioEnlabasededatos.setTelefono(usuarioRecibido.getTelefono());
+            usuarioEnlabasededatos.setFechaNacimiento(usuarioRecibido.getFechaNacimiento());
+            usuarioEnlabasededatos.setSexo(usuarioRecibido.getSexo());
+
+            usuarioRepository.save(usuarioEnlabasededatos);
+
+            return "redirect:/admin/usuariosActuales";
+        }
 
     }
 
