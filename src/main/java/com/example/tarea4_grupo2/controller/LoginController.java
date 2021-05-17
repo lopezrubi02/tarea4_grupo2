@@ -93,7 +93,9 @@ public class LoginController {
         }else if(rol.equals("AdminSistema")){
             System.out.println("El rol es : "+rol);
             return "redirect:/admin/gestionCuentas";
-        } else{
+        } else if(rol.equals("Repartidor")) {
+            return "redirect:/repartidor/home";
+        }else{
             System.out.println(rol);
             return "adminsistema/login";
         }

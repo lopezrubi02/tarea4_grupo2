@@ -160,8 +160,11 @@ public class RepartidorController {
     //Filtra por Restaurante o Distrito
     @PostMapping("/repartidor/Buscador")
     public String buscador(@RequestParam("valorBuscado") String searchField,
-                           Model model, RedirectAttributes attr) {
-        int id=10;
+                           Model model, RedirectAttributes attr,HttpSession session) {
+
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int id=sessionUser.getIdusuarios();
+
         //List<PedidosReporteDTO> listaPedidosxRestaurante = repartidorRepository.findPedidosByRestaurante(searchField);
         //List<PedidosReporteDTO> listaPedidosxDistrito = repartidorRepository.findPedidosByDistrito(searchField);
         List <PedidosReporteDTOs> ListaFindReporte = repartidorRepository.findReporte(searchField, id);
@@ -178,8 +181,10 @@ public class RepartidorController {
     }
 
     @GetMapping("/repartidor/Reportes")
-    public String reportes(Model model, RedirectAttributes attr){
-        int id = 10;
+    public String reportes(Model model, RedirectAttributes attr,HttpSession session){
+
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int id = sessionUser.getIdusuarios();
         List<PedidosReporteDTOs> listaReporte1 = repartidorRepository.findPedidosPorRepartidor(id);
         List<RepartidorComisionMensualDTO> listaComisionMensual = repartidorRepository.obtenerComisionPorMes(id);
         if (listaReporte1.isEmpty()) {
@@ -198,8 +203,12 @@ public class RepartidorController {
 
     @GetMapping(value={"/repartidor/home", "/repartidor", "/repartidor"})
     public String homeRepartidor(@ModelAttribute("repartidor") Repartidor repartidor,
-                                 Model model, RedirectAttributes attr) {
-        int id=10;
+                                 Model model, RedirectAttributes attr,HttpSession session) {
+
+
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int id= sessionUser.getIdusuarios();
+
         Optional<Usuario> optional = usuarioRepository.findById(id);
         if (optional.isPresent()) {
             Usuario usuario = optional.get();
@@ -229,11 +238,12 @@ public class RepartidorController {
     }
 
     @GetMapping("/repartidor/perfil")
-    public String perfilRepartidor(@ModelAttribute("repartidor") Repartidor repartidor, Model model) {
+    public String perfilRepartidor(@ModelAttribute("repartidor") Repartidor repartidor, Model model,
+                                   HttpSession session) {
 
-        //Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-        //int id = sessionUser.getIdusuarios();
-        int id=10;
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int id = sessionUser.getIdusuarios();
+
 
         Optional<Usuario> optional = usuarioRepository.findById(id);
 

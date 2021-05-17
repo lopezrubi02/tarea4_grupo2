@@ -34,6 +34,7 @@ public class WebSecurityConfigAdapter extends org.springframework.security.confi
                 .antMatchers("/admin", "/admin/**").hasAuthority("AdminSistema")
              //   .antMatchers("/cliente","/cliente/**").hasAuthority("Cliente")
                 .antMatchers("/adminrest","/adminrest/**").hasAuthority("AdminRestaurante")
+                .antMatchers("/repartidor","/repartidor/**").hasAuthority("Repartidor")
                 .anyRequest().permitAll();
 
 
