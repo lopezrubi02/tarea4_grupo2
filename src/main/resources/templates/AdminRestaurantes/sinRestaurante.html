@@ -7,11 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
     <title>Spicyo</title>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/owl.carousel.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/responsive.css">
-    <link rel="stylesheet" href="css/styleAdminRest.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <link rel="stylesheet" href="/css/styleAdminRest.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
@@ -21,7 +21,7 @@
 <body class="main-layout">
 
 <div class="loader_bg">
-    <div class="loader"><img src="images/loading.gif" alt="" /></div>
+    <div class="loader"><img src="/images/loading.gif" alt="" /></div>
 </div>
 
 <div class="wrapper">
@@ -42,7 +42,7 @@
                 <div class="row">
                     <div class="col-md-3">
                         <div class="full">
-                            <a class="logo" href="index.html"><img src="images/logo.png" alt="#" /></a>
+                            <a class="logo" href="index.html"><img src="/images/logo.png" alt="#" /></a>
                         </div>
                     </div>
                     <div class="col-md-9">
@@ -50,10 +50,10 @@
                             <div class="right_header_info">
                                 <ul>
                                     <!-- TODO -->
-                                    <li class="button_user"><a class="button active" th:href="@{/cuentaAdmin}">Mi cuenta</a><a class="button" th:href="@{/login}">Logout</a></li>
+                                    <li class="button_user"><a class="button" th:href="@{/login}">Logout</a></li>
                                     <li>
                                         <button type="button" id="sidebarCollapse">
-                                            <img src="images/menu_icon.png" alt="#">
+                                            <img src="/images/menu_icon.png" alt="#">
                                         </button>
                                     </li>
                                 </ul>
@@ -70,7 +70,7 @@
                         <div class="row justify-content-center">
                             <div class="col-xl-12" style="align-content: center">
                                 <div class="container" style="text-align: center">
-                                    <h1>Bienvenido, XXXXX</h1>
+                                    <h1 th:text="|Bienvenido ${session.usuarioLogueado.nombre} ${session.usuarioLogueado.apellidos}|"></h1>
                                     <div class="row" style="padding-top: 50px">
                                         <h2>Aun no has registrado tu restaurante</h2>
                                     </div>
@@ -78,7 +78,7 @@
                             </div>
                         </div>
                         <div class="row" style="padding-top: 100px">
-                            <a class="send2" type="submit" th:href="@{/registerRestaurante}" style="text-align: center">Registre su restaurante</a>
+                            <a class="send" type="submit" th:href="@{/adminrest/registerRestaurante}" style="text-align: center; max-width: 200px">Registre su restaurante</a>
                         </div>
                     </div>
                     <div class="copyright">
@@ -93,14 +93,14 @@
 </div>
     <div class="overlay"></div>
     <!-- Javascript files-->
-    <script src="js/jquery.min.js"></script>
-    <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap.bundle.min.js"></script>
-    <script src="js/owl.carousel.min.js"></script>
-    <script src="js/custom.js"></script>
-    <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/popper.min.js"></script>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/owl.carousel.min.js"></script>
+    <script src="/js/custom.js"></script>
+    <script src="/js/jquery.mCustomScrollbar.concat.min.js"></script>
 
-    <script src="js/jquery-3.0.0.min.js"></script>
+    <script src="/js/jquery-3.0.0.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             $("#sidebar").mCustomScrollbar({

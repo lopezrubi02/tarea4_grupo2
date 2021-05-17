@@ -6,6 +6,6 @@ public interface PedidosDisponiblesDTO {
     String getDistritorestaurante();
     String getDireccioncliente();
     int getComision();
-    int getMonto();
+    float getMonto();
 
 }
