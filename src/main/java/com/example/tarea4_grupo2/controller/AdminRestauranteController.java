@@ -534,6 +534,7 @@ public class AdminRestauranteController {
     public String editPerfilUsuario(@ModelAttribute("restaurante") @Valid Restaurante restaurante,
                                     BindingResult bindingResult,
                                     HttpSession session,
+                                    @RequestParam("imagen") MultipartFile file,
                                     Model model){
         Usuario user=(Usuario) session.getAttribute("usuarioLogueado");
         if(bindingResult.hasFieldErrors("nombre")||bindingResult.hasFieldErrors("direccion")){
@@ -545,6 +546,13 @@ public class AdminRestauranteController {
             return "AdminRestaurantes/cuentarest";
         }
         Restaurante rest=restauranteRepository.buscarRestaurantePorIdAdmin(user.getIdusuarios()).get();
+        try {
+            rest.setFoto(file.getBytes());
+            rest.setFotocontenttype(file.getContentType());
+            rest.setFotonombre(file.getOriginalFilename());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         rest.setNombre(restaurante.getNombre());
         rest.setDireccion(restaurante.getDireccion());
         restauranteRepository.save(rest);
