@@ -127,23 +127,4 @@ public class Restaurante {
     public void setCategoriasrestList(List<Categorias> categoriasrestList) {
         this.categoriasrestList = categoriasrestList;
     }
-
-    private String fotonombre;
-    private String fotocontenttype;
-    public String getFotonombre() {
-        return fotonombre;
-    }
-
-    public void setFotonombre(String fotonombre) {
-        this.fotonombre = fotonombre;
-    }
-
-    public String getFotocontenttype() {
-        return fotocontenttype;
-    }
-
-    public void setFotocontenttype(String fotocontenttype) {
-        this.fotocontenttype = fotocontenttype;
-    }
-
 }

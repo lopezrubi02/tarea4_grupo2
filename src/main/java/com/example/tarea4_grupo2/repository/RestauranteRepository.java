@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RestauranteRepository extends JpaRepository<Restaurante, Integer> {
-    Restaurante findRestauranteByIdadminrestEquals(int idAdmin);
+    //Restaurante findRestauranteByIdadminrestEquals(int idAdmin);
 
     @Query(value="select*from restaurante\n" +
             "where idadminrest=?1",nativeQuery = true)
