@@ -152,7 +152,7 @@ public class AdminRestauranteController {
     }
 
     @GetMapping("/imagen")
-    public ResponseEntity<byte[]> imagenRestaurante(@RequestParam("id")int id,HttpSession session) {
+    public ResponseEntity<byte[]> imagenRestaurante(HttpSession session) {
 
         /**Se obtiene Id de Restaurante**/
         Usuario user=(Usuario) session.getAttribute("usuarioLogueado");
