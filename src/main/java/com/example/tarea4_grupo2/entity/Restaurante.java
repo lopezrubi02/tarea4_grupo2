@@ -19,7 +19,7 @@ public class Restaurante {
     @Pattern(regexp = "^[0-9]*$",message = "Solo pueden ser numeros")
     private String ruc;
     @Column(nullable = false)
-    @Pattern(regexp = "^[a-zA-Z ]*$",message = "Solo pueden ser letras")
+    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚ ]*$",message = "Solo pueden ser letras")
     @NotBlank(message = "No puede estar en blanco")
     private String nombre;
     private Float calificacionpromedio;

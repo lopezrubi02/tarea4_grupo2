@@ -20,13 +20,13 @@ public class Usuario implements Serializable {
     @Column(nullable = false)
     @NotBlank(message = "No puede estar vacío")
     @Size(max=45,message = "Los nombres no puede tener más de 45 caracteres")
-    @Pattern(regexp = "^[a-zA-z ]*$",message = "Solo puede contener letras")
+    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚ ]*$",message = "Solo puede contener letras")
     private String nombre;
 
     @Column(nullable = false)
     @NotBlank(message = "No puede estar vacío")
     @Size(max=45,message = "Los apellidos no puede tener más de 45 caracteres")
-    @Pattern(regexp = "^[a-zA-z ]*$",message = "Solo puede contener letras")
+    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚ ]*$",message = "Solo puede contener letras")
     private String apellidos;
 
     @Column(nullable = false)

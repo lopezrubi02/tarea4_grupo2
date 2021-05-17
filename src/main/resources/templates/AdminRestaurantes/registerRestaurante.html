@@ -108,13 +108,13 @@
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <label>Distrito</label>
-                                            <select type="text" class="form-select" th:field="*{distrito.iddistritos}"style="width: 100%;">
+                                            <select type="text" class="form-select" th:field="*{distrito.iddistritos}"style="width: 100%;height: 50px;border: #fff solid 2px;box-shadow: 0 0 0 .2rem rgba(255, 255, 255, .25);">
                                                 <option th:each="lista : ${listadistritos}"
                                                         th:text="${lista.nombredistrito}"
                                                         th:value="${lista.iddistritos}"></option>
                                             </select>
                                         </div>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                        <div style="padding-top: 10px" class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <div style="position: relative"><input class="form-control-file" type="file" id="imagen" name="imagen" style="opacity: 0%;position: absolute">Adjuntar Imagen</div>
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
