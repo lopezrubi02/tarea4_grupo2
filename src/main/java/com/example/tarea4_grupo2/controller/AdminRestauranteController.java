@@ -19,6 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -74,7 +75,7 @@ public class AdminRestauranteController {
             Optional<Restaurante> restauranteOpt = restauranteRepository.buscarRestaurantePorIdAdmin(id);
 
             if(restauranteOpt.isPresent()){
-                return "AdminRestaurantes/perfilrestaurante";
+                return "redirect:/adminrest/perfil";
             }else{
                 return "AdminRestaurantes/sinRestaurante";
             }
@@ -171,9 +172,18 @@ public class AdminRestauranteController {
     /************************PERFIL************************/
 
     @GetMapping("/perfil")
-    public String perfilRestaurante(Model model){
-        Integer id = 1;
-        model.addAttribute("calificacion",pedidosRepository.calificacionPromedio(id));
+    public String perfilRestaurante(Model model, HttpSession session){
+
+        /**Se obtiene Id de Restaurante**/
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
+        /********************************/
+        BigDecimal calificacion = pedidosRepository.calificacionPromedio(idrestaurante);
+        System.out.println(calificacion);
+        Restaurante restaurante = restauranteRepository.findById(idrestaurante).get();
+        restaurante.setCalificacionpromedio(calificacion.floatValue());
+        restauranteRepository.save(restaurante);
+        model.addAttribute("calificacionpromedio",calificacion);
         return "AdminRestaurantes/perfilrestaurante";
     }
 
@@ -418,9 +428,13 @@ public class AdminRestauranteController {
     /************************PEDIDOS************************/
 
     @GetMapping("/pedidos")
-    public String verPedidos(Model model){
-        Integer id = 1;
-        model.addAttribute("listaPedidos",pedidosRepository.listaPedidos(id));
+    public String verPedidos(Model model, HttpSession session){
+
+        /**Se obtiene Id de Restaurante**/
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
+        /********************************/
+        model.addAttribute("listaPedidos",pedidosRepository.listaPedidos(idrestaurante));
         return "AdminRestaurantes/pedidos";
     }
 

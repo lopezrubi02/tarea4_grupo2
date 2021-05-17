@@ -5,6 +5,7 @@ import com.example.tarea4_grupo2.entity.Pedidos;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
@@ -45,10 +46,12 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
 
     /******ADMINISTRADOR RESTAURANTE**********/
 
-    @Query(value = "select p.idpedidos,p.montototal,concat(u.nombre,' ',u.apellidos)cliente,cast(p.fechahorapedido as DATE)fechahorapedido,d.direccion,d.distrito from pedidos p\n" +
+    @Query(value = "select p.idpedidos,p.montototal,concat(u.nombre,' ',u.apellidos)cliente,cast(p.fechahorapedido as DATE)fechahorapedido,d.direccion,dr.nombredistrito \n" +
+            "from pedidos p\n" +
             "inner join usuarios u on p.idcliente = u.idusuarios\n" +
             "inner join restaurante r on p.restaurante_idrestaurante = r.idrestaurante\n" +
             "inner join direcciones d on p.direccionentrega = d.iddirecciones\n" +
+            "inner join distritos dr on dr.iddistritos = d.iddistrito\n" +
             "where r.idrestaurante=?1 and p.estadorestaurante='pendiente'",nativeQuery = true)
     List<PedidosAdminRestDto> listaPedidos(Integer id);
 
@@ -128,8 +131,8 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
 
     @Query(value="select \n" +
             "avg(p.calificacionrestaurante) as calificacionpromedio\n" +
-            "from pedidos p where p.restaurante_idrestaurante = ?1", nativeQuery = true)
-    List<AvgCalifDto>calificacionPromedio(Integer id);
+            "from pedidos p where p.restaurante_idrestaurante = ?1 and p.estadorestaurante = 'entregado'", nativeQuery = true)
+    BigDecimal calificacionPromedio(Integer id);
 
     @Query(value="select p.idpedidos,pl.nombre,php.descripcion,php.cantidadplatos,php.cubiertos,d.direccion,d.distrito,p.montototal from pedidos p\n" +
             "inner join pedidos_has_plato php on p.idpedidos = php.pedidos_idpedidos\n" +

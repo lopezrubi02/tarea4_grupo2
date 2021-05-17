@@ -8,6 +8,6 @@ public interface PedidosAdminRestDto {
     String getcliente();
     Date getfechahorapedido();
     String getdireccion();
-    String getdistrito();
+    String getnombredistrito();
 
 }
