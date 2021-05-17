@@ -6,6 +6,7 @@ import com.example.tarea4_grupo2.dto.Top3Platos_ClientesDTO;
 import com.example.tarea4_grupo2.dto.Top3Restaurantes_ClienteDTO;
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
@@ -16,6 +17,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.Year;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,6 +51,7 @@ public class UsuarioController {
 
     @GetMapping("/cliente/paginaprincipal")
     public String paginaprincipal() {
+
         return "cliente/paginaPrincipal";
     }
 
@@ -117,8 +124,27 @@ public class UsuarioController {
     @GetMapping("/cliente/reportes")
     public String reportesCliente(Model model) {
         int idusuarios = 8;
-        int anio = 2021;
-        int mes = 05;
+//        int anio = 2021;
+  //      int mes = 05;
+
+        java.util.Date fecha = new Date();
+        LocalDate localDate = LocalDate.now();
+        System.out.println(localDate);
+        System.out.println("ver año y mes");
+        String fechaactual1 = String.valueOf(localDate);
+        String[] fechaactual = fechaactual1.split("-");
+        System.out.println(fechaactual);
+        String a = fechaactual[0];
+        String m = fechaactual[1];
+        int anioactual = Integer.parseInt(a);
+        int mesactual = Integer.parseInt(m);
+        System.out.println(anioactual);
+        System.out.println(mesactual);
+
+        int anio = anioactual;
+        int mes = mesactual;
+
+
         Optional<Usuario> optUsuario = usuarioRepository.findById(idusuarios);
         if (optUsuario.isPresent()) {
             Usuario cliente = optUsuario.get();
@@ -209,7 +235,7 @@ public class UsuarioController {
     }
 
 
-     @GetMapping("cliente/filtrocategoria")
+     @GetMapping("/cliente/filtrocategoria")
      public String filtrosrestaurantes1(Model model,
      @RequestParam(value = "idcategoriarest" ,defaultValue = "0") int idcategoriarest
                                         ){
