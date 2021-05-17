@@ -1,9 +1,6 @@
 package com.example.tarea4_grupo2.controller;
 
-import com.example.tarea4_grupo2.dto.DineroAhorrado_ClienteDTO;
-import com.example.tarea4_grupo2.dto.TiempoMedio_ClienteDTO;
-import com.example.tarea4_grupo2.dto.Top3Platos_ClientesDTO;
-import com.example.tarea4_grupo2.dto.Top3Restaurantes_ClienteDTO;
+import com.example.tarea4_grupo2.dto.*;
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
 import org.apache.tomcat.jni.Local;
@@ -13,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.text.ParseException;
@@ -173,36 +171,55 @@ public class UsuarioController {
 
     @PostMapping("/cliente/recepcionCliente")
     public String recepcionCliente(@RequestParam("fechahorapedido") String fechahorapedido,
-                                   Model model) {
+                                   Model model, RedirectAttributes redirectAttributes) {
         int idusuarios = 7;
         System.out.println(fechahorapedido);
         String[] fecha = fechahorapedido.split("-", 2);
         System.out.println(fecha);
-        String a = fecha[0];
-        String m = fecha[1];
         idusuarios = 8;
-        int anio = Integer.parseInt(a);
-        int mes = Integer.parseInt(m);
-        System.out.println(anio);
-        System.out.println(mes);
-        System.out.println(idusuarios);
-        System.out.println("**************************************");
         //string -> (fechahorapedido)
         //se divide en mes y año (haciendo un split -> arreglo de string)****
         ///sout del split
-        //parseo a enteros
-        Optional<Usuario> clienteopt = usuarioRepository.findById(idusuarios);
-        if (clienteopt.isPresent()) {
-            model.addAttribute("listaTop3Restaurantes", pedidosRepository.obtenerTop3Restaurantes(idusuarios, anio, mes));
-            model.addAttribute("listaTop3Platos", pedidosRepository.obtenerTop3Platos(idusuarios, anio, mes));
-            model.addAttribute("listaPromedioTiempo", pedidosRepository.obtenerTiemposPromedio(idusuarios, anio, mes));
-            model.addAttribute("listaHistorialConsumo", pedidosRepository.obtenerHistorialConsumo(idusuarios, anio, mes));
+
+
+        try {
+            String a = fecha[0];
+            String m = fecha[1];
+            int anio = Integer.parseInt(a);
+            int mes = Integer.parseInt(m);
+            System.out.println(anio);
+            System.out.println(mes);
+            System.out.println(idusuarios);
+            System.out.println("**************************************");
+            System.out.println("mes: "+ mes + " anio : "+ anio);
+            Optional<Usuario> clienteopt = usuarioRepository.findById(idusuarios);
+            List<Top3Restaurantes_ClienteDTO> listaTop3Restaurantes = pedidosRepository.obtenerTop3Restaurantes(idusuarios, anio, mes);
+            List<Top3Platos_ClientesDTO> listaTop3Platos = pedidosRepository.obtenerTop3Platos(idusuarios, anio, mes);
+            List<TiempoMedio_ClienteDTO> listaPromedioTiempo = pedidosRepository.obtenerTiemposPromedio(idusuarios, anio, mes);
+            List<HistorialConsumo_ClienteDTO> listaHistorialConsumo = pedidosRepository.obtenerHistorialConsumo(idusuarios, anio, mes);
             DineroAhorrado_ClienteDTO dineroAhorrado_clienteDTO = pedidosRepository.dineroAhorrado(idusuarios, anio, mes);
-            //System.out.println(dineroAhorrado_clienteDTO.getDiferencia());
-            System.out.println("gggggggggggggggggggggggggggg");
-            model.addAttribute("diferencia", dineroAhorrado_clienteDTO);
-            System.out.println("IDCliente: " + idusuarios + "Mes: " + mes + "Anio: " + anio);
+            if (clienteopt.isPresent()) {
+                if(listaHistorialConsumo.isEmpty() && listaPromedioTiempo.isEmpty() && listaTop3Platos.isEmpty() && listaTop3Restaurantes.isEmpty() && (dineroAhorrado_clienteDTO == null)){
+                    redirectAttributes.addFlashAttribute("alerta", "No se han encontrado datos para los reportes");
+                    return "redirect:/cliente/reportes";
+                }else {
+                    model.addAttribute("listaTop3Restaurantes", listaTop3Restaurantes);
+                    model.addAttribute("listaTop3Platos", listaTop3Platos);
+                    model.addAttribute("listaPromedioTiempo", listaPromedioTiempo);
+                    model.addAttribute("listaHistorialConsumo", listaHistorialConsumo);
+                    //System.out.println(dineroAhorrado_clienteDTO.getDiferencia());
+                    System.out.println("gggggggggggggggggggggggggggg");
+                    model.addAttribute("diferencia", dineroAhorrado_clienteDTO);
+                    System.out.println("IDCliente: " + idusuarios + " Mes: " + mes + " Anio: " + anio);
+                }
+            }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("No se encuentra el indice");
+            System.out.println("no se encontraron mes y año");
+            redirectAttributes.addFlashAttribute("alerta2", "No se añadieron campos de búsqueda");
+            return "redirect:/cliente/reportes";
         }
+
         return "cliente/reportes";
     }
 
