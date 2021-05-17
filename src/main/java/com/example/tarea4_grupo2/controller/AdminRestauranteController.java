@@ -439,15 +439,23 @@ public class AdminRestauranteController {
     }
 
     @GetMapping("/preparacion")
-    public String pedidosPreparacion(Model model){
-        model.addAttribute("listaAceptado",pedidosRepository.aceptadopedidos());
-        model.addAttribute("listaPreparado",pedidosRepository.preparadopedidos());
+    public String pedidosPreparacion(Model model, HttpSession session){
+
+        /**Se obtiene Id de Restaurante**/
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
+        /********************************/
+
+        model.addAttribute("listaAceptado",pedidosRepository.aceptadopedidos(idrestaurante));
+        model.addAttribute("listaPreparado",pedidosRepository.preparadopedidos(idrestaurante));
         return"AdminRestaurantes/preparacion";
     }
 
     @GetMapping("/detallepedidos")
     public String detallePedidos(@RequestParam("id")int id,Model model){
+        System.out.println("Trace1");
         model.addAttribute("detalle",pedidosRepository.detallepedidos(id));
+        System.out.println("Trace2");
         return "AdminRestaurantes/detalle";
     }
 
@@ -456,7 +464,7 @@ public class AdminRestauranteController {
         Optional<Pedidos> optional = pedidosRepository.findById(id);
         optional.get().setEstadorestaurante("aceptado");
         pedidosRepository.save(optional.get());
-        return"redirect:/pedidos";
+        return"redirect:/adminrest/pedidos";
     }
 
     @GetMapping("/rechazarpedido")
@@ -464,7 +472,7 @@ public class AdminRestauranteController {
         Optional<Pedidos> optional = pedidosRepository.findById(id);
         optional.get().setEstadorestaurante("rechazado");
         pedidosRepository.save(optional.get());
-        return"redirect:/pedidos";
+        return"redirect:/adminrest/pedidos";
     }
 
     @GetMapping("/preparadopedido")
@@ -472,7 +480,7 @@ public class AdminRestauranteController {
         Optional<Pedidos> optional = pedidosRepository.findById(id);
         optional.get().setEstadorestaurante("preparado");
         pedidosRepository.save(optional.get());
-        return "redirect:/preparacion";
+        return "redirect:/adminrest/preparacion";
     }
 
     @GetMapping("/entregadopedido")
@@ -480,7 +488,7 @@ public class AdminRestauranteController {
         Optional<Pedidos> optional = pedidosRepository.findById(id);
         optional.get().setEstadorestaurante("entregado");
         pedidosRepository.save(optional.get());
-        return"redirect:/preparacion";
+        return"redirect:/adminrest/preparacion";
     }
 
     @GetMapping("/cuentaAdmin")

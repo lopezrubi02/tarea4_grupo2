@@ -8,6 +8,6 @@ public interface PedidoAceptadosDtos {
     String getcliente();
     Date getfechahorapedido();
     String getdireccion();
-    String getdistrito();
+    String getnombredistrito();
 
 }

@@ -7,7 +7,7 @@ public interface PedidoDetallesDto {
     int getcantidadplatos();
     int getcubiertos();
     String getdireccion();
-    String getdistrito();
-    int getmontototal();
+    String getnombredistrito();
+    Float getprecio();
 
 }
