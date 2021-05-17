@@ -13,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -125,10 +126,14 @@ public class UsuarioController {
     }
 
     @GetMapping("/cliente/reportes")
-    public String reportesCliente(Model model) {
-        int idusuarios = 8;
+    public String reportesCliente(Model model,
+                                  RedirectAttributes redirectAttributes,
+                                  HttpSession session) {
+        //int idusuarios = 8;
 //        int anio = 2021;
   //      int mes = 05;
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuarios=sessionUser.getIdusuarios();
 
         java.util.Date fecha = new Date();
         LocalDate localDate = LocalDate.now();
@@ -176,8 +181,13 @@ public class UsuarioController {
 
     @PostMapping("/cliente/recepcionCliente")
     public String recepcionCliente(@RequestParam("fechahorapedido") String fechahorapedido,
-                                   Model model) {
-        int idusuarios = 7;
+                                   RedirectAttributes redirectAttributes,
+                                   Model model,
+                                   HttpSession session) {
+        //int idusuarios = 7;
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuarios=sessionUser.getIdusuarios();
+
         System.out.println(fechahorapedido);
         String[] fecha = fechahorapedido.split("-", 2);
         System.out.println(fecha);
@@ -231,9 +241,11 @@ public class UsuarioController {
     /** Realizar pedido **/
 
     @GetMapping("/cliente/realizarpedido")
-    public String realizarpedido(Model model) {
+    public String realizarpedido(Model model, HttpSession session) {
 
-        int idusuarioactual = 7;
+        //int idusuarioactual = 7;
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuarioactual=sessionUser.getIdusuarios();
 
         List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuarioactual);
         List<Categorias> listacategorias = categoriasRepository.findAll();
@@ -261,8 +273,11 @@ public class UsuarioController {
 
     @GetMapping("/cliente/direccionxenviar")
     public String direccionxenviar(Model model,
-                                   @RequestParam(value = "direccionxenviar", defaultValue = "0") int direccionxenviar){
-        int idusuarioactual= 7;
+                                   @RequestParam(value = "direccionxenviar", defaultValue = "0") int direccionxenviar,
+                                   HttpSession session){
+        //int idusuarioactual= 7;
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuarioactual=sessionUser.getIdusuarios();
 
         Optional<Direcciones> direccionopt = direccionesRepository.findById(direccionxenviar);
         if(direccionopt.isPresent()){
@@ -286,7 +301,8 @@ public class UsuarioController {
 
      @GetMapping("/cliente/filtrocategoria")
      public String filtrosrestaurantes1(Model model,
-     @RequestParam(value = "idcategoriarest" ,defaultValue = "0") int idcategoriarest
+     @RequestParam(value = "idcategoriarest" ,defaultValue = "0") int idcategoriarest,
+                                        HttpSession session
                                         ){
   //       System.out.println(idcategoriarest);
     //     System.out.println("*******************************");
@@ -295,7 +311,10 @@ public class UsuarioController {
          Optional<Categorias> catopt = categoriasRepository.findById(idcategoriarest);
          if(catopt.isPresent()){
              List<Restaurante> listarestauranteseleccionado = restauranteRepository.listarestxcategoria(idcategoriarest);
-             int idusuarioactual = 7;
+             //int idusuarioactual = 7;
+
+             Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+             int idusuarioactual=sessionUser.getIdusuarios();
 
              List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuarioactual);
              List<Categorias> listacategorias = categoriasRepository.findAll();
@@ -382,9 +401,13 @@ public class UsuarioController {
                               @RequestParam(value = "idrestaurante") int idrestaurante,
                               @RequestParam("idplato") int idplato,
                               @RequestParam("direccionxpedir") int iddireccionxpedir,
+                              HttpSession session,
                               Model model){
 
-         int idusuario = 7;
+         //int idusuario = 7;
+
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuario=sessionUser.getIdusuarios();
 
          Optional<Restaurante> restauranteopt = restauranteRepository.findById(idrestaurante);
          Optional<Plato> platoopt = platoRepository.findById(idplato);
@@ -453,13 +476,15 @@ public class UsuarioController {
          return "cliente/carrito_productos";
     }
 
-    }
-
     /** Mi perfil **/
 
     @GetMapping("/cliente/miperfil")
-    public String miperfil(Model model) {
-        int idusuario = 7;
+    public String miperfil(Model model, HttpSession session) {
+        //int idusuario = 7;
+
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuario=sessionUser.getIdusuarios();
+
         List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosAndActivoEquals(idusuario,1);
         model.addAttribute("listadirecciones", listadireccionescliente);
         Optional<Usuario> optional = usuarioRepository.findById(idusuario);
@@ -517,9 +542,13 @@ public class UsuarioController {
 
     @PostMapping("/cliente/guardarnuevadireccion")
     public String guardarnuevadireccion(@RequestParam("direccion") String direccion,
-                                        @RequestParam("iddistrito") int iddistrito) {
+                                        @RequestParam("iddistrito") int iddistrito,
+                                        HttpSession session) {
 
-        int idusuario = 7;
+        //int idusuario = 7;
+
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuario=sessionUser.getIdusuarios();
 
         Direcciones direccioncrear = new Direcciones();
         direccioncrear.setDireccion(direccion);
@@ -551,10 +580,14 @@ public class UsuarioController {
 
     @PostMapping("/cliente/guardarnuevacontra")
     public String nuevacontra(@RequestParam("contrasenia1") String contra1,
-                              @RequestParam("contrasenia2") String contra2){
+                              @RequestParam("contrasenia2") String contra2,
+                              HttpSession session){
 
 
-        int idusuario = 7;
+        //int idusuario = 7;
+
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuario=sessionUser.getIdusuarios();
 
         Optional<Usuario> usarioopt = usuarioRepository.findById(idusuario);
 
