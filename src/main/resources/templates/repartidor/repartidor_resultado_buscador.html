@@ -44,114 +44,77 @@
         <!-- blog -->
         <div class="blog">
             <div class="container">
-                <div class="row">
-                    <div class="col-md-12">
-                        <h1>Pedidos disponibles</h1>
-                    </div>
-                    <div th:if="${msg != null}" th:text="${msg}" class="alert alert-success" role="alert"></div>
-                    <form method="post" th:action="@{/reportes/Buscador}">
-                        <input name="valorBuscado" class="form-control mb-3" type="text" placeholder="Ingrese el nombre del restaurante o distrito del restaurante"/>
-                    </form>
+                <h1>Pedidos disponibles</h1>
+                <form method="post" th:action="@{/reportes/Buscador}">
+                    <input name="valorBuscado" class="form-control mb-3" type="text" placeholder="Ingrese el nombre del restaurante o distrito del restaurante"/>
+                </form>
                     <a class="btn btn-primary" th:href="@{'/reportes'}">Limpiar</a>
                 </div>
-                <div class="row table-users">
-                    <!-- table -->
-                    <div class="col-md-12">
-                        <div class="table-responsive">
-                            <table class="table table-striped">
-                                <thead>
-                                <tr>
-                                    <th scope="col"># PEDIDO</th>
-                                    <th scope="col">RESTAURANTE</th>
-                                    <th scope="col">DISTRITO DEL RESTAURANTE</th>
-                                    <th scope="col">COMISIÓN</th>
-                                    <th scope="col">CALIFICACIÓN</th>
-                                    <th scope="col">S/. TOTAL</th>
-                                    <th></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr th:each="pedidoDisponible, info : ${listaPedidosxRestaurante}">
-                                    <td th:text="${info.index + 1}"></td>
-                                    <td th:text="${pedidoDisponible.getNombre()}"></td>
-                                    <td th:text="${pedidoDisponible.getDistrito()}"></td>
-                                    <td th:text="${pedidoDisponible.getComisionrepartidor()}"></td>
-                                    <td th:text="${pedidoDisponible.getCalificacionrepartidor()}"></td>
-                                    <td th:text="${pedidoDisponible.getMontototal()}"></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
 
-                    <div class="col-md-12">
-                        <div class="table-responsive">
-                            <table class="table table-striped">
-                                <thead>
-                                <tr>
-                                    <th scope="col"># PEDIDO</th>
-                                    <th scope="col">RESTAURANTE</th>
-                                    <th scope="col">DISTRITO DEL RESTAURANTE</th>
-                                    <th scope="col">COMISIÓN</th>
-                                    <th scope="col">CALIFICACIÓN</th>
-                                    <th scope="col">S/. TOTAL</th>
-                                    <th></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr th:each="pedidoDisponible, info : ${listaPedidosxDistrito}">
-                                    <td th:text="${info.index + 1}"></td>
-                                    <td th:text="${pedidoDisponible.getNombre()}"></td>
-                                    <td th:text="${pedidoDisponible.getDistrito()}"></td>
-                                    <td th:text="${pedidoDisponible.getComisionrepartidor()}"></td>
-                                    <td th:text="${pedidoDisponible.getCalificacionrepartidor()}"></td>
-                                    <td th:text="${pedidoDisponible.getMontototal()}"></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <!-- end of table. -->
-                    <li class="button_user"><a class="btn btn-primary" th:href="">Exportar reporte a Excel</a></li>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col"># PEDIDO</th>
+                    <th scope="col">RESTAURANTE</th>
+                    <th scope="col">DISTRITO DEL RESTAURANTE</th>
+                    <th scope="col">DIRECCION DE DESTINO</th>
+                    <th scope="col">DISTRITO DE DESTINO</th>
+                    <th scope="col">COMISIÓN S/.</th>
+                    <th scope="col">S/. TOTAL</th>
+                    <th scope="col">CALIFICACION</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="pedidoDisponible, info : ${ListaFindReporte}">
+                    <td th:text="${info.index + 1}"></td>
+                    <td th:text="${pedidoDisponible.getNombre()}"></td>
+                    <td th:text="${pedidoDisponible.getDistrito()}"></td>
+                    <td th:text="${pedidoDisponible.getDireccionCliente()}"></td>
+                    <td th:text="${pedidoDisponible.getDistritoCliente()}"></td>
+                    <td th:text="${pedidoDisponible.getComisionrepartidor()} + '.0'"></td>
+                    <td th:text="${pedidoDisponible.getMontototal()}"></td>
+                    <td th:text="${pedidoDisponible.getCalificacionrepartidor()}"></td>
+                </tr>
+                </tbody>
+            </table>
 
-
-                    <div class="col-md-12">
-                        <p>Anterior | 1 | 2 | 3 | Siguiente</p>
-                    </div>
-
-                </div>
-            </div>
         </div>
+
     </div>
-    <!-- end blog -->
+</div>
+<!-- end blog -->
 
-    <!-- footer -->
-    <fooetr>
-        <div class="footer">
-            <div class="container-fluid">
-                <div class="copyright">
-                    <div class="container">
-                        <p>© 2050 All Rights Reserved</p>
-                    </div>
+
+
+
+
+<!-- footer -->
+<fooetr>
+    <div class="footer">
+        <div class="container-fluid">
+            <div class="copyright">
+                <div class="container">
+                    <p>© 2050 All Rights Reserved</p>
                 </div>
             </div>
-
         </div>
-    </fooetr>
-    <!-- end footer -->
+
+    </div>
+</fooetr>
+<!-- end footer -->
 
 </div>
 </div>
 <div class="overlay"></div>
 <!-- Javascript files-->
-<script src="js/jquery.min.js"></script>
-<script src="js/popper.min.js"></script>
-<script src="js/bootstrap.bundle.min.js"></script>
-<script src="js/owl.carousel.min.js"></script>
-<script src="js/custom.js"></script>
-<script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/popper.min.js}"></script>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/owl.carousel.min.js}"></script>
+<script th:src="@{/js/custom.js}"></script>
+<script th:src="@{/js/jquery.mCustomScrollbar.concat.min.js}"></script>
 
-<script src="js/jquery-3.0.0.min.js"></script>
+<script th:src="@{/js/jquery-3.0.0.min.js}"></script>
 <script type="text/javascript">
     $(document).ready(function () {
         $("#sidebar").mCustomScrollbar({
@@ -170,6 +133,12 @@
             $('a[aria-expanded=true]').attr('aria-expanded', 'false');
         });
     });
+
+    //    Make a whole row as clickeable
+    function rowClicked(value) {
+        location.href = "/admin/user?id=" + value;
+    }
+
 </script>
 
 <style>

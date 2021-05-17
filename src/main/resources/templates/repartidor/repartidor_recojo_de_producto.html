@@ -1,83 +1,89 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-
 <head th:replace="fragment/fragment.html :: header( title = 'Pedido esperando recojo')"></head>
 
-<!-- body -->
 
 <body class="main-layout">
-    <!-- loader  -->
-    <div class="loader_bg">
-        <div class="loader"><img src="images/loading.gif" alt="" /></div>
-    </div>
+<!-- loader  -->
+<div class="loader_bg">
+    <div class="loader"><img src="images/loading.gif" alt=""/></div>
+</div>
 
-    <div class="wrapper">
+<div class="wrapper">
     <!-- end loader -->
 
-     <div class="sidebar">
-            <!-- Sidebar  -->
-            <nav id="sidebar">
+    <div class="sidebar">
+        <!-- Sidebar  -->
+        <nav id="sidebar">
 
-                <div id="dismiss">
-                    <i class="fa fa-arrow-left"></i>
-                </div>
+            <div id="dismiss">
+                <i class="fa fa-arrow-left"></i>
+            </div>
 
-                <ul class="list-unstyled components">
-                    <li >
-                        <a href="repartidor_principal.html">Home</a>
-                    </li>
-                    <li>
-                        <a href="repartidor_reportes.html">Reportes</a>
-                    </li>
-                    <li >
-                        <a href="repartidor_pedidos_disponibles.html">Notificaciones</a>
-                    </li>
-                </ul>
+            <ul class="list-unstyled components">
 
-            </nav>
-        </div>
+                <li>
+                    <a th:href="@{'/repartidor'}">Home</a>
+                </li>
+                <li>
+                    <a th:href="@{'/repartidor/Reportes'}">Reportes</a>
+                </li>
+                <li>
+                    <a th:href="@{'/repartidor/PedidosDisponibles'}">Notificaciones</a>
+                </li>
+            </ul>
+
+        </nav>
+    </div>
 
     <div id="content">
-    <!-- header -->
+        <!-- header -->
         <header th:replace="fragment/fragment.html :: navbar"></header>
-
         <!-- end header -->
 
 
-    <!-- blog -->
-    <div class="blog">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1 th:text="Pedido esperando recojo"></h1>
-                </div>
+        <!-- blog -->
+        <div class="blog">
+            <div class="container">
+                <h1>Pedido esperando ser recogido</h1>
+                <p th:text="'Restaurante: ' + ${restaurante.getNombre()}"></p>
+                <p th:text="'Dirección de recojo: ' + ${restaurante.getDireccion()}"></p>
+                <p th:text="'Distrito de recojo: ' + ${restaurante.getDistrito()}"></p>
+                <hr>
+                <p th:text="'Direccion de destino: ' + ${direccion.getDireccion()}"></p>
+                <p th:text="'Distrito de destino: ' + ${direccion.getDistrito()}"></p>
+                <hr>
+                <p th:text="'Total: S/.' + ${ pedido.getMontototal()}"></p>
+                <p th:text="'Comisión: S/. ' + ${pedido.getComisionrepartidor()}+'.0'"></p>
             </div>
-            <div class="row table-users">
-                <!-- table -->
-                <div class="col-md-12">
-                    <div class="table-responsive">
-                        <div class="form-control">
-                            <h1>Detalle de pedido:</h1>
-                            <div th:each="detallesPlatosPorPedidoDTO, info : ${listaPlatosPorPedidoDTO}">
-                                <p th:text="${info.index + 1} + ').' + ${detallesPlatosPorPedidoDTO}"></p>
-                            </div>
-                            <div>
-                                <p th:text="'Restaurante: ' + ${restaurante.getNombre()}"></p>
-                                <p th:text="'Dirección de recojo: ' + ${restaurante.getDireccion()} +'. ' ${restaurante.getDistrito()}"></p>
-                                <p th:text="'Total: S/.' + ${ pedido.getMontototal()}"></p>
-                                <p th:text="'Comisión: S/. ' + ${pedido.getComisionrepartidor()}"></p>
-                            </div>
-                        </div>
-                    </div>
-                    <li class="button_user"><a class="button active" href="repartidor_pedido_en_progreso.html">Confirmar recojo del pedido</a>
-                </div>
-                <!-- end of table -->
+            <div class="container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col"># ITEM</th>
+                        <th scope="col">CANT.</th>
+                        <th scope="col">DETALLE</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="detallesPlatosPorPedidoDTO, info : ${listaPlatosPorPedidoDTO}">
+                        <td th:text="${info.index + 1}"></td>
+                        <td th:text="${detallesPlatosPorPedidoDTO.getCantidadplatos()}"></td>
+                        <td th:text="${detallesPlatosPorPedidoDTO.getNombre()}"></td>
+                    </tr>
+                </tbody>
+            </table>
+                <td><a class="btn btn-primary" th:href="@{'/repartidor/ConfirmaRecojo' + '?idpedido=' + ${pedido.getIdpedidos()}}">Confirmar Recojo</a></td>
 
             </div>
+
         </div>
     </div>
-    </div>
     <!-- end blog -->
+
+
+
+
 
     <!-- footer -->
     <fooetr>
@@ -89,76 +95,83 @@
                     </div>
                 </div>
             </div>
-            
+
         </div>
     </fooetr>
     <!-- end footer -->
 
-    </div>
-    </div>
-    <div class="overlay"></div>
-    <!-- Javascript files-->
-    <script src="js/jquery.min.js"></script>
-    <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap.bundle.min.js"></script>
-    <script src="js/owl.carousel.min.js"></script>
-    <script src="js/custom.js"></script>
-     <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
-    
-    <script src="js/jquery-3.0.0.min.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $("#sidebar").mCustomScrollbar({
-                theme: "minimal"
-            });
+</div>
+</div>
+<div class="overlay"></div>
+<!-- Javascript files-->
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/popper.min.js}"></script>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/owl.carousel.min.js}"></script>
+<script th:src="@{/js/custom.js}"></script>
+<script th:src="@{/js/jquery.mCustomScrollbar.concat.min.js}"></script>
 
-            $('#dismiss, .overlay').on('click', function() {
-                $('#sidebar').removeClass('active');
-                $('.overlay').removeClass('active');
-            });
-
-            $('#sidebarCollapse').on('click', function() {
-                $('#sidebar').addClass('active');
-                $('.overlay').addClass('active');
-                $('.collapse.in').toggleClass('in');
-                $('a[aria-expanded=true]').attr('aria-expanded', 'false');
-            });
+<script th:src="@{/js/jquery-3.0.0.min.js}"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#sidebar").mCustomScrollbar({
+            theme: "minimal"
         });
-    </script>
 
-    <style>
-    #owl-demo .item{
+        $('#dismiss, .overlay').on('click', function () {
+            $('#sidebar').removeClass('active');
+            $('.overlay').removeClass('active');
+        });
+
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').addClass('active');
+            $('.overlay').addClass('active');
+            $('.collapse.in').toggleClass('in');
+            $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+        });
+    });
+
+    //    Make a whole row as clickeable
+    function rowClicked(value) {
+        location.href = "/admin/user?id=" + value;
+    }
+
+</script>
+
+<style>
+    #owl-demo .item {
         margin: 3px;
     }
-    #owl-demo .item img{
+
+    #owl-demo .item img {
         display: block;
         width: 100%;
         height: auto;
     }
-    </style>
+</style>
 
-     
-    <script>
-         $(document).ready(function() {
-           var owl = $('.owl-carousel');
-           owl.owlCarousel({
-             margin: 10,
-             nav: true,
-             loop: true,
-             responsive: {
-               0: {
-                 items: 1
-               },
-               600: {
-                 items: 2
-               },
-               1000: {
-                 items: 5
-               }
-             }
-           })
-         })
-      </script>
+
+<script>
+    $(document).ready(function () {
+        var owl = $('.owl-carousel');
+        owl.owlCarousel({
+            margin: 10,
+            nav: true,
+            loop: true,
+            responsive: {
+                0: {
+                    items: 1
+                },
+                600: {
+                    items: 2
+                },
+                1000: {
+                    items: 5
+                }
+            }
+        })
+    })
+</script>
 
 </body>
 

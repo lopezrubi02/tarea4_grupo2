@@ -23,5 +23,7 @@ public interface RestauranteRepository extends JpaRepository<Restaurante, Intege
     List<RestauranteReportes_DTO> reportesRestaurantes();
 
 
+    @Query(value = "select * from restaurante where idrestaurante = ?1", nativeQuery = true)
+    Restaurante findRestauranteById(int id);
 
 }

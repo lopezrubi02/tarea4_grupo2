@@ -1,5 +1,6 @@
 package com.example.tarea4_grupo2.repository;
 
+import com.example.tarea4_grupo2.entity.Direcciones;
 import com.example.tarea4_grupo2.entity.Repartidor;
 import com.example.tarea4_grupo2.entity.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,6 +15,9 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     List<Usuario> findAllByRolAndCuentaActiva(String rol, Integer cuentaActiva);
     List<Usuario> findAllByRolAndCuentaActivaAndNombre(String rol, Integer cuentaActiva, String name);
     List<Usuario> findAllByNombreAndCuentaActiva(String nombre, int cuentaActiva);
+
+    @Query(value = "select * from usuarios where idusuarios = ?1", nativeQuery = true)
+    Usuario findUsuarioById(int id);
 
     //Gestion de Nuevas Cuentas
 
