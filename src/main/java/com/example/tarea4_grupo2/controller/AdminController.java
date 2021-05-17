@@ -61,8 +61,6 @@ public class AdminController {
          *
          */
 
-        // todo html para el post
-
         float numberOfUsersPerPage = 7;
         int page = Integer.parseInt(requestedPage);
 
@@ -129,7 +127,6 @@ public class AdminController {
         if (optional.isPresent()) {
             Usuario usuario = optional.get();
 
-            // TODO switch case
             switch (usuario.getRol()) {
                 case "AdminSistema":
                     model.addAttribute("usuario", usuario);
@@ -175,8 +172,7 @@ public class AdminController {
             @ModelAttribute("usuario") @Valid Usuario usuarioRecibido,
             BindingResult bindingResult,
             HttpSession session){
-        // TODO se harcodeo el id del actual usuario logeado
-        //int id = 1;
+
         Usuario usuarioActual = (Usuario) session.getAttribute("usuarioLogueado");
         int id = usuarioActual.getIdusuarios();
 
