@@ -3,10 +3,7 @@ package com.example.tarea4_grupo2.controller;
 import com.example.tarea4_grupo2.dto.DeliveryReportes_DTO;
 import com.example.tarea4_grupo2.dto.RepartidoresReportes_DTO;
 import com.example.tarea4_grupo2.dto.RestauranteReportes_DTO;
-import com.example.tarea4_grupo2.entity.Direcciones;
-import com.example.tarea4_grupo2.entity.Repartidor;
-import com.example.tarea4_grupo2.entity.Restaurante;
-import com.example.tarea4_grupo2.entity.Usuario;
+import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -314,8 +311,10 @@ public class AdminController {
                         model.addAttribute("usuario",usuario);
 
                         Restaurante restaurante = restauranteRepository.findRestauranteByUsuario_Idusuarios(id);
+                        List<Categorias> categorias =  restaurante.getCategoriasrestList();
 
                         model.addAttribute("restaurante",restaurante);
+                        model.addAttribute("categorias",categorias);
                         return "adminsistema/AceptarCuentaRestaurante";
                     case "Repartidor":
                         model.addAttribute("usuario",usuario);
@@ -373,9 +372,14 @@ public class AdminController {
 
 
 
-    @GetMapping("adminForm")
-    public String adminForm(Model model){
+    @GetMapping("/adminForm")
+    public String adminForm(Model model,HttpSession session){
         model.addAttribute("usuario", new Usuario());
+        Usuario usuario = (Usuario) session.getAttribute("usuarioLogueado");
+        int idAdmin = usuario.getIdusuarios();
+        if(idAdmin!=1){
+            return "redirect:/admin/gestionCuentas";
+        }
         return "adminsistema/agregarAdmin";
     }
 
@@ -385,6 +389,7 @@ public class AdminController {
                                @RequestParam("password2") String password2,
                                @RequestParam(value = "contras",defaultValue = "") String contras,
                                Model model, RedirectAttributes attr){
+
         if(bindingResult.hasErrors()){
             return "adminsistema/agregarAdmin";
         }

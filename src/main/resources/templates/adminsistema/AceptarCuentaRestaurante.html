@@ -117,7 +117,7 @@
             <div class="row">
                 <div class="col-12 col-lg-5 text-center" style="margin-bottom: 4vh;">
                     <!-- imagen -->
-                    <img src="./images/userImage.jpg" class="img-responsive">  
+                    <img th:src="@{/images/userImage.jpg}" class="img-responsive">
                 </div>
                 <div class="col-12 col-lg-7">
                     <!-- datos -->
@@ -202,7 +202,7 @@
           <div class="row">
               <div class="col-12 col-lg-6 text-center" style="margin-bottom: 4vh;">
                   <!-- imagen -->
-                  <img src="./images/cevicheria.jpg" class="img-responsive">  
+                  <img th:src="@{/images/restaurant.jpg}" class="img-responsive">
               </div>
               <div class="col-12 col-lg-6">
                   <!-- datos -->
@@ -245,7 +245,9 @@
                               <h6 class="mb-0">Categoria</h6>
                             </div>
                             <div class="col-sm-9 text-secondary">
-                              Sushi
+                              <tr th:each="categoria, index : ${categorias}">
+                                  <th scope="row" th:text="${categoria.getNombrecategoria()}+'-'"></th>
+                              </tr>
                             </div>
                           </div>
   
