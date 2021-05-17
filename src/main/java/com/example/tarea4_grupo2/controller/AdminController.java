@@ -229,7 +229,7 @@ public class AdminController {
                 String buscar2 = "%"+buscar+"%";
                 usuarioList = usuarioRepository.buscarGestionCuentasNuevas(buscar2);
             } else if(rol.equals("Repartidor") || rol.equals("AdminRestaurante") ){
-                usuarioList = usuarioRepository.findAllByRolAndCuentaActiva(rol,0);
+                usuarioList = usuarioRepository.findAllByRolAndCuentaActiva(rol,2);
             }else{
                 usuarioList = usuarioRepository.cuentasNuevas();
             }
@@ -301,7 +301,7 @@ public class AdminController {
         Optional<Usuario> optional = usuarioRepository.findById(id);
         if(optional.isPresent()){
             Usuario usuario = optional.get();
-            if(usuario.getCuentaActiva()==0){
+            if(usuario.getCuentaActiva()==2){
 
                 switch (usuario.getRol()){
                     case "AdminRestaurante":
@@ -332,7 +332,7 @@ public class AdminController {
         Optional<Usuario> optional = usuarioRepository.findById(id);
         if(optional.isPresent()){
             Usuario usuario = optional.get();
-            if(usuario.getCuentaActiva()==0){
+            if(usuario.getCuentaActiva()==2){
                     usuario.setCuentaActiva(1);
                     usuarioRepository.save(usuario);
                     attr.addFlashAttribute("msg","Cuenta aceptada exitosamente");
