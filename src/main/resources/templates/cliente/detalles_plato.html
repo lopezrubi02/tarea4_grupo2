@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
+<html lang="en" xmlns="http://www.w3.org/1999/html" xmlns:background="http://www.w3.org/1999/xhtml">
 
 <head>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
@@ -115,7 +115,7 @@
                                     </br>
 									<a style="color: white;" th:text="'S/. ' + ${platoseleccionado.precio}">Precio: 20 soles</a>
 								</div>
-								<form class="main_form" method="post" th:action="@{'/cliente/platopedido?idrestaurante=' + ${idrestaurante}}">
+								<form class="main_form" method="post" th:action="@{'/cliente/platopedido?idrestaurante=' + ${idrestaurante} + '&idplato=' + ${platoseleccionado.idplato}}">
                                     <div class="row">
 										<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
 											<div class="form-floating">
@@ -137,7 +137,7 @@
 										<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <li class="button_user">
                                                 <a class="button active" th:href="'/cliente/restaurantexordenar?idrestaurante=' + ${platoseleccionado.restaurante.idrestaurante}">Cancelar</a>
-                                                <button style="background: #16181b; color: white; border-color: #16181b" type="submit">Agregar</button>
+                                                <button style="background: #16181b; color: white; border-color: #16181b;" type="submit">Agregar</button>
                                             </li>
                                         </div>
 									</div>

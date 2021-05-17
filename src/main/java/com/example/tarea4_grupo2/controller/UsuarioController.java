@@ -6,6 +6,7 @@ import com.example.tarea4_grupo2.dto.Top3Platos_ClientesDTO;
 import com.example.tarea4_grupo2.dto.Top3Restaurantes_ClienteDTO;
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -49,12 +50,16 @@ public class UsuarioController {
     @Autowired
     PlatoRepository platoRepository;
 
+    @Autowired
+    PedidoHasPlatoRepository pedidoHasPlatoRepository;
+
     @GetMapping("/cliente/paginaprincipal")
     public String paginaprincipal() {
 
         return "cliente/paginaPrincipal";
     }
 
+    /** Registro cliente**/
 
     @GetMapping("/nuevocliente")
     public String nuevoCliente(Model model,@ModelAttribute("usuario") Usuario usuario)
@@ -121,11 +126,11 @@ public class UsuarioController {
         }
     }
 
+    /** Reportes **/
+
     @GetMapping("/cliente/reportes")
     public String reportesCliente(Model model) {
         int idusuarios = 8;
-//        int anio = 2021;
-  //      int mes = 05;
 
         java.util.Date fecha = new Date();
         LocalDate localDate = LocalDate.now();
@@ -205,6 +210,8 @@ public class UsuarioController {
         }
         return "cliente/reportes";
     }
+
+    /** Realizar pedido **/
 
     @GetMapping("/cliente/realizarpedido")
     public String realizarpedido(Model model) {
@@ -322,20 +329,81 @@ public class UsuarioController {
     }
 
     @PostMapping("/cliente/platopedido")
-    public String platopedido(@RequestParam("cubierto") int cubiertos,
+    public String platopedido(@RequestParam("cubierto") boolean cubiertos,
                               @RequestParam("cantidad") int cantidad,
                               @RequestParam("descripcion") String descripcion,
-                              @RequestParam(value = "idrestaurante") int idrestaurante){
+                              @RequestParam(value = "idrestaurante") int idrestaurante,
+                              @RequestParam("idplato") int idplato,
+                              Model model){
 
-        System.out.println(cubiertos);
-        System.out.println("**********************+");
-        System.out.println(cantidad);
-        System.out.println(descripcion);
-        System.out.println(idrestaurante);
-        System.out.println("gggggggggggggggggg");
-        return "redirect:/cliente/restaurantexordenar?idrestaurante=" + idrestaurante;
+         int idcliente = 2;
+
+         Optional<Restaurante> restauranteopt = restauranteRepository.findById(idrestaurante);
+         Optional<Plato> platoopt = platoRepository.findById(idplato);
+
+         if(platoopt.isPresent() && restauranteopt.isPresent()){
+
+             Plato platoelegido = platoopt.get();
+
+             System.out.println(cubiertos);
+             System.out.println("**********************+");
+             System.out.println(cantidad);
+             System.out.println(descripcion);
+             System.out.println(idrestaurante);
+             System.out.println("gggggggggggggggggg");
+             List<PedidoHasPlato> pedidoHasPlatoList =  pedidoHasPlatoRepository.findAll();
+             System.out.println(pedidoHasPlatoList.get(1).getPlato().getIdplato());
+             System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaa");
+
+             Pedidos pedidos = new Pedidos();
+             pedidos.setIdcliente(idcliente);
+
+             //para obtener el ultimo id de un pedido
+             List<Pedidos> listapedidos = pedidosRepository.findAll();
+             int cantpedidos = listapedidos.size();
+             Pedidos ultimopedido = listapedidos.get(cantpedidos-1);
+             int ultimoid = ultimopedido.getIdpedidos();
+
+             System.out.println(ultimoid);
+             System.out.println("pruebaaaaaaaaaaaaaaaaa");
+
+             int nuevoidpedido = ultimoid + 1;
+
+             pedidos.setIdpedidos(nuevoidpedido);
+             pedidos.setIdcliente(idcliente);
+             pedidos.setRestaurante_idrestaurante(idrestaurante);
+             pedidosRepository.save(pedidos);
+
+             PedidoHasPlato pedidoHasPlato = new PedidoHasPlato();
+             pedidoHasPlato.setPlato(platoelegido);
+             pedidoHasPlato.setPedido(pedidos);
+             if(descripcion!=null){
+                 pedidoHasPlato.setCubiertos(cubiertos);
+             }
+             pedidoHasPlato.setCantidadplatos(cantidad);
+             pedidoHasPlato.setDescripcion(descripcion);
+
+             pedidoHasPlatoRepository.save(pedidoHasPlato);
+
+             return "redirect:/cliente/restaurantexordenar?idrestaurante=" + idrestaurante;
+         }else{
+             return "redirect:/cliente/realizarpedido";
+         }
 
     }
+
+    @GetMapping("/cliente/carritoproductos")
+    public String carritoproductos(){
+         return "cliente/carrito_productos";
+    }
+
+    @GetMapping("/cliente/checkout2")
+    public String checkout2(){
+        return "cliente/carrito_cliente";
+    }
+
+
+
 
     /** Mi perfil **/
 

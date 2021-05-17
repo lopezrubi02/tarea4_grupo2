@@ -311,6 +311,12 @@ $(function () {
 			$(this).toggleClass('active');
 		});
 	});
+	$(document).ready(function () {
+		$('#sidebarCollapse2').on('click', function () {
+			$('#sidebar2').toggleClass('active');
+			$(this).toggleClass('active');
+		});
+	});
 
 	/* Product slider 
 	-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- */
