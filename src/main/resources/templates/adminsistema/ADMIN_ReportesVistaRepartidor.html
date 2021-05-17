@@ -35,7 +35,7 @@
         <div class="loader"><img src="images/loading.gif" alt="" /></div>
     </div>
 
-    <div class="wrapper">
+    <div th:replace="fragments/adminSistema.html:: slider" class="wrapper">
     <!-- end loader -->
 
      <div class="sidebar">
@@ -66,7 +66,7 @@
     <div id="content">
     <!-- header -->
     <header>
-        <div class="container-fluid">
+        <div th:replace="fragments/adminSistema.html:: barra" class="container-fluid">
             <div class="row">
                 <div class="col-md-3">
                     <div class="full">
@@ -112,17 +112,15 @@
                 </div>
 				
             </div>
-			<br></br>
             <div class="row">
                 <div class="col-2">
                     <!-- search bar -->
-                    <select class="custom-select" id="inputGroupSelect01">
+                    <!--select class="custom-select" id="inputGroupSelect01">
                         <option selected value="todos">Todos</option>
 						<option value="repartidores">Bicicleta</option>
                         <option value="repartidores">Bicimoto</option>
                         <option value="restaurantes">Moto</option>
-                    </select>
-					
+                    </select-->
                 </div>
 				<!--div class="row">
 					<div class="col-8">
@@ -142,22 +140,22 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Nombre</th>
-                                <th scope="col">DNI</th>
-                                <th scope="col">Tipo de Movilidad</th>
-                                <th scope="col">Pedidos Realizados</th>
-                                <th scope="col">Comisión (S/.)</th>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Nombre</th>
+                                    <th scope="col">DNI</th>
+                                    <th scope="col">Tipo de Movilidad</th>
+                                    <th scope="col">Pedidos Realizados</th>
+                                    <th scope="col">Comisión (S/.)</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr th: th:each="repartidor, info: ${reporteLista}">
-                                <th scope="row" th:text="${info.index + 1}">1</th>
-                                <td th:text="${repartidor.nombre+' '+repartidor.apellidos}"></td>
-                                <td th:text="${repartidor.dni}"></td>
-                                <td th:text="${repartidor.movilidad}"></td>
-                                <td th:text="${repartidor.pedidos}"></td>
-                                <td th:text="${repartidor.comision}"></td>
+                                <tr th:each="repartidor, info: ${reporteLista2}">
+                                    <td scope="row" th:text="${info.index + 1}">1</td>
+                                    <td th:text="${repartidor.nombre+' '+repartidor.apellidos}"></td>
+                                    <td th:text="${repartidor.dni}"></td>
+                                    <td th:text="${repartidor.movilidad}"></td>
+                                    <td th:text="${repartidor.pedidos}"></td>
+                                    <td th:text="${repartidor.comision}"></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -170,8 +168,8 @@
                 </div>
 
             </div>
-			<br></br>
-			<br></br>
+            <br>
+            <br>
 			<div class="col-8">
                     <h3>Estadisticas</h3>
                 </div>
@@ -191,7 +189,7 @@
 								<tbody>
 									<tr>
 									<th scope="row">1</th>
-									<td th:text="${mayorrep.nombre+' '+mayorrep.apellidos}"></td>
+									<td th:text="${mayorrep.nombre+ ' ' +mayorrep.apellidos}"></td>
 									<td th:text="${mayorrep.dni}"></td>
 									<td th:text="${mayorrep.pedidos}"></td>
 									<td>Mas pedidos entregados</td>
@@ -221,7 +219,7 @@
             <div class="container-fluid">
                 <div class="copyright">
                     <div class="container">
-                        <p>© 2050 All Rights Reserved</p>
+                        <p>© 2021 Todos los derechos reservados</p>
                     </div>
                 </div>
             </div>

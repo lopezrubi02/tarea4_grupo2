@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/fragment.html :: header( title = 'Spicy')"></head>
+<head th:insert="fragment/fragment.html :: header( title = 'Spicy')"></head>
 <!-- body -->
 
 <body class="main-layout">
@@ -52,12 +52,15 @@
                                 <ul>
 
                                     <li class="dinone"><a th:href="@{'/repartidor'}">Home</a></li>
-                                    <li class="dinone"><a href="repartidor_reportes.html">Reportes</a></li>
+                                    <li class="dinone"><a th:href="@{'/repartidor/Reportes'}">Reportes</a></li>
                                     <li class="dinone"><a th:href="@{'/repartidor/PedidosDisponibles'}">Notificaciones</a></li>
 
                                     <!-- TODO -->
-                                    <li class="button_user"><a class="button active" href="#login.html">Mi cuenta</a><a
-                                            class="button" href="#">Logout</a></li>
+                                    <li class="button_user"><a class="button active" th:href="@{'/repartidor/perfil'}">Mi cuenta</a>
+                                        <form th:action="@{/logout}" method="post">
+                                            <button class="button " type="submit">Logout</button>
+                                        </form>
+                                    </li>
                                     <li>
                                         <button type="button" id="sidebarCollapse">
                                             <img th:src="@{/images/menu_icon.png}">
@@ -80,7 +83,6 @@
                         <h1 th:text="${usuario.nombre} + ${ usuario.apellidos}"></h1>
                     </div>
                 </div>
-                <div th:if="${msg != null}" th:text="${msg}" class="alert alert-success" role="alert"></div>
 
                 <hr>
                 <div class="row">
@@ -94,13 +96,16 @@
                               th:object="${repartidor}">
                             <input th:field="*{idusuarios}" type="hidden">
                             <div class="form-group">
-                                <label>Distrito donde se encuentra</label>
-                                <input type="text" class="form-control" th:field="*{distritoactual}">
+                                <label class="form-label">Distrito</label>
+                                <select th:field="*{distritos}" class="form-select" name="distrito" style="width: 100%;">
+                                    <option th:each="distrito : ${listadistritos}" th:value="${distrito.iddistritos}"
+                                            th:text="${distrito.nombredistrito}"></option>
+                                </select>
                             </div>
 
                             <div class="form-group">
                                 <label>Disponibilidad</label>
-                                <select th:field="*{disponibilidad}" class="form-control">
+                                <select th:field="*{disponibilidad}"  class="form-select" style="width: 100%;">
                                     <option th:value="true" th:text="Disponible"></option>
                                     <option th:value="false" th:text="Ocupado"></option>
                                 </select>

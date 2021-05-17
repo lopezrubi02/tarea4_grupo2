@@ -22,6 +22,8 @@ public class Plato {
 
     private int disponibilidad;
 
+    private int activo;
+
     public int getIdplato() {
         return idplato;
     }
@@ -68,5 +70,13 @@ public class Plato {
 
     public void setDisponibilidad(int disponibilidad) {
         this.disponibilidad = disponibilidad;
+    }
+
+    public int getActivo() {
+        return activo;
+    }
+
+    public void setActivo(int activo) {
+        this.activo = activo;
     }
 }

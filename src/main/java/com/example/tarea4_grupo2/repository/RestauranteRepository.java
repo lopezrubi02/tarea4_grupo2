@@ -6,19 +6,27 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface RestauranteRepository extends JpaRepository<Restaurante, Integer> {
     //Restaurante findRestauranteByIdadminrestEquals(int idAdmin);
+
+    @Query(value = "select * from restaurante where idrestaurante = ?1", nativeQuery = true)
+    Restaurante findRestauranteById(int id);
+
+    Restaurante findRestauranteByUsuario_Idusuarios(int idAdmin);
+
 
     @Query(value="select*from restaurante\n" +
             "where idadminrest=?1",nativeQuery = true)
     Restaurante obtenerperfilRest(int id);
 
-    //Usado por adminsistema en reportes restaurante
+    //Usado por adminsistema en reportes restaurante ,cambiar por group by por id(pendiente)
     @Query(value = "select r.nombre as 'restnombre', u.nombre, u.apellidos, count(p.idpedidos) as 'pedidos', (sum(p.montototal) - sum(p.comisionrepartidor) - sum(p.comisionsistema)) as 'ventastotales' from restaurante r\n" +
             "inner join usuarios u on (r.idadminrest=u.idusuarios)\n" +
             "inner join pedidos p on (r.idrestaurante=p.restaurante_idrestaurante)\n" +
-            "order by 'restnombre';",nativeQuery = true)
+            "group by r.nombre " +
+            "order by r.nombre;",nativeQuery = true)
     List<RestauranteReportes_DTO> reportesRestaurantes();
 
     //seleccionar restaurantes por categoria
@@ -27,6 +35,8 @@ public interface RestauranteRepository extends JpaRepository<Restaurante, Intege
             "inner join proyecto.restaurante_has_categorias rc\n" +
             "on rc.restaurante_idrestaurante = r.idrestaurante where rc.categorias_idcategorias=?1",nativeQuery = true)
     List<Restaurante> listarestxcategoria (int categorias_idcategorias);
+    @Query(value="select * from restaurante where idadminrest = ?1 limit 1", nativeQuery = true)
+    Optional<Restaurante> buscarRestaurantePorIdAdmin(Integer id);
 
     //contar cantidad de reviews dadas al restaurante
     @Query(value = "select count(idpedidos) from pedidos where restaurante_idrestaurante=?1 and calificacionrestaurante <> 'null'",nativeQuery = true)
@@ -34,5 +44,7 @@ public interface RestauranteRepository extends JpaRepository<Restaurante, Intege
 
     @Query(value = "select * from restaurante r where lower(r.nombre) like lower('%?1%')",nativeQuery = true)
     List<Restaurante> buscarRestaurantexNombre(String nombre);
+    @Query(value="select ruc from restaurante where idadminrest=?1",nativeQuery = true)
+    String buscarRuc(int id);
 
 }

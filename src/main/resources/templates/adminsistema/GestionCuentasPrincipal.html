@@ -38,7 +38,7 @@
     <div class="wrapper">
     <!-- end loader -->
 
-     <div class="sidebar">
+     <div th:replace="fragments/adminSistema.html:: slider" class="sidebar">
             <!-- Sidebar  -->
             <nav id="sidebar">
 
@@ -61,12 +61,12 @@
                 </ul>
 
             </nav>
-        </div>
+     </div>
 
     <div id="content">
     <!-- header -->
     <header>
-        <div class="container-fluid">
+        <div th:replace="fragments/adminSistema.html:: barra" class="container-fluid">
             <div class="row">
                 <div class="col-md-3">
                     <div class="full">
@@ -77,8 +77,8 @@
                     <div class="full">
                         <div class="right_header_info">
                             <ul>
-                                <li class="dinone"><a href="#">Usuarios Actuales</a></li>
-                                <li class="dinone"><a href="GestionCuentasPrincipal.html">Gestión de nuevas cuentas</a></li>
+                                <li class="dinone"><a th:href="@{usuariosActuales}">Usuarios Actuales</a></li>
+                                <li class="dinone"><a th:href="@{gestionCuentas}">Gestión de nuevas cuentas</a></li>
                                 <li class="dinone"><a th:href="@{reportes}">Reportes</a></li>
                                 <!-- TODO -->
                                 <li class="button_user"><a class="button active" href="#login.html">Mi cuenta</a><a class="button" href="#">Logout</a></li>
@@ -103,8 +103,11 @@
     <div class="blog">
         <div class="container">
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-4">
                     <h1>Gestión de nuevas cuentas</h1>
+                </div>
+                <div class="col-md-8">
+                    <button th:if="${msg != null}" th:text="${msg}" class="btn btn-warning" role="alert"></button>
                 </div>
             </div>
             <hr>
@@ -116,7 +119,7 @@
 					<button type="button " class="btn btn-dark btn-lg btn-block" th:href="@{nuevosUsuarios}">Solicitud de Nuevas Cuentas</button></a>
                 </div>
 				
-                <div class="col-12 col-md-6">
+                <div th:if="${idAdmin == 1}"class="col-12 col-md-6">
 					<!-- imagen -->
                     <div align="center"><img th:src="@{/images/Foto-NuevoAdmin.png}" th:href="@{adminForm}" width="348" height="348"></div>
 					<a th:href="@{adminForm}">

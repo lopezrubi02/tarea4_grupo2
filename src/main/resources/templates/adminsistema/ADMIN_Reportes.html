@@ -38,7 +38,7 @@
     <div class="wrapper" >
     <!-- end loader -->
 
-     <div class="sidebar">
+     <div th:replace="fragments/adminSistema.html:: slider" class="sidebar">
             <!-- Sidebar  -->
             <nav id="sidebar">
 
@@ -66,7 +66,7 @@
     <div id="content">
     <!-- header -->
     <header>
-        <div class="container-fluid">
+        <div th:replace="fragments/adminSistema.html:: barra" class="container-fluid">
             <div class="row">
                 <div class="col-md-3">
                     <div class="full">
@@ -77,9 +77,9 @@
                     <div class="full">
                         <div class="right_header_info">
                             <ul>
-                                <li class="dinone"><a href="#">Usuarios Actuales</a></li>
-                                <li class="dinone"><a href="GestionCuentasPrincipal.html">Gestión de nuevas cuentas</a></li>
-                                <li class="dinone"><a href="ADMIN_Reportes.html">Reportes</a></li>
+                                <li class="dinone"><a th:href="@{usuariosActuales}">Usuarios Actuales</a></li>
+                                <li class="dinone"><a th:href="@{gestionCuentas}">Gestión de nuevas cuentas</a></li>
+                                <li class="dinone"><a th:href="@{reportes}">Reportes</a></li>
                                 <!-- TODO -->
                                 <li class="button_user"><a class="button active" href="#login.html">Mi cuenta</a><a class="button" href="#">Logout</a></li>
                                 <li>

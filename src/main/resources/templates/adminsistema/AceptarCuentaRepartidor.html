@@ -38,7 +38,7 @@
     <div class="wrapper">
     <!-- end loader -->
 
-     <div class="sidebar">
+     <div th:replace="fragments/adminSistema.html:: slider" class="sidebar">
             <!-- Sidebar  -->
             <nav id="sidebar">
 
@@ -66,11 +66,11 @@
     <div id="content">
     <!-- header -->
     <header>
-        <div class="container-fluid">
+        <div th:replace="fragments/adminSistema.html:: barra" class="container-fluid">
             <div class="row">
                 <div class="col-md-3">
                     <div class="full">
-                        <a class="logo" href="index.html"><img src="images/logo.png" alt="#" /></a>
+                        <a class="logo" href="index.html"><img th:src="@{/images/logo.png}" alt="#" /></a>
                     </div>
                 </div>
                 <div class="col-md-9">
@@ -82,7 +82,7 @@
                                 <li class="button_user"><a class="button active" href="#login.html">Mi cuenta</a><a class="button" href="#">Logout</a></li>
                                 <li>
                                     <button type="button" id="sidebarCollapse">
-                                        <img src="images/menu_icon.png" alt="#">
+                                        <img th:src="@{/images/menu_icon.png}" alt="#">
                                     </button>
                                 </li>
                             </ul>
@@ -112,7 +112,7 @@
             <div class="row">
                 <div class="col-12 col-lg-5 text-center" style="margin-bottom: 4vh;">
                     <!-- imagen -->
-                    <img src="./images/userImage.jpg" class="img-responsive">  
+                    <img th:src="@{/images/userImage.jpg}" class="img-responsive">
                 </div>
                 <div class="col-12 col-lg-7">
                     <!-- datos -->
@@ -195,8 +195,9 @@
             </div>
 			 <br></br> 
 			<div class="d-flex justify-content-end">
-				<a href="ADMIN_RazonDenegacionCuenta.html">
-				<button class="btn btn-dark" style="margin-left: 10px" href="#">Denegar Cuenta</button></a>
+				<!--a href="ADMIN_RazonDenegacionCuenta.html"-->
+				<!--button class="btn btn-dark" style="margin-left: 10px" href="#">Denegar Cuenta</button></a-->
+                <li class="button_user"><a class="button active" th:href="@{'/admin/correo'+'?id='+${usuario.idusuarios}}" >Denegar Cuenta</a></li>
 				<!--button class="btn btn-warning" style="margin-left: 10px" th:href="@{'/admin/aceptar'+'?id='+${usuario.idusuarios}}">Aceptar Cuenta</button-->
                 <li class="button_user"><a class="button active" th:href="@{'/admin/aceptar'+'?id='+${usuario.idusuarios}}" >Aceptar Cuenta</a></li>
 			</div>

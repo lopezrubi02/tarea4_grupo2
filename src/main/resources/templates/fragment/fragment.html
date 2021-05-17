@@ -47,7 +47,10 @@
                             <li class="dinone"><a th:href="@{'/repartidor/Reportes'}">Reportes</a></li>
                             <li class="dinone"><a th:href="@{'/repartidor/PedidosDisponibles'}">Notificaciones</a></li>
                             <!-- TODO -->
-                            <li class="button_user"><a class="button active" href="#repartidor_perfil.html">Mi cuenta</a><a class="button" href="repartidor_login.html">Logout</a></li>
+                            <li class="button_user"><a class="button active" th:href="@{'/repartidor/miperfil'}">Mi cuenta</a>
+                                <form th:action="@{/logout}" method="post">
+                                    <button class="button " type="submit">Logout</button>
+                                </form></li>
                             <li>
                                 <button type="button" id="sidebarCollapse">
                                     <img src="images/menu_icon.png" alt="#">

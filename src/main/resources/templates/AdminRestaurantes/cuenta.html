@@ -1,10 +1,274 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <!-- basic -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- mobile metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <!-- site metas -->
+    <title>Spicyo</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- bootstrap css -->
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <!-- owl css -->
+    <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}">
+    <!-- style css -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <!-- responsive-->
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <!-- awesome fontfamily -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
 </head>
-<body>
+<!-- body -->
+
+<body class="main-layout about_page">
+<!-- loader  -->
+<div class="wrapper">
+    <!-- end loader -->
+    <div class="sidebar">
+        <!-- Sidebar  -->
+        <nav id="sidebar">
+            <div id="dismiss">
+                <i class="fa fa-arrow-left"></i>
+            </div>
+        </nav>
+    </div>
+
+
+    <div id="content">
+        <!-- header -->
+        <header>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="full">
+                            <a class="logo" href="index.html"><img src="/images/logo.png" alt="#" /></a>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="full">
+                            <div class="right_header_info">
+                                <ul>
+                                    <!-- TODO -->
+                                    <li class="button_user"><a class="button active" th:href="@{/adminrest/cuentaAdmin}">Mi cuenta</a><a class="button" th:href="@{/logout}">Logout</a></li>
+                                    <li>
+                                        <button type="button" id="sidebarCollapse">
+                                            <img src="/images/menu_icon.png" alt="#">
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- end header -->
+
+        <div class="yellow_bg" style="background: #d8b00f">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="title">
+                            <h2>Mi Perfil</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- about -->
+        <div class="about">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 about_img_boxpdnt">
+                                <figure><img th:src="@{/images/perfil-hombre-dibujos-animados_18591-58484 (1).jpg}" alt="#/"></figure>
+                                <form method="post" th:action="@{'/adminrest/guardarrestedit'}" th:object="${restaurante}" enctype="multipart/form-data">
+                                    <input type="hidden" th:field="*{usuario.idusuarios}">
+                                    <div class="about_box" style="height: 620px">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                            <label>Nombre del restaurante</label>
+                                            <div class="text-danger" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
+                                            <input class="form-control" th:field="*{nombre}" th:value="*{nombre}" type="text">
+                                        </div>
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                            <label>RUC del restaurante</label>
+                                            <input class="form-control" th:value="${ruc}" type="text" disabled>
+                                        </div>
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                            <label>Direccion del restaurante</label>
+                                            <div class="text-danger" th:if="${#fields.hasErrors('direccion')}" th:errors="*{direccion}"></div>
+                                            <input class="form-control" th:field="*{direccion}" th:value="*{direccion}" type="text">
+                                        </div>
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                            <label>Distrito</label>
+                                            <select type="text" class="form-select" th:field="*{distrito.iddistritos}"style="width: 100%;">
+                                                <option th:each="lista : ${listadistritos}"
+                                                        th:text="${lista.nombredistrito}"
+                                                        th:value="${lista.iddistritos}"
+                                                        th:selected="${lista.nombredistrito==restaurante.distrito.nombredistrito}"></option>
+                                            </select>
+                                        </div>
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                            <div style="position: relative;padding-top: 25px"><input class="form-control-file" type="file" id="imagen" name="imagen" style="opacity: 0%;position: absolute">Adjuntar Imagen</div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div style="padding-left: 15px;padding-top: 25px">
+                                                    <button class="send" type="submit"
+                                                            style="font-size: 16px;background: #d8b00f;width: 200px">Guardar cambios</button>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3"></div>
+                                            <div class="col-md-3">
+                                                <div style="padding-left: 15px;padding-top: 25px">
+                                                    <a class="send" type="button" th:href="@{/adminrest/categoriaedit}"
+                                                            style="font-size: 16px;background: #d8b00f;width: 200px;text-align: center;color:black;">Categorias</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                                <form method="post" th:action="@{'/adminrest/guardaradminedit'}" th:object="${usuario}">
+                                    <div class="about_box" style="padding: 64px 40px">
+                                        <div>
+                                            <input th:field="*{idusuarios}" th:value="*{idusuarios}" type="hidden">
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <label>Correo</label>
+                                                <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                                                <input class="form-control" type="text" th:field="*{email}">
+                                            </div>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <label>Nombres</label>
+                                                <input class="form-control"type="text" th:value="${datos.nombre}" disabled>
+                                            </div>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <label>Apellidos</label>
+                                                <input class="form-control"type="text" th:value="${datos.apellidos}" disabled>
+                                            </div>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <label>DNI</label>
+                                                <input class="form-control" type="text" th:value="${datos.dni}"  disabled>
+                                            </div>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <label>Número de celular</label>
+                                                <div class="text-danger" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}"></div>
+                                                <input class="form-control" type="number" th:field="*{telefono}">
+                                            </div>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <label>Fecha de nacimiento</label>
+                                                <input class="form-control" type="date" th:value="${datos.fechanacimiento}" disabled>
+                                            </div>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <label>Mis direcciones</label><br/><a th:href="@{'/adminrest/agregardireccion'}"> Agregar nueva dirección</a>
+                                                <br>
+                                                <div class="form-floating">
+                                                    <table class="table table-light table-hover">
+                                                        <tbody>
+                                                        <tr th:each="d: ${listadirecciones}">
+                                                            <td th:text = "${d.direccion}"></td>
+                                                            <td><a th:href="@{'/adminrest/borrardireccion?iddireccion=' + ${d.getIddirecciones()}}"><img align="right" src="http://cdn.onlinewebfonts.com/svg/img_512185.png" width="25" height="25"/></a></td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                    <br/>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <label>Contraseña</label>
+                                                <div th:if="${msg != null}" th:text="${msg}" class="text-danger"></div>
+                                                <div class="text-danger" th:if="${#fields.hasErrors('contraseniaHash')}" th:errors="*{contraseniaHash}"></div>
+                                                <input placeholder="Contraseña" class="form-control" type="password" th:field="*{contraseniaHash}">
+                                            </div>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <label>Confirmar contraseña</label>
+                                                <input placeholder="Confirmar contraseña" class="form-control" type="password" id="pass2" name="pass2">
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <div style="padding-left: 15px;padding-top: 25px">
+                                                        <button class="send" type="submit"
+                                                                style="font-size: 16px;background: #d8b00f;width: 200px">Guardar cambios</button>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3"></div>
+                                                <div class="col-md-3">
+                                                    <div style="padding-left: 15px;padding-top: 25px">
+                                                        <a class="send" type="button" th:href="@{/adminrest/perfil}"
+                                                                style="text-align: center; font-size: 16px;background: #d8b00f;width: 200px;color: black">Regresar</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end about -->
+
+
+        <!-- footer -->
+        <fooetr>
+            <div class="footer">
+
+                <div class="copyright">
+                    <div class="container">
+                        <p>© 2021 Todos los derechos reservados</p>
+                    </div>
+                </div>
+            </div>
+        </fooetr>
+        <!-- end footer -->
+
+    </div>
+</div>
+<div class="overlay"></div>
+<!-- Javascript files-->
+<script th:href="@{/js/jquery.min.js}"></script>
+<script th:href="@{/js/popper.min.js}"></script>
+<script th:href="@{/js/bootstrap.bundle.min.js}"></script>
+<script th:href="@{/js/owl.carousel.min.js}"></script>
+<script th:href="@{/js/custom.js}"></script>
+<script th:href="@{/js/jquery.mCustomScrollbar.concat.min.js}"></script>
+
+<script th:href="@{/js/jquery-3.0.0.min.js}"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#sidebar").mCustomScrollbar({
+            theme: "minimal"
+        });
+
+        $('#dismiss, .overlay').on('click', function() {
+            $('#sidebar').removeClass('active');
+            $('.overlay').removeClass('active');
+        });
+
+        $('#sidebarCollapse').on('click', function() {
+            $('#sidebar').addClass('active');
+            $('.overlay').addClass('active');
+            $('.collapse.in').toggleClass('in');
+            $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+        });
+    });
+</script>
 
 </body>
+
 </html>

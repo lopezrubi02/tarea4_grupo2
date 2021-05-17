@@ -11,19 +11,15 @@ public class Pedidos {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idpedidos;
 
-    @Column(nullable = false)
     private float montototal;
 
 
-    @Column(nullable = false)
     private int comisionrepartidor;
 
-    @Column(nullable = false)
     private int comisionsistema;
 
     private String montoexacto;
 
-    @Column(nullable = false)
     private int idmetodopago;
 
     private int calificacionrestaurante;
@@ -35,10 +31,8 @@ public class Pedidos {
 
     private float tiempodelivery;
 
-    @Column(nullable = false)
     private String estadorestaurante;
 
-    @Column(nullable = false)
     private String estadorepartidor;
 
     @Column(nullable = false)
@@ -47,6 +41,7 @@ public class Pedidos {
 
     private int idrepartidor;
 
+    @Column(nullable = false)
     private int restaurante_idrestaurante;
 
     private Date fechahorapedido;

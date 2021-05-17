@@ -38,7 +38,7 @@
     <div class="wrapper" >
     <!-- end loader -->
 
-     <div class="sidebar">
+     <div th:replace="fragments/adminSistema.html:: slider" class="sidebar">
             <!-- Sidebar  -->
             <nav id="sidebar">
 
@@ -66,7 +66,7 @@
     <div id="content">
     <!-- header -->
     <header>
-        <div class="container-fluid">
+        <div th:replace="fragments/adminSistema.html:: barra" class="container-fluid">
             <div class="row">
                 <div class="col-md-3">
                     <div class="full">
@@ -117,7 +117,7 @@
             <div class="row">
                 <div class="col-12 col-lg-5 text-center" style="margin-bottom: 4vh;">
                     <!-- imagen -->
-                    <img src="./images/userImage.jpg" class="img-responsive">  
+                    <img th:src="@{/images/userImage.jpg}" class="img-responsive">
                 </div>
                 <div class="col-12 col-lg-7">
                     <!-- datos -->
@@ -180,7 +180,8 @@
 			</div>
 			<br></br> 
 		<div class="d-flex justify-content-end">
-						<button class="btn btn-dark" style="margin-left: 10px"href="#">Denegar Cuenta</button>
+						<!--utton class="btn btn-dark" style="margin-left: 10px"href="#">Denegar Cuenta</button-->
+            <li class="button_user"><a class="button active" th:href="@{'/admin/correo'+'?id='+${usuario.idusuarios}}" >Denegar Cuenta</a></li>
 						<!--button class="btn btn-warning" style="margin-left: 10px" th:href="@{'/admin/aceptar'+'?id='+${usuario.idusuarios}}">Aceptar Cuenta</button-->
             <li class="button_user"><a class="button active" th:href="@{'/admin/aceptar'+'?id='+${usuario.idusuarios}}" >Aceptar Cuenta</a></li>
 
@@ -201,7 +202,7 @@
           <div class="row">
               <div class="col-12 col-lg-6 text-center" style="margin-bottom: 4vh;">
                   <!-- imagen -->
-                  <img src="./images/cevicheria.jpg" class="img-responsive">  
+                  <img th:src="@{/images/restaurant.jpg}" class="img-responsive">
               </div>
               <div class="col-12 col-lg-6">
                   <!-- datos -->
@@ -235,7 +236,7 @@
                             <div class="col-sm-3">
                               <h6 class="mb-0">Distrito</h6>
                             </div>
-                            <div class="col-sm-9 text-secondary" th:text="${restaurante.distrito}">
+                            <div class="col-sm-9 text-secondary" th:text="${restaurante.distrito.getNombredistrito()}">
                             </div>
                           </div>
                           <hr>
@@ -244,7 +245,9 @@
                               <h6 class="mb-0">Categoria</h6>
                             </div>
                             <div class="col-sm-9 text-secondary">
-                              Sushi
+                              <tr th:each="categoria, index : ${categorias}">
+                                  <th scope="row" th:text="${categoria.getNombrecategoria()}+'-'"></th>
+                              </tr>
                             </div>
                           </div>
   

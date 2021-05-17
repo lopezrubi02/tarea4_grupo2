@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface PlatoRepository extends JpaRepository<Plato,Integer> {
 
-    @Query(value = "select * from plato where restaurante_idrestaurante = ?1",
+    @Query(value = "select * from plato p where p.restaurante_idrestaurante = ?1 and p.activo = 1",
             nativeQuery = true)
     List<Plato> buscarPlatosPorIdRestaurante(int idrestaurante);
 

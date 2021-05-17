@@ -67,7 +67,7 @@
     <div id="content">
     <!-- header -->
     <header>
-        <div class="container-fluid">
+        <div th:replace="fragments/adminSistema.html:: barra" class="container-fluid">
             <div class="row">
                 <div class="col-md-3">
                     <div class="full">
@@ -116,8 +116,12 @@
 		<div class="container">
 				<div class="col-md-12">
                     <div class="d-flex justify-content-end">
-						<button class="btn btn-dark" style="margin-left: 10px"href="#">Cancelar</button>
-						<button class="btn btn-warning" style="margin-left: 10px" href="#">Enviar Correo</button>
+                        <li class="button_user"><a class="button active" th:href="@{nuevosUsuarios}" >Cancelar</a></li>
+                        <li class="button_user"><a class="button active" th:href="@{'/admin/denegar'+'?id='+${id}}" >Denegar Cuenta</a></li>
+						<!--button class="btn btn-dark" style="margin-left: 10px"
+                                th:href="@{nuevasCuentas}">Cancelar</button>
+						<button class="btn btn-warning" style="margin-left: 10px"
+                                th:href="@{'/admin/denegar'+'?id='+${id}}">Enviar Correo</button-->
 					</div>	
                 </div>
 			</div>
