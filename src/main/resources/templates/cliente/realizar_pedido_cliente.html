@@ -33,11 +33,11 @@
 
 <body class="main-layout">
     <!-- loader  -->
-    <!--div class="loader_bg">
+    <div class="loader_bg">
         <div class="loader"><img th:src="@{/images/loading.gif}" alt="" /></div>
     </div>
 
-    <div class="wrapper"-->
+    <div class="wrapper">
     <!-- end loader -->
 
      <div class="sidebar">
@@ -51,13 +51,13 @@
                 <ul class="list-unstyled components">
 
                     <li class="active">
-                        <a href="">Home</a>
+                        <a th:href="@{cliente/paginaprincipal}">Home</a>
                     </li>
                     <li>
-                        <a href="about.html">Realizar pedido</a>
+                        <a th:href="@{cliente/realizarpedido}">Realizar pedido</a>
                     </li>
                     <li>
-                        <a href="recipe.html">Mis reportes</a>
+                        <a th:href="@{/cliente/reportes}">Mis reportes</a>
                     </li>
             
                 </ul>
@@ -79,10 +79,10 @@
                     <div class="full">
                         <div class="right_header_info">
                             <ul>
-                                <li class="dinone"><a href="#">Mis reportes</a></li>
-                                <li class="dinone"><a href="#">Relizar pedido</a></li>
+                                <li class="dinone"><a th:href="@{/cliente/reportes}">Mis reportes</a></li>
+                                <li class="dinone"><a th:href="@{/cliente/realizarpedido}">Relizar pedido</a></li>
              
-                                <li class="button_user"><a class="button active" href="#login.html">Mi perfil</a><a class="button" href="#">Cerrar sesión</a></li>
+                                <li class="button_user"><a class="button active" th:href="@{/cliente/miperfil}">Mi perfil</a><a class="button" href="#">Cerrar sesión</a></li>
                                 <li><a href="#"><img style="margin-right: 15px;" th:src="@{/images/carrito.png}" width="45" height="45"></a></li>
                                 <li>
                                     <button type="button" id="sidebarCollapse">
@@ -104,13 +104,17 @@
 				<div class="title">
 			  <!--el input de buscar plato jutno a la dirección de entrega -->
 				<div class="row g-2">
-					<div class="col-md">
+                    <form class="input-group" method="post" th:action="@{/cliente/filtrarnombre}" style="width: 50%"><!-- COMPLETAR -->
+                        <div class="col-md">
+
 						<div class="form-floating">
-							<input type="email" class="form-control" id="floatingInputGrid" placeholder="Buscar plato o restaurante" >
-						<label for="floatingInputGrid">Buscar plato o restaurante</label>
+							<!--input type="email" class="form-control" id="floatingInputGrid" placeholder="Buscar plato o restaurante" -->
+                            <input name="searchField" class="form-control" id="floatingInputGrid" type="text" placeholder="Buscar plato o restaurante" th:text="${searchField}"/>
+                            <label for="floatingInputGrid">Buscar plato o restaurante</label>
 						</div>
-			  </div>
-			  <div class="col-md">
+			        </div>
+                    </form>
+			        <div class="col-md">
 				<div class="form-floating">
 				  <select class="form-select" id="floatingSelectGrid1" aria-label="Floating label select example">
 					<option th:each="direccion : ${listadirecciones}"
@@ -137,13 +141,19 @@
         <div class="title">
 			<!--filtro -->
 			<h3 style="text-align: left">Filtros</h3>
-						<div class="row g-2">
-			  <div class="col-md">
+            <!-- form de filtros -->
+            <div class="row g-2">
+                <form class="input-group mb-lg-3" method="post" th:action="@{cliente/filtrosrestaurantes}"><!-- COMPLETAR -->
+                    <div class="col-md">
 				<div class="form-floating">
-				  <select class="form-select" id="floatingSelectGrid2" aria-label="Floating label select example">
-					<option th:each = "categoria : ${listacategorias}"
+				  <select class="form-select" id="floatingSelectGrid2" aria-label="Floating label select example" onchange="window.location=this.options[this.selectedIndex].value">
+                      <option selected="true" disabled="disabled">Filtrar por categoría</option>
+                      <option th:text="Todas"
+                            th:value=" 'filtrocategoria?idcategoriarest=0'">Todos</option>
+                      <option
+                            th:each = "categoria : ${listacategorias}"
                     th:text="${categoria.getNombrecategoria()}"
-                    th:value="${categoria.getIdcategorias()}">Todos</option>
+                    th:value=" 'filtrocategoria?idcategoriarest=' + ${categoria.getIdcategorias()}">Todos</option>
 				  </select>
 				  <label for="floatingSelectGrid2">Categoría</label>
 				</div>
@@ -173,6 +183,8 @@
 				  <label for="floatingSelectGrid4">Calificación promedio</label>
 				</div>
 			  </div>
+                </form>
+                <!-- form -->
 			</div>
 			  <!--i><img src="images/title.png" alt="#"/></i>
 			  <h2>Our Blog</h2>
@@ -180,77 +192,27 @@
         </div>
       </div>
     </div>
-    <div class="row">
-      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mar_bottom">
-        <div class="blog_box">
-          <div class="blog_img_box">
-            <figure><img th:src="@{/images/blog_img1.png}" width="70" height="70"/>
-             
-            </figure>
+        <div class="row">
+          <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mar_bottom" th:each="restaurante : ${listarestaurantes}">
+            <div class="blog_box">
+              <div class="blog_img_box">
+                <figure><img th:src="@{/images/blog_img1.png}" width="70" height="70"/></figure>
+              </div>
+              <a th:href=" '/cliente/restaurantexordenar?idrestaurante=' + ${restaurante.idrestaurante}">
+                  <h3 th:text="${restaurante.nombre}">Chifa Imperial</h3></a>
+              <p>
+                  <span th:each="categoriarest : ${restaurante.categoriasrestList}"
+                        th:text="${categoriarest.nombrecategoria} + ', '">
+                  </span>
+              </p>
+            </div>
+              </br>
           </div>
-          <h3>Chifa Imperial</h3>
-          <p>Chifa </p>
+
+
         </div>
-      </div>
-       <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mar_bottom">
-        <div class="blog_box">
-          <div class="blog_img_box">
-            <figure><img th:src="@{/images/blog_img2.png}" width="70" height="70"/>
-             
-            </figure>
-          </div>
-          <h3>McDonald's</h3>
-          <p>Hamburguesas</p>
-        </div>
-      </div>
-       <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
-        <div class="blog_box">
-          <div class="blog_img_box">
-            <figure><img th:src="@{/images/blog_img3.png}" width="70" height="70"/>
-             
-            </figure>
-          </div>
-          <h3>PizzaHut</h3>
-          <p>Pizzas y pastas</p>
-        </div>
-      </div>
-		</div>
-		</br>
-		<div class="row">
-      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mar_bottom">
-        <div class="blog_box">
-          <div class="blog_img_box">
-            <figure><img th:src="@{/images/blog_img1.png}" width="70" height="70"/>
-             
-            </figure>
-          </div>
-          <h3>Chifa del Pueblo</h3>
-          <p>Chifa </p>
-        </div>
-      </div>
-       <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mar_bottom">
-        <div class="blog_box">
-          <div class="blog_img_box">
-            <figure><img th:src="@{/images/blog_img2.png}" width="70" height="70"/>
-             
-            </figure>
-          </div>
-          <h3>Bembos</h3>
-          <p>Hamburguesas</p>
-        </div>
-      </div>
-       <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
-        <div class="blog_box">
-          <div class="blog_img_box">
-            <figure><img th:src="@{/images/blog_img3.png}" width="70" height="70"/>
-             
-            </figure>
-          </div>
-          <h3>Pizza Raúl</h3>
-          <p>Pizzas y pastas</p>
-        </div>
-      </div>
-		</div>
+            </br>
+
   </div>
 </div>
 <!-- end blog -->
@@ -268,18 +230,18 @@
         </div>
     </fooetr>
     <!-- end footer -->
-
+    </div>
     <div class="overlay"></div>
     <!-- Javascript files-->
-    <script th:href="@{/js/jquery.min.js}"></script>
-    <script th:href="@{/js/popper.min.js}"></script>
-    <script th:href="@{/js/bootstrap.bundle.min.js}"></script>
-    <script th:href="@{/js/owl.carousel.min.js}"></script>
-    <script th:href="@{/js/custom.js}"></script>
-    <script th:href="@{/js/jquery.mCustomScrollbar.concat.min.js}"></script>
+    <script th:src="@{/js/jquery.min.js}" ></script>
+    <script th:src="@{/js/popper.min.js}" ></script>
+    <script th:src="@{/js/bootstrap.bundle.min.js}" ></script>
+    <script th:src="@{/js/owl.carousel.min.js}" ></script>
+    <script th:src="@{/js/custom.js}" ></script>
+    <script th:src="@{/js/jquery.mCustomScrollbar.concat.min.js}" ></script>
 
-    <script th:href="@{/js/jquery-3.0.0.min.js}"></script>
-   <script type="text/javascript">
+    <script th:src="@{/js/jquery-3.0.0.min.js}" ></script>
+    <script type="text/javascript">
         $(document).ready(function() {
             $("#sidebar").mCustomScrollbar({
                 theme: "minimal"
@@ -297,8 +259,8 @@
                 $('a[aria-expanded=true]').attr('aria-expanded', 'false');
             });
         });
-    </script>
 
+    </script>
     <style>
     #owl-demo .item{
         margin: 3px;

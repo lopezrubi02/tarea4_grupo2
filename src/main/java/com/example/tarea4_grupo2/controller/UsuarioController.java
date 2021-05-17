@@ -4,14 +4,8 @@ import com.example.tarea4_grupo2.dto.DineroAhorrado_ClienteDTO;
 import com.example.tarea4_grupo2.dto.TiempoMedio_ClienteDTO;
 import com.example.tarea4_grupo2.dto.Top3Platos_ClientesDTO;
 import com.example.tarea4_grupo2.dto.Top3Restaurantes_ClienteDTO;
-import com.example.tarea4_grupo2.entity.Categorias;
-import com.example.tarea4_grupo2.entity.Direcciones;
-import com.example.tarea4_grupo2.entity.Pedidos;
-import com.example.tarea4_grupo2.entity.Usuario;
-import com.example.tarea4_grupo2.repository.CategoriasRepository;
-import com.example.tarea4_grupo2.repository.DireccionesRepository;
-import com.example.tarea4_grupo2.repository.PedidosRepository;
-import com.example.tarea4_grupo2.repository.UsuarioRepository;
+import com.example.tarea4_grupo2.entity.*;
+import com.example.tarea4_grupo2.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
@@ -26,7 +20,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/cliente")
 public class UsuarioController {
 
     @Autowired
@@ -41,74 +34,85 @@ public class UsuarioController {
     @Autowired
     PedidosRepository pedidosRepository;
 
+    @Autowired
+    DistritosRepository distritosRepository;
+
+    @Autowired
+    RestauranteRepository restauranteRepository;
+
+    @Autowired
+    PlatoRepository platoRepository;
+
+    @GetMapping("/cliente/paginaprincipal")
     @GetMapping("/paginaprincipal")
     public String paginaprincipal() {
         return "cliente/paginaPrincipal";
     }
 
 
-    @GetMapping("/nuevo")
-    public String nuevoCliente() {
+    @GetMapping("/nuevocliente")
+    public String nuevoCliente(Model model,@ModelAttribute("usuario") Usuario usuario)
+    {
+        List<Distritos> listadistritos = distritosRepository.findAll();
+        model.addAttribute("listadistritos",listadistritos);
         return "cliente/registroCliente";
     }
 
     @PostMapping("/guardarNuevo")
-    public String guardarCliente(@RequestParam("nombres") String nombres,
-                                 @RequestParam("apellidos") String apellidos,
-                                 @RequestParam("email") String email,
-                                 @RequestParam("dni") String dni,
-                                 @RequestParam("telefono") Integer telefono,
-                                 @RequestParam("fechaNacimiento") String fechaNacimiento,
-                                 @RequestParam("sexo") String sexo,
-                                 @RequestParam("direccion") String direccion,
-                                 @RequestParam("distrito") String distrito,
-                                 @RequestParam("contraseniaHash") String contraseniaHash,
+    public String guardarCliente(@RequestParam("direccion") String direccion,
+                                 @RequestParam("iddistrito") int iddistrito,
                                  @RequestParam("password2") String pass2,
-                                 Model model) {
+                                 Model model,
+                                 @ModelAttribute("usuario") @Valid Usuario usuario,
+                                 BindingResult bindingResult) {
 
-        System.out.println(nombres + apellidos + email + dni + telefono + fechaNacimiento);
-        System.out.println(fechaNacimiento);
-        if (contraseniaHash.equals(pass2)) {
-            Usuario usuario = new Usuario();
-            usuario.setNombre(nombres);
-            usuario.setApellidos(apellidos);
-            usuario.setEmail(email);
-            usuario.setTelefono(telefono);
-            usuario.setSexo(sexo);
+        if(bindingResult.hasErrors()){
+            System.out.println("hay algun error");
+            List<Distritos> listadistritos = distritosRepository.findAll();
+            model.addAttribute("listadistritos",listadistritos);
+            System.out.println(bindingResult.getFieldErrors());
+            System.out.println(pass2);
+            System.out.println(usuario.getContraseniaHash());
+            return "cliente/registroCliente";
+        }else{
+            System.out.println("mo hay error de binding");
+            System.out.println(pass2);
+            System.out.println(usuario.getContraseniaHash());
+            System.out.println("#####################################33");
+            if (usuario.getContraseniaHash().equals(pass2)) {
+                System.out.println(pass2);
+                System.out.println(usuario.getContraseniaHash());
+                String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
 
-            String contraseniahashbcrypt = BCrypt.hashpw(contraseniaHash, BCrypt.gensalt());
 
+                usuario.setContraseniaHash(contraseniahashbcrypt);
+                usuario.setRol("Cliente");
+                usuario.setCuentaActiva(1);
 
-            usuario.setContraseniaHash(contraseniahashbcrypt);
-            usuario.setRol("Cliente");
-            usuario.setCuentaActiva(1);
-            usuario.setDni(dni);
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            try {
-                usuario.setFechaNacimiento(sdf.parse(fechaNacimiento));
-                System.out.println(fechaNacimiento);
-            } catch (ParseException e) {
-                e.printStackTrace();
+                usuarioRepository.save(usuario);
+                System.out.println("guarda");
+
+                Usuario usuarionuevo = usuarioRepository.findByDni(usuario.getDni());
+
+                int idusuarionuevo = usuarionuevo.getIdusuarios();
+
+                Direcciones direccionactual = new Direcciones();
+                direccionactual.setDireccion(direccion);
+                Optional<Distritos> distritoopt = distritosRepository.findById(iddistrito);
+                Distritos distritosactual = distritoopt.get();
+
+                direccionactual.setDistrito(distritosactual);
+                direccionactual.setUsuariosIdusuarios(idusuarionuevo);
+                direccionactual.setActivo(1);
+                direccionesRepository.save(direccionactual);
+
+                return "cliente/confirmarCuenta";
+            } else {
+                List<Distritos> listadistritos = distritosRepository.findAll();
+                model.addAttribute("listadistritos",listadistritos);
                 return "cliente/registroCliente";
             }
-            usuarioRepository.save(usuario);
-
-            Usuario usuarionuevo = usuarioRepository.findByDni(dni);
-
-            int idusuarionuevo = usuarionuevo.getIdusuarios();
-
-            Direcciones direccionactual = new Direcciones();
-            direccionactual.setDireccion(direccion);
-            //direccionactual.setDistrito(distrito);
-            direccionactual.setUsuariosIdusuarios(idusuarionuevo);
-
-            direccionesRepository.save(direccionactual);
-
-            return "cliente/confirmarCuenta";
-        } else {
-            return "cliente/registroCliente";
         }
-
     }
 
     @GetMapping("/reportes")
@@ -177,24 +181,143 @@ public class UsuarioController {
         return "cliente/reportes";
     }
 
-    @GetMapping("/realizarpedido")
+    @GetMapping("/cliente/realizarpedido")
     public String realizarpedido(Model model) {
 
         int idusuarioactual = 8;
 
         List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuarioactual);
         List<Categorias> listacategorias = categoriasRepository.findAll();
+        List<Restaurante> listarestaurantes = restauranteRepository.findAll();
         model.addAttribute("listacategorias", listacategorias);
         model.addAttribute("listadirecciones", listadireccionescliente);
-
+        model.addAttribute("listarestaurantes",listarestaurantes);
+;
 
         return "cliente/realizar_pedido_cliente";
     }
 
-    @GetMapping("/miperfil")
+    @PostMapping("/cliente/filtrarnombre")
+    public String filtronombre(Model model,
+                               @RequestParam(value = "searchField" ,defaultValue = "") String buscar){
+        //TODO mandar a la vista los platos buscados
+        System.out.println(buscar);
+        List<Plato> listaplatos = platoRepository.buscarPlatoxNombre(buscar);
+        List<Restaurante> listarestaurantes = restauranteRepository.buscarRestaurantexNombre(buscar);
+        model.addAttribute("listarestaurantesbuscado",listarestaurantes);
+        model.addAttribute("listaplatosbuscado",listaplatos);
+        return "redirect:/cliente/realizarpedido";
+    }
+
+
+     @GetMapping("cliente/filtrocategoria")
+     public String filtrosrestaurantes1(Model model,
+     @RequestParam(value = "idcategoriarest" ,defaultValue = "0") int idcategoriarest
+                                        ){
+         System.out.println(idcategoriarest);
+         System.out.println("*******************************");
+
+
+         Optional<Categorias> catopt = categoriasRepository.findById(idcategoriarest);
+         if(catopt.isPresent()){
+             List<Restaurante> listarestauranteseleccionado = restauranteRepository.listarestxcategoria(idcategoriarest);
+             int idusuarioactual = 8;
+
+             List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuarioactual);
+             List<Categorias> listacategorias = categoriasRepository.findAll();
+             List<Restaurante> listarestaurantes = restauranteRepository.findAll();
+             model.addAttribute("listacategorias", listacategorias);
+             model.addAttribute("listadirecciones", listadireccionescliente);
+
+
+             if(idcategoriarest!=0){
+                 model.addAttribute("listarestaurantes",listarestauranteseleccionado);
+             }else{
+                 model.addAttribute("listarestaurantes",listarestaurantes);
+             }
+
+             return "cliente/realizar_pedido_cliente";
+         }else{
+             return "redirect:/cliente/realizarpedido";
+         }
+
+     }
+
+
+        /** restaurante a ordenar **/
+
+     @GetMapping("/cliente/restaurantexordenar")
+     public String restaurantexordenar(@RequestParam("idrestaurante") int idrestaurante, Model model){
+
+         System.out.println(idrestaurante);
+         System.out.println("**************************");
+
+         Optional<Restaurante> restopt = restauranteRepository.findById(idrestaurante);
+
+        if(restopt.isPresent()){
+            Restaurante rest = restopt.get();
+
+            if (rest!=null){
+                int cantreviews = restauranteRepository.cantreviews(idrestaurante);
+                System.out.println(cantreviews);
+                System.out.println("**************************");
+
+                List<Plato> platosxrest = platoRepository.buscarPlatosPorIdRestauranteDisponilidadActivo(idrestaurante);
+
+                model.addAttribute("restaurantexordenar",rest);
+                model.addAttribute("cantreviews",cantreviews);
+                model.addAttribute("platosxrest",platosxrest);
+                return "cliente/restaurante_orden_cliente";
+
+            }else{
+                return "redirect:/cliente/realizarpedido";
+            }
+        }else{
+            return "redirect:/cliente/realizarpedido";
+        }
+
+     }
+
+    @GetMapping("/cliente/platoxpedir")
+    public String platoxpedir(Model model,
+                              @RequestParam("idplato") int idplatopedir,
+                              @RequestParam("idrestaurante") int idrestaurante){
+
+         Optional<Plato> platoopt = platoRepository.findById(idplatopedir);
+         Optional<Restaurante> restopt = restauranteRepository.findById(idrestaurante);
+
+         if(platoopt.isPresent() && restopt.isPresent()){
+             Plato platoseleccionado = platoopt.get();
+             model.addAttribute("platoseleccionado",platoseleccionado);
+             model.addAttribute("idrestaurante",idrestaurante);
+             return "cliente/detalles_plato";
+         }else{
+            return "redirect:/cliente/restaurantexordenar?idrestaurante=" + idrestaurante;
+         }
+    }
+
+    @PostMapping("/cliente/platopedido")
+    public String platopedido(@RequestParam("cubierto") int cubiertos,
+                              @RequestParam("cantidad") int cantidad,
+                              @RequestParam("descripcion") String descripcion,
+                              @RequestParam(value = "idrestaurante") int idrestaurante){
+
+        System.out.println(cubiertos);
+        System.out.println("**********************+");
+        System.out.println(cantidad);
+        System.out.println(descripcion);
+        System.out.println(idrestaurante);
+        System.out.println("gggggggggggggggggg");
+        return "redirect:/cliente/restaurantexordenar?idrestaurante=" + idrestaurante;
+
+    }
+
+    /** Mi perfil **/
+
+    @GetMapping("/cliente/miperfil")
     public String miperfil(Model model) {
         int idusuario = 8;
-        List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuario);
+        List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosAndActivoEquals(idusuario,1);
         model.addAttribute("listadirecciones", listadireccionescliente);
         Optional<Usuario> optional = usuarioRepository.findById(idusuario);
         Usuario usuario = optional.get();
@@ -203,7 +326,7 @@ public class UsuarioController {
         return "cliente/miPerfil";
     }
 
-    @PostMapping("/miperfil")
+    @PostMapping("/cliente/miperfil")
     public String updatemiperfil(Usuario usuarioRecibido) {
         System.out.println(usuarioRecibido.getIdusuarios());
         Optional<Usuario> optusuario = usuarioRepository.findById(usuarioRecibido.getIdusuarios());
@@ -225,50 +348,65 @@ public class UsuarioController {
     }
 
 
-    @GetMapping("/borrardireccion")
+    @GetMapping("/cliente/borrardireccion")
     public String borrardireccion(@RequestParam("iddireccion") int iddireccion,
                                   Model model) {
 
-        direccionesRepository.deleteById(iddireccion);
+        Optional<Direcciones> direccionopt = direccionesRepository.findById(iddireccion);
+        Direcciones direccionborrar = direccionopt.get();
+
+        if(direccionborrar != null){
+            direccionborrar.setActivo(0);
+            direccionesRepository.save(direccionborrar);
+        }
 
         return "redirect:/cliente/miperfil";
     }
 
-    @GetMapping("/agregardireccion")
-    public String agregardireccion() {
+    @GetMapping("/cliente/agregardireccion")
+    public String agregardireccion(Model model) {
+
+        List<Distritos> listadistritos = distritosRepository.findAll();
+        model.addAttribute("listadistritos",listadistritos);
 
         return "cliente/registrarNuevaDireccion";
     }
 
-    @PostMapping("/guardarnuevadireccion")
+    @PostMapping("/cliente/guardarnuevadireccion")
     public String guardarnuevadireccion(@RequestParam("direccion") String direccion,
-                                        @RequestParam("distrito") String distrito) {
+                                        @RequestParam("iddistrito") int iddistrito) {
 
         int idusuario = 8;
 
         Direcciones direccioncrear = new Direcciones();
         direccioncrear.setDireccion(direccion);
         //direccioncrear.setDistrito(distrito);
-        direccioncrear.setUsuariosIdusuarios(idusuario);
 
+        Optional<Distritos> distritoopt = distritosRepository.findById(iddistrito);
+        Distritos distritonuevo = distritoopt.get();
+
+        direccioncrear.setDistrito(distritonuevo);
+
+        direccioncrear.setUsuariosIdusuarios(idusuario);
+        direccioncrear.setActivo(1);
         direccionesRepository.save(direccioncrear);
 
         return "redirect:/cliente/miperfil";
 
     }
 
-    @GetMapping("/olvidecontrasenia")
+    @GetMapping("/cliente/olvidecontrasenia")
     public String olvidecontrasenia()
     {
         return "cliente/recuperarContra1";
     }
 
-    @GetMapping("/recuperarcontrasenia")
+    @GetMapping("/cliente/recuperarcontrasenia")
     public String recuperarcontra(){
         return "cliente/recuperarContra2";
     }
 
-    @PostMapping("/guardarnuevacontra")
+    @PostMapping("/cliente/guardarnuevacontra")
     public String nuevacontra(@RequestParam("contrasenia1") String contra1,
                               @RequestParam("contrasenia2") String contra2){
 

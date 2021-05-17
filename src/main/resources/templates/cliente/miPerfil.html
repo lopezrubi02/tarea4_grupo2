@@ -33,10 +33,9 @@
 
 <body class="main-layout about_page">
     <!-- loader  -->
-    <!--div class="loader_bg">
+    <div class="loader_bg">
         <div class="loader"><img th:src="@{/images/loading.gif}" alt="" /></div>
-
-    </div-->
+    </div>
 
     <div class="wrapper">
     <!-- end loader -->
@@ -202,15 +201,15 @@
     </div>
     <div class="overlay"></div>
     <!-- Javascript files-->
-    <script th:href="@{/js/jquery.min.js}"></script>
-    <script th:href="@{/js/popper.min.js}"></script>
-    <script th:href="@{/js/bootstrap.bundle.min.js}"></script>
-    <script th:href="@{/js/owl.carousel.min.js}"></script>
-    <script th:href="@{/js/custom.js}"></script>
-    <script th:href="@{/js/jquery.mCustomScrollbar.concat.min.js}"></script>
+    <script th:src="@{/js/jquery.min.js}" ></script>
+    <script th:src="@{/js/popper.min.js}" ></script>
+    <script th:src="@{/js/bootstrap.bundle.min.js}" ></script>
+    <script th:src="@{/js/owl.carousel.min.js}" ></script>
+    <script th:src="@{/js/custom.js}" ></script>
+    <script th:src="@{/js/jquery.mCustomScrollbar.concat.min.js}" ></script>
 
-    <script th:href="@{/js/jquery-3.0.0.min.js}"></script>
-   <script type="text/javascript">
+    <script th:src="@{/js/jquery-3.0.0.min.js}" ></script>
+    <script type="text/javascript">
         $(document).ready(function() {
             $("#sidebar").mCustomScrollbar({
                 theme: "minimal"
@@ -228,8 +227,8 @@
                 $('a[aria-expanded=true]').attr('aria-expanded', 'false');
             });
         });
-    </script>
 
+    </script>
 </body>
 
 </html>
