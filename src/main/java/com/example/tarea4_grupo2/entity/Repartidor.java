@@ -25,9 +25,18 @@ public class Repartidor {
     private boolean disponibilidad;
     private Float calificacionpromedio;
 
+
+    public Distritos getDistritos() {
+        return distritos;
+    }
+
+    public void setDistritos(Distritos distritos) {
+        this.distritos = distritos;
+    }
+
     @ManyToOne
-    @JoinColumn(name = "iddistrito")
-    private Distritos distrito;
+    @JoinColumn(name = "iddistritoactual")
+    private Distritos distritos;
 
     public String getFotonombre() {
         return fotonombre;
@@ -41,13 +50,7 @@ public class Repartidor {
         return foto;
     }
 
-    public int getIddistritoactual() {
-        return iddistritoactual;
-    }
 
-    public void setIddistritoactual(int iddistritoactual) {
-        this.iddistritoactual = iddistritoactual;
-    }
 
 
     /*@OneToOne
