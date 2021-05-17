@@ -58,6 +58,16 @@ public interface RepartidorRepository  extends JpaRepository<Repartidor, Integer
             "where p.estadorepartidor like concat('pendient', '%')", nativeQuery = true)
     List<PedidosDisponiblesDTO> findListaPedidosDisponibles();
 
+
+    //Usado por Adminsistema en reportes de repartidores
+
+    @Query(value = "select u.nombre, u.apellidos,u.dni, dr.movilidad, dr.idrepartidor, count(p.idpedidos) as 'pedidos', sum(p.comisionrepartidor) as 'comision' from usuarios u\n" +
+            "inner join datosrepartidor dr on (u.idusuarios = dr.usuarios_idusuarios)\n" +
+            "inner join pedidos p on (p.idrepartidor = dr.usuarios_idusuarios)\n" +
+            "group by dr.idrepartidor\n" +
+            "order by idrepartidor",nativeQuery = true)
+    List<RepartidoresReportes_DTO> reporteRepartidores();
+
     //Listo
     @Query(value = "select pe.idpedidos, pe.montototal, pe.comisionrepartidor, pe.restaurante_idrestaurante, php.cantidadplatos, pl.idplato, pl.nombre\n" +
             "from pedidos_has_plato php\n" +
