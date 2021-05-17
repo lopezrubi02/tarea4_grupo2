@@ -104,7 +104,7 @@
 				<div class="title">
 			  <!--el input de buscar plato jutno a la dirección de entrega -->
 				<div class="row g-2">
-                    <form class="input-group" method="post" th:action="@{/cliente/filtrarnombre}" style="width: 50%"><!-- COMPLETAR -->
+                    <form class="input-group" method="post" th:action="@{/cliente/filtrarnombre}"><!-- COMPLETAR -->
                         <div class="col-md">
 
 						<div class="form-floating">
@@ -113,18 +113,20 @@
                             <label for="floatingInputGrid">Buscar plato o restaurante</label>
 						</div>
 			        </div>
-                    </form>
-			        <div class="col-md">
-				<div class="form-floating">
-				  <select class="form-select" id="floatingSelectGrid1" aria-label="Floating label select example">
-					<option th:each="direccion : ${listadirecciones}"
-                    th:text="${direccion.getDireccion()}"
-                    th:value="${direccion.getIddirecciones()}">Dirección 1</option>
 
-				  </select>
-				  <label for="floatingSelectGrid1">¿A dónde vas  a enviar tu pedido?</label>
-				</div>
-			  </div>
+			        <div class="col-md">
+                        <div class="form-floating">
+                          <select class="form-select" id="floatingSelectGrid1" aria-label="Floating label select example" onchange="window.location=this.options[this.selectedIndex].value">
+                            <option th:each="direccion : ${listadirecciones}"
+                                    th:text="${direccion.getDireccion()}"
+                            th:value="'direccionxenviar?direccionxenviar=' + ${direccion.getIddirecciones()}"
+                            >Dirección 1</option>
+
+                          </select>
+                          <label for="floatingSelectGrid1">¿A dónde vas  a enviar tu pedido?</label>
+                        </div>
+		    	  </div>
+                    </form>
 				</div>					 
 				 
 				</div>
@@ -153,7 +155,8 @@
                       <option
                             th:each = "categoria : ${listacategorias}"
                     th:text="${categoria.getNombrecategoria()}"
-                    th:value=" 'filtrocategoria?idcategoriarest=' + ${categoria.getIdcategorias()}">Todos</option>
+                    th:value=" 'filtrocategoria?idcategoriarest=' + ${categoria.getIdcategorias()}"
+                   >Todos</option>
 				  </select>
 				  <label for="floatingSelectGrid2">Categoría</label>
 				</div>
@@ -198,7 +201,7 @@
               <div class="blog_img_box">
                 <figure><img th:src="@{/images/blog_img1.png}" width="70" height="70"/></figure>
               </div>
-              <a th:href=" '/cliente/restaurantexordenar?idrestaurante=' + ${restaurante.idrestaurante}">
+              <a th:href=" '/cliente/restaurantexordenar?idrestaurante=' + ${restaurante.idrestaurante} + '&direccionxenviar=' + ${direccionseleccionada.getIddirecciones()}">
                   <h3 th:text="${restaurante.nombre}">Chifa Imperial</h3></a>
               <p>
                   <span th:each="categoriarest : ${restaurante.categoriasrestList}"

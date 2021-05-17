@@ -60,8 +60,10 @@
                                             <li class="dinone"><a th:href="@{'/repartidor/PedidosDisponibles'}">Notificaciones</a></li>
 
                                             <!-- TODO -->
-                                            <li class="button_user"><a class="button active" th:href="@{'/repartidor/perfil'}">Mi cuenta</a><a
-                                                    class="button" th:href="@{'/logout'}">Logout</a></li>
+                                            <li class="button_user"><a class="button active" th:href="@{'/repartidor/perfil'}">Mi cuenta</a>
+                                                <form th:action="@{/logout}" method="post">
+                                                    <button class="button " type="submit">Logout</button>
+                                                </form></li>
                                             <li>
                                                 <button type="button" id="sidebarCollapse">
                                                     <img th:src="@{/images/menu_icon.png}" alt="#">

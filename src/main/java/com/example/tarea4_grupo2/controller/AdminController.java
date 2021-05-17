@@ -3,10 +3,7 @@ package com.example.tarea4_grupo2.controller;
 import com.example.tarea4_grupo2.dto.DeliveryReportes_DTO;
 import com.example.tarea4_grupo2.dto.RepartidoresReportes_DTO;
 import com.example.tarea4_grupo2.dto.RestauranteReportes_DTO;
-import com.example.tarea4_grupo2.entity.Direcciones;
-import com.example.tarea4_grupo2.entity.Repartidor;
-import com.example.tarea4_grupo2.entity.Restaurante;
-import com.example.tarea4_grupo2.entity.Usuario;
+import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -14,10 +11,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.HttpServletBean;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import javax.validation.Valid;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -171,9 +173,12 @@ public class AdminController {
     public String miCuenta(
             Model model,
             @ModelAttribute("usuario") @Valid Usuario usuarioRecibido,
-            BindingResult bindingResult){
+            BindingResult bindingResult,
+            HttpSession session){
         // TODO se harcodeo el id del actual usuario logeado
-        int id = 1;
+        //int id = 1;
+        Usuario usuarioActual = (Usuario) session.getAttribute("usuarioLogueado");
+        int id = usuarioActual.getIdusuarios();
 
         Optional<Usuario> optional = usuarioRepository.findById(id);
         Usuario usuario = optional.get();
@@ -191,9 +196,6 @@ public class AdminController {
     ){
 
         if(bindingResult.hasErrors()) {
-            System.out.println(" ============ ERROR ============");
-
-
             return "adminsistema/miCuenta";
         } else {
             // se obtiene el usuario en la base de datos para actualizar solo los campos que han cambiado
@@ -220,7 +222,10 @@ public class AdminController {
 //--------------------------
 //-------------------------------------------------k
     @GetMapping("/gestionCuentas")
-    public String gestionCuentas(){
+    public String gestionCuentas(HttpSession session,Model model){
+        Usuario usuarioActual = (Usuario) session.getAttribute("usuarioLogueado");
+        int id = usuarioActual.getIdusuarios();
+        model.addAttribute("idAdmin",id);
         return "adminsistema/GestionCuentasPrincipal";
     }
 
@@ -260,7 +265,7 @@ public class AdminController {
 
                 if(buscar.equals("")){
                     attr.addFlashAttribute("msg","No hay nuevas Cuentas que aceptar");
-                    return "adminsistema/GestionCuentasPrincipal";
+                    return "redirect:/admin/gestionCuentas";
                 }
 
                 attr.addFlashAttribute("msg","No se encontraron resultados para su busqueda");
@@ -318,8 +323,10 @@ public class AdminController {
                         model.addAttribute("usuario",usuario);
 
                         Restaurante restaurante = restauranteRepository.findRestauranteByUsuario_Idusuarios(id);
+                        List<Categorias> categorias =  restaurante.getCategoriasrestList();
 
                         model.addAttribute("restaurante",restaurante);
+                        model.addAttribute("categorias",categorias);
                         return "adminsistema/AceptarCuentaRestaurante";
                     case "Repartidor":
                         model.addAttribute("usuario",usuario);
@@ -377,56 +384,43 @@ public class AdminController {
 
 
 
-    @GetMapping("adminForm")
-    public String adminForm(){
+    @GetMapping("/adminForm")
+    public String adminForm(Model model,HttpSession session){
+        model.addAttribute("usuario", new Usuario());
+        Usuario usuario = (Usuario) session.getAttribute("usuarioLogueado");
+        int idAdmin = usuario.getIdusuarios();
+        if(idAdmin!=1){
+            return "redirect:/admin/gestionCuentas";
+        }
         return "adminsistema/agregarAdmin";
     }
 
-    @PostMapping("/agregarAdmin")
-    public String agregarAdmin(@RequestParam("nombres") String nombres,
-                               @RequestParam("apellidos") String apellidos,
-                               @RequestParam("email" ) String email,
-                               @RequestParam("dni") String dni,
-                               @RequestParam("telefono") Integer telefono,
-                               @RequestParam("fechaNacimiento") String fechaNacimiento,
-                               @RequestParam("sexo") String sexo,
-                               @RequestParam("contraseniaHash") String contraseniaHash,
-                               @RequestParam("password2") String pass2,
-                               Model model, RedirectAttributes attr){
-        System.out.println(nombres + apellidos + email + dni + telefono + fechaNacimiento);
-        System.out.println(fechaNacimiento);
-        if(contraseniaHash.equals(pass2)){
-            Usuario usuario = new Usuario();
-            usuario.setNombre(nombres);
-            usuario.setApellidos(apellidos);
-            usuario.setEmail(email);
-            usuario.setTelefono(telefono);
-            usuario.setSexo(sexo);
 
-            String contraseniahashbcrypt = BCrypt.hashpw(contraseniaHash, BCrypt.gensalt());
-            usuario.setContraseniaHash(contraseniahashbcrypt);
-            usuario.setRol("AdminSistema");
-            usuario.setCuentaActiva(1);
-            usuario.setDni(dni);
-            LocalDateTime localDate = LocalDateTime.now();
-            usuario.setUltimafechaingreso(localDate);
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            try{
-                usuario.setFechaNacimiento(sdf.parse(fechaNacimiento));
-                System.out.println(fechaNacimiento);
-            } catch (ParseException e) {
-                e.printStackTrace();
-                attr.addFlashAttribute("msg","Fecha Incorrecta");
-                return "adminsistema/agregarAdmin";
-            }
-            usuarioRepository.save(usuario);
-            attr.addFlashAttribute("msg","Administrador creado exitosamente");
-        }else{
-            attr.addFlashAttribute("msg","Fallo al crear Administrador");
+    @PostMapping("/agregarAdmin")
+    public String agregarAdmin(@ModelAttribute("usuario") @Valid Usuario usuario, BindingResult bindingResult,
+                               @RequestParam("password2") String password2,
+                               @RequestParam(value = "contras",defaultValue = "") String contras,
+                               Model model, RedirectAttributes attr){
+
+        if(bindingResult.hasErrors()){
             return "adminsistema/agregarAdmin";
         }
-        return "adminsistema/GestionCuentasPrincipal";
+        else {
+            if(usuario.getContraseniaHash().equals(password2)) {
+                String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
+                usuario.setContraseniaHash(contraseniahashbcrypt);
+                usuarioRepository.save(usuario);
+                attr.addFlashAttribute("msg", "Administrador creado exitosamente");
+
+            }else {
+                model.addAttribute("contras","Contraseña no coinciden");
+                return "adminsistema/agregarAdmin";
+            }
+        }
+
+        return "redirect:/admin/gestionCuentas";
     }
+
 
     //Reportes
 
