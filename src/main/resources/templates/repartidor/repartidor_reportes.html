@@ -69,8 +69,8 @@
                         <td th:text="${info.index + 1}"></td>
                         <td th:text="${pedidoDisponible.getNombre()}"></td>
                         <td th:text="${pedidoDisponible.getRestaurantedistrito()}"></td>
-                        <td th:text="${pedidoDisponible.getClientedireccion()}"></td>
-                        <td th:text="${pedidoDisponible.getClientedistrito()}"></td>
+                        <td th:text="${pedidoDisponible.getClienteubicacion().getDireccion()}"></td>
+                        <td th:text="${pedidoDisponible.getClienteubicacion().getDistrito()}"></td>
                         <td th:text="${pedidoDisponible.getComisionrepartidor()} + '.0'"></td>
                         <td th:text="${pedidoDisponible.getMontototal()}"></td>
                         <td th:text="${pedidoDisponible.getCalificacionrepartidor()}"></td>
