@@ -82,8 +82,15 @@
                                 <li class="dinone"><a href="#">Mis reportes</a></li>
                                 <li class="dinone"><a href="#">Relizar pedido</a></li>
 
-                                <li class="button_user"><a class="button active" href="#login.html">Mi perfil</a><a class="button" href="#">Cerrar sesión</a></li>
-                                <li>
+                                <li class="button_user">
+                                    <a class="button active" th:href="@{'/cliente/miperfil'}">Mi perfil</a>
+                                    <!--a class="button" href="#">Cerrar sesión</a-->
+                                </li>
+                                <li style="transform: translateY(-7px)">
+                                    <form th:action="@{/logout}" method="post">
+                                        <button class="button" style="padding: 0px 15px; font-size: 14px;height: 40px;width: 100.5px;background:#e3d105" type="submit">Logout</button>
+                                    </form>
+                                </li><li>
                                     <a href="#"><img style="margin-right: 15px;" th:src="@{/images/carrito.png}" width="45" height="45"></a></li>
                                 <li>
                                     <button type="button" id="sidebarCollapse">
