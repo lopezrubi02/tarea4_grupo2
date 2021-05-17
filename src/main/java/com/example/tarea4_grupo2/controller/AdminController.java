@@ -12,11 +12,14 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.HttpServletBean;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import javax.validation.Valid;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -57,8 +60,6 @@ public class AdminController {
          *      + Si la pagina recibida es mayor a la maxima posible
          *
          */
-
-        // todo html para el post
 
         float numberOfUsersPerPage = 7;
         int page = Integer.parseInt(requestedPage);
@@ -126,7 +127,6 @@ public class AdminController {
         if (optional.isPresent()) {
             Usuario usuario = optional.get();
 
-            // TODO switch case
             switch (usuario.getRol()) {
                 case "AdminSistema":
                     model.addAttribute("usuario", usuario);
@@ -168,9 +168,11 @@ public class AdminController {
 
     @GetMapping("/miCuenta")
     public String miCuenta(
-            Model model, HttpSession session){
-        // TODO se harcodeo el id del actual usuario logeado
-        //int id = 1;
+            Model model,
+            @ModelAttribute("usuario") @Valid Usuario usuarioRecibido,
+            BindingResult bindingResult,
+            HttpSession session){
+
         Usuario usuarioActual = (Usuario) session.getAttribute("usuarioLogueado");
         int id = usuarioActual.getIdusuarios();
 
@@ -183,24 +185,30 @@ public class AdminController {
 
     @PostMapping("/miCuenta")
     public String updateAdminInfo(
-            Usuario usuarioRecibido,
-            RedirectAttributes redirectAttributes
+            @ModelAttribute("usuario") @Valid Usuario usuarioRecibido,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes,
+            Model model
     ){
 
-        // se obtiene el usuario en la base de datos para actualizar solo los campos que han cambiado
-        Optional<Usuario> optionalUsuario = usuarioRepository.findById(usuarioRecibido.getIdusuarios());
-        Usuario usuarioEnlabasededatos = optionalUsuario.get();
+        if(bindingResult.hasErrors()) {
+            return "adminsistema/miCuenta";
+        } else {
+            // se obtiene el usuario en la base de datos para actualizar solo los campos que han cambiado
+            Optional<Usuario> optionalUsuario = usuarioRepository.findById(usuarioRecibido.getIdusuarios());
+            Usuario usuarioEnlabasededatos = optionalUsuario.get();
 
-        usuarioEnlabasededatos.setNombre(usuarioRecibido.getNombre());
-        usuarioEnlabasededatos.setEmail(usuarioRecibido.getEmail());
-        usuarioEnlabasededatos.setDni(usuarioRecibido.getDni());
-        usuarioEnlabasededatos.setTelefono(usuarioRecibido.getTelefono());
-        usuarioEnlabasededatos.setFechaNacimiento(usuarioRecibido.getFechaNacimiento());
-        usuarioEnlabasededatos.setSexo(usuarioRecibido.getSexo());
+            usuarioEnlabasededatos.setNombre(usuarioRecibido.getNombre());
+            usuarioEnlabasededatos.setEmail(usuarioRecibido.getEmail());
+            usuarioEnlabasededatos.setDni(usuarioRecibido.getDni());
+            usuarioEnlabasededatos.setTelefono(usuarioRecibido.getTelefono());
+            usuarioEnlabasededatos.setFechaNacimiento(usuarioRecibido.getFechaNacimiento());
+            usuarioEnlabasededatos.setSexo(usuarioRecibido.getSexo());
 
-        usuarioRepository.save(usuarioEnlabasededatos);
+            usuarioRepository.save(usuarioEnlabasededatos);
 
-        return "redirect:/admin/usuariosActuales";
+            return "redirect:/admin/usuariosActuales";
+        }
 
     }
 
