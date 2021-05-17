@@ -47,10 +47,10 @@
                 <h1>Detalles del pedido disponible</h1>
                 <p th:text="'Restaurante: ' + ${restaurante.getNombre()}"></p>
                 <p th:text="'Dirección de recojo: ' + ${restaurante.getDireccion()}"></p>
-                <p th:text="'Distrito de recojo: ' + ${restaurante.getDistrito()}"></p>
+                <p th:text="'Distrito de recojo: ' + ${restaurante.getDistrito().getNombredistrito()}"></p>
                 <hr>
                 <p th:text="'Direccion de destino: ' + ${direccion.getDireccion()}"></p>
-                <p th:text="'Distrito de destino: ' + ${direccion.getDistrito()}"></p>
+                <p th:text="'Distrito de destino: ' + ${direccion.getDistrito().getNombredistrito()}"></p>
                 <hr>
                 <p th:text="'Total: S/.' + ${ pedido.getMontototal()}"></p>
                 <p th:text="'Comisión: S/. ' + ${pedido.getComisionrepartidor()}+'.0'"></p>
