@@ -99,8 +99,8 @@
                                     <td th:text="${pedido.getdescripcion()}"></td>
                                     <td th:text="${pedido.getcantidadplatos()}"></td>
                                     <td th:text="${pedido.getdireccion()}"></td>
-                                    <td th:text="${pedido.getdistrito()}"></td>
-                                    <td th:text="${pedido.getmontototal()}"></td>
+                                    <td th:text="${pedido.getnombredistrito()}"></td>
+                                    <td th:text="${pedido.getprecio()}"></td>
                                     <td th:text="${pedido.getcubiertos()}"></td>
                                 </tr>
                                 </tbody>
@@ -109,7 +109,7 @@
                     </div>
                     <!-- end of table -->
                 </div>
-                <a class="send" th:href="@{/pedidos}" style="background: #d8b00f;text-align: center">Regresar</a>
+                <a class="send" th:href="@{/adminrest/pedidos}" style="background: #d8b00f;text-align: center">Regresar</a>
             </div>
         </div>
     </div>

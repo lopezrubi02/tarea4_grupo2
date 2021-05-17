@@ -8,12 +8,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
     <title>Register</title>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/owl.carousel.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/styleAdminRest">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/styleAdminRest">
     <!-- responsive-->
-    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="/css/responsive.css">
     <!-- awesome fontfamily -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <!--[if lt IE 9]>
@@ -38,13 +38,13 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <!-- bootstrap css -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
     <!-- owl css -->
-    <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <link rel="stylesheet" href="/css/owl.carousel.min.css">
     <!-- style css -->
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
     <!-- responsive-->
-    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="/css/responsive.css">
     <!-- awesome fontfamily -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <!--[if lt IE 9]>
@@ -56,7 +56,7 @@
 <body class="main-layout">
 <!-- loader  -->
 <div class="loader_bg">
-    <div class="loader"><img src="images/loading.gif" alt="" /></div>
+    <div class="loader"><img src="/images/loading.gif" alt="" /></div>
 </div>
 
 <div class="wrapper">
@@ -78,7 +78,7 @@
                 <div class="row">
                     <div class="col-md-3">
                         <div class="full">
-                            <a class="logo" href="index.html"><img src="images/logo.png" alt="#" /></a>
+                            <a class="logo" href="index.html"><img src="/images/logo.png" alt="#" /></a>
                         </div>
                     </div>
                     <div class="col-md-9">
@@ -86,10 +86,10 @@
                             <div class="right_header_info">
                                 <ul>
                                     <!-- TODO -->
-                                    <li class="button_user"><a class="button active" th:href="@{/cuentaAdmin}">Mi cuenta</a><a class="button" th:href="@{/login}">Logout</a></li>
+                                    <li class="button_user"><a class="button active" th:href="@{/adminrest/cuentaAdmin}">Mi cuenta</a><a class="button" th:href="@{/login}">Logout</a></li>
                                     <li>
                                         <button type="button" id="sidebarCollapse">
-                                            <img src="images/menu_icon.png" alt="#">
+                                            <img src="/images/menu_icon.png" alt="#">
                                         </button>
                                     </li>
                                 </ul>
@@ -125,10 +125,10 @@
                                     <td th:text="${aceptado.getidpedidos()}"></td>
                                     <td th:text="${aceptado.getcliente()}"></td>
                                     <td th:text="${aceptado.getdireccion()}"></td>
-                                    <td th:text="${aceptado.getdistrito()}"></td>
+                                    <td th:text="${aceptado.getnombredistrito()}"></td>
                                     <td th:text="${aceptado.getmontototal()}"></td>
                                     <td th:text="${aceptado.getfechahorapedido()}"></td>
-                                    <td><a class="send" th:href="@{'/preparadopedido'+'?id='+${aceptado.getidpedidos()}}" style="text-align: center;background: #d8b00f">Preparado</a></td>
+                                    <td><a class="send" th:href="@{'/adminrest/preparadopedido'+'?id='+${aceptado.getidpedidos()}}" style="text-align: center;background: #d8b00f">Preparado</a></td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -158,10 +158,10 @@
                                     <td th:text="${preparado.getidpedidos()}"></td>
                                     <td th:text="${preparado.getcliente()}"></td>
                                     <td th:text="${preparado.getdireccion()}"></td>
-                                    <td th:text="${preparado.getdistrito()}"></td>
+                                    <td th:text="${preparado.getnombredistrito()}"></td>
                                     <td th:text="${preparado.getmontototal()}"></td>
                                     <td th:text="${preparado.getfechahorapedido()}"></td>
-                                    <td><a class="send" th:href="@{'/entregadopedido'+'?id='+${preparado.getidpedidos()}}" style="text-align: center;background: #d8b00f">Entregado</a></td>
+                                    <td><a class="send" th:href="@{'/adminrest/entregadopedido'+'?id='+${preparado.getidpedidos()}}" style="text-align: center;background: #d8b00f">Entregado</a></td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -169,7 +169,7 @@
                     </div>
                     <!-- end of table -->
                 </div>
-                <a class="send" th:href="@{/pedidos}" style="background: #d8b00f;text-align: center">Regresar</a>
+                <a class="send" th:href="@{/adminrest/pedidos}" style="background: #d8b00f;text-align: center">Regresar</a>
             </div>
         </div>
     </div>
@@ -194,14 +194,14 @@
 </div>
 <div class="overlay"></div>
 <!-- Javascript files-->
-<script src="js/jquery.min.js"></script>
-<script src="js/popper.min.js"></script>
-<script src="js/bootstrap.bundle.min.js"></script>
-<script src="js/owl.carousel.min.js"></script>
-<script src="js/custom.js"></script>
-<script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/popper.min.js"></script>
+<script src="/js/bootstrap.bundle.min.js"></script>
+<script src="/js/owl.carousel.min.js"></script>
+<script src="/js/custom.js"></script>
+<script src="/js/jquery.mCustomScrollbar.concat.min.js"></script>
 
-<script src="js/jquery-3.0.0.min.js"></script>
+<script src="/js/jquery-3.0.0.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function() {
         $("#sidebar").mCustomScrollbar({
