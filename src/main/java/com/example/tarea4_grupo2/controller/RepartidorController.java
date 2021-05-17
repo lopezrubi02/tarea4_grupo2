@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/repartidor")
 public class RepartidorController {
 
     @Autowired
@@ -44,7 +43,7 @@ public class RepartidorController {
     @Autowired
     RestauranteRepository restauranteRepository;
 
-    @GetMapping("/VerDetalles")
+    @GetMapping("/repartidor/VerDetalles")
     public String verDetalles(Model model, @RequestParam("id") int id, RedirectAttributes attr) {
         Optional<Pedidos> pedidoElegido = pedidosRepository.findById(id);
 
@@ -69,7 +68,7 @@ public class RepartidorController {
         }
     }
 
-    @GetMapping("/PedidosDisponibles")
+    @GetMapping("/repartidor/PedidosDisponibles")
     public String pedidosDisponibles(RedirectAttributes attr, Model model) {
         List<PedidosDisponiblesDTO> listaPedidos = repartidorRepository.findListaPedidosDisponibles();
         if (listaPedidos.isEmpty()) {
@@ -82,7 +81,7 @@ public class RepartidorController {
     }
 
     //El repartidor acepta el pedido del restaurante y se cambia el estado a "esperando recojo del restaurante"
-    @GetMapping("/AceptaPedido")
+    @GetMapping("/repartidor/AceptaPedido")
     public String aceptaPedidoPorElRepartidor(RedirectAttributes attr, @RequestParam("idpedido") int idPedidoElegido, Model model) {
         Optional<Pedidos> pedidoElegido = pedidosRepository.findById(idPedidoElegido);
 
@@ -109,7 +108,7 @@ public class RepartidorController {
 
     //pendiente, aceptado, recogido, entregado
     //El repartidor recoge el pedido del restaurante y el estado cambia a "por entregar".
-    @GetMapping("/ConfirmaRecojo")
+    @GetMapping("/repartidor/ConfirmaRecojo")
     public String confirmaRecojo(RedirectAttributes attr, @RequestParam("idpedido") int idPedidoElegido, Model model) {
         Optional<Pedidos> pedidoElegido = pedidosRepository.findById(idPedidoElegido);
 
@@ -138,7 +137,7 @@ public class RepartidorController {
     }
 
     //El repartidor entrega el pedido al cliente
-    @GetMapping("/ConfirmaEntrega")
+    @GetMapping("/repartidor/ConfirmaEntrega")
     public String confirmaEntrega(RedirectAttributes attr, @RequestParam("idpedido") int idPedidoElegido, Model model) {
         Optional<Pedidos> pedidoElegido = pedidosRepository.findById(idPedidoElegido);
 
@@ -154,7 +153,7 @@ public class RepartidorController {
     }
 
     //Filtra por Restaurante o Distrito
-    @PostMapping("/Buscador")
+    @PostMapping("/repartidor/Buscador")
     public String buscador(@RequestParam("valorBuscado") String searchField,
                            Model model, RedirectAttributes attr) {
         int id=10;
@@ -173,7 +172,7 @@ public class RepartidorController {
 
     }
 
-    @GetMapping("/Reportes")
+    @GetMapping("/repartidor/Reportes")
     public String reportes(Model model, RedirectAttributes attr){
         int id = 10;
         List<PedidosReporteDTOs> listaReporte1 = repartidorRepository.findPedidosPorRepartidor(id);
@@ -192,7 +191,7 @@ public class RepartidorController {
     }
 
 
-    @GetMapping(value={"/home", "", "/"})
+    @GetMapping(value={"/repartidor/home", "/repartidor", "/repartidor"})
     public String homeRepartidor(@ModelAttribute("repartidor") Repartidor repartidor,
                                  Model model, RedirectAttributes attr) {
         int id=10;
@@ -208,7 +207,7 @@ public class RepartidorController {
         return "repartidor/repartidor_principal";
     }
 
-    @PostMapping("/save_principal")
+    @PostMapping("/repartidor/save_principal")
     public String guardarHomeRepartidor(Repartidor repartidorRecibido) {
 
         Repartidor optionalRepartidor = repartidorRepository.findRepartidorByIdusuariosEquals(repartidorRecibido.getIdusuarios());
@@ -224,7 +223,7 @@ public class RepartidorController {
         return "redirect:/repartidor/home";
     }
 
-    @GetMapping("/perfil")
+    @GetMapping("/repartidor/perfil")
     public String perfilRepartidor(@ModelAttribute("repartidor") Repartidor repartidor, Model model) {
 
         int id=10;
@@ -245,7 +244,7 @@ public class RepartidorController {
         return "repartidor/repartidor_perfil";
     }
 
-    @PostMapping("/save_perfil")
+    @PostMapping("/repartidor/save_perfil")
     public String guardarPerfilRepartidor(@ModelAttribute("usuario") @Valid Usuario usuario,
                                           BindingResult bindingResult,
                                           @ModelAttribute("direcciones") Direcciones direcciones,
@@ -411,12 +410,5 @@ public class RepartidorController {
 
 
     }
-
-    //@GetMapping("/reportes")
-    //public String repartidorReportes(Model model) {
-        //hardcodeado por ahora
-       // int id=10;
-      //  List<RepartidorComisionMensualDTO> listaComisionMensual = repartidorRepository.obtenerComisionPorMes(id);
-
 
 }

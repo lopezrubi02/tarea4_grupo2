@@ -114,7 +114,7 @@ public class UsuarioController {
         }
     }
 
-    @GetMapping("/reportes")
+    @GetMapping("/cliente/reportes")
     public String reportesCliente(Model model) {
         int idusuarios = 8;
         int anio = 2021;
@@ -145,7 +145,7 @@ public class UsuarioController {
         }
     }
 
-    @PostMapping("/recepcionCliente")
+    @PostMapping("/cliente/recepcionCliente")
     public String recepcionCliente(@RequestParam("fechahorapedido") String fechahorapedido,
                                    Model model) {
         int idusuarios = 7;
