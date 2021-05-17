@@ -2,39 +2,38 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <!-- basic -->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- mobile metas -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
-    <!-- site metas -->
     <title>Spicyo</title>
-
-    <!-- bootstrap css -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <!-- owl css -->
     <link rel="stylesheet" href="/css/owl.carousel.min.css">
-    <!-- style css -->
     <link rel="stylesheet" href="/css/style.css">
-    <!-- responsive-->
     <link rel="stylesheet" href="/css/responsive.css">
-    <!-- awesome fontfamily -->
+    <link rel="stylesheet" href="/css/styleAdminRest.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
 </head>
-<!-- body -->
+
 
 <body class="main-layout">
-<!-- loader  -->
+
 <div class="loader_bg">
     <div class="loader"><img src="/images/loading.gif" alt="" /></div>
 </div>
 
 <div class="wrapper">
-    <!-- end loader -->
+    <div class="sidebar">
+        <!-- Sidebar  -->
+        <nav id="sidebar">
+
+            <div id="dismiss">
+                <i class="fa fa-arrow-left"></i>
+            </div>
+        </nav>
+    </div>
 
     <div id="content">
         <!-- header -->
@@ -50,7 +49,13 @@
                         <div class="full">
                             <div class="right_header_info">
                                 <ul>
-                                    <li class="button_user"><a class="button active" th:href="@{/login}">Cerrar sesión</a></li>
+                                    <!-- TODO -->
+                                    <li class="button_user"><a class="button" th:href="@{/login}">Logout</a></li>
+                                    <li>
+                                        <button type="button" id="sidebarCollapse">
+                                            <img src="/images/menu_icon.png" alt="#">
+                                        </button>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
@@ -58,32 +63,22 @@
                 </div>
             </div>
         </header>
-
-
         <div class="bg_bg">
             <fooetr>
                 <div class="footer">
                     <div class="container-fluid">
-                        <div class="row" style="text-align: center">
-                            <div class="col-xl-12" style="align-content: center;padding-bottom: 100px">
-                                <div class="row">
-                                    <a style="margin: auto"><div style="color: black;font-size:xx-large"><u>Su restaurante esta en proceso de evaluación</u></div></a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-12" align="center">
-                            <div class="img-box">
-                                <figure>
-                                    <img style="width: 300px;height: 300px" src="/images/tiempo.png">
-                                </figure>
-                            </div>
-                        </div>
-                        <div class="row">
+                        <div class="row justify-content-center">
                             <div class="col-xl-12" style="align-content: center">
-                                <div class="row" style="padding-top: 100px">
-                                    <a class="send" type="submit" style="text-align: center" th:href="@{'/adminrest/borrarRestaurante'+'?id='+${id}}">Anular Registro</a>
+                                <div class="container" style="text-align: center">
+                                    <h1 th:text="|Bienvenido ${session.usuarioLogueado.nombre} ${session.usuarioLogueado.apellidos}|"></h1>
+                                    <div class="row" style="padding-top: 50px">
+                                        <h2>Aun no has registrado tu restaurante</h2>
+                                    </div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="row" style="padding-top: 100px">
+                            <a class="send" type="submit" th:href="@{/adminrest/registerRestaurante}" style="text-align: center; max-width: 200px">Registre su restaurante</a>
                         </div>
                     </div>
                     <div class="copyright">
@@ -93,8 +88,6 @@
                     </div>
                 </div>
             </fooetr>
-            <!-- end footer -->
-
         </div>
     </div>
 </div>
@@ -138,7 +131,6 @@
             height: auto;
         }
     </style>
-
 
     <script>
         $(document).ready(function() {

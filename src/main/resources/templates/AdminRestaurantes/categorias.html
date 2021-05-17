@@ -12,14 +12,14 @@
     <title>Register</title>
 
     <!-- bootstrap css -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
     <!-- owl css -->
-    <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <link rel="stylesheet" href="/css/owl.carousel.min.css">
     <!-- style css -->
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/styleAdminRest.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/styleAdminRest.css">
     <!-- responsive-->
-    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="/css/responsive.css">
     <!-- awesome fontfamily -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <!--[if lt IE 9]>
@@ -60,7 +60,7 @@
                                 <h2>Elige tus categorías</h2>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
-                                <form method="post" th:action="@{/llenarcategoria}" th:object="${restaurante}" class="main_form">
+                                <form method="post" th:action="@{/adminrest/llenarcategoria}" th:object="${restaurante}" class="main_form">
                                     <input type="hidden" id="cantidad" value="4">
                                     <input type="hidden" th:field="*{idrestaurante}" th:value="${id}">
                                     <div th:each="lista:${listacategorias}" class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
@@ -73,7 +73,7 @@
                                                 <button class="send" type="submit" >Registrar</button>
                                             </div>
                                             <div class="col-md-4">
-                                                <a class="send" th:href="@{'/borrarRestaurante'+'?id='+${id}}" style="text-align: center">Anular</a>
+                                                <a class="send" th:href="@{/adminrest/borrarRestaurante}" style="text-align: center">Anular</a>
                                             </div>
                                         </div>
                                     </div>
@@ -81,7 +81,7 @@
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                                 <div class="img-box" align="center">
-                                    <figure><img th:src="@{/imagen}" style="width:500px;height:500px"></figure>
+                                    <figure><img th:src="@{'/adminrest/imagen'}" style="width:500px;height:500px"></figure>
                                 </div>
                                 <div style="text-align: center;font-size: 30px;color: black">Imagen del restaurante</div>
                             </div>
@@ -101,13 +101,13 @@
 
     <div class="overlay"></div>
     <!-- Javascript files-->
-    <script src="js/jquery.min.js"></script>
-    <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap.bundle.min.js"></script>
-    <script src="js/owl.carousel.min.js"></script>
-    <script src="js/custom.js"></script>
-    <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
-    <script src="js/jquery-3.0.0.min.js"></script>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/popper.min.js"></script>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/owl.carousel.min.js"></script>
+    <script src="/js/custom.js"></script>
+    <script src="/js/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="/js/jquery-3.0.0.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             $("#sidebar").mCustomScrollbar({

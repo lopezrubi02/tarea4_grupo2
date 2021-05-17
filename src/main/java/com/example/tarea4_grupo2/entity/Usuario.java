@@ -4,6 +4,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import javax.validation.constraints.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -11,7 +12,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "usuarios")
-public class Usuario {
+public class Usuario implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idusuarios;
@@ -19,15 +20,17 @@ public class Usuario {
     @Column(nullable = false)
     @NotBlank(message = "No puede estar vacío")
     @Size(max=45,message = "Los nombres no puede tener más de 45 caracteres")
+    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñ ]*$",message = "Solo puede contener letras")
     private String nombre;
 
     @Column(nullable = false)
     @NotBlank(message = "No puede estar vacío")
     @Size(max=45,message = "Los apellidos no puede tener más de 45 caracteres")
+    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñ ]*$",message = "Solo puede contener letras")
     private String apellidos;
 
     @Column(nullable = false)
-    @Email
+    @Email(message = "No es formato @gmail.com")
     @NotBlank(message = "No puede estar vacío")
     @Size(max=45, message = "El email no puede tener más de 45 caracteres")
     private String email;
@@ -52,6 +55,7 @@ public class Usuario {
     @Column(nullable = false)
     @NotBlank(message = "No puede estar vacío")
     @Size(max=8,message = "No puede tenr más de 8 dígitos")
+    @Pattern(regexp = "^[0-9]*$",message = "Solo puede contener números")
     private String dni;
 
     private Integer comisionventa;

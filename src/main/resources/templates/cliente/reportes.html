@@ -31,9 +31,9 @@
 
 <body class="main-layout blog_page">
     <!-- loader  -->
-    <!--div class="loader_bg">
+    <div class="loader_bg">
         <div class="loader"><img src="images/loading.gif" alt="" /></div>
-    </div-->
+    </div>
 
     <div class="wrapper">
     <!-- end loader -->
@@ -70,7 +70,7 @@
             <div class="row">
                 <div class="col-md-3">
                     <div class="full">
-                        <a class="logo" href=""><img th:src="@{/images/logo.png}" alt="#" /></a>
+                        <a class="logo" th:href="@{/cliente/paginaprincipal}"><img th:src="@{/images/logo.png}" alt="#" /></a>
                     </div>
                 </div>
                 <div class="col-md-9">
@@ -80,7 +80,13 @@
                                 <li class="dinone"><a th:href="@{'/cliente/reportes'}">Mis reportes</a></li>
                                 <li class="dinone"><a th:href="@{'/cliente/realizarpedido'}">Relizar pedido</a></li>
                        
-                                <li class="button_user"><a class="button active" th:href="@{'/cliente/miperfil'}">Mi perfil</a><a class="button" href="#">Cerrar sesión</a></li>
+                                <li class="button_user">
+                                    <a class="button active" th:href="@{'/cliente/miperfil'}">Mi perfil</a>
+                                    <!--a class="button" href="#">Cerrar sesión</a-->
+                                    <form th:action="@{/logout}" method="post">
+                                        <button class="button " type="submit">Cerrar sesión</button>
+                                    </form>
+                                </li>
                                 <li><a href="#"><img style="margin-right: 15px;" th:src="@{/images/carrito.png}" width="45" height="45"></a></li>
                                 <li>
                                     <button type="button" id="sidebarCollapse">
@@ -101,7 +107,6 @@
                <div class="col-md-12">
                   <div class="title">
                      <h2>Reportes</h2>
-                    
                   </div>
                </div>
             </div>
@@ -114,6 +119,8 @@
     <div class="row">
       <div class="col-md-12">
         <div class="title">
+            <div th:if="${alerta != null}" th:text="${alerta}" class="alert alert-warning" role="alert"></div>
+            <div th:if="${alerta2 != null}" th:text="${alerta2}" class="alert alert-warning" role="alert"></div>
             <div class="row g-2">
                 <div class="col-md">
                     <form class="form-group mb-3" method="post" th:action="@{/cliente/recepcionCliente}">
@@ -281,15 +288,15 @@
     </div>
     <div class="overlay"></div>
     <!-- Javascript files-->
-    <script src="js/jquery.min.js"></script>
-    <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap.bundle.min.js"></script>
-    <script src="js/owl.carousel.min.js"></script>
-    <script src="js/custom.js"></script>
-     <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
-    
-     <script src="js/jquery-3.0.0.min.js"></script>
-   <script type="text/javascript">
+    <script th:src="@{/js/jquery.min.js}" ></script>
+    <script th:src="@{/js/popper.min.js}" ></script>
+    <script th:src="@{/js/bootstrap.bundle.min.js}" ></script>
+    <script th:src="@{/js/owl.carousel.min.js}" ></script>
+    <script th:src="@{/js/custom.js}" ></script>
+    <script th:src="@{/js/jquery.mCustomScrollbar.concat.min.js}" ></script>
+
+    <script th:src="@{/js/jquery-3.0.0.min.js}" ></script>
+    <script type="text/javascript">
         $(document).ready(function() {
             $("#sidebar").mCustomScrollbar({
                 theme: "minimal"
@@ -307,8 +314,8 @@
                 $('a[aria-expanded=true]').attr('aria-expanded', 'false');
             });
         });
-    </script>
 
+    </script>
 </body>
 
 </html>
