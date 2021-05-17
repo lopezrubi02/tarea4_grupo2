@@ -115,7 +115,7 @@
                                     </br>
 									<a style="color: white;" th:text="'S/. ' + ${platoseleccionado.precio}">Precio: 20 soles</a>
 								</div>
-								<form class="main_form" method="post" th:action="@{'/cliente/platopedido?idrestaurante=' + ${idrestaurante} + '&idplato=' + ${platoseleccionado.idplato}}">
+								<form class="main_form" method="post" th:action="@{'/cliente/platopedido?idrestaurante=' + ${idrestaurante} + '&idplato=' + ${platoseleccionado.idplato} + '&direccionxpedir=' + ${iddireccionxpedir}}">
                                     <div class="row">
 										<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
 											<div class="form-floating">
