@@ -1,6 +1,8 @@
 package com.example.tarea4_grupo2.entity;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name="plato")
@@ -8,6 +10,9 @@ public class Plato {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idplato;
+
+    @OneToMany(mappedBy = "pedido")
+    private Set<PedidoHasPlato> pedidohasplato = new HashSet<>();
 
     @Column(nullable = false)
     private String nombre;
@@ -23,6 +28,26 @@ public class Plato {
     private int disponibilidad;
 
     private int activo;
+
+    public Set<PedidoHasPlato> getPedidohasplato() {
+        return pedidohasplato;
+    }
+
+    public void setPedidohasplato(Set<PedidoHasPlato> pedidohasplato) {
+        this.pedidohasplato = pedidohasplato;
+    }
+
+    public Plato() {
+    }
+
+    public Plato(String nombre, String descripcion, float precio, Restaurante restaurante, int disponibilidad, int activo) {
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.precio = precio;
+        this.restaurante = restaurante;
+        this.disponibilidad = disponibilidad;
+        this.activo = activo;
+    }
 
     public int getIdplato() {
         return idplato;
