@@ -9,9 +9,8 @@ public interface PedidosReporteDTOs {
     int getComisionrepartidor();
     int getCalificacionrepartidor();
     String getNombre();
-    String getRestauranteiddistrito();
+    String getRestaurantedistrito();
     String getClientedireccion();
-    String getClientedistrito();
 }
 
 /*

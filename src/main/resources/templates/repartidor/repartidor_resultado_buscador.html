@@ -44,7 +44,7 @@
         <!-- blog -->
         <div class="blog">
             <div class="container">
-                <h1>Pedidos disponibles</h1>
+                <h1>Resultados de búsqueda</h1>
                 <form method="post" th:action="@{/reportes/Buscador}">
                     <input name="valorBuscado" class="form-control mb-3" type="text" placeholder="Ingrese el nombre del restaurante o distrito del restaurante"/>
                 </form>
@@ -58,22 +58,20 @@
                     <th scope="col">RESTAURANTE</th>
                     <th scope="col">DISTRITO DEL RESTAURANTE</th>
                     <th scope="col">DIRECCION DE DESTINO</th>
-                    <th scope="col">DISTRITO DE DESTINO</th>
                     <th scope="col">COMISIÓN S/.</th>
                     <th scope="col">S/. TOTAL</th>
                     <th scope="col">CALIFICACION</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="pedidoDisponible, info : ${ListaFindReporte}">
+                <tr th:each="registro, info : ${listaFindReporte}">
                     <td th:text="${info.index + 1}"></td>
-                    <td th:text="${pedidoDisponible.getNombre()}"></td>
-                    <td th:text="${pedidoDisponible.getDistrito()}"></td>
-                    <td th:text="${pedidoDisponible.getDireccionCliente()}"></td>
-                    <td th:text="${pedidoDisponible.getDistritoCliente()}"></td>
-                    <td th:text="${pedidoDisponible.getComisionrepartidor()} + '.0'"></td>
-                    <td th:text="${pedidoDisponible.getMontototal()}"></td>
-                    <td th:text="${pedidoDisponible.getCalificacionrepartidor()}"></td>
+                    <td th:text="${registro.getNombre()}"></td>
+                    <td th:text="${registro.getRestaurantedistrito()}"></td>
+                    <td th:text="${registro.getClientedireccion()}"></td>
+                    <td th:text="${registro.getComisionrepartidor()}+'.0'"></td>
+                    <td th:text="${registro.montototal} + '.0'"></td>
+                    <td th:text="${registro.getCalificacionrepartidor()}"></td>
                 </tr>
                 </tbody>
             </table>

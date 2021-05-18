@@ -167,14 +167,14 @@ public class RepartidorController {
 
         //List<PedidosReporteDTO> listaPedidosxRestaurante = repartidorRepository.findPedidosByRestaurante(searchField);
         //List<PedidosReporteDTO> listaPedidosxDistrito = repartidorRepository.findPedidosByDistrito(searchField);
-        List <PedidosReporteDTOs> ListaFindReporte = repartidorRepository.findReporte(searchField, id);
-        if (ListaFindReporte.isEmpty()) {
+        List <PedidosReporteDTOs> listaFindReporte = repartidorRepository.findReporte(searchField, id);
+        if (listaFindReporte.isEmpty()) {
             attr.addFlashAttribute("msg", "No hay resultados asociados a la búsqueda.");
             return "redirect:/repartidor";
         }else{
             //model.addAttribute("listaPedidosxRestaurante", listaPedidosxRestaurante);
             //model.addAttribute("listaPedidosxDistrito", listaPedidosxDistrito);
-            model.addAttribute("ListaFindReporte", ListaFindReporte);
+            model.addAttribute("listaFindReporte", listaFindReporte);
             return "repartidor/repartidor_resultado_buscador";
         }
 
