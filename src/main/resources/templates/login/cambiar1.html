@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Recuperar contraseña</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css"  th:href="@{'/css/bootstrap.css'}" >
+</head>
+<body >
+<div class="wrap-login100">
+    <form class="login100-form" th:action="@{'/cambiarContrasenia'}" method="post">
+            <span class="login100-form-title p-b-43">
+                Spicy
+            </span>
+        <br>
+        <div align="center" th:if="${msg != null}" th:text="${msg}" class="alert alert-success" role="alert"></div>
+        <div align="center" th:if="${msg2 != null}" th:text="${msg2}" class="alert alert-danger" role="alert"></div>
+
+        <div class="form-group">
+            <label>Ingrese contraseña nueva:</label>
+            <input th:value="contrasenia" placeholder="Contraseña nueva" type="password" class="form-control" name="contrasenia" id="contrasenia">
+        </div>
+
+        <div class="form-group">
+            <label for="token"></label>
+            <input type="hidden" th:value="${usuario.token}" class="form-control" name="token" id="token">
+        </div>
+        <br>
+        <input type="submit" class="btn btn-info btn-block" value="¡Cambiar contraseña ahora!">
+    </form >
+
+    <div class="login100-more" >
+        <img width="99%" th:src="@{'/img/foto.jpg'}">
+    </div>
+</div>
+</body>
+</html>
