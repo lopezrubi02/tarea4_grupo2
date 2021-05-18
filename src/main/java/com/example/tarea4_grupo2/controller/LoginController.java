@@ -79,10 +79,9 @@ public class LoginController {
         }
     }
 
-    @GetMapping("/login")
-    public String loginForm(
-    ){
-        return "adminsistema/login";
+    @GetMapping(value = {"","/login"})
+    public String loginForm(){
+        return "login/login";
     }
 
     @GetMapping("/redirectByRol")
@@ -107,7 +106,7 @@ public class LoginController {
         }
         else{
             System.out.println(rol);
-            return "adminsistema/login";
+            return "/login";
         }
     }
     @GetMapping("/olvidoContrasenia")
@@ -134,7 +133,7 @@ public class LoginController {
                 random.nextBytes(bytes);
                 String token = bytes.toString();
                 subject = "Recuperacion de contraseña - Spicy";
-                String direccion = "http://localhost:8090/proyecto/cambiar1/";
+                String direccion = "http://localhost:8090/cambiar1/";
                 URL url = new URL(direccion + token);
                 mensaje = "¡Hola!<br><br>Para reestablecer su contraseña haga click: <a href='" + direccion + token + "'>AQUÍ</a> <br><br>Atte. Equipo de Spicy</b>";
                 ;
@@ -146,10 +145,10 @@ public class LoginController {
                 attr.addFlashAttribute("msg2", "¡No estas registrado! :(");
             }
             sendMailService.sendMail(correoDestino, "saritaatanacioarenas@gmail.com", subject, mensaje);
-            return "adminsistema/login";
+            return "redirect:/login";
         } else {
             attr.addFlashAttribute("msg2", "¡Ingresa un formato email! :(");
-            return "adminsistema/login";
+            return "redirect:/login";
         }
     }
 
@@ -183,7 +182,7 @@ public class LoginController {
                 usuarioToken.get().setToken(tokenNuevo);
                 usuarioRepository.save(usuarioToken.get());
             }
-            return "redirect:/loginForm";
+            return "redirect:/login";
         } else {
             attr.addFlashAttribute("msg2", "¡Error en el token o expirado! debes generar otro :(");
             return "/login/olvidoContrasenia";

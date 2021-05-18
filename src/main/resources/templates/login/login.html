@@ -74,15 +74,13 @@
                 <div class="footer">
                     <div class="container-fluid">
                         <div class="row">
+
                             <div class="col-md-12">
                                 <h2>Iniciar sesión</h2>
+                                <div align="center" th:if="${msg != null}" th:text="${msg}" class="alert alert-success" role="alert"></div>
+                                <div align="center" th:if="${msg2 != null}" th:text="${msg2}" class="alert alert-danger" role="alert"></div>
+
                             </div>
-
-                            <div align="center" th:if="${msg != null}" th:text="${msg}" class="alert alert-success" role="alert"></div>
-                            <div align="center" th:if="${msg2 != null}" th:text="${msg2}" class="alert alert-danger" role="alert"></div>
-
-
-
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
 
 
@@ -106,7 +104,7 @@
                                         </div>
 
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <a href="">Olvidé mi contraseña</a>
+                                            <a th:href="@{'/olvidoContrasenia'}">Olvidé mi contraseña</a>
                                         </div>
                                         </br>
                                         </br>
