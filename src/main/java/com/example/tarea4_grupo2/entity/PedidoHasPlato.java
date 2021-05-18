@@ -26,6 +26,18 @@ public class PedidoHasPlato{
 
     private boolean cubiertos;
 
+    public PedidoHasPlato() {
+    }
+
+    public PedidoHasPlato(PedidoHasPlatoKey id, Pedidos pedido, Plato plato, String descripcion, int cantidadplatos, boolean cubiertos) {
+        this.id = id;
+        this.pedido = pedido;
+        this.plato = plato;
+        this.descripcion = descripcion;
+        this.cantidadplatos = cantidadplatos;
+        this.cubiertos = cubiertos;
+    }
+
     public PedidoHasPlatoKey getId() {
         return id;
     }

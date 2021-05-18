@@ -439,30 +439,27 @@ public class UsuarioController {
              pedidos.setIdmetodopago(1);
              pedidos.setIdrepartidor(11);
              pedidos.setDireccionentrega(iddireccionxpedir);
-             pedidosRepository.save(pedidos);
 
              List<Pedidos> listapedidoscliente = pedidosRepository.listapedidoxcliente(idcliente,idrestaurante);
              int tam = listapedidoscliente.size();
              Pedidos ultimopedido = listapedidoscliente.get(tam-1);
              int idultimopedido = ultimopedido.getIdpedidos();
 
-             PedidoHasPlato pedidoHasPlato = new PedidoHasPlato();
-             pedidoHasPlato.getId();
-             pedidoHasPlato.setPlato(platoelegido);
-             pedidoHasPlato.setPedido(pedidos);
-             if(descripcion!=null){
-                 pedidoHasPlato.setDescripcion(descripcion);
-             }
-             pedidoHasPlato.setCantidadplatos(cantidad);
-             pedidoHasPlato.setCubiertos(cubiertos);
+             PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido,idplato);
+             PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey,pedidos,platoelegido,descripcion,cantidad,cubiertos);
+            pedidos.addpedido(pedidoHasPlato);
+            pedidosRepository.save(pedidos);
+             listapedidoscliente = pedidosRepository.listapedidoxcliente(idcliente,idrestaurante);
+             tam = listapedidoscliente.size();
+             ultimopedido = listapedidoscliente.get(tam-1);
+             idultimopedido = ultimopedido.getIdpedidos();
+             pedidoHasPlatoKey.setPedidosidpedidos(idultimopedido);
+             //PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido,idplato);
+             pedidoHasPlato.setId(pedidoHasPlatoKey);
+             //PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey,pedidos,platoelegido,descripcion,cantidad,cubiertos);
+            pedidoHasPlatoRepository.save(pedidoHasPlato);
 
-//             pedidoHasPlatoRepository.save(pedidoHasPlato);
-
-             PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey();
-             pedidoHasPlatoKey.setPlatoidplato(idplato);
-            pedidoHasPlatoKey.setPedidosidpedidos(idultimopedido);
-
-             return "redirect:/cliente/restaurantexordenar?idrestaurante=" + idrestaurante;
+             return "redirect:/cliente/restaurantexordenar?idrestaurante=" + idrestaurante + "&direccionxenviar=" + iddireccionxpedir;
          }else{
              return "redirect:/cliente/realizarpedido";
          }

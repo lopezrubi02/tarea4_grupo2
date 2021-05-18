@@ -81,8 +81,15 @@
                         <div class="full">
                             <div class="right_header_info">
                                 <ul>
-                                    <!-- TODO -->
-                                    <li class="button_user"><a class="button active" th:href="@{/cuentaAdmin}">Mi cuenta</a><a class="button" th:href="@{/login}">Logout</a></li>
+                                    <li class="button_user">
+                                        <a class="button active" th:href="@{/adminrest/cuentaAdmin}">Mi cuenta</a>
+                                    </li>
+
+                                    <li style="transform: translateY(-7px)">
+                                        <form th:action="@{/logout}" method="post">
+                                            <button class="button" style="padding: 0px 15px; font-size: 14px;height: 40px;width: 100.5px;background:#e3d105" type="submit">Logout</button>
+                                        </form>
+                                    </li>
                                     <li>
                                         <button type="button" id="sidebarCollapse">
                                             <img src="/images/menu_icon.png" alt="#">

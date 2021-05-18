@@ -13,6 +13,14 @@ public class PedidoHasPlatoKey implements Serializable {
     @Column(name = "plato_idplato")
     private int platoidplato;
 
+    public PedidoHasPlatoKey() {
+    }
+
+    public PedidoHasPlatoKey(int pedidosidpedidos, int platoidplato) {
+        super();
+        this.pedidosidpedidos = pedidosidpedidos;
+        this.platoidplato = platoidplato;
+    }
 
     public int getPedidosidpedidos() {
         return pedidosidpedidos;
