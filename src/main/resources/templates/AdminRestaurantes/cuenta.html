@@ -59,8 +59,15 @@
                         <div class="full">
                             <div class="right_header_info">
                                 <ul>
-                                    <!-- TODO -->
-                                    <li class="button_user"><a class="button active" th:href="@{/adminrest/cuentaAdmin}">Mi cuenta</a><a class="button" th:href="@{/logout}">Logout</a></li>
+                                    <li class="button_user">
+                                        <a class="button active" th:href="@{/adminrest/cuentaAdmin}">Mi cuenta</a>
+                                    </li>
+
+                                    <li style="transform: translateY(-7px)">
+                                        <form th:action="@{/logout}" method="post">
+                                            <button class="button" style="padding: 0px 15px; font-size: 14px;height: 40px;width: 100.5px;background:#e3d105" type="submit">Logout</button>
+                                        </form>
+                                    </li>
                                     <li>
                                         <button type="button" id="sidebarCollapse">
                                             <img src="/images/menu_icon.png" alt="#">
@@ -207,8 +214,8 @@
                                                 <div class="col-md-3"></div>
                                                 <div class="col-md-3">
                                                     <div style="padding-left: 15px;padding-top: 25px">
-                                                        <button class="send" th:href="@{/adminrest/perfil}"
-                                                                style="font-size: 16px;background: #d8b00f;width: 200px">Regresar</button>
+                                                        <a class="send" type="button" th:href="@{/adminrest/perfil}"
+                                                                style="text-align: center; font-size: 16px;background: #d8b00f;width: 200px;color: black">Regresar</a>
                                                     </div>
                                                 </div>
                                             </div>

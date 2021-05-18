@@ -19,6 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -74,7 +75,7 @@ public class AdminRestauranteController {
             Optional<Restaurante> restauranteOpt = restauranteRepository.buscarRestaurantePorIdAdmin(id);
 
             if(restauranteOpt.isPresent()){
-                return "AdminRestaurantes/perfilrestaurante";
+                return "redirect:/adminrest/perfil";
             }else{
                 return "AdminRestaurantes/sinRestaurante";
             }
@@ -171,10 +172,24 @@ public class AdminRestauranteController {
     /************************PERFIL************************/
 
     @GetMapping("/perfil")
-    public String perfilRestaurante(Model model){
-        Integer id = 1;
-        model.addAttribute("calificacion",pedidosRepository.calificacionPromedio(id));
-        return "AdminRestaurantes/perfilrestaurante";
+    public String perfilRestaurante(Model model, HttpSession session){
+
+        /**Se obtiene Id de Restaurante**/
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        if(sessionUser.getCuentaActiva()==1){
+            Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
+            /********************************/
+            BigDecimal calificacion = pedidosRepository.calificacionPromedio(idrestaurante);
+            System.out.println(calificacion);
+            Restaurante restaurante = restauranteRepository.findById(idrestaurante).get();
+            restaurante.setCalificacionpromedio(calificacion.floatValue());
+            restauranteRepository.save(restaurante);
+            model.addAttribute("calificacionpromedio",calificacion);
+            return "AdminRestaurantes/perfilrestaurante";
+        }
+        else{
+            return "redirect:/adminrest/login";
+        }
     }
 
     /************************PLATOS************************/
@@ -184,12 +199,17 @@ public class AdminRestauranteController {
 
         /**Se obtiene Id de Restaurante**/
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-        Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
-        /********************************/
+        if(sessionUser.getCuentaActiva()==1){
+            Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
+            /********************************/
 
-        model.addAttribute("iddelrestaurante", idrestaurante);
-        model.addAttribute("listaPlatos", platoRepository.buscarPlatosPorIdRestaurante(idrestaurante));
-        return "AdminRestaurantes/menu";
+            model.addAttribute("iddelrestaurante", idrestaurante);
+            model.addAttribute("listaPlatos", platoRepository.buscarPlatosPorIdRestaurante(idrestaurante));
+            return "AdminRestaurantes/menu";
+        }
+        else{
+            return "redirect:/adminrest/login";
+        }
     }
 
     @GetMapping("/crearPlato")
@@ -253,47 +273,54 @@ public class AdminRestauranteController {
     /************************CUPONES************************/
 
     @GetMapping("/cupones")
-    public String verCupones(Model model,@RequestParam(name = "page", defaultValue = "1") String requestedPage){
-        float numberOfUsersPerPage = 7;
-        int page = Integer.parseInt(requestedPage);
-        int idrestaurante = 1;
-        List<Cupones> listaCupones = cuponesRepository.buscarCuponesPorIdRestaurante(idrestaurante);
-        List<String> listaDisponibilidad = new ArrayList<String>();
-        int numberOfPages = (int) Math.ceil(listaCupones.size() / numberOfUsersPerPage);
-        if (page > numberOfPages) {
-            page = numberOfPages;
-        } // validation
+    public String verCupones(Model model,@RequestParam(name = "page", defaultValue = "1") String requestedPage,HttpSession session){
+        Usuario usuario= (Usuario) session.getAttribute("usuarioLogueado");
+        if(usuario.getCuentaActiva()==1){
+            float numberOfUsersPerPage = 7;
+            int page = Integer.parseInt(requestedPage);
+            int idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(usuario.getIdusuarios()).get().getIdrestaurante();
+            List<Cupones> listaCupones = cuponesRepository.buscarCuponesPorIdRestaurante(idrestaurante);
+            List<String> listaDisponibilidad = new ArrayList<String>();
+            int numberOfPages = (int) Math.ceil(listaCupones.size() / numberOfUsersPerPage);
+            if (page > numberOfPages) {
+                page = numberOfPages;
+            } // validation
 
-        int start = (int) numberOfUsersPerPage * (page - 1);
-        int end = (int) (start + numberOfUsersPerPage);
+            int start = (int) numberOfUsersPerPage * (page - 1);
+            int end = (int) (start + numberOfUsersPerPage);
 
-        List<Cupones> listOfCuponesPage = listaCupones.subList(start, Math.min(end, listaCupones.size()));
-        for (Cupones i: listOfCuponesPage){
-            Date inicio = i.getFechainicio();
-            Date fin = i.getFechafin();
-            Date ahora = Date.valueOf(LocalDate.now());
+            List<Cupones> listOfCuponesPage = listaCupones.subList(start, Math.min(end, listaCupones.size()));
+            for (Cupones i: listOfCuponesPage){
+                Date inicio = i.getFechainicio();
+                Date fin = i.getFechafin();
+                Date ahora = Date.valueOf(LocalDate.now());
 
-            if(inicio.compareTo(ahora) > 0){
-                listaDisponibilidad.add("No");
-            }else if(fin.compareTo(ahora) < 0){
-                listaDisponibilidad.add("No");
-            }else if((inicio.compareTo(ahora) < 0) && (fin.compareTo(ahora) > 0)){
-                listaDisponibilidad.add("Si");
-            }else{
-                listaDisponibilidad.add("No");
+                if(inicio.compareTo(ahora) > 0){
+                    listaDisponibilidad.add("No");
+                }else if(fin.compareTo(ahora) < 0){
+                    listaDisponibilidad.add("No");
+                }else if((inicio.compareTo(ahora) < 0) && (fin.compareTo(ahora) > 0)){
+                    listaDisponibilidad.add("Si");
+                }else{
+                    listaDisponibilidad.add("No");
+                }
+
             }
-
+            model.addAttribute("listaCupones", listOfCuponesPage);
+            model.addAttribute("listaDisponibilidad", listaDisponibilidad);
+            model.addAttribute("currentPage", page);
+            model.addAttribute("maxNumberOfPages", numberOfPages);
+            return "/AdminRestaurantes/cupones";
         }
-        model.addAttribute("listaCupones", listOfCuponesPage);
-        model.addAttribute("listaDisponibilidad", listaDisponibilidad);
-        model.addAttribute("currentPage", page);
-        model.addAttribute("maxNumberOfPages", numberOfPages);
-        return "/AdminRestaurantes/cupones";
+        else{
+            return "redirect:/adminrest/login";
+        }
     }
 
     @GetMapping("/crearCupon")
-    public String crearCupon(@ModelAttribute("cupon") Cupones cupon, Model model){
-        int idrestaurante = 1;
+    public String crearCupon(@ModelAttribute("cupon") Cupones cupon, Model model,HttpSession session){
+        Usuario usuario=(Usuario) session.getAttribute("usuarioLogueado");
+        int idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(usuario.getIdusuarios()).get().getIdrestaurante();
         Restaurante restaurante = new Restaurante();
         restaurante.setIdrestaurante(idrestaurante);
         cupon.setRestaurante(restaurante);
@@ -315,7 +342,7 @@ public class AdminRestauranteController {
             model.addAttribute("listaPlatos",listaPlatos);
             return "AdminRestaurantes/generarCupon";
         }else{
-            return "redirect:/cupones";
+            return "redirect:/adminrest/cupones";
         }
     }
     @GetMapping("/borrarCupon")
@@ -326,9 +353,9 @@ public class AdminRestauranteController {
         if(optCupon.isPresent()){
             cuponesRepository.deleteById(id);
             attr.addFlashAttribute("msg", "Cupon borrado exitosamente");
-            return "redirect:/cupones";
+            return "redirect:/adminrest/cupones";
         }else{
-            return "redirect:/cupones";
+            return "redirect:/adminrest/cupones";
         }
     }
 
@@ -352,38 +379,42 @@ public class AdminRestauranteController {
 
     @GetMapping("/calificaciones")
     public String verCalificaciones(Model model, @RequestParam(name = "page", defaultValue = "1") String requestedPage,
-                                    @RequestParam(name = "searchfield", defaultValue = "") String searchField){
-        float numberOfUsersPerPage = 7;
-        int page = Integer.parseInt(requestedPage);
-        //falta cambiar el id de acuerdo a la sesion pero por mientras se dejará ahi
-        Integer id = 1;
-        List<ComentariosDto> comentariosList;
-        if(searchField.equals("")){
-            comentariosList= pedidosRepository.comentariosUsuarios(id);
+                                    @RequestParam(name = "searchfield", defaultValue = "") String searchField,HttpSession session){
+        Usuario usuario=(Usuario) session.getAttribute("usuarioLogueado");
+        if(usuario.getCuentaActiva()==1){
+            float numberOfUsersPerPage = 7;
+            int page = Integer.parseInt(requestedPage);
+            int idrestaurante= restauranteRepository.buscarRestaurantePorIdAdmin(usuario.getIdusuarios()).get().getIdrestaurante();
+            List<ComentariosDto> comentariosList;
+            if(searchField.equals("")){
+                comentariosList= pedidosRepository.comentariosUsuarios(idrestaurante);
+            }
+            else{
+                comentariosList= pedidosRepository.buscarComentariosUsuarios(searchField,idrestaurante);
+            }
+            // si no se encuentra nada, se redirige a la lista general
+            if(comentariosList.size() == 0){
+                return "redirect:/adminrest/calificaciones";
+            }
+
+            int numberOfPages = (int) Math.ceil(comentariosList.size() / numberOfUsersPerPage);
+            if (page > numberOfPages) {
+                page = numberOfPages;
+            } // validation
+
+            int start = (int) numberOfUsersPerPage * (page - 1);
+            int end = (int) (start + numberOfUsersPerPage);
+
+            List<ComentariosDto> lisOfComentariosPage = comentariosList.subList(start, Math.min(end, comentariosList.size()));
+
+            model.addAttribute("listaComentarios", lisOfComentariosPage);
+            model.addAttribute("currentPage", page);
+            model.addAttribute("maxNumberOfPages", numberOfPages);
+            model.addAttribute("searchfield",searchField);
+            return "AdminRestaurantes/calificaciones";
+        }else{
+            return"redirect:/adminrest/login";
         }
-        else{
-            comentariosList= pedidosRepository.buscarComentariosUsuarios(searchField,id);
-        }
-        // si no se encuentra nada, se redirige a la lista general
-        if(comentariosList.size() == 0){
-            return "redirect:/adminrest/calificaciones";
-        }
-
-        int numberOfPages = (int) Math.ceil(comentariosList.size() / numberOfUsersPerPage);
-        if (page > numberOfPages) {
-            page = numberOfPages;
-        } // validation
-
-        int start = (int) numberOfUsersPerPage * (page - 1);
-        int end = (int) (start + numberOfUsersPerPage);
-
-        List<ComentariosDto> lisOfComentariosPage = comentariosList.subList(start, Math.min(end, comentariosList.size()));
-
-        model.addAttribute("listaComentarios", lisOfComentariosPage);
-        model.addAttribute("currentPage", page);
-        model.addAttribute("maxNumberOfPages", numberOfPages);
-        model.addAttribute("searchfield",searchField);
-        return "AdminRestaurantes/calificaciones";
     }
 
     @PostMapping("/buscarCalificaciones")
@@ -396,44 +427,73 @@ public class AdminRestauranteController {
     /************************REPORTE************************/
 
     @GetMapping("/reporte")
-    public String verReporte(Model model){
-        Integer id = 1;
-        model.addAttribute("listaPedidosPorFecha",pedidosRepository.listaPedidosReporteporFechamasantigua(id));
-        model.addAttribute("listaGanancias",pedidosRepository.gananciaPorMes(id));
-        model.addAttribute("platosTop5",pedidosRepository.platosMasVendidos(id));
-        model.addAttribute("platosNoTop5",pedidosRepository.platosMenosVendidos(id));
-        return "AdminRestaurantes/reporte";
+    public String verReporte(Model model,HttpSession session){
+        Usuario usuario=(Usuario) session.getAttribute("usuarioLogueado");
+        if(usuario.getCuentaActiva()==1){
+            int idrestaurante= restauranteRepository.buscarRestaurantePorIdAdmin(usuario.getIdusuarios()).get().getIdrestaurante();
+            model.addAttribute("listaPedidosPorFecha",pedidosRepository.listaPedidosReporteporFechamasantigua(idrestaurante));
+            model.addAttribute("listaGanancias",pedidosRepository.gananciaPorMes(idrestaurante));
+            model.addAttribute("platosTop5",pedidosRepository.platosMasVendidos(idrestaurante));
+            model.addAttribute("platosNoTop5",pedidosRepository.platosMenosVendidos(idrestaurante));
+            return "AdminRestaurantes/reporte";
+        }else{
+            return "redirect:/adminrest/login";
+        }
     }
 
     @PostMapping("/buscarReporte")
-    public String searchReporte(@RequestParam("name") String name, Model model) {
-        Integer id = 1;
-        model.addAttribute("listaPedidosPorFecha",pedidosRepository.buscarPorReporte(name,id));
-        model.addAttribute("listaGanancias",pedidosRepository.gananciaPorMes(id));
-        model.addAttribute("platosTop5",pedidosRepository.platosMasVendidos(id));
-        model.addAttribute("platosNoTop5",pedidosRepository.platosMenosVendidos(id));
-        return "AdminRestaurantes/reporte";
+    public String searchReporte(@RequestParam("name") String name, Model model, HttpSession session) {
+
+        /**Se obtiene Id de Restaurante**/
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        if(sessionUser.getCuentaActiva()==1){
+            Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
+            model.addAttribute("listaPedidosPorFecha",pedidosRepository.buscarPorReporte(name,idrestaurante));
+            model.addAttribute("listaGanancias",pedidosRepository.gananciaPorMes(idrestaurante));
+            model.addAttribute("platosTop5",pedidosRepository.platosMasVendidos(idrestaurante));
+            model.addAttribute("platosNoTop5",pedidosRepository.platosMenosVendidos(idrestaurante));
+            return "AdminRestaurantes/reporte";
+        }
+        else{
+            return "redirect:/adminrest/login";
+        }
     }
 
     /************************PEDIDOS************************/
 
     @GetMapping("/pedidos")
-    public String verPedidos(Model model){
-        Integer id = 1;
-        model.addAttribute("listaPedidos",pedidosRepository.listaPedidos(id));
-        return "AdminRestaurantes/pedidos";
+    public String verPedidos(Model model, HttpSession session){
+
+        /**Se obtiene Id de Restaurante**/
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        if(sessionUser.getCuentaActiva()==1){
+            Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
+            /********************************/
+            model.addAttribute("listaPedidos",pedidosRepository.listaPedidos(idrestaurante));
+            return "AdminRestaurantes/pedidos";
+        }else{
+            return "redirect:/adminrest/login";
+        }
     }
 
     @GetMapping("/preparacion")
-    public String pedidosPreparacion(Model model){
-        model.addAttribute("listaAceptado",pedidosRepository.aceptadopedidos());
-        model.addAttribute("listaPreparado",pedidosRepository.preparadopedidos());
+    public String pedidosPreparacion(Model model, HttpSession session){
+
+        /**Se obtiene Id de Restaurante**/
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
+        /********************************/
+
+        model.addAttribute("listaAceptado",pedidosRepository.aceptadopedidos(idrestaurante));
+        model.addAttribute("listaPreparado",pedidosRepository.preparadopedidos(idrestaurante));
         return"AdminRestaurantes/preparacion";
     }
 
     @GetMapping("/detallepedidos")
     public String detallePedidos(@RequestParam("id")int id,Model model){
+        System.out.println("Trace1");
         model.addAttribute("detalle",pedidosRepository.detallepedidos(id));
+        System.out.println("Trace2");
         return "AdminRestaurantes/detalle";
     }
 
@@ -442,7 +502,7 @@ public class AdminRestauranteController {
         Optional<Pedidos> optional = pedidosRepository.findById(id);
         optional.get().setEstadorestaurante("aceptado");
         pedidosRepository.save(optional.get());
-        return"redirect:/pedidos";
+        return"redirect:/adminrest/pedidos";
     }
 
     @GetMapping("/rechazarpedido")
@@ -450,7 +510,7 @@ public class AdminRestauranteController {
         Optional<Pedidos> optional = pedidosRepository.findById(id);
         optional.get().setEstadorestaurante("rechazado");
         pedidosRepository.save(optional.get());
-        return"redirect:/pedidos";
+        return"redirect:/adminrest/pedidos";
     }
 
     @GetMapping("/preparadopedido")
@@ -458,7 +518,7 @@ public class AdminRestauranteController {
         Optional<Pedidos> optional = pedidosRepository.findById(id);
         optional.get().setEstadorestaurante("preparado");
         pedidosRepository.save(optional.get());
-        return "redirect:/preparacion";
+        return "redirect:/adminrest/preparacion";
     }
 
     @GetMapping("/entregadopedido")
@@ -466,12 +526,15 @@ public class AdminRestauranteController {
         Optional<Pedidos> optional = pedidosRepository.findById(id);
         optional.get().setEstadorestaurante("entregado");
         pedidosRepository.save(optional.get());
-        return"redirect:/preparacion";
+        return"redirect:/adminrest/preparacion";
     }
+
+    /************************CUENTA************************/
 
     @GetMapping("/cuentaAdmin")
     public String cuenta(@ModelAttribute("restaurante") Restaurante restaurante, @ModelAttribute("usuario") Usuario usuario, Model model,HttpSession session){
         Usuario user=(Usuario)session.getAttribute("usuarioLogueado");
+        if(user.getCuentaActiva()==1){
         model.addAttribute("listadirecciones",direccionesRepository.findAllByUsuariosIdusuariosAndActivoEquals(user.getIdusuarios(),1));
         model.addAttribute("restaurante",restauranteRepository.obtenerperfilRest(user.getIdusuarios()));
         model.addAttribute("usuario",usuarioRepository.findById(user.getIdusuarios()).get());
@@ -479,6 +542,10 @@ public class AdminRestauranteController {
         model.addAttribute("listadistritos",distritosRepository.findAll());
         model.addAttribute("ruc",restauranteRepository.buscarRuc(user.getIdusuarios()));
         return "AdminRestaurantes/cuenta";
+        }
+        else{
+            return "redirect:/adminrest/login";
+        }
     }
     @GetMapping("/borrarRestaurante")
     public String borrarRestaurante(HttpSession session){

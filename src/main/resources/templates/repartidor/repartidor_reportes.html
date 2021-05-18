@@ -49,7 +49,9 @@
                 <div th:if="${msg != null}" th:text="${msg}" class="alert alert-success" role="alert"></div>
                 <form method="post" th:action="@{/repartidor/Buscador}">
                     <input name="valorBuscado" class="form-control mb-3" type="text" placeholder="Ingrese el nombre del restaurante o distrito del restaurante"/>
+                    <a class="btn btn-primary" th:href="@{'/repartidor/Reportes'}">Limpiar</a>
                 </form>
+
 
                 <table class="table">
                     <thead>
@@ -57,8 +59,7 @@
                         <th scope="col"># PEDIDO</th>
                         <th scope="col">RESTAURANTE</th>
                         <th scope="col">DISTRITO DEL RESTAURANTE</th>
-                        <th scope="col">DIRECCION DE DESTINO</th>
-                        <th scope="col">DISTRITO DE DESTINO</th>
+                        <th scope="col">LUGAR DE DESTINO</th>
                         <th scope="col">COMISIÓN S/.</th>
                         <th scope="col">S/. TOTAL</th>
                         <th scope="col">CALIFICACION</th>
@@ -69,11 +70,11 @@
                         <td th:text="${info.index + 1}"></td>
                         <td th:text="${pedidoDisponible.getNombre()}"></td>
                         <td th:text="${pedidoDisponible.getRestaurantedistrito()}"></td>
-                        <td th:text="${pedidoDisponible.getClientedireccion()}"></td>
-                        <td th:text="${pedidoDisponible.getClientedistrito()}"></td>
+                        <td th:text="${pedidoDisponible.getClienteubicacion()}"></td>
                         <td th:text="${pedidoDisponible.getComisionrepartidor()} + '.0'"></td>
                         <td th:text="${pedidoDisponible.getMontototal()}"></td>
                         <td th:text="${pedidoDisponible.getCalificacionrepartidor()}"></td>
+                    </tr>
                     </tbody>
                 </table>
 

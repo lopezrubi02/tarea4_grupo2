@@ -53,16 +53,18 @@
                     <div class="col-md-9">
                         <div class="full">
                             <div class="right_header_info">
+
                                 <ul>
                                     <!-- TODO -->
-
                                     <li class="button_user">
                                         <a class="button active" th:href="@{/adminrest/cuentaAdmin}">Mi cuenta</a>
-                                        <form th:action="@{/logout}" method="post">
-                                            <button class="button" type="submit">Logout</button>
-                                        </form>
                                     </li>
 
+                                    <li style="transform: translateY(-7px)">
+                                        <form th:action="@{/logout}" method="post">
+                                            <button class="button" style="padding: 0px 15px; font-size: 14px;height: 40px;width: 100.5px;background:#e3d105" type="submit">Logout</button>
+                                        </form>
+                                    </li>
                                     <li>
                                         <button type="button" id="sidebarCollapse">
                                             <img src="/images/menu_icon.png" alt="#">
@@ -95,7 +97,7 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-xl-12">
-                                            <div th:each="c: ${calificacion}" style="font-size: large;color: black">Calificación general: <span th:text="${c.getcalificacionpromedio()}"></span> <img src="/images/pixlr-bg-result.png" style="width: 20px;height: 20px"></div>
+                                            <div style="font-size: large;color: black">Calificación general: <span th:text="${calificacionpromedio}"></span> <img src="/images/pixlr-bg-result.png" style="width: 20px;height: 20px"></div>
                                         </div>
                                     </div>
                                     <div class="row" style="padding-top: 50px">

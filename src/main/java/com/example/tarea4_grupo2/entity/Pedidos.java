@@ -3,6 +3,8 @@ package com.example.tarea4_grupo2.entity;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name ="pedidos")
@@ -11,19 +13,17 @@ public class Pedidos {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idpedidos;
 
-    @Column(nullable = false)
+    @OneToMany(mappedBy = "pedido")
+    private Set<PedidoHasPlato> pedidohasplato = new HashSet<>();
+
     private float montototal;
 
-
-    @Column(nullable = false)
     private int comisionrepartidor;
 
-    @Column(nullable = false)
     private int comisionsistema;
 
     private String montoexacto;
 
-    @Column(nullable = false)
     private int idmetodopago;
 
     private int calificacionrestaurante;
@@ -35,10 +35,8 @@ public class Pedidos {
 
     private float tiempodelivery;
 
-    @Column(nullable = false)
     private String estadorestaurante;
 
-    @Column(nullable = false)
     private String estadorepartidor;
 
     @Column(nullable = false)
@@ -47,11 +45,48 @@ public class Pedidos {
 
     private int idrepartidor;
 
+    @Column(nullable = false)
     private int restaurante_idrestaurante;
 
     private Date fechahorapedido;
     private Date fechahoraentregado;
     private int direccionentrega;
+
+    public Set<PedidoHasPlato> getPedidohasplato() {
+        return pedidohasplato;
+    }
+
+    public void setPedidohasplato(Set<PedidoHasPlato> pedidohasplato) {
+        this.pedidohasplato = pedidohasplato;
+    }
+
+    public void addpedido(PedidoHasPlato pedidoHasPlato){
+        this.pedidohasplato.add(pedidoHasPlato);
+    }
+
+
+    public Pedidos() {
+    }
+
+    public Pedidos(float montototal, int comisionrepartidor, int comisionsistema, String montoexacto, int idmetodopago, int calificacionrestaurante, int calificacionrepartidor, String comentario, float tiempodelivery, String estadorestaurante, String estadorepartidor, int idcliente, int idrepartidor, int restaurante_idrestaurante, Date fechahorapedido, Date fechahoraentregado, int direccionentrega) {
+        this.montototal = montototal;
+        this.comisionrepartidor = comisionrepartidor;
+        this.comisionsistema = comisionsistema;
+        this.montoexacto = montoexacto;
+        this.idmetodopago = idmetodopago;
+        this.calificacionrestaurante = calificacionrestaurante;
+        this.calificacionrepartidor = calificacionrepartidor;
+        this.comentario = comentario;
+        this.tiempodelivery = tiempodelivery;
+        this.estadorestaurante = estadorestaurante;
+        this.estadorepartidor = estadorepartidor;
+        this.idcliente = idcliente;
+        this.idrepartidor = idrepartidor;
+        this.restaurante_idrestaurante = restaurante_idrestaurante;
+        this.fechahorapedido = fechahorapedido;
+        this.fechahoraentregado = fechahoraentregado;
+        this.direccionentrega = direccionentrega;
+    }
 
     public int getIdpedidos() {
         return idpedidos;

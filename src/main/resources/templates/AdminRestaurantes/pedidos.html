@@ -81,8 +81,15 @@
                         <div class="full">
                             <div class="right_header_info">
                                 <ul>
-                                    <!-- TODO -->
-                                    <li class="button_user"><a class="button active" th:href="@{/cuentaAdmin}">Mi cuenta</a><a class="button" th:href="@{/login}">Logout</a></li>
+                                    <li class="button_user">
+                                        <a class="button active" th:href="@{/adminrest/cuentaAdmin}">Mi cuenta</a>
+                                    </li>
+
+                                    <li style="transform: translateY(-7px)">
+                                        <form th:action="@{/logout}" method="post">
+                                            <button class="button" style="padding: 0px 15px; font-size: 14px;height: 40px;width: 100.5px;background:#e3d105" type="submit">Logout</button>
+                                        </form>
+                                    </li>
                                     <li>
                                         <button type="button" id="sidebarCollapse">
                                             <img src="/images/menu_icon.png" alt="#">
@@ -119,14 +126,14 @@
                                 </thead>
                                 <tbody>
                                 <tr th:each="pedidos:${listaPedidos}">
-                                    <td><a th:href="@{'/detallepedidos'+'?id='+${pedidos.getidpedidos()}}" th:text="${pedidos.getidpedidos()}"></a></td>
+                                    <td><a th:href="@{'/adminrest/detallepedidos'+'?id='+${pedidos.getidpedidos()}}" th:text="${pedidos.getidpedidos()}"></a></td>
                                     <td th:text="${pedidos.getcliente()}"></td>
                                     <td th:text="${pedidos.getdireccion()}"></td>
-                                    <td th:text="${pedidos.getdistrito()}"></td>
+                                    <td th:text="${pedidos.getnombredistrito()}"></td>
                                     <td th:text="${pedidos.getmontototal()}"></td>
                                     <td th:text="${#dates.format(pedidos.getfechahorapedido(), 'dd-MM-yyyy')}"></td>
-                                    <td><a class="send" th:href="@{'/aceptarpedido'+'?id='+${pedidos.getidpedidos()}}" style="text-align: center;background: #d8b00f">Aceptar</a></td>
-                                    <td><a class="send" th:href="@{'/rechazarpedido'+'?id='+${pedidos.getidpedidos()}}" style="text-align: center;background: #d8b00f">Rechazar</a></td>
+                                    <td><a class="send" th:href="@{'/adminrest/aceptarpedido'+'?id='+${pedidos.getidpedidos()}}" style="text-align: center;background: #d8b00f">Aceptar</a></td>
+                                    <td><a class="send" th:href="@{'/adminrest/rechazarpedido'+'?id='+${pedidos.getidpedidos()}}" style="text-align: center;background: #d8b00f">Rechazar</a></td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -136,10 +143,10 @@
                 </div>
                 <div class="row">
                     <div class="col-md-4">
-                    <a class="send" th:href="@{/perfil}" style="background: #d8b00f;text-align: center">Regresar</a>
+                    <a class="send" th:href="@{/adminrest/perfil}" style="background: #d8b00f;text-align: center">Regresar</a>
                     </div>
                     <div class="col-md-4">
-                        <a class="send" th:href="@{/preparacion}" style="background: #d8b00f;text-align: center">En preparacion</a>
+                        <a class="send" th:href="@{/adminrest/preparacion}" style="background: #d8b00f;text-align: center">En preparacion</a>
                     </div>
                 </div>
                 </div>

@@ -6,24 +6,31 @@ import com.example.tarea4_grupo2.entity.Usuario;
 import com.example.tarea4_grupo2.repository.DireccionesRepository;
 import com.example.tarea4_grupo2.repository.DistritosRepository;
 import com.example.tarea4_grupo2.repository.UsuarioRepository;
+import com.example.tarea4_grupo2.service.SendMailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.SecureRandom;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Controller
 public class LoginController {
+    @Autowired
+    SendMailService sendMailService;
     @Autowired
     UsuarioRepository usuarioRepository;
     @Autowired
@@ -72,10 +79,9 @@ public class LoginController {
         }
     }
 
-    @GetMapping("/login")
-    public String loginForm(
-    ){
-        return "adminsistema/login";
+    @GetMapping(value = {"","/login"})
+    public String loginForm(){
+        return "login/login";
     }
 
     @GetMapping("/redirectByRol")
@@ -95,9 +101,92 @@ public class LoginController {
             return "redirect:/admin/gestionCuentas";
         } else if(rol.equals("Repartidor")) {
             return "redirect:/repartidor/home";
-        }else{
+        }else if(rol.equals("Cliente")){
+            return "redirect:/cliente/paginaprincipal";
+        }
+        else{
             System.out.println(rol);
-            return "adminsistema/login";
+            return "/login";
         }
     }
+    @GetMapping("/olvidoContrasenia")
+    public String olvidoContrasenia(RedirectAttributes attr) {
+        return "login/olvidoContrasenia";
+    }
+
+    //envia el correo con el token
+    @PostMapping("/recuperarContrasenia")
+    public String recuperarContrasenia(@RequestParam("correo") String correoDestino, RedirectAttributes attr,
+                                       @ModelAttribute("usuario") Usuario usuario) throws MalformedURLException {
+        String emailPattern = "^[_a-z0-9-]+(\\.[_a-z0-9-]+)*@" +
+                "[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,4})$";
+        Pattern pattern = Pattern.compile(emailPattern);
+        Matcher matcher = pattern.matcher(correoDestino);
+
+        if (matcher.find() == true) {
+            Optional<Usuario> optionalUsuario = Optional.ofNullable(usuarioRepository.findByEmail(correoDestino));
+            String subject;
+            String mensaje;
+            if (optionalUsuario.isPresent()) {
+                SecureRandom random = new SecureRandom();
+                byte bytes[] = new byte[20];
+                random.nextBytes(bytes);
+                String token = bytes.toString();
+                subject = "Recuperacion de contraseña - Spicy";
+                String direccion = "http://localhost:8090/cambiar1/";
+                URL url = new URL(direccion + token);
+                mensaje = "¡Hola!<br><br>Para reestablecer su contraseña haga click: <a href='" + direccion + token + "'>AQUÍ</a> <br><br>Atte. Equipo de Spicy</b>";
+                ;
+                attr.addFlashAttribute("msg", "¡Contraseña temporal enviada al correo! :D");
+                optionalUsuario.get().setToken(token);
+            } else {
+                subject = "Invitacion de registro - Spicy";
+                mensaje = "No está registrado en Spicy :(";
+                attr.addFlashAttribute("msg2", "¡No estas registrado! :(");
+            }
+            sendMailService.sendMail(correoDestino, "saritaatanacioarenas@gmail.com", subject, mensaje);
+            return "redirect:/login";
+        } else {
+            attr.addFlashAttribute("msg2", "¡Ingresa un formato email! :(");
+            return "redirect:/login";
+        }
+    }
+
+    //aquí se ingresa la contraseña
+    @GetMapping(value = "/cambiar1/{token}") //formato que espero el usuario coloque en URL
+    public String cambiar1(@PathVariable("token") String tokenObtenido, Model model, RedirectAttributes attr) {
+        Usuario usuario = new Usuario();
+        usuario.setToken(tokenObtenido);
+        model.addAttribute("usuario", usuario);
+        return "login/cambiar1";
+    }
+
+    @PostMapping("/cambiarContrasenia")
+    public String cambiarContrasenia(Usuario usuario, RedirectAttributes attr, @RequestParam("contrasenia") String contrasenia) {
+
+        Optional<Usuario> usuarioToken = Optional.ofNullable(usuarioRepository.findByToken(usuario.getToken()));
+        if (usuarioToken.isPresent()) {
+            BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+            if (contrasenia == "") {
+                attr.addFlashAttribute("msg2", "¡Contraseña no puede ser nula! :C");
+            } else {
+                String contraseniahashbcrypt = BCrypt.hashpw(contrasenia, BCrypt.gensalt());
+                usuarioToken.get().setContraseniaHash(contraseniahashbcrypt);
+
+                attr.addFlashAttribute("msg", "¡Contraseña cambiada! :D");
+
+                SecureRandom random = new SecureRandom();
+                byte bytes[] = new byte[20];
+                random.nextBytes(bytes);
+                String tokenNuevo = bytes.toString();
+                usuarioToken.get().setToken(tokenNuevo);
+                usuarioRepository.save(usuarioToken.get());
+            }
+            return "redirect:/login";
+        } else {
+            attr.addFlashAttribute("msg2", "¡Error en el token o expirado! debes generar otro :(");
+            return "/login/olvidoContrasenia";
+        }
+    }
+
 }

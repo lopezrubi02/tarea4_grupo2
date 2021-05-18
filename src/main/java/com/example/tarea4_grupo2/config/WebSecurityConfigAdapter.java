@@ -32,9 +32,11 @@ public class WebSecurityConfigAdapter extends org.springframework.security.confi
 
         httpSecurity.authorizeRequests()
                 .antMatchers("/admin", "/admin/**").hasAuthority("AdminSistema")
-             //   .antMatchers("/cliente","/cliente/**").hasAuthority("Cliente")
+                .antMatchers("/cliente","/cliente/**").hasAuthority("Cliente")
                 .antMatchers("/adminrest","/adminrest/**").hasAuthority("AdminRestaurante")
                 .antMatchers("/repartidor","/repartidor/**").hasAuthority("Repartidor")
+                .antMatchers("/login", "/login/**").permitAll()
+                .antMatchers("/cambiar1/**", "/cambiar1/", "/cambiarContrasenia").permitAll()
                 .anyRequest().permitAll();
 
 

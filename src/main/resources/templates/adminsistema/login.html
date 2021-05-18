@@ -54,7 +54,7 @@
                     <div class="full">
                         <div class="right_header_info">
                             <ul>
-                               <li class="button_user"><a class="button active" th:href="@{/eleccion}">Crear una cuenta</a><a class="button" href="#">Soy partner</a></li>
+                               <li class="button_user"><a class="button active" th:href="@{/eleccion}">Crear una cuenta</a></li>
                             </ul>
                         </div>
                     </div>
@@ -78,6 +78,9 @@
 						<h2>Iniciar sesión</h2>
 					</div>
 
+                    <div align="center" th:if="${msg != null}" th:text="${msg}" class="alert alert-success" role="alert"></div>
+                    <div align="center" th:if="${msg2 != null}" th:text="${msg2}" class="alert alert-danger" role="alert"></div>
+
 
 
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
@@ -88,7 +91,10 @@
 
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <h4 th:if="${(param.error != null)}" >
-                                        <i>Usuario y/o contraseña incorrecto </i>
+                                        <i style="
+                                                color:  #581845 ;
+                                                text-shadow: 1px 1px gray;
+                                            ">Usuario y/o contraseña incorrecto </i>
                                     </h4>
                                 </div>
 
@@ -96,11 +102,11 @@
                                     <input class="form-control" placeholder="Correo" type="text" id="username" name="username">
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <input class="form-control" placeholder="Contraseña" type="text" id="password" name="password">
+                                    <input class="form-control" placeholder="Contraseña" type="password" id="password" name="password">
                                 </div>
 								
 								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-									<a href="">Olvidé mi contraseña</a>
+									<a th:href="@{'/olvidoContrasenia'}">Olvidé mi contraseña</a>
 								</div>
 								</br>
 								</br>

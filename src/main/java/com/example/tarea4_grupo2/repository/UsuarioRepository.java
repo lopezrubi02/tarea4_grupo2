@@ -17,6 +17,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     List<Usuario> findAllByRolAndCuentaActivaAndNombre(String rol, Integer cuentaActiva, String name);
     List<Usuario> findAllByNombreAndCuentaActiva(String nombre, int cuentaActiva);
 
+    Usuario findByToken(String token);
+
     @Query(value = "select * from usuarios where idusuarios = ?1", nativeQuery = true)
     Usuario findUsuarioById(int id);
 

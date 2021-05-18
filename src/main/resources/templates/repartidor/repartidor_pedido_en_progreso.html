@@ -48,12 +48,12 @@
                 <h1>Pedido esperando ser entregado</h1>
                 <p th:text="'Restaurante: ' + ${restaurante.getNombre()}"></p>
                 <p th:text="'Dirección de recojo: ' + ${restaurante.getDireccion()}"></p>
-                <p th:text="'Distrito de recojo: ' + ${restaurante.getDistrito()}"></p>
+                <p th:text="'Distrito de recojo: ' + ${restaurante.getDistrito().getNombredistrito()}"></p>
                 <hr>
                 <p th:text="'Nombre del cliente: ' + ${usuario.getNombre()} + ' '+ ${usuario.getApellidos()}"></p>
                 <p th:text="'Contacto del cliente: ' + ${usuario.getTelefono()}"></p>
                 <p th:text="'Direccion de destino: ' + ${direccion.getDireccion()}"></p>
-                <p th:text="'Distrito de destino: ' + ${direccion.getDistrito()}"></p>
+                <p th:text="'Distrito de destino: ' + ${direccion.getDistrito().getNombredistrito()}"></p>
 
                 <hr>
                 <p th:text="'Total: S/.' + ${ pedido.getMontototal()}"></p>

@@ -20,14 +20,17 @@ public class Usuario implements Serializable {
     @Column(nullable = false)
     @NotBlank(message = "No puede estar vacío")
     @Size(max=45,message = "Los nombres no puede tener más de 45 caracteres")
-    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚ ]*$",message = "Solo puede contener letras")
+    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñ ]*$",message = "Solo puede contener letras")
     private String nombre;
 
     @Column(nullable = false)
     @NotBlank(message = "No puede estar vacío")
     @Size(max=45,message = "Los apellidos no puede tener más de 45 caracteres")
-    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚ ]*$",message = "Solo puede contener letras")
+    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñ ]*$",message = "Solo puede contener letras")
     private String apellidos;
+
+    @Column(nullable = true)
+    private String token;
 
     @Column(nullable = false)
     @Email(message = "No es formato @gmail.com")
@@ -170,5 +173,13 @@ public class Usuario implements Serializable {
 
     public void setUltimafechaingreso(LocalDateTime ultimafechaingreso) {
         this.ultimafechaingreso = ultimafechaingreso;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }
