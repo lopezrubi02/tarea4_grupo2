@@ -29,6 +29,9 @@ public class Usuario implements Serializable {
     @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñ ]*$",message = "Solo puede contener letras")
     private String apellidos;
 
+    @Column(nullable = true)
+    private String token;
+
     @Column(nullable = false)
     @Email(message = "No es formato @gmail.com")
     @NotBlank(message = "No puede estar vacío")
@@ -170,5 +173,13 @@ public class Usuario implements Serializable {
 
     public void setUltimafechaingreso(LocalDateTime ultimafechaingreso) {
         this.ultimafechaingreso = ultimafechaingreso;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

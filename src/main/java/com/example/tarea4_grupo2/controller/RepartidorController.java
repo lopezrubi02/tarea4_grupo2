@@ -71,15 +71,23 @@ public class RepartidorController {
 
     @GetMapping("/repartidor/PedidosDisponibles")
     public String pedidosDisponibles(RedirectAttributes attr, Model model,HttpSession session) {
-        List<PedidosDisponiblesDTO> listaPedidos = repartidorRepository.findListaPedidosDisponibles();
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-        if (listaPedidos.isEmpty()) {
-            attr.addFlashAttribute("msg", "No hay pedidos disponibles para mostrar.");
-            return "redirect:/repartidor";
+        Optional<Repartidor> repartidor = repartidorRepository.findById(sessionUser.getIdusuarios());
+
+        if (repartidor.isPresent()) {
+            List<PedidosDisponiblesDTO> listaPedidos = repartidorRepository.findListaPedidosDisponibles();
+
+            if (listaPedidos.isEmpty()) {
+                attr.addFlashAttribute("msg", "No hay pedidos disponibles para mostrar.");
+                return "redirect:/repartidor";
+            } else {
+                model.addAttribute("listaPedidosDisponibles", listaPedidos);
+                return "repartidor/repartidor_pedidos_disponibles";
+            }
         } else {
-            model.addAttribute("listaPedidosDisponibles", listaPedidos);
-            return "repartidor/repartidor_pedidos_disponibles";
+            return "redirect:/repartidor";
         }
+
     }
 
     //El repartidor acepta el pedido del restaurante y se cambia el estado a "esperando recojo del restaurante"
