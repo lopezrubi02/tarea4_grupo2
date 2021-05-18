@@ -346,7 +346,7 @@ public class RepartidorController {
         repartidor1.setLicencia(licencia);
         repartidorRepository.save(repartidor1);
 
-        return "redirect:/repartidor/home";
+        return "redirect:/login";
     }
 
     @GetMapping("/new3")
@@ -420,11 +420,11 @@ public class RepartidorController {
                 repartidorRepository.save(repartidor);
 
                 if(movilidad.equalsIgnoreCase("bicicleta")){
-                    return "redirect:/repartidor/home";
+                    return "redirect:/login";
                 }else{
                     //form de placa y licencia
                     attributes.addAttribute("id",usuario2.getIdusuarios());
-                    return "redirect:/repartidor/new2";
+                    return "redirect:/new2";
                 }
 
 
