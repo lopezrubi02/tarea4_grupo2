@@ -453,7 +453,7 @@ public class AdminController {
     @GetMapping("/RestaurantesReportes")
     public String restaurantesReportes(Model model){
         List<RestauranteReportes_DTO> reporteLista = restauranteRepository.reportesRestaurantes();
-        model.addAttribute("reporteLista1",reporteLista);
+        model.addAttribute("reporteLista",reporteLista);
 
         double max = 0;
         int indicemayor = 0;
@@ -483,7 +483,7 @@ public class AdminController {
     @GetMapping("/RepartidorReportes")
     public String repartidorReportes(Model model){
         List<RepartidoresReportes_DTO>  reporteLista = repartidorRepository.reporteRepartidores();
-        model.addAttribute("reporteLista2",reporteLista);
+        model.addAttribute("reporteLista",reporteLista);
 
         int max = 0;
         int indicemayor = 0;

@@ -32,13 +32,13 @@
 <body class="main-layout">
     <!-- loader  -->
     <div class="loader_bg">
-        <div class="loader"><img src="images/loading.gif" alt="" /></div>
+        <!--div class="loader"><img src="images/loading.gif" alt="" /></div-->
     </div>
 
-    <div th:replace="fragments/adminSistema.html:: slider" class="wrapper">
+    <div  class="wrapper">
     <!-- end loader -->
 
-     <div class="sidebar">
+     <div th:replace="fragments/adminSistema.html:: slider" class="sidebar">
             <!-- Sidebar  -->
             <nav id="sidebar">
 
@@ -93,6 +93,7 @@
                 </div>
             </div>
         </div>
+
     </header>
     <!-- end header -->
 
@@ -149,7 +150,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr th:each="repartidor, info: ${reporteLista2}">
+                                <tr th:each="repartidor, info: ${reporteLista}">
                                     <td scope="row" th:text="${info.index + 1}">1</td>
                                     <td th:text="${repartidor.nombre+' '+repartidor.apellidos}"></td>
                                     <td th:text="${repartidor.dni}"></td>
