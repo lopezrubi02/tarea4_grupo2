@@ -10,7 +10,7 @@ public interface PedidosReporteDTOs {
     int getCalificacionrepartidor();
     String getNombre();
     String getRestaurantedistrito();
-    String getClientedireccion();
+    String getClienteubicacion();
 }
 
 /*

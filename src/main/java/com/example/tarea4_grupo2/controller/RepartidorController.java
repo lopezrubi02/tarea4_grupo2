@@ -90,6 +90,7 @@ public class RepartidorController {
 
         if (pedidoElegido.isPresent()) {
             Pedidos pedido = pedidoElegido.get();
+            pedido.setIdrepartidor(sessionUser.getIdusuarios());
             pedido.setEstadorepartidor("aceptado"); //Estado de esperando recojo del restaurante
             model.addAttribute("pedido", pedido);
 
@@ -101,6 +102,8 @@ public class RepartidorController {
 
             List<PlatosPorPedidoDTO> listaPlatosPorPedidoDTO = repartidorRepository.findListaPlatosPorPedido(pedido.getIdpedidos());
             model.addAttribute("listaPlatosPorPedidoDTO", listaPlatosPorPedidoDTO);
+
+            pedidosRepository.save(pedido);
 
             return "repartidor/repartidor_recojo_de_producto";
         } else {
@@ -133,6 +136,8 @@ public class RepartidorController {
             List<PlatosPorPedidoDTO> listaPlatosPorPedidoDTO = repartidorRepository.findListaPlatosPorPedido(pedido.getIdpedidos());
             model.addAttribute("listaPlatosPorPedidoDTO", listaPlatosPorPedidoDTO);
 
+            pedidosRepository.save(pedido);
+
             return "repartidor/repartidor_pedido_en_progreso";
         } else {
             attr.addFlashAttribute("msg", "Este pedido ya no está disponible :(");
@@ -150,6 +155,7 @@ public class RepartidorController {
             Pedidos pedido = pedidoElegido.get();
             pedido.setEstadorepartidor("entregado"); //Estado de entregado al cliente
             model.addAttribute("pedido", pedido);
+            pedidosRepository.save(pedido);
             attr.addFlashAttribute("msgVerde", "Se registró la entrega del pedido. ¡Gracias!");
         } else {
             attr.addFlashAttribute("msg", "Este pedido ya no está disponible :(");
