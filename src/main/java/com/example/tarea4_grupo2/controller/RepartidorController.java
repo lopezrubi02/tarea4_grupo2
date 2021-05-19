@@ -191,7 +191,6 @@ public class RepartidorController {
             model.addAttribute("listaFindReporte", listaFindReporte);
             return "repartidor/repartidor_resultado_buscador";
         }
-
     }
 
     @GetMapping("/repartidor/Reportes")
