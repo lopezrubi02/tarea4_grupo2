@@ -33,9 +33,9 @@
 
 <body class="main-layout">
     <!-- loader  -->
-    <div class="loader_bg">
+    <!--div class="loader_bg">
         <div class="loader"><img th:src="@{/images/loading.gif}" alt="" /></div>
-    </div>
+    </div-->
 
     <div class="wrapper">
     <!-- end loader -->
@@ -206,7 +206,7 @@
           <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mar_bottom" th:each="restaurante : ${listarestaurantes}">
             <div class="blog_box">
               <div class="blog_img_box">
-                <figure><img th:src="@{/images/blog_img1.png}" width="70" height="70"/></figure>
+                <figure><img th:src="@{|fileUploaded/${restaurante.idrestaurante}|}" width="70" height="70"/></figure>
               </div>
               <a th:href=" '/cliente/restaurantexordenar?idrestaurante=' + ${restaurante.idrestaurante} + '&direccionxenviar=' + ${direccionseleccionada.getIddirecciones()}">
                   <h3 th:text="${restaurante.nombre}">Chifa Imperial</h3></a>

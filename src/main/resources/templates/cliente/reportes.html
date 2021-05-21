@@ -126,9 +126,9 @@
             <div th:if="${alerta2 != null}" th:text="${alerta2}" class="alert alert-warning" role="alert"></div>
             <div class="row g-2">
                 <div class="col-md">
-                    <form class="form-group mb-3" method="post" th:action="@{/cliente/recepcionCliente}">
+                    <form class="form-group mb-3" method="post" th:action="@{/cliente/recepcionCliente}" th:object="${localDate}">
                         <div class="input-group-append">
-                            <input type="month" id="start" name="fechahorapedido">
+                            <input type="month" id="start" name="fechahorapedido" class="form-control"  th:field="*{}">
                             <button class="btn btn-warning" type="submit">Buscar</button>
                             <button class="btn btn-dark" th:href="@{/clientes/reportes}">Limpiar</button>
                         </div>

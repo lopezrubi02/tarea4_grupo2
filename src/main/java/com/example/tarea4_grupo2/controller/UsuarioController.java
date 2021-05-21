@@ -3,7 +3,12 @@ package com.example.tarea4_grupo2.controller;
 import com.example.tarea4_grupo2.dto.*;
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
+import jdk.nashorn.internal.runtime.regexp.joni.NodeOptInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -126,30 +132,22 @@ public class UsuarioController {
     @GetMapping("/cliente/reportes")
     public String reportesCliente(Model model,
                                   RedirectAttributes redirectAttributes,
-                                  HttpSession session) {
-        //int idusuarios = 8;
-//        int anio = 2021;
-  //      int mes = 05;
+                                  HttpSession session,
+                                  @ModelAttribute("fecha") DateFormat localDate) {
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuarios=sessionUser.getIdusuarios();
 
         java.util.Date fecha = new Date();
-        LocalDate localDate = LocalDate.now();
-        System.out.println(localDate);
-        System.out.println("ver año y mes");
-        String fechaactual1 = String.valueOf(localDate);
+        LocalDate dateactual = LocalDate.now();
+
+        String fechaactual1 = String.valueOf(dateactual);
         String[] fechaactual = fechaactual1.split("-");
-        System.out.println(fechaactual);
         String a = fechaactual[0];
         String m = fechaactual[1];
         int anioactual = Integer.parseInt(a);
         int mesactual = Integer.parseInt(m);
-        System.out.println(anioactual);
-        System.out.println(mesactual);
-
         int anio = anioactual;
         int mes = mesactual;
-
 
         Optional<Usuario> optUsuario = usuarioRepository.findById(idusuarios);
         if (optUsuario.isPresent()) {
@@ -171,6 +169,7 @@ public class UsuarioController {
             model.addAttribute("listaPromedioTiempo", tiempoMedio_clienteDTOS);
             model.addAttribute("diferencia", dineroAhorrado_clienteDTO);
             model.addAttribute("listaHistorialConsumo", pedidosRepository.obtenerHistorialConsumo(idusuarios, anio, mes));
+            model.addAttribute("fechaactual",localDate);
             return "cliente/reportes";
         } else {
             return "redirect:/cliente/miperfil";
@@ -181,11 +180,13 @@ public class UsuarioController {
     public String recepcionCliente(@RequestParam("fechahorapedido") String fechahorapedido,
                                    RedirectAttributes redirectAttributes,
                                    Model model,
-                                   HttpSession session) {
-        //int idusuarios = 7;
+                                   HttpSession session,
+                                   @ModelAttribute("localDate") @Valid String localdate
+                                   ) {
+
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuarios=sessionUser.getIdusuarios();
-
+        localdate = fechahorapedido;
         System.out.println(fechahorapedido);
         String[] fecha = fechahorapedido.split("-", 2);
         System.out.println(fecha);
@@ -230,11 +231,36 @@ public class UsuarioController {
             System.out.println("No se encuentra el indice");
             System.out.println("no se encontraron mes y año");
             redirectAttributes.addFlashAttribute("alerta2", "No se añadieron campos de búsqueda");
+            model.addAttribute("fechaactual",localdate);
             return "redirect:/cliente/reportes";
         }
 
         return "cliente/reportes";
     }
+
+    @GetMapping("/image/id")
+    public ResponseEntity<byte[]>mostrarImagen(@PathVariable("id") int id){
+        Optional<Restaurante> opt = restauranteRepository.findById(id);
+
+        if(opt.isPresent()){
+            Restaurante r = opt.get();
+
+            byte[] imagenComoBytes = r.getFoto();
+
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.setContentType(
+                    MediaType.parseMediaType(r.getFotocontenttype()));
+
+            return new ResponseEntity<>(
+                    imagenComoBytes,
+                    httpHeaders,
+                    HttpStatus.OK);
+        }else{
+            return null;
+        }
+
+    }
+
 
     /** Realizar pedido **/
 
@@ -467,8 +493,14 @@ public class UsuarioController {
     }
 
     @GetMapping("/cliente/carritoproductos")
-    public String carritoproductos(){
-         return "cliente/carrito_productos";
+    public String carritoproductos(Model model, HttpSession session){
+
+
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuario=sessionUser.getIdusuarios();
+
+
+        return "cliente/carrito_productos";
     }
 
     /** Mi perfil **/
