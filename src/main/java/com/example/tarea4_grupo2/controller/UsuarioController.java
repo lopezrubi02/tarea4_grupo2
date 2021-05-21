@@ -141,18 +141,14 @@ public class UsuarioController {
         int anio = anioactual;
         int mes = mesactual;
         String mes_mostrar = String.valueOf(mes);
-        System.out.println(mes);
-        System.out.println(mes_mostrar);
+
         if(mes<10){
             mes_mostrar='0' + mes_mostrar; //agrega cero si el menor de 10
 
         }
-        System.out.println(mes_mostrar);
-        String fechamostrar = anio + "-" + mes_mostrar;
-        System.out.println(fechamostrar);
-        System.out.println(fechaactual1);
 
-        System.out.println("*****************");
+        String fechamostrar = anio + "-" + mes_mostrar;
+
         Optional<Usuario> optUsuario = usuarioRepository.findById(idusuarios);
         if (optUsuario.isPresent()) {
             Usuario cliente = optUsuario.get();
