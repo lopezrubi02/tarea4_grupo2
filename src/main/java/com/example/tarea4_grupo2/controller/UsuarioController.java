@@ -34,27 +34,22 @@ public class UsuarioController {
 
     @Autowired
     UsuarioRepository usuarioRepository;
-
     @Autowired
     DireccionesRepository direccionesRepository;
-
     @Autowired
     CategoriasRepository categoriasRepository;
-
     @Autowired
     PedidosRepository pedidosRepository;
-
     @Autowired
     DistritosRepository distritosRepository;
-
     @Autowired
     RestauranteRepository restauranteRepository;
-
     @Autowired
     PlatoRepository platoRepository;
-
     @Autowired
     PedidoHasPlatoRepository pedidoHasPlatoRepository;
+    @Autowired
+    RepartidorRepository repartidorRepository;
 
     @GetMapping("/cliente/paginaprincipal")
     public String paginaprincipal() {
@@ -132,14 +127,11 @@ public class UsuarioController {
     @GetMapping("/cliente/reportes")
     public String reportesCliente(Model model,
                                   RedirectAttributes redirectAttributes,
-                                  HttpSession session,
-                                  @ModelAttribute("fecha") DateFormat localDate) {
+                                  HttpSession session) {
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuarios=sessionUser.getIdusuarios();
 
-        java.util.Date fecha = new Date();
         LocalDate dateactual = LocalDate.now();
-
         String fechaactual1 = String.valueOf(dateactual);
         String[] fechaactual = fechaactual1.split("-");
         String a = fechaactual[0];
@@ -148,7 +140,19 @@ public class UsuarioController {
         int mesactual = Integer.parseInt(m);
         int anio = anioactual;
         int mes = mesactual;
+        String mes_mostrar = String.valueOf(mes);
+        System.out.println(mes);
+        System.out.println(mes_mostrar);
+        if(mes<10){
+            mes_mostrar='0' + mes_mostrar; //agrega cero si el menor de 10
 
+        }
+        System.out.println(mes_mostrar);
+        String fechamostrar = anio + "-" + mes_mostrar;
+        System.out.println(fechamostrar);
+        System.out.println(fechaactual1);
+
+        System.out.println("*****************");
         Optional<Usuario> optUsuario = usuarioRepository.findById(idusuarios);
         if (optUsuario.isPresent()) {
             Usuario cliente = optUsuario.get();
@@ -162,14 +166,13 @@ public class UsuarioController {
             }
 
             DineroAhorrado_ClienteDTO dineroAhorrado_clienteDTO = pedidosRepository.dineroAhorrado(idusuarios, anio, mes);
-            System.out.println(dineroAhorrado_clienteDTO.getDiferencia());
             model.addAttribute("cliente", cliente);
             model.addAttribute("listaTop3Restaurantes",top3Restaurantes_clienteDTOS );
             model.addAttribute("listaTop3Platos", top3Platos_clientesDTOS);
             model.addAttribute("listaPromedioTiempo", tiempoMedio_clienteDTOS);
             model.addAttribute("diferencia", dineroAhorrado_clienteDTO);
             model.addAttribute("listaHistorialConsumo", pedidosRepository.obtenerHistorialConsumo(idusuarios, anio, mes));
-            model.addAttribute("fechaactual",localDate);
+            model.addAttribute("fechaseleccionada",fechamostrar);
             return "cliente/reportes";
         } else {
             return "redirect:/cliente/miperfil";
@@ -180,32 +183,23 @@ public class UsuarioController {
     public String recepcionCliente(@RequestParam("fechahorapedido") String fechahorapedido,
                                    RedirectAttributes redirectAttributes,
                                    Model model,
-                                   HttpSession session,
-                                   @ModelAttribute("localDate") @Valid String localdate
+                                   HttpSession session
                                    ) {
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuarios=sessionUser.getIdusuarios();
-        localdate = fechahorapedido;
-        System.out.println(fechahorapedido);
-        String[] fecha = fechahorapedido.split("-", 2);
-        System.out.println(fecha);
-        idusuarios = 8;
-        //string -> (fechahorapedido)
-        //se divide en mes y año (haciendo un split -> arreglo de string)****
-        ///sout del split
 
+        String[] fecha = fechahorapedido.split("-", 2);
+
+        LocalDate dateactual = LocalDate.now();
+        String fechaactual1 = String.valueOf(dateactual);
 
         try {
             String a = fecha[0];
             String m = fecha[1];
             int anio = Integer.parseInt(a);
             int mes = Integer.parseInt(m);
-            System.out.println(anio);
-            System.out.println(mes);
-            System.out.println(idusuarios);
-            System.out.println("**************************************");
-            System.out.println("mes: "+ mes + " anio : "+ anio);
+
             Optional<Usuario> clienteopt = usuarioRepository.findById(idusuarios);
             List<Top3Restaurantes_ClienteDTO> listaTop3Restaurantes = pedidosRepository.obtenerTop3Restaurantes(idusuarios, anio, mes);
             List<Top3Platos_ClientesDTO> listaTop3Platos = pedidosRepository.obtenerTop3Platos(idusuarios, anio, mes);
@@ -221,25 +215,21 @@ public class UsuarioController {
                     model.addAttribute("listaTop3Platos", listaTop3Platos);
                     model.addAttribute("listaPromedioTiempo", listaPromedioTiempo);
                     model.addAttribute("listaHistorialConsumo", listaHistorialConsumo);
-                    //System.out.println(dineroAhorrado_clienteDTO.getDiferencia());
-                    System.out.println("gggggggggggggggggggggggggggg");
                     model.addAttribute("diferencia", dineroAhorrado_clienteDTO);
-                    System.out.println("IDCliente: " + idusuarios + " Mes: " + mes + " Anio: " + anio);
+                    model.addAttribute("fechaseleccionada",fechahorapedido);
+                    //model.addAttribute("fechaactual",fechaactual1);
                 }
             }
         } catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println("No se encuentra el indice");
-            System.out.println("no se encontraron mes y año");
             redirectAttributes.addFlashAttribute("alerta2", "No se añadieron campos de búsqueda");
-            model.addAttribute("fechaactual",localdate);
             return "redirect:/cliente/reportes";
         }
-
         return "cliente/reportes";
     }
 
-    @GetMapping("/image/id")
-    public ResponseEntity<byte[]>mostrarImagen(@PathVariable("id") int id){
+    /** Imágenes **/
+    @GetMapping("/cliente/imagerestaurante/{id}")
+    public ResponseEntity<byte[]>mostrarImagenRest(@PathVariable("id") int id){
         Optional<Restaurante> opt = restauranteRepository.findById(id);
 
         if(opt.isPresent()){
@@ -258,7 +248,28 @@ public class UsuarioController {
         }else{
             return null;
         }
+    }
 
+    @GetMapping("/cliente/imagenrepartidor/{id}")
+    public ResponseEntity<byte[]>mostrarImagenRepart(@PathVariable("id") int id){
+        Optional<Repartidor> opt = repartidorRepository.findById(id);
+
+        if(opt.isPresent()){
+            Repartidor r = opt.get();
+
+            byte[] imagenComoBytes = r.getFoto();
+
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.setContentType(
+                    MediaType.parseMediaType(r.getFotocontenttype()));
+
+            return new ResponseEntity<>(
+                    imagenComoBytes,
+                    httpHeaders,
+                    HttpStatus.OK);
+        }else{
+            return null;
+        }
     }
 
 

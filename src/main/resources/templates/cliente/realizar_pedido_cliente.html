@@ -206,7 +206,8 @@
           <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mar_bottom" th:each="restaurante : ${listarestaurantes}">
             <div class="blog_box">
               <div class="blog_img_box">
-                <figure><img th:src="@{|fileUploaded/${restaurante.idrestaurante}|}" width="70" height="70"/></figure>
+                  <!--td><img height="100" width="100" th:src="@{|image/${producto.id}|}" /></td-->
+                  <figure><img th:src="@{|/cliente/imagerestaurante/${restaurante.idrestaurante}|}" width="70" height="70"/></figure>
               </div>
               <a th:href=" '/cliente/restaurantexordenar?idrestaurante=' + ${restaurante.idrestaurante} + '&direccionxenviar=' + ${direccionseleccionada.getIddirecciones()}">
                   <h3 th:text="${restaurante.nombre}">Chifa Imperial</h3></a>
