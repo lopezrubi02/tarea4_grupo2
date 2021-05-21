@@ -71,15 +71,23 @@ public class RepartidorController {
 
     @GetMapping("/repartidor/PedidosDisponibles")
     public String pedidosDisponibles(RedirectAttributes attr, Model model,HttpSession session) {
-        List<PedidosDisponiblesDTO> listaPedidos = repartidorRepository.findListaPedidosDisponibles();
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-        if (listaPedidos.isEmpty()) {
-            attr.addFlashAttribute("msg", "No hay pedidos disponibles para mostrar.");
-            return "redirect:/repartidor";
+        Optional<Repartidor> repartidor = repartidorRepository.findById(sessionUser.getIdusuarios());
+
+        if (repartidor.isPresent()) {
+            List<PedidosDisponiblesDTO> listaPedidos = repartidorRepository.findListaPedidosDisponibles();
+
+            if (listaPedidos.isEmpty()) {
+                attr.addFlashAttribute("msg", "No hay pedidos disponibles para mostrar.");
+                return "redirect:/repartidor";
+            } else {
+                model.addAttribute("listaPedidosDisponibles", listaPedidos);
+                return "repartidor/repartidor_pedidos_disponibles";
+            }
         } else {
-            model.addAttribute("listaPedidosDisponibles", listaPedidos);
-            return "repartidor/repartidor_pedidos_disponibles";
+            return "redirect:/repartidor";
         }
+
     }
 
     //El repartidor acepta el pedido del restaurante y se cambia el estado a "esperando recojo del restaurante"
@@ -352,7 +360,7 @@ public class RepartidorController {
         repartidor1.setLicencia(licencia);
         repartidorRepository.save(repartidor1);
 
-        return "redirect:/repartidor/home";
+        return "redirect:/login";
     }
 
     @GetMapping("/new3")
@@ -426,11 +434,11 @@ public class RepartidorController {
                 repartidorRepository.save(repartidor);
 
                 if(movilidad.equalsIgnoreCase("bicicleta")){
-                    return "redirect:/repartidor/home";
+                    return "redirect:/login";
                 }else{
                     //form de placa y licencia
                     attributes.addAttribute("id",usuario2.getIdusuarios());
-                    return "redirect:/repartidor/new2";
+                    return "redirect:/new2";
                 }
 
 

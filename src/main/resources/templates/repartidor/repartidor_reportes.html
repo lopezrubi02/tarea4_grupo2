@@ -49,8 +49,9 @@
                 <div th:if="${msg != null}" th:text="${msg}" class="alert alert-success" role="alert"></div>
                 <form method="post" th:action="@{/repartidor/Buscador}">
                     <input name="valorBuscado" class="form-control mb-3" type="text" placeholder="Ingrese el nombre del restaurante o distrito del restaurante"/>
+                    <a class="btn btn-primary" th:href="@{'/repartidor/Reportes'}">Limpiar</a>
                 </form>
-                <a class="btn btn-primary" th:href="@{'/repartidor/reportes'}">Limpiar</a>
+
 
                 <table class="table">
                     <thead>

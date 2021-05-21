@@ -150,7 +150,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr th:each="restaurante,info : ${reporteLista1}">
+                                <tr th:each="restaurante,info : ${reporteLista}">
                                     <td scope="row" th:text="${info.index + 1}"></td>
                                     <td th:text="${restaurante.restnombre}"></td>
                                     <td th:text="${restaurante.nombre + ' ' + restaurante.apellidos}"></td>

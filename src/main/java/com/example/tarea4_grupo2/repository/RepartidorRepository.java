@@ -20,7 +20,7 @@ public interface RepartidorRepository  extends JpaRepository<Repartidor, Integer
             "    inner join direcciones d on (p.direccionentrega = d.iddirecciones)\n" +
             "    inner join distritos d2 on (d.iddistrito = d2.iddistritos)\n" +
             "    inner join restaurante r2 on (r2.iddistrito= d2.iddistritos)\n" +
-            "    where p.idrepartidor=?1\n", nativeQuery = true)
+            "    where p.idrepartidor=?1 group by p.idpedidos;\n", nativeQuery = true)
     List<PedidosReporteDTOs> findPedidosPorRepartidor(int idRepartidor);
 
 
