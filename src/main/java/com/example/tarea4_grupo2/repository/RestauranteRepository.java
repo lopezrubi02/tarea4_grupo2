@@ -4,6 +4,7 @@ import com.example.tarea4_grupo2.dto.RestauranteReportes_DTO;
 import com.example.tarea4_grupo2.entity.Restaurante;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,8 +43,9 @@ public interface RestauranteRepository extends JpaRepository<Restaurante, Intege
     @Query(value = "select count(idpedidos) from pedidos where restaurante_idrestaurante=?1 and calificacionrestaurante <> 'null'",nativeQuery = true)
     Integer cantreviews(int restaurante_idrestaurante);
 
-    @Query(value = "select * from restaurante r where lower(r.nombre) like lower('%?1%')",nativeQuery = true)
-    List<Restaurante> buscarRestaurantexNombre(String nombre);
+    @Query(value = "select * from restaurante r where lower(r.nombre) like concat('%',lower(:nombre),'%')",nativeQuery = true)
+    List<Restaurante> buscarRestaurantexNombre(@Param("nombre") String nombre);
+
     @Query(value="select ruc from restaurante where idadminrest=?1",nativeQuery = true)
     String buscarRuc(int id);
 

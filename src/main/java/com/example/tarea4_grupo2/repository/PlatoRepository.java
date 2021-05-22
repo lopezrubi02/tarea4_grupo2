@@ -4,6 +4,7 @@ import com.example.tarea4_grupo2.entity.Plato;
 import com.example.tarea4_grupo2.entity.Restaurante;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -19,8 +20,8 @@ public interface PlatoRepository extends JpaRepository<Plato,Integer> {
             nativeQuery = true)
     List<Plato> buscarPlatosPorIdRestauranteDisponilidadActivo(int idrestaurante);
 
-    @Query(value = "select * from plato p where lower(p.nombre) like lower('%?1%')",nativeQuery = true)
-    List<Plato> buscarPlatoxNombre(String nombre);
+    @Query(value = "select * from plato p where lower(p.nombre) like concat('%',lower(:nombre),'%')",nativeQuery = true)
+    List<Plato> buscarPlatoxNombre(@Param("nombre") String nombre);
 
 
 }

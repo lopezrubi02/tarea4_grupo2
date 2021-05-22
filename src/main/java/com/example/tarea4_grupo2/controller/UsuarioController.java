@@ -292,14 +292,21 @@ public class UsuarioController {
 
     @PostMapping("/cliente/filtrarnombre")
     public String filtronombre(Model model,
-                               @RequestParam(value = "searchField" ,defaultValue = "") String buscar){
-        //TODO mandar a la vista los platos buscados
-    //    System.out.println(buscar);
+                               @RequestParam(value = "searchField" ,defaultValue = "") String buscar,
+                               HttpSession session){
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuarioactual=sessionUser.getIdusuarios();
+
         List<Plato> listaplatos = platoRepository.buscarPlatoxNombre(buscar);
         List<Restaurante> listarestaurantes = restauranteRepository.buscarRestaurantexNombre(buscar);
         model.addAttribute("listarestaurantesbuscado",listarestaurantes);
         model.addAttribute("listaplatosbuscado",listaplatos);
-        return "redirect:/cliente/realizarpedido";
+
+        List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuarioactual);
+        model.addAttribute("listadirecciones", listadireccionescliente);
+        model.addAttribute("nombrebuscado",buscar);
+
+        return "cliente/busquedanombre";
     }
 
     @GetMapping("/cliente/direccionxenviar")

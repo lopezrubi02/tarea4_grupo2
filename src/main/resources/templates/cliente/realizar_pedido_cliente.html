@@ -64,7 +64,41 @@
 
             </nav>
         </div>
+        <div class="sidebar">
+            <!-- Sidebar  -->
+            <nav id="sidebar2">
 
+                <div id="dismiss2">
+                    <i class="fa fa-arrow-left"></i>
+                </div>
+
+                <div>
+                    <div>
+                        <ul class="list-unstyled components">
+                            <li class="active">
+                                <a><h4>Entregar en: Avenida Peru 3081</h4></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+
+                        <table>
+                            <tbody>
+                            <tr>
+                                <td>January</td>
+                                <td>$100</td>
+                            </tr>
+                            <tr>
+                                <td>February</td>
+                                <td>$80</td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </nav>
+        </div>
     <div id="content">
     <!-- header -->
     <header>
@@ -90,7 +124,13 @@
                                     <form th:action="@{/logout}" method="post">
                                         <button class="button" style="padding: 0px 15px; font-size: 14px;height: 40px;width: 100.5px;background:#e3d105" type="submit">Logout</button>
                                     </form>
-                                </li><li><a href="#"><img style="margin-right: 15px;" th:src="@{/images/carrito.png}" width="45" height="45"></a></li>
+                                </li>
+                                <li>
+                                    <!--a href="#"><img style="margin-right: 15px;" th:src="@{/images/carrito.png}" width="45" height="45"></a-->
+                                    <button type="button" id="sidebarCollapse2">
+                                        <img th:src="@{/images/carrito.png}" width="45" height="45" alt="#">
+                                    </button>
+                                </li>
                                 <li>
                                     <button type="button" id="sidebarCollapse">
                                         <img th:src="@{/images/menu_icon.png}" alt="#">
@@ -116,7 +156,7 @@
 
 						<div class="form-floating">
 							<!--input type="email" class="form-control" id="floatingInputGrid" placeholder="Buscar plato o restaurante" -->
-                            <input name="searchField" class="form-control" id="floatingInputGrid" type="text" placeholder="Buscar plato o restaurante" th:text="${searchField}"/>
+                            <input name="searchField" class="form-control" id="floatingInputGrid" type="text" placeholder="Buscar plato o restaurante"/>
                             <label for="floatingInputGrid">Buscar plato o restaurante</label>
 						</div>
 			        </div>
@@ -196,17 +236,15 @@
                 </form>
                 <!-- form -->
 			</div>
-			  <!--i><img src="images/title.png" alt="#"/></i>
-			  <h2>Our Blog</h2>
-			  <span>when looking at its layout. The point of using Lorem</span-->
+
         </div>
       </div>
     </div>
+        <!-- lista restaurantes -->
         <div class="row">
           <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mar_bottom" th:each="restaurante : ${listarestaurantes}">
             <div class="blog_box">
               <div class="blog_img_box">
-                  <!--td><img height="100" width="100" th:src="@{|image/${producto.id}|}" /></td-->
                   <figure><img th:src="@{|/cliente/imagerestaurante/${restaurante.idrestaurante}|}" width="70" height="70"/></figure>
               </div>
               <a th:href=" '/cliente/restaurantexordenar?idrestaurante=' + ${restaurante.idrestaurante} + '&direccionxenviar=' + ${direccionseleccionada.getIddirecciones()}">
@@ -219,10 +257,9 @@
             </div>
               </br>
           </div>
-
-
         </div>
-            </br>
+
+      <!-- fin lista restaurantes -->
 
   </div>
 </div>
@@ -244,6 +281,9 @@
     </div>
     <div class="overlay"></div>
     <!-- Javascript files-->
+
+    <script th:src="@{/js/pruebacarrito.js}" ></script>
+
     <script th:src="@{/js/jquery.min.js}" ></script>
     <script th:src="@{/js/popper.min.js}" ></script>
     <script th:src="@{/js/bootstrap.bundle.min.js}" ></script>
@@ -265,6 +305,26 @@
 
             $('#sidebarCollapse').on('click', function() {
                 $('#sidebar').addClass('active');
+                $('.overlay').addClass('active');
+                $('.collapse.in').toggleClass('in');
+                $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+            });
+        });
+
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#sidebar2").mCustomScrollbar({
+                theme: "minimal"
+            });
+
+            $('#dismiss2, .overlay').on('click', function() {
+                $('#sidebar2').removeClass('active');
+                $('.overlay').removeClass('active');
+            });
+
+            $('#sidebarCollapse2').on('click', function() {
+                $('#sidebar2').addClass('active');
                 $('.overlay').addClass('active');
                 $('.collapse.in').toggleClass('in');
                 $('a[aria-expanded=true]').attr('aria-expanded', 'false');
