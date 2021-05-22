@@ -530,12 +530,10 @@ public class UsuarioController {
         }
     }
 
-
     /** restaurante a ordenar **/
 
      @GetMapping("/cliente/restaurantexordenar")
-     public String restaurantexordenar(@RequestParam("idrestaurante") int idrestaurante, Model model,
-                                       @RequestParam("direccionxenviar") int iddireccionxenviar
+     public String restaurantexordenar(@RequestParam("idrestaurante") int idrestaurante, Model model
                                      ){
 
          Optional<Restaurante> restopt = restauranteRepository.findById(idrestaurante);
@@ -553,7 +551,6 @@ public class UsuarioController {
                 model.addAttribute("restaurantexordenar",rest);
                 model.addAttribute("cantreviews",cantreviews);
                 model.addAttribute("platosxrest",platosxrest);
-                model.addAttribute("iddireccionxenviar",iddireccionxenviar);
                 return "cliente/restaurante_orden_cliente";
 
             }else{
@@ -568,8 +565,7 @@ public class UsuarioController {
     @GetMapping("/cliente/platoxpedir")
     public String platoxpedir(Model model,
                               @RequestParam("idplato") int idplatopedir,
-                              @RequestParam("idrestaurante") int idrestaurante,
-                              @RequestParam("direccionxenviar") int iddireccionxpedir){
+                              @RequestParam("idrestaurante") int idrestaurante){
 
          Optional<Plato> platoopt = platoRepository.findById(idplatopedir);
          Optional<Restaurante> restopt = restauranteRepository.findById(idrestaurante);
@@ -578,7 +574,6 @@ public class UsuarioController {
              Plato platoseleccionado = platoopt.get();
              model.addAttribute("platoseleccionado",platoseleccionado);
              model.addAttribute("idrestaurante",idrestaurante);
-             model.addAttribute("iddireccionxpedir",iddireccionxpedir);
              return "cliente/detalles_plato";
          }else{
             return "redirect:/cliente/restaurantexordenar?idrestaurante=" + idrestaurante;
@@ -591,7 +586,6 @@ public class UsuarioController {
                               @RequestParam("descripcion") String descripcion,
                               @RequestParam(value = "idrestaurante") int idrestaurante,
                               @RequestParam("idplato") int idplato,
-                              @RequestParam("direccionxpedir") int iddireccionxpedir,
                               HttpSession session,
                               Model model){
 
@@ -623,13 +617,11 @@ public class UsuarioController {
              System.out.println("idplato:");
              System.out.println(idplato);
 
-             System.out.println(iddireccionxpedir);
              Pedidos pedidos = new Pedidos();
              pedidos.setIdcliente(idcliente);
              pedidos.setRestaurante_idrestaurante(idrestaurante);
              pedidos.setIdmetodopago(1);
              pedidos.setIdrepartidor(11);
-             pedidos.setDireccionentrega(iddireccionxpedir);
 
              List<Pedidos> listapedidoscliente = pedidosRepository.listapedidoxcliente(idcliente,idrestaurante);
              int tam = listapedidoscliente.size();
@@ -650,11 +642,10 @@ public class UsuarioController {
              //PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey,pedidos,platoelegido,descripcion,cantidad,cubiertos);
             pedidoHasPlatoRepository.save(pedidoHasPlato);
 
-             return "redirect:/cliente/restaurantexordenar?idrestaurante=" + idrestaurante + "&direccionxenviar=" + iddireccionxpedir;
+             return "redirect:/cliente/restaurantexordenar?idrestaurante=" + idrestaurante;
          }else{
              return "redirect:/cliente/realizarpedido";
          }
-
     }
 
     @GetMapping("/cliente/carritoproductos")

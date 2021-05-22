@@ -201,6 +201,9 @@
                   <span th:text="${plato.getDescripcion()}"> Descripcion
                   </span>
               </p>
+              <p th:text="'S/.' + ${plato.precio}">precio</p>
+              <a th:href="@{'/cliente/platoxpedir?idrestaurante=' + ${plato.getRestaurante().getIdrestaurante()} + '&idplato=' + ${plato.getIdplato()}}"><h4 style="text-align: right; margin-right: 10px">Seleccionar</h4></a>
+              </br>
             </div>
             </br>
           </div>
