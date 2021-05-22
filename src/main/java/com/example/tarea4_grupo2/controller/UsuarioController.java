@@ -293,21 +293,70 @@ public class UsuarioController {
     @PostMapping("/cliente/filtrarnombre")
     public String filtronombre(Model model,
                                @RequestParam(value = "searchField" ,defaultValue = "") String buscar,
+                               RedirectAttributes redirectAttributes,
                                HttpSession session){
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuarioactual=sessionUser.getIdusuarios();
+        System.out.println(buscar);
+        System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        if(buscar.isEmpty()){
+            return "redirect:/cliente/realizarpedido";
+        }else{
+            List<Plato> listaplatos = platoRepository.buscarPlatoxNombre(buscar);
+            List<Restaurante> listarestaurantes = restauranteRepository.buscarRestaurantexNombre(buscar);
 
-        List<Plato> listaplatos = platoRepository.buscarPlatoxNombre(buscar);
-        List<Restaurante> listarestaurantes = restauranteRepository.buscarRestaurantexNombre(buscar);
-        model.addAttribute("listarestaurantesbuscado",listarestaurantes);
-        model.addAttribute("listaplatosbuscado",listaplatos);
+            if(listaplatos.size()==0 && listarestaurantes.size()==0){
+                redirectAttributes.addFlashAttribute("alertabusqueda", "No hay coincidencia de búsqueda");
+                return "redirect:/cliente/realizarpedido";
+            }else{
+                List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuarioactual);
+                model.addAttribute("listadirecciones", listadireccionescliente);
+                model.addAttribute("listarestaurantesbuscado",listarestaurantes);
+                model.addAttribute("listaplatosbuscado",listaplatos);
+                model.addAttribute("nombrebuscado",buscar);
+                return "cliente/busquedanombre";
+            }
+        }
 
-        List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuarioactual);
-        model.addAttribute("listadirecciones", listadireccionescliente);
-        model.addAttribute("nombrebuscado",buscar);
-
-        return "cliente/busquedanombre";
     }
+
+     @GetMapping("/cliente/filtrocategoria")
+     public String filtrosrestaurantes1(Model model,
+     @RequestParam(value = "idcategoriarest" ,defaultValue = "0") int idcategoriarest,
+                                        HttpSession session
+                                        ){
+
+         Optional<Categorias> catopt = categoriasRepository.findById(idcategoriarest);
+         if(catopt.isPresent()){
+
+             Categorias cat = catopt.get();
+
+             List<Restaurante> listarestauranteseleccionado = restauranteRepository.listarestxcategoria(idcategoriarest);
+             //int idusuarioactual = 7;
+
+             Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+             int idusuarioactual=sessionUser.getIdusuarios();
+
+             List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuarioactual);
+             List<Categorias> listacategorias = categoriasRepository.findAll();
+             List<Restaurante> listarestaurantes = restauranteRepository.findAll();
+             model.addAttribute("listacategorias", listacategorias);
+             model.addAttribute("listadirecciones", listadireccionescliente);
+
+
+             if(idcategoriarest!=0){
+                 model.addAttribute("listarestaurantes",listarestauranteseleccionado);
+             }else{
+                 model.addAttribute("listarestaurantes",listarestaurantes);
+             }
+             model.addAttribute("catelegida",idcategoriarest);
+             return "cliente/realizar_pedido_cliente";
+         }else{
+             return "redirect:/cliente/realizarpedido";
+         }
+
+     }
+
 
     @GetMapping("/cliente/direccionxenviar")
     public String direccionxenviar(Model model,
@@ -337,45 +386,7 @@ public class UsuarioController {
     }
 
 
-     @GetMapping("/cliente/filtrocategoria")
-     public String filtrosrestaurantes1(Model model,
-     @RequestParam(value = "idcategoriarest" ,defaultValue = "0") int idcategoriarest,
-                                        HttpSession session
-                                        ){
-  //       System.out.println(idcategoriarest);
-    //     System.out.println("*******************************");
-
-
-         Optional<Categorias> catopt = categoriasRepository.findById(idcategoriarest);
-         if(catopt.isPresent()){
-             List<Restaurante> listarestauranteseleccionado = restauranteRepository.listarestxcategoria(idcategoriarest);
-             //int idusuarioactual = 7;
-
-             Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-             int idusuarioactual=sessionUser.getIdusuarios();
-
-             List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuarioactual);
-             List<Categorias> listacategorias = categoriasRepository.findAll();
-             List<Restaurante> listarestaurantes = restauranteRepository.findAll();
-             model.addAttribute("listacategorias", listacategorias);
-             model.addAttribute("listadirecciones", listadireccionescliente);
-
-
-             if(idcategoriarest!=0){
-                 model.addAttribute("listarestaurantes",listarestauranteseleccionado);
-             }else{
-                 model.addAttribute("listarestaurantes",listarestaurantes);
-             }
-
-             return "cliente/realizar_pedido_cliente";
-         }else{
-             return "redirect:/cliente/realizarpedido";
-         }
-
-     }
-
-
-        /** restaurante a ordenar **/
+    /** restaurante a ordenar **/
 
      @GetMapping("/cliente/restaurantexordenar")
      public String restaurantexordenar(@RequestParam("idrestaurante") int idrestaurante, Model model,

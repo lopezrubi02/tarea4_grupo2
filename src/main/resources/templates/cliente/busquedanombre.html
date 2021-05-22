@@ -186,7 +186,8 @@
       <div class="container">
         <!-- lista platos buscado -->
 
-        <div class="row">
+        <div class="row" th:if="${listaplatosbuscado.size()!=0}">
+
           <h3 style="text-align: left">Platos</h3>
 
           <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mar_bottom" th:each="plato : ${listaplatosbuscado}">
@@ -208,7 +209,8 @@
         </br>
 
         <!-- lista restaurantes buscado -->
-        <div class="row">
+        <div class="row" th:if="${listarestaurantesbuscado.size()!=0}">
+
           <h3 style="text-align: left">Restaurantes</h3>
 
           <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mar_bottom" th:each="restaurante : ${listarestaurantesbuscado}">
@@ -216,7 +218,7 @@
               <div class="blog_img_box">
                 <figure><img th:src="@{|/cliente/imagerestaurante/${restaurante.idrestaurante}|}" width="70" height="70"/></figure>
               </div>
-              <a th:href=" '/cliente/restaurantexordenar?idrestaurante=' + ${restaurante.idrestaurante} + '&direccionxenviar=' + ${direccionseleccionada.getIddirecciones()}">
+              <a th:href=" '/cliente/restaurantexordenar?idrestaurante=' + ${restaurante.idrestaurante}">
                 <h3 th:text="${restaurante.nombre}">Chifa Imperial</h3></a>
               <p>
                   <span th:each="categoriarest : ${restaurante.categoriasrestList}"

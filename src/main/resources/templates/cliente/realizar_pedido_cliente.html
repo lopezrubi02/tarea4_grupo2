@@ -159,9 +159,9 @@
                             <input name="searchField" class="form-control" id="floatingInputGrid" type="text" placeholder="Buscar plato o restaurante"/>
                             <label for="floatingInputGrid">Buscar plato o restaurante</label>
 						</div>
-			        </div>
+			            </div>
 
-			        <div class="col-md">
+			            <div class="col-md">
                         <div class="form-floating">
                           <select class="form-select" id="floatingSelectGrid1" aria-label="Floating label select example" onchange="window.location=this.options[this.selectedIndex].value">
                             <option th:each="direccion : ${listadirecciones}"
@@ -172,9 +172,10 @@
                           </select>
                           <label for="floatingSelectGrid1">¿A dónde vas  a enviar tu pedido?</label>
                         </div>
-		    	  </div>
+		    	        </div>
                     </form>
-				</div>					 
+                    <div th:if="${alertabusqueda != null}" th:text="${alertabusqueda}" class="alert alert-warning" role="alert"></div>
+                </div>
 				 
 				</div>
 		   </div>
@@ -202,6 +203,7 @@
                       <option
                             th:each = "categoria : ${listacategorias}"
                     th:text="${categoria.getNombrecategoria()}"
+                            th:selected="${categoria.getIdcategorias() == catelegida}"
                     th:value=" 'filtrocategoria?idcategoriarest=' + ${categoria.getIdcategorias()}"
                    >Todos</option>
 				  </select>
@@ -247,7 +249,7 @@
               <div class="blog_img_box">
                   <figure><img th:src="@{|/cliente/imagerestaurante/${restaurante.idrestaurante}|}" width="70" height="70"/></figure>
               </div>
-              <a th:href=" '/cliente/restaurantexordenar?idrestaurante=' + ${restaurante.idrestaurante} + '&direccionxenviar=' + ${direccionseleccionada.getIddirecciones()}">
+              <a th:href=" '/cliente/restaurantexordenar?idrestaurante=' + ${restaurante.idrestaurante}">
                   <h3 th:text="${restaurante.nombre}">Chifa Imperial</h3></a>
               <p>
                   <span th:each="categoriarest : ${restaurante.categoriasrestList}"
@@ -260,7 +262,7 @@
         </div>
 
       <!-- fin lista restaurantes -->
-
+    </br>
   </div>
 </div>
 <!-- end blog -->
