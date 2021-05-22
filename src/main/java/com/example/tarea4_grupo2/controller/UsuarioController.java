@@ -323,16 +323,12 @@ public class UsuarioController {
      @GetMapping("/cliente/filtrocategoria")
      public String filtrosrestaurantes1(Model model,
      @RequestParam(value = "idcategoriarest" ,defaultValue = "0") int idcategoriarest,
-                                        HttpSession session
-                                        ){
+                                        HttpSession session){
 
          Optional<Categorias> catopt = categoriasRepository.findById(idcategoriarest);
          if(catopt.isPresent()){
 
-             Categorias cat = catopt.get();
-
              List<Restaurante> listarestauranteseleccionado = restauranteRepository.listarestxcategoria(idcategoriarest);
-             //int idusuarioactual = 7;
 
              Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
              int idusuarioactual=sessionUser.getIdusuarios();
@@ -342,7 +338,6 @@ public class UsuarioController {
              List<Restaurante> listarestaurantes = restauranteRepository.findAll();
              model.addAttribute("listacategorias", listacategorias);
              model.addAttribute("listadirecciones", listadireccionescliente);
-
 
              if(idcategoriarest!=0){
                  model.addAttribute("listarestaurantes",listarestauranteseleccionado);
@@ -354,11 +349,52 @@ public class UsuarioController {
          }else{
              return "redirect:/cliente/realizarpedido";
          }
+     }
+
+     @GetMapping("cliente/filtroprecio")
+    public String filtroprecio(Model model,HttpSession session,
+                               @RequestParam(value = "preciopromedio", defaultValue = "0") int precio){
+
+        if(precio!=0){
+
+            Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+            int idusuarioactual=sessionUser.getIdusuarios();
+
+            List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuarioactual);
+            List<Categorias> listacategorias = categoriasRepository.findAll();
+            model.addAttribute("listacategorias", listacategorias);
+            model.addAttribute("listadirecciones", listadireccionescliente);
+
+            switch (precio){
+                case 1:
+                    List<Restaurante> listaRestFiltroPrecio = restauranteRepository.listarestprecio1();
+                    model.addAttribute("listarestaurantes", listaRestFiltroPrecio);
+                    return "cliente/realizar_pedido_cliente";
+                case 2:
+                    listaRestFiltroPrecio = restauranteRepository.listarestprecio2();
+                    model.addAttribute("listarestaurantes", listaRestFiltroPrecio);
+                    return "cliente/realizar_pedido_cliente";
+                case 3:
+                    listaRestFiltroPrecio = restauranteRepository.listarestprecio3();
+                    model.addAttribute("listarestaurantes", listaRestFiltroPrecio);
+                    return "cliente/realizar_pedido_cliente";
+                case 4:
+                    listaRestFiltroPrecio = restauranteRepository.listarestprecio4();
+                    model.addAttribute("listarestaurantes", listaRestFiltroPrecio);
+                    return "cliente/realizar_pedido_cliente";
+                default:
+                    return "redirect:/cliente/realizarpedido";
+            }
+        }else{
+            return "redirect:/cliente/realizarpedido";
+
+        }
+
+
 
      }
 
-
-    @GetMapping("/cliente/direccionxenviar")
+     @GetMapping("/cliente/direccionxenviar")
     public String direccionxenviar(Model model,
                                    @RequestParam(value = "direccionxenviar", defaultValue = "0") int direccionxenviar,
                                    HttpSession session){

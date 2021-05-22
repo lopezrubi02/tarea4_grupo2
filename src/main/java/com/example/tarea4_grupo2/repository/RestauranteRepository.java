@@ -43,10 +43,40 @@ public interface RestauranteRepository extends JpaRepository<Restaurante, Intege
     @Query(value = "select count(idpedidos) from pedidos where restaurante_idrestaurante=?1 and calificacionrestaurante <> 'null'",nativeQuery = true)
     Integer cantreviews(int restaurante_idrestaurante);
 
+    // filtro restaurante por nombre
     @Query(value = "select * from restaurante r where lower(r.nombre) like concat('%',lower(:nombre),'%')",nativeQuery = true)
     List<Restaurante> buscarRestaurantexNombre(@Param("nombre") String nombre);
 
     @Query(value="select ruc from restaurante where idadminrest=?1",nativeQuery = true)
     String buscarRuc(int id);
+
+    // filtro por precio de platos promedio
+    @Query(value = "select r.*\n" +
+            "from plato p \n" +
+            "inner join restaurante r \n" +
+            "on r.idrestaurante = p.restaurante_idrestaurante\n" +
+            " group by p.restaurante_idrestaurante having sum(p.precio)/count(p.precio) <15",nativeQuery = true)
+    List<Restaurante> listarestprecio1();
+
+    @Query(value = "select r.*\n" +
+            "from plato p \n" +
+            "inner join restaurante r \n" +
+            "on r.idrestaurante = p.restaurante_idrestaurante\n" +
+            " group by p.restaurante_idrestaurante having sum(p.precio)/count(p.precio) <25 and sum(p.precio)/count(p.precio) > 15",nativeQuery = true)
+    List<Restaurante> listarestprecio2();
+
+    @Query(value = "select r.*\n" +
+            "from plato p \n" +
+            "inner join restaurante r \n" +
+            "on r.idrestaurante = p.restaurante_idrestaurante\n" +
+            " group by p.restaurante_idrestaurante having sum(p.precio)/count(p.precio) <40 and sum(p.precio)/count(p.precio) > 25",nativeQuery = true)
+    List<Restaurante> listarestprecio3();
+
+    @Query(value = "select r.*\n" +
+            "from plato p \n" +
+            "inner join restaurante r \n" +
+            "on r.idrestaurante = p.restaurante_idrestaurante\n" +
+            "group by p.restaurante_idrestaurante having sum(p.precio)/count(p.precio) > 40",nativeQuery = true)
+    List<Restaurante> listarestprecio4();
 
 }

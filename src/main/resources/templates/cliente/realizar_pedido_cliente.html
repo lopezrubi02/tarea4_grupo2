@@ -212,12 +212,13 @@
 			  </div>
 			  <div class="col-md">
 				<div class="form-floating">
-				  <select class="form-select" id="floatingSelectGrid3" aria-label="Floating label select example">
-					<option selected>Todos</option>
-					<option value="1">Menor a 15</option>
-					<option value="2">Entre 15 y 25</option>
-					<option value="3">Entre 25 y 40</option>
-					<option value="3">Mayor a 40</option>
+				  <select class="form-select" id="floatingSelectGrid3" aria-label="Floating label select example" onchange="window.location=this.options[this.selectedIndex].value">
+                      <option selected="true" disabled="disabled">Filtrar por precio</option>
+					  <option value="filtroprecio?preciopromedio=0">Todos</option>
+					  <option value="filtroprecio?preciopromedio=1">Menor a 15</option>
+					  <option value="filtroprecio?preciopromedio=2">Entre 15 y 25</option>
+			  		  <option value="filtroprecio?preciopromedio=3">Entre 25 y 40</option>
+				  	  <option value="filtroprecio?preciopromedio=4">Mayor a 40</option>
 				  </select>
 				  <label for="floatingSelectGrid3">Precio base promedio</label>
 				</div>
@@ -225,12 +226,13 @@
 				  <div class="col-md">
 				<div class="form-floating">
 				  <select class="form-select" id="floatingSelectGrid4" aria-label="Floating label select example">
-					<option selected>Todos</option>
-                      <option value="1">1 estrellas</option>
-					<option value="2">2 estrellas</option>
-					<option value="3">3 estrellas</option>
-					<option value="4">4 estrellas</option>
-					<option value="5">5 estrellas</option>
+                    <option selected="true" disabled="disabled">Filtrar por calificación</option>
+                    <option value="0">Todos</option>
+                    <option value="1">1 estrellas</option>
+                    <option value="2">2 estrellas</option>
+                    <option value="3">3 estrellas</option>
+                    <option value="4">4 estrellas</option>
+                    <option value="5">5 estrellas</option>
 				  </select>
 				  <label for="floatingSelectGrid4">Calificación promedio</label>
 				</div>
