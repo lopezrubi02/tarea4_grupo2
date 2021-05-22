@@ -226,22 +226,27 @@
 			  </div>
 				  <div class="col-md">
 				<div class="form-floating">
-				  <select class="form-select" id="floatingSelectGrid4" aria-label="Floating label select example">
+				  <select class="form-select" id="floatingSelectGrid4" aria-label="Floating label select example" onchange="window.location=this.options[this.selectedIndex].value">
                     <option selected="true" disabled="disabled">Filtrar por calificación</option>
-                    <option value="0">Todos</option>
-                    <option value="1">1 estrellas</option>
+                    <option value="filtrocalificacion?calificacion=0">Todos</option>
+                      <option
+                              th:each = "calificacion, info : ${listaidcalificacion}"
+                              th:text="${calificacion}"
+                              th:selected="${info.index + 1 == calsel}"
+                              th:value=" 'filtrocalificacion?calificacion=' + ${info.index + 1}">Todos</option>
+                      <!--option value="1">1 estrellas</option>
                     <option value="2">2 estrellas</option>
                     <option value="3">3 estrellas</option>
                     <option value="4">4 estrellas</option>
-                    <option value="5">5 estrellas</option>
+                    <option value="5">5 estrellas</option-->
 				  </select>
 				  <label for="floatingSelectGrid4">Calificación promedio</label>
 				</div>
 			  </div>
                 </form>
                 <!-- form -->
-			</div>
-
+                <div th:if="${alertaprecio != null}" th:text="${alertaprecio}" class="alert alert-warning" role="alert"></div>
+            </div>
         </div>
       </div>
     </div>

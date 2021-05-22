@@ -79,4 +79,8 @@ public interface RestauranteRepository extends JpaRepository<Restaurante, Intege
             "group by p.restaurante_idrestaurante having sum(p.precio)/count(p.precio) > 40",nativeQuery = true)
     List<Restaurante> listarestprecio4();
 
+    @Query(value = "select * from restaurante r \n" +
+            "where round(calificacionpromedio) = ?1",nativeQuery = true)
+    List<Restaurante> listarestcalificacion(int numestrellas);
+
 }
