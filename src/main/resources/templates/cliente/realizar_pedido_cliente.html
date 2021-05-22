@@ -215,10 +215,11 @@
 				  <select class="form-select" id="floatingSelectGrid3" aria-label="Floating label select example" onchange="window.location=this.options[this.selectedIndex].value">
                       <option selected="true" disabled="disabled">Filtrar por precio</option>
 					  <option value="filtroprecio?preciopromedio=0">Todos</option>
-					  <option value="filtroprecio?preciopromedio=1">Menor a 15</option>
-					  <option value="filtroprecio?preciopromedio=2">Entre 15 y 25</option>
-			  		  <option value="filtroprecio?preciopromedio=3">Entre 25 y 40</option>
-				  	  <option value="filtroprecio?preciopromedio=4">Mayor a 40</option>
+                      <option
+                              th:each = "preciopromedio, info : ${listaidprecio}"
+                              th:text="${preciopromedio}"
+                              th:selected="${info.index + 1 == precioselec}"
+                              th:value=" 'filtroprecio?preciopromedio=' + ${info.index + 1}">Todos</option>
 				  </select>
 				  <label for="floatingSelectGrid3">Precio base promedio</label>
 				</div>

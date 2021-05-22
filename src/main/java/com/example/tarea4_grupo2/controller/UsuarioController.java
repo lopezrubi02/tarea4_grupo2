@@ -24,10 +24,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.Year;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 public class UsuarioController {
@@ -274,9 +271,15 @@ public class UsuarioController {
     @GetMapping("/cliente/realizarpedido")
     public String realizarpedido(Model model, HttpSession session) {
 
-        //int idusuarioactual = 7;
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuarioactual=sessionUser.getIdusuarios();
+
+        List<String> listaidprecio = new ArrayList<>();
+        listaidprecio.add("Menor a 15");
+        listaidprecio.add("Entre 15 y 25");
+        listaidprecio.add("Entre 25 y 40");
+        listaidprecio.add("Mayor a 40");
+        model.addAttribute("listaidprecio",listaidprecio);
 
         List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuarioactual);
         List<Categorias> listacategorias = categoriasRepository.findAll();
@@ -297,8 +300,6 @@ public class UsuarioController {
                                HttpSession session){
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuarioactual=sessionUser.getIdusuarios();
-        System.out.println(buscar);
-        System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         if(buscar.isEmpty()){
             return "redirect:/cliente/realizarpedido";
         }else{
@@ -327,6 +328,12 @@ public class UsuarioController {
 
          Optional<Categorias> catopt = categoriasRepository.findById(idcategoriarest);
          if(catopt.isPresent()){
+             List<String> listaidprecio = new ArrayList<>();
+             listaidprecio.add("Menor a 15");
+             listaidprecio.add("Entre 15 y 25");
+             listaidprecio.add("Entre 25 y 40");
+             listaidprecio.add("Mayor a 40");
+             model.addAttribute("listaidprecio",listaidprecio);
 
              List<Restaurante> listarestauranteseleccionado = restauranteRepository.listarestxcategoria(idcategoriarest);
 
@@ -356,6 +363,12 @@ public class UsuarioController {
                                @RequestParam(value = "preciopromedio", defaultValue = "0") int precio){
 
         if(precio!=0){
+            List<String> listaidprecio = new ArrayList<>();
+            listaidprecio.add("Menor a 15");
+            listaidprecio.add("Entre 15 y 25");
+            listaidprecio.add("Entre 25 y 40");
+            listaidprecio.add("Mayor a 40");
+            model.addAttribute("listaidprecio",listaidprecio);
 
             Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
             int idusuarioactual=sessionUser.getIdusuarios();
@@ -369,18 +382,22 @@ public class UsuarioController {
                 case 1:
                     List<Restaurante> listaRestFiltroPrecio = restauranteRepository.listarestprecio1();
                     model.addAttribute("listarestaurantes", listaRestFiltroPrecio);
+                    model.addAttribute("precioselec",precio);
                     return "cliente/realizar_pedido_cliente";
                 case 2:
                     listaRestFiltroPrecio = restauranteRepository.listarestprecio2();
                     model.addAttribute("listarestaurantes", listaRestFiltroPrecio);
+                    model.addAttribute("precioselec",precio);
                     return "cliente/realizar_pedido_cliente";
                 case 3:
                     listaRestFiltroPrecio = restauranteRepository.listarestprecio3();
                     model.addAttribute("listarestaurantes", listaRestFiltroPrecio);
+                    model.addAttribute("precioselec",precio);
                     return "cliente/realizar_pedido_cliente";
                 case 4:
                     listaRestFiltroPrecio = restauranteRepository.listarestprecio4();
                     model.addAttribute("listarestaurantes", listaRestFiltroPrecio);
+                    model.addAttribute("precioselec",precio);
                     return "cliente/realizar_pedido_cliente";
                 default:
                     return "redirect:/cliente/realizarpedido";
@@ -389,9 +406,6 @@ public class UsuarioController {
             return "redirect:/cliente/realizarpedido";
 
         }
-
-
-
      }
 
      @GetMapping("/cliente/direccionxenviar")
@@ -404,6 +418,13 @@ public class UsuarioController {
 
         Optional<Direcciones> direccionopt = direccionesRepository.findById(direccionxenviar);
         if(direccionopt.isPresent()){
+            List<String> listaidprecio = new ArrayList<>();
+            listaidprecio.add("Menor a 15");
+            listaidprecio.add("Entre 15 y 25");
+            listaidprecio.add("Entre 25 y 40");
+            listaidprecio.add("Mayor a 40");
+            model.addAttribute("listaidprecio",listaidprecio);
+
             Direcciones direccionseleccionada = direccionopt.get();
             List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuarioactual);
             List<Categorias> listacategorias = categoriasRepository.findAll();
