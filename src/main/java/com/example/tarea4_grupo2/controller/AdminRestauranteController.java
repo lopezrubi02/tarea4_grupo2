@@ -46,6 +46,8 @@ public class AdminRestauranteController {
     DistritosRepository distritosRepository;
     @Autowired
     DireccionesRepository direccionesRepository;
+    @Autowired
+    FotosPlatosRepository fotosPlatosRepository;
 
     @GetMapping("/login")
     public String loginAdmin(Model model, HttpSession session){
@@ -169,6 +171,19 @@ public class AdminRestauranteController {
         }
         return null;
     }
+
+    @GetMapping("/imagenplato")
+    public ResponseEntity<byte[]> imagenPlato(HttpSession session, @RequestParam("idplato") Integer idplato) {
+
+        Optional<FotosPlatos> optFoto = fotosPlatosRepository.encontrarIdPlato(idplato);
+        if (optFoto.isPresent()) {
+            byte[] imagen = optFoto.get().getFoto();
+            HttpHeaders httpHeaders=new HttpHeaders();
+            httpHeaders.setContentType(MediaType.parseMediaType(optFoto.get().getFotocontenttype()));
+            return new ResponseEntity<>(imagen,httpHeaders, HttpStatus.OK);
+        }
+        return null;
+    }
     /************************PERFIL************************/
 
     @GetMapping("/perfil")
@@ -240,13 +255,61 @@ public class AdminRestauranteController {
     }
 
     @PostMapping("/guardarPlato")
-    public String guardarPlato(@ModelAttribute("plato") Plato plato, RedirectAttributes attr, Model model){
+    public String guardarPlato(@ModelAttribute("plato") Plato plato, RedirectAttributes attr, Model model, @RequestParam( name="imagen", required = false) MultipartFile file) throws IOException{
+
+        System.out.println("TRACE1");
+        String nombreplato = plato.getNombre();
         if (plato.getIdplato() == 0) {
-            attr.addFlashAttribute("msg", "Plato creado exitosamente");
             platoRepository.save(plato);
+            Optional<Plato> platoguardado = platoRepository.buscarPlato(nombreplato);
+            if(platoguardado.isPresent()){
+                System.out.println("TRACE2");
+                Plato plato1 = platoguardado.get();
+                FotosPlatos fotosPlatos = new FotosPlatos();
+                fotosPlatos.setIdplato(plato1);
+                /**Se intentar guardar la imagen**/
+                try {
+                    fotosPlatos.setFoto(file.getBytes());
+                    fotosPlatos.setFotocontenttype(file.getContentType());
+                    fotosPlatos.setFotonombre(file.getOriginalFilename());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                fotosPlatosRepository.save(fotosPlatos);
+                attr.addFlashAttribute("msg", "Plato creado exitosamente");
+            }
             return "redirect:/adminrest/menu";
         } else {
             platoRepository.save(plato);
+            System.out.println("TRACE3");
+            if(!(file.isEmpty())){
+                System.out.println("TRACE4");
+                Optional<FotosPlatos> optFoto = fotosPlatosRepository.encontrarIdPlato(plato.getIdplato());
+                if(optFoto.isPresent()) {
+                    System.out.println("TRACE5");
+                    FotosPlatos fotosPlatos = optFoto.get();
+                    try {
+                        fotosPlatos.setFoto(file.getBytes());
+                        fotosPlatos.setFotocontenttype(file.getContentType());
+                        fotosPlatos.setFotonombre(file.getOriginalFilename());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    fotosPlatosRepository.save(fotosPlatos);
+                }else{
+                    System.out.println("TRACE6");
+                    FotosPlatos fotosPlatos = new FotosPlatos();
+                    fotosPlatos.setIdplato(plato);
+                    try {
+                        fotosPlatos.setFoto(file.getBytes());
+                        fotosPlatos.setFotocontenttype(file.getContentType());
+                        fotosPlatos.setFotonombre(file.getOriginalFilename());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    fotosPlatosRepository.save(fotosPlatos);
+                }
+            }
             attr.addFlashAttribute("msg", "Plato actualizado exitosamente");
             return "redirect:/adminrest/menu";
         }
