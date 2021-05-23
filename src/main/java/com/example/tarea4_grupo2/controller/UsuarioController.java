@@ -291,13 +291,51 @@ public class UsuarioController {
         List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuarioactual);
         List<Categorias> listacategorias = categoriasRepository.findAll();
         List<Restaurante> listarestaurantes = restauranteRepository.findAll();
-        Direcciones direccionseleccionada = listadireccionescliente.get(1);
         model.addAttribute("listacategorias", listacategorias);
         model.addAttribute("listadirecciones", listadireccionescliente);
         model.addAttribute("listarestaurantes",listarestaurantes);
-        model.addAttribute("direccionseleccionada",direccionseleccionada);
 
         return "cliente/realizar_pedido_cliente";
+    }
+
+    @GetMapping("/cliente/direccionxenviar")
+    public String direccionxenviar(Model model,
+                                   @RequestParam(value = "direccion", defaultValue = "0") int direccionxenviar,
+                                   HttpSession session){
+
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuarioactual=sessionUser.getIdusuarios();
+
+        Optional<Direcciones> direccionopt = direccionesRepository.findById(direccionxenviar);
+        if(direccionopt.isPresent()){
+            List<String> listaidprecio = new ArrayList<>();
+            listaidprecio.add("Menor a 15");
+            listaidprecio.add("Entre 15 y 25");
+            listaidprecio.add("Entre 25 y 40");
+            listaidprecio.add("Mayor a 40");
+            model.addAttribute("listaidprecio",listaidprecio);
+            List<String> listaidcalificacion = new ArrayList<>();
+            listaidcalificacion.add("1 estrella");
+            listaidcalificacion.add("2 estrellas");
+            listaidcalificacion.add("3 estrellas");
+            listaidcalificacion.add("4 estrellas");
+            listaidcalificacion.add("5 estrellas");
+            model.addAttribute("listaidcalificacion",listaidcalificacion);
+
+            Direcciones direccionseleccionada = direccionopt.get();
+            List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuarioactual);
+            List<Categorias> listacategorias = categoriasRepository.findAll();
+            List<Restaurante> listarestaurantes = restauranteRepository.findAll();
+            model.addAttribute("listacategorias", listacategorias);
+            model.addAttribute("listadirecciones", listadireccionescliente);
+            model.addAttribute("listarestaurantes",listarestaurantes);
+            model.addAttribute("iddireccionxenviar",direccionxenviar);
+            model.addAttribute("direccionseleccionada",direccionseleccionada.getDireccion());
+            return "cliente/realizar_pedido_cliente";
+        }else{
+            return "redirect:/cliente/realizarpedido";
+
+        }
     }
 
     @PostMapping("/cliente/filtrarnombre")
@@ -495,41 +533,6 @@ public class UsuarioController {
 
      }
 
-
-     @GetMapping("/cliente/direccionxenviar")
-    public String direccionxenviar(Model model,
-                                   @RequestParam(value = "direccionxenviar", defaultValue = "0") int direccionxenviar,
-                                   HttpSession session){
-        //int idusuarioactual= 7;
-        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-        int idusuarioactual=sessionUser.getIdusuarios();
-
-        Optional<Direcciones> direccionopt = direccionesRepository.findById(direccionxenviar);
-        if(direccionopt.isPresent()){
-            List<String> listaidprecio = new ArrayList<>();
-            listaidprecio.add("Menor a 15");
-            listaidprecio.add("Entre 15 y 25");
-            listaidprecio.add("Entre 25 y 40");
-            listaidprecio.add("Mayor a 40");
-            model.addAttribute("listaidprecio",listaidprecio);
-
-            Direcciones direccionseleccionada = direccionopt.get();
-            List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuarioactual);
-            List<Categorias> listacategorias = categoriasRepository.findAll();
-            List<Restaurante> listarestaurantes = restauranteRepository.findAll();
-            model.addAttribute("listacategorias", listacategorias);
-            model.addAttribute("listadirecciones", listadireccionescliente);
-            model.addAttribute("listarestaurantes",listarestaurantes);
-            model.addAttribute("iddireccionxenviar",direccionxenviar);
-            System.out.println(direccionxenviar);
-            model.addAttribute("direccionseleccionada",direccionseleccionada);
-            return "cliente/realizar_pedido_cliente";
-        }else{
-            return "redirect:/cliente/realizarpedido";
-
-        }
-    }
-
     /** restaurante a ordenar **/
 
      @GetMapping("/cliente/restaurantexordenar")
@@ -537,14 +540,11 @@ public class UsuarioController {
                                      ){
 
          Optional<Restaurante> restopt = restauranteRepository.findById(idrestaurante);
-        //Optional<Direcciones> direccionopt )
         if(restopt.isPresent()){
             Restaurante rest = restopt.get();
 
             if (rest!=null){
                 int cantreviews = restauranteRepository.cantreviews(idrestaurante);
-       //         System.out.println(cantreviews);
-         //       System.out.println("**************************");
 
                 List<Plato> platosxrest = platoRepository.buscarPlatosPorIdRestauranteDisponilidadActivo(idrestaurante);
 
@@ -698,7 +698,7 @@ public class UsuarioController {
         return "redirect:/cliente/miperfil";
     }
 
-
+    /** CRUD direcciones **/
     @GetMapping("/cliente/borrardireccion")
     public String borrardireccion(@RequestParam("iddireccion") int iddireccion,
                                   Model model) {

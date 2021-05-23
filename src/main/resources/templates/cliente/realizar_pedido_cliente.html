@@ -166,9 +166,8 @@
                           <select class="form-select" id="floatingSelectGrid1" aria-label="Floating label select example" onchange="window.location=this.options[this.selectedIndex].value">
                             <option th:each="direccion : ${listadirecciones}"
                                     th:text="${direccion.getDireccion()}"
-                            th:value="'direccionxenviar?direccionxenviar=' + ${direccion.getIddirecciones()}"
-                            >Dirección 1</option>
-
+                                    th:selected="${direccion.direccion == direccionseleccionada}"
+                            th:value="'direccionxenviar?direccion=' + ${direccion.getIddirecciones()}">Dirección 1</option>
                           </select>
                           <label for="floatingSelectGrid1">¿A dónde vas  a enviar tu pedido?</label>
                         </div>
