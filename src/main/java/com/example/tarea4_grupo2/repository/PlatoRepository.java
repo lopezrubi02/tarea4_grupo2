@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PlatoRepository extends JpaRepository<Plato,Integer> {
@@ -23,5 +24,7 @@ public interface PlatoRepository extends JpaRepository<Plato,Integer> {
     @Query(value = "select * from plato p where lower(p.nombre) like concat('%',lower(:nombre),'%')",nativeQuery = true)
     List<Plato> buscarPlatoxNombre(@Param("nombre") String nombre);
 
+    @Query(value = "select * from plato p where p.nombre = ?1 limit 1",nativeQuery = true)
+    Optional<Plato> buscarPlato(String nombre);
 
 }
