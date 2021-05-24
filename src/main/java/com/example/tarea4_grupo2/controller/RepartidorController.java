@@ -250,7 +250,7 @@ public class RepartidorController {
         return "redirect:/repartidor/home";
     }
 
-    @GetMapping("/repartidor/perfil")
+    @GetMapping("/repartidor/miperfil")
     public String perfilRepartidor(@ModelAttribute("repartidor") Repartidor repartidor, Model model,
                                    HttpSession session) {
 
