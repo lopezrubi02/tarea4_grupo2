@@ -30,28 +30,7 @@
     </style>
 </head>
 
-<header>
-    <body th:fragment="navbar">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-3">
-                <div class="full">
-                    <a class="logo" href="index.html"><img src="images/logo.png" alt="#" /></a>
-                </div>
-            </div>
-            <div class="col-md-9">
-                <div class="full">
-                    <div class="right_header_info">
-                        <ul>
-                            <li class="button_user"><a class="button active" th:href="@{/eleccion}">Crear una cuenta</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    </body>
-</header>
+
 
 
 
@@ -65,6 +44,7 @@
     <div id="content">
         <!-- header -->
         <header>
+            <body th:fragment="navbar">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-3">
@@ -72,8 +52,18 @@
                             <a class="logo" href="index.html"><img src="images/logo.png" alt="#" /></a>
                         </div>
                     </div>
+                    <div class="col-md-9">
+                        <div class="full">
+                            <div class="right_header_info">
+                                <ul>
+                                    <li class="button_user"><a class="button active" th:href="@{/eleccion}">Crear una cuenta</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+            </body>
         </header>
         <div class="bg_bg">
             <!-- end about -->
