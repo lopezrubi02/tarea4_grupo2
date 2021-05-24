@@ -136,7 +136,7 @@ public class LoginController {
                 String direccion = "http://localhost:8090/cambiar1/";
                 URL url = new URL(direccion + token);
                 mensaje = "¡Hola!<br><br>Para reestablecer su contraseña haga click: <a href='" + direccion + token + "'>AQUÍ</a> <br><br>Atte. Equipo de Spicy :D</b>";
-                attr.addFlashAttribute("msg", "¡Contraseña temporal enviada al correo! :D");
+                attr.addFlashAttribute("msg", "¡Revisa tu correo para continuar el proceso! :D");
                 optionalUsuario.get().setToken(token);
             } else {
                 subject = "Invitacion de registro - Spicy";
