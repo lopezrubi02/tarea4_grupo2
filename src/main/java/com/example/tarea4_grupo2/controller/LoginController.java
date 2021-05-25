@@ -160,26 +160,48 @@ public class LoginController {
         return "login/cambiar1";
     }
 
+    public  boolean validarContrasenia(String contrasenia1, String contrasenia2) {
+        boolean resultado1 = true;
+        boolean resultado2 = true;
+        boolean resultado = true;
+        Pattern pattern1 = Pattern.compile("(?=.[0-9])(?=.[a-z])(?=\\S+$).{8,}");
+        Matcher mather1 = pattern1.matcher(contrasenia1);
+
+        Pattern pattern2 = Pattern.compile("(?=.[0-9])(?=.[a-z])(?=\\S+$).{8,}");
+        Matcher mather2 = pattern2.matcher(contrasenia2);
+        if (mather2.find() == false || mather1.find() == false) {
+            resultado2 = false;
+        }
+        return  resultado;
+    }
+
     @PostMapping("/cambiarContrasenia")
-    public String cambiarContrasenia(Usuario usuario, RedirectAttributes attr, @RequestParam("contrasenia") String contrasenia) {
+    public String cambiarContrasenia(Usuario usuario, RedirectAttributes attr, @RequestParam("contrasenia") String contrasenia, @RequestParam("contrasenia2") String contrasenia2) {
 
         Optional<Usuario> usuarioToken = Optional.ofNullable(usuarioRepository.findByToken(usuario.getToken()));
         if (usuarioToken.isPresent()) {
             BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-            if (contrasenia == "") {
-                attr.addFlashAttribute("msg2", "¡Contraseña no puede ser nula! :C");
-            } else {
-                String contraseniahashbcrypt = BCrypt.hashpw(contrasenia, BCrypt.gensalt());
-                usuarioToken.get().setContraseniaHash(contraseniahashbcrypt);
+            if (contrasenia == "" || contrasenia2 == "") {
+                attr.addFlashAttribute("msg2", "¡Contraseña no puede ser nula! Intenta nuevamente con el link enviado al correo :C");
+            } else if (contrasenia.equals(contrasenia2)){
+                Boolean validacionContrasenias = validarContrasenia(contrasenia, contrasenia2);
+                if (validacionContrasenias==true) {
+                    String contraseniahashbcrypt = BCrypt.hashpw(contrasenia, BCrypt.gensalt());
+                    usuarioToken.get().setContraseniaHash(contraseniahashbcrypt);
 
-                attr.addFlashAttribute("msg", "¡Contraseña cambiada! :D");
+                    attr.addFlashAttribute("msg", "¡Contraseña cambiada! :D");
 
-                SecureRandom random = new SecureRandom();
-                byte bytes[] = new byte[20];
-                random.nextBytes(bytes);
-                String tokenNuevo = bytes.toString();
-                usuarioToken.get().setToken(tokenNuevo);
-                usuarioRepository.save(usuarioToken.get());
+                    SecureRandom random = new SecureRandom();
+                    byte bytes[] = new byte[20];
+                    random.nextBytes(bytes);
+                    String tokenNuevo = bytes.toString();
+                    usuarioToken.get().setToken(tokenNuevo);
+                    usuarioRepository.save(usuarioToken.get());
+                } else {
+                    attr.addFlashAttribute("msg2", "¡Debe tener al menos 8 caracteres, uno especial y una mayuscula");
+                }
+            } else{
+                attr.addFlashAttribute("msg2", "¡Las contraseñas no coinciden!");
             }
             return "redirect:/login";
         } else {
