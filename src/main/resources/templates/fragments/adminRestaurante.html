@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="header (title)">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+  <title th:text="${title}"></title>
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/owl.carousel.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/styleAdminRest">
+  <!-- responsive-->
+  <link rel="stylesheet" href="/css/responsive.css">
+  <!-- awesome fontfamily -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
+</head>
+
+<body>
+<div class="container-fluid" th:fragment="navbar">
+  <div class="row">
+    <div class="col-md-3">
+      <div class="full">
+        <a class="logo" th:href="@{/adminrest/perfil}"><img src="/images/logo.png" alt="#"/></a>
+      </div>
+    </div>
+    <div class="col-md-9">
+      <div class="full">
+        <div class="right_header_info">
+          <ul>
+            <li class="button_user">
+              <a class="button active" th:href="@{/adminrest/cuentaAdmin}">Mi cuenta</a>
+            </li>
+            <!-- TODO -->
+            <li style="transform: translateY(-7px)">
+              <form th:action="@{/logout}" method="post">
+                <button class="button"
+                        style="padding: 0px 15px; font-size: 14px;height: 40px;width: 100.5px;background:#e3d105"
+                        type="submit">Logout
+                </button>
+              </form>
+            </li>
+            <li>
+              <button type="button" id="sidebarCollapse">
+                <img src="/images/menu_icon.png" alt="#">
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
+
