@@ -435,18 +435,36 @@ public class AdminRestauranteController {
     }
 
     @PostMapping("/guardarCupon")
-    public String guardarCupon(@ModelAttribute("cupon") Cupones cupon, RedirectAttributes attr,
-                               Model model){
+    public String guardarCupon(@ModelAttribute("cupon") @Valid Cupones cupon, BindingResult bindingResult, RedirectAttributes attr,
+                               Model model, HttpSession session){
 
-        if (cupon.getIdcupones() == 0) {
-            cuponesRepository.save(cupon);
-            attr.addFlashAttribute("msg1", "Cupon creado exitosamente");
-            return "redirect:/adminrest/cupones";
+        if(bindingResult.hasErrors()){
 
-        } else {
-            cuponesRepository.save(cupon);
-            attr.addFlashAttribute("msg2", "Cupon actualizado exitosamente");
-            return "redirect:/adminrest/cupones";
+            /**Se obtiene Id de Restaurante**/
+            Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+            Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
+            /********************************/
+            model.addAttribute("cupon",cupon);
+            List<Plato> listaPlatos = platoRepository.buscarPlatosPorIdRestaurante(idrestaurante);
+            model.addAttribute("listaPlatos",listaPlatos);
+            return "AdminRestaurantes/generarCupon";
+
+        }else {
+
+            if (cupon.getIdcupones() == 0) {
+
+                cuponesRepository.save(cupon);
+                attr.addFlashAttribute("msg1", "Cupon creado exitosamente");
+                return "redirect:/adminrest/cupones";
+
+            } else {
+
+                cuponesRepository.save(cupon);
+                attr.addFlashAttribute("msg2", "Cupon actualizado exitosamente");
+                return "redirect:/adminrest/cupones";
+
+            }
+
         }
     }
 

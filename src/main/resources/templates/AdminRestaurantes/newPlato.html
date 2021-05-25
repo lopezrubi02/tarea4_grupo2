@@ -61,7 +61,7 @@
                                             <div class="text-danger" th:if="${#fields.hasErrors('precio')}" th:errors="*{precio}"></div>
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:if="${plato.idplato}">
-                                            <label for="disponibilidad">Disponible?</label>
+                                            <label for="disponibilidad">Stock</label>
                                             <select class="form-control-sm" th:field="*{disponibilidad}">
                                                 <option value="1">Disponible</option>
                                                 <option value="0">Agotado</option>
