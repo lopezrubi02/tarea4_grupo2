@@ -17,12 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.Month;
-import java.time.Year;
 import java.util.*;
 
 @Controller
@@ -46,6 +41,9 @@ public class UsuarioController {
     PedidoHasPlatoRepository pedidoHasPlatoRepository;
     @Autowired
     RepartidorRepository repartidorRepository;
+
+    @Autowired
+    FotosPlatosRepository fotosPlatosRepository;
 
     @GetMapping("/cliente/paginaprincipal")
     public String paginaprincipal() {
@@ -241,6 +239,27 @@ public class UsuarioController {
             return null;
         }
     }
+    @GetMapping("/cliente/imagenplato/{id}")
+    public ResponseEntity<byte[]>mostrarimagenplato(@PathVariable("id") int id){
+        Optional<FotosPlatos> optft = fotosPlatosRepository.fotoplatoxidplato(id);
+
+        if(optft.isPresent()){
+            FotosPlatos fp = optft.get();
+
+            byte[] imagenComoBytes = fp.getFoto();
+
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.setContentType(
+                    MediaType.parseMediaType(fp.getFotocontenttype()));
+
+            return new ResponseEntity<>(
+                    imagenComoBytes,
+                    httpHeaders,
+                    HttpStatus.OK);
+        }else{
+            return null;
+        }
+    }
 
     @GetMapping("/cliente/imagenrepartidor/{id}")
     public ResponseEntity<byte[]>mostrarImagenRepart(@PathVariable("id") int id){
@@ -263,7 +282,6 @@ public class UsuarioController {
             return null;
         }
     }
-
 
     /** Realizar pedido **/
 
@@ -727,14 +745,12 @@ public class UsuarioController {
                                         @RequestParam("iddistrito") int iddistrito,
                                         HttpSession session) {
 
-        //int idusuario = 7;
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuario=sessionUser.getIdusuarios();
 
         Direcciones direccioncrear = new Direcciones();
         direccioncrear.setDireccion(direccion);
-        //direccioncrear.setDistrito(distrito);
 
         Optional<Distritos> distritoopt = distritosRepository.findById(iddistrito);
         Distritos distritonuevo = distritoopt.get();
@@ -747,46 +763,6 @@ public class UsuarioController {
 
         return "redirect:/cliente/miperfil";
 
-    }
-
-    @GetMapping("/cliente/olvidecontrasenia")
-    public String olvidecontrasenia()
-    {
-        return "cliente/recuperarContra1";
-    }
-
-    @GetMapping("/cliente/recuperarcontrasenia")
-    public String recuperarcontra(){
-        return "cliente/recuperarContra2";
-    }
-
-    @PostMapping("/cliente/guardarnuevacontra")
-    public String nuevacontra(@RequestParam("contrasenia1") String contra1,
-                              @RequestParam("contrasenia2") String contra2,
-                              HttpSession session){
-
-        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-        int idusuario=sessionUser.getIdusuarios();
-
-        Optional<Usuario> usarioopt = usuarioRepository.findById(idusuario);
-
-        Usuario usuariodb = usarioopt.get();
-
-        if(usuariodb.getIdusuarios()!=null){
-            if(contra1.equals(contra2)){
-
-
-                System.out.println(contra1);
-                String contraseniahashbcrypt = BCrypt.hashpw(contra1, BCrypt.gensalt());
-
-                usuariodb.setContraseniaHash(contraseniahashbcrypt);
-                usuarioRepository.save(usuariodb);
-
-            }
-        }
-
-
-        return "cliente/confirmarRecu";
     }
 
 }
