@@ -1,6 +1,10 @@
 package com.example.tarea4_grupo2.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,11 +18,17 @@ public class Plato {
     @OneToMany(mappedBy = "pedido")
     private Set<PedidoHasPlato> pedidohasplato = new HashSet<>();
 
+    @NotBlank(message = "El nombre no puede estar vacio.")
+    @Size(max = 30, message = "El nombre no puede sobrepasar los 30 caracteres.")
     @Column(nullable = false)
     private String nombre;
 
+    @NotBlank(message = "La descripcion no puede estar vacia.")
+    @Size(min = 3, message = "La descripcion debe tener como minimo 3 caracteres.")
     private String descripcion;
 
+    @Digits(integer=10, fraction = 2, message = "El precio debe tener 2 decimales como maximo.")
+    @Positive(message = "El precio no puede ser un numero negativo.")
     private float precio;
 
     @ManyToOne

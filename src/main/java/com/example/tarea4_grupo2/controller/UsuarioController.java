@@ -3,7 +3,6 @@ package com.example.tarea4_grupo2.controller;
 import com.example.tarea4_grupo2.dto.*;
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
-import jdk.nashorn.internal.runtime.regexp.joni.NodeOptInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,12 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.Month;
-import java.time.Year;
 import java.util.*;
 
 @Controller
@@ -47,6 +41,9 @@ public class UsuarioController {
     PedidoHasPlatoRepository pedidoHasPlatoRepository;
     @Autowired
     RepartidorRepository repartidorRepository;
+
+    @Autowired
+    FotosPlatosRepository fotosPlatosRepository;
 
     @GetMapping("/cliente/paginaprincipal")
     public String paginaprincipal() {
@@ -242,6 +239,27 @@ public class UsuarioController {
             return null;
         }
     }
+    @GetMapping("/cliente/imagenplato/{id}")
+    public ResponseEntity<byte[]>mostrarimagenplato(@PathVariable("id") int id){
+        Optional<FotosPlatos> optft = fotosPlatosRepository.fotoplatoxidplato(id);
+
+        if(optft.isPresent()){
+            FotosPlatos fp = optft.get();
+
+            byte[] imagenComoBytes = fp.getFoto();
+
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.setContentType(
+                    MediaType.parseMediaType(fp.getFotocontenttype()));
+
+            return new ResponseEntity<>(
+                    imagenComoBytes,
+                    httpHeaders,
+                    HttpStatus.OK);
+        }else{
+            return null;
+        }
+    }
 
     @GetMapping("/cliente/imagenrepartidor/{id}")
     public ResponseEntity<byte[]>mostrarImagenRepart(@PathVariable("id") int id){
@@ -264,7 +282,6 @@ public class UsuarioController {
             return null;
         }
     }
-
 
     /** Realizar pedido **/
 
@@ -291,13 +308,51 @@ public class UsuarioController {
         List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuarioactual);
         List<Categorias> listacategorias = categoriasRepository.findAll();
         List<Restaurante> listarestaurantes = restauranteRepository.findAll();
-        Direcciones direccionseleccionada = listadireccionescliente.get(1);
         model.addAttribute("listacategorias", listacategorias);
         model.addAttribute("listadirecciones", listadireccionescliente);
         model.addAttribute("listarestaurantes",listarestaurantes);
-        model.addAttribute("direccionseleccionada",direccionseleccionada);
 
         return "cliente/realizar_pedido_cliente";
+    }
+
+    @GetMapping("/cliente/direccionxenviar")
+    public String direccionxenviar(Model model,
+                                   @RequestParam(value = "direccion", defaultValue = "0") int direccionxenviar,
+                                   HttpSession session){
+
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuarioactual=sessionUser.getIdusuarios();
+
+        Optional<Direcciones> direccionopt = direccionesRepository.findById(direccionxenviar);
+        if(direccionopt.isPresent()){
+            List<String> listaidprecio = new ArrayList<>();
+            listaidprecio.add("Menor a 15");
+            listaidprecio.add("Entre 15 y 25");
+            listaidprecio.add("Entre 25 y 40");
+            listaidprecio.add("Mayor a 40");
+            model.addAttribute("listaidprecio",listaidprecio);
+            List<String> listaidcalificacion = new ArrayList<>();
+            listaidcalificacion.add("1 estrella");
+            listaidcalificacion.add("2 estrellas");
+            listaidcalificacion.add("3 estrellas");
+            listaidcalificacion.add("4 estrellas");
+            listaidcalificacion.add("5 estrellas");
+            model.addAttribute("listaidcalificacion",listaidcalificacion);
+
+            Direcciones direccionseleccionada = direccionopt.get();
+            List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuarioactual);
+            List<Categorias> listacategorias = categoriasRepository.findAll();
+            List<Restaurante> listarestaurantes = restauranteRepository.findAll();
+            model.addAttribute("listacategorias", listacategorias);
+            model.addAttribute("listadirecciones", listadireccionescliente);
+            model.addAttribute("listarestaurantes",listarestaurantes);
+            model.addAttribute("iddireccionxenviar",direccionxenviar);
+            model.addAttribute("direccionseleccionada",direccionseleccionada.getDireccion());
+            return "cliente/realizar_pedido_cliente";
+        }else{
+            return "redirect:/cliente/realizarpedido";
+
+        }
     }
 
     @PostMapping("/cliente/filtrarnombre")
@@ -495,41 +550,6 @@ public class UsuarioController {
 
      }
 
-
-     @GetMapping("/cliente/direccionxenviar")
-    public String direccionxenviar(Model model,
-                                   @RequestParam(value = "direccionxenviar", defaultValue = "0") int direccionxenviar,
-                                   HttpSession session){
-        //int idusuarioactual= 7;
-        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-        int idusuarioactual=sessionUser.getIdusuarios();
-
-        Optional<Direcciones> direccionopt = direccionesRepository.findById(direccionxenviar);
-        if(direccionopt.isPresent()){
-            List<String> listaidprecio = new ArrayList<>();
-            listaidprecio.add("Menor a 15");
-            listaidprecio.add("Entre 15 y 25");
-            listaidprecio.add("Entre 25 y 40");
-            listaidprecio.add("Mayor a 40");
-            model.addAttribute("listaidprecio",listaidprecio);
-
-            Direcciones direccionseleccionada = direccionopt.get();
-            List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuarioactual);
-            List<Categorias> listacategorias = categoriasRepository.findAll();
-            List<Restaurante> listarestaurantes = restauranteRepository.findAll();
-            model.addAttribute("listacategorias", listacategorias);
-            model.addAttribute("listadirecciones", listadireccionescliente);
-            model.addAttribute("listarestaurantes",listarestaurantes);
-            model.addAttribute("iddireccionxenviar",direccionxenviar);
-            System.out.println(direccionxenviar);
-            model.addAttribute("direccionseleccionada",direccionseleccionada);
-            return "cliente/realizar_pedido_cliente";
-        }else{
-            return "redirect:/cliente/realizarpedido";
-
-        }
-    }
-
     /** restaurante a ordenar **/
 
      @GetMapping("/cliente/restaurantexordenar")
@@ -537,14 +557,11 @@ public class UsuarioController {
                                      ){
 
          Optional<Restaurante> restopt = restauranteRepository.findById(idrestaurante);
-        //Optional<Direcciones> direccionopt )
         if(restopt.isPresent()){
             Restaurante rest = restopt.get();
 
             if (rest!=null){
                 int cantreviews = restauranteRepository.cantreviews(idrestaurante);
-       //         System.out.println(cantreviews);
-         //       System.out.println("**************************");
 
                 List<Plato> platosxrest = platoRepository.buscarPlatosPorIdRestauranteDisponilidadActivo(idrestaurante);
 
@@ -698,7 +715,7 @@ public class UsuarioController {
         return "redirect:/cliente/miperfil";
     }
 
-
+    /** CRUD direcciones **/
     @GetMapping("/cliente/borrardireccion")
     public String borrardireccion(@RequestParam("iddireccion") int iddireccion,
                                   Model model) {
@@ -728,14 +745,12 @@ public class UsuarioController {
                                         @RequestParam("iddistrito") int iddistrito,
                                         HttpSession session) {
 
-        //int idusuario = 7;
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuario=sessionUser.getIdusuarios();
 
         Direcciones direccioncrear = new Direcciones();
         direccioncrear.setDireccion(direccion);
-        //direccioncrear.setDistrito(distrito);
 
         Optional<Distritos> distritoopt = distritosRepository.findById(iddistrito);
         Distritos distritonuevo = distritoopt.get();
@@ -748,49 +763,6 @@ public class UsuarioController {
 
         return "redirect:/cliente/miperfil";
 
-    }
-
-    @GetMapping("/cliente/olvidecontrasenia")
-    public String olvidecontrasenia()
-    {
-        return "cliente/recuperarContra1";
-    }
-
-    @GetMapping("/cliente/recuperarcontrasenia")
-    public String recuperarcontra(){
-        return "cliente/recuperarContra2";
-    }
-
-    @PostMapping("/cliente/guardarnuevacontra")
-    public String nuevacontra(@RequestParam("contrasenia1") String contra1,
-                              @RequestParam("contrasenia2") String contra2,
-                              HttpSession session){
-
-
-        //int idusuario = 7;
-
-        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-        int idusuario=sessionUser.getIdusuarios();
-
-        Optional<Usuario> usarioopt = usuarioRepository.findById(idusuario);
-
-        Usuario usuariodb = usarioopt.get();
-
-        if(usuariodb.getIdusuarios()!=null){
-            if(contra1.equals(contra2)){
-
-
-                System.out.println(contra1);
-                String contraseniahashbcrypt = BCrypt.hashpw(contra1, BCrypt.gensalt());
-
-                usuariodb.setContraseniaHash(contraseniahashbcrypt);
-                usuarioRepository.save(usuariodb);
-
-            }
-        }
-
-
-        return "cliente/confirmarRecu";
     }
 
 }

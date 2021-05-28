@@ -1,7 +1,12 @@
 package com.example.tarea4_grupo2.entity;
 
 
+import org.springframework.format.annotation.NumberFormat;
+
 import javax.persistence.*;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
 import java.sql.Date;
 
 @Entity
@@ -12,12 +17,16 @@ public class Cupones {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idcupones;
 
+    @NotBlank(message = "El nombre no puede estar vacio.")
     @Column(nullable = false)
     private String nombre;
 
+    @NotBlank(message = "La descripcion no puede estar vacia.")
     @Column(nullable = false)
     private String descripcion;
 
+    @Positive(message = "Este valor no puede ser un numero negativo.")
+    @Digits(integer = 8 , fraction=2, message = "Este valor solo puede tener 2 decimales como maximo.")
     @Column(nullable = false)
     private float valordescuento;
 

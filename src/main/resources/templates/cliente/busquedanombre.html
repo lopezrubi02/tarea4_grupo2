@@ -193,7 +193,7 @@
           <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mar_bottom" th:each="plato : ${listaplatosbuscado}">
             <div class="blog_box">
               <div class="blog_img_box">
-                <figure><img src="https://mahatmarice.com/wp-content/uploads/2020/04/Rice-Pizza-Crust.jpg" width="70" height="70"/></figure>
+                <figure><img th:src="@{|/cliente/imagenplato/${plato.idplato}|}" width="70" height="70"/></figure>
               </div>
               <a href="#">
                 <h3 th:text="${plato.getNombre()}">Chifa Imperial</h3></a>
