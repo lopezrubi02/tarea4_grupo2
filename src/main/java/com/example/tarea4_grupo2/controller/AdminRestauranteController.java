@@ -50,19 +50,15 @@ public class AdminRestauranteController {
     FotosPlatosRepository fotosPlatosRepository;
 
     @GetMapping("/login")
-    public String loginAdmin(Model model, HttpSession session){
+    public String loginAdmin(HttpSession session){
 
-        /**Se obtiene Id de Usuario**/
+        /*Se obtiene Id de Usuario*/
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int id = sessionUser.getIdusuarios();
         System.out.println(id);
-        /********************************/
 
         if(sessionUser.getCuentaActiva() == 2){
-
-            System.out.println("TRACE1");
             Optional<Restaurante> restauranteOpt = restauranteRepository.buscarRestaurantePorIdAdmin(id);
-            System.out.println("TRACE2");
 
             if(restauranteOpt.isPresent()){
                 return "AdminRestaurantes/espera";
@@ -87,12 +83,7 @@ public class AdminRestauranteController {
             return null;
         }
     }
-/* Se encuentra en login controller
-    @GetMapping("/register")
-    public String registerAdmin(@ModelAttribute("usuario") Usuario usuario){
-        return "AdminRestaurantes/register";
-    }
-*/
+
     @PostMapping("/categorias")
     public String esperaConfirmacion(@ModelAttribute("restaurante") @Valid Restaurante restaurante,BindingResult bindingResult,
                                      @RequestParam("imagen") MultipartFile file,
@@ -120,14 +111,6 @@ public class AdminRestauranteController {
             return "AdminRestaurantes/categorias";
         }
     }
-    @PostMapping("/estado")
-    public String estadoAdmin(@RequestParam("correo") String correo) {
-        //Se valida con el correo si en la bd aparece como usuario aceptado o en espera y tendría dos posibles salidas
-        if(correo!=""){
-            return "AdminRestaurantes/restaurante";
-        }
-        return "redirect:/login";
-    }
 
     @GetMapping("/registerRestaurante")
     public String registerRestaurante(@ModelAttribute("restaurante")Restaurante restaurante, Model model,HttpSession session){
@@ -143,6 +126,7 @@ public class AdminRestauranteController {
         return "AdminRestaurantes/sinRestaurante";
     }
 
+    //TODO se usa esto?
     @PostMapping("/validarpersona")
     public String validarPersona(){
         return "AdminRestaurantes/restaurante";
@@ -153,6 +137,8 @@ public class AdminRestauranteController {
 
         return "AdminRestaurantes/correo";
     }
+
+    /************************FOTOS************************/
 
     @GetMapping("/imagen")
     public ResponseEntity<byte[]> imagenRestaurante(HttpSession session) {
@@ -184,6 +170,7 @@ public class AdminRestauranteController {
         }
         return null;
     }
+
     /************************PERFIL************************/
 
     @GetMapping("/perfil")
@@ -200,6 +187,7 @@ public class AdminRestauranteController {
             restaurante.setCalificacionpromedio(calificacion.floatValue());
             restauranteRepository.save(restaurante);
             model.addAttribute("calificacionpromedio",calificacion);
+            model.addAttribute("nombrerestaurante", restaurante.getNombre());
             return "AdminRestaurantes/perfilrestaurante";
         }
         else{
@@ -255,63 +243,87 @@ public class AdminRestauranteController {
     }
 
     @PostMapping("/guardarPlato")
-    public String guardarPlato(@ModelAttribute("plato") Plato plato, RedirectAttributes attr, Model model, @RequestParam( name="imagen", required = false) MultipartFile file) throws IOException{
+    public String guardarPlato(@ModelAttribute("plato") @Valid Plato plato, BindingResult bindingResult, RedirectAttributes attr, Model model,
+                               @RequestParam( name="imagen", required = false) MultipartFile file, HttpSession session) throws IOException{
 
-        System.out.println("TRACE1");
-        String nombreplato = plato.getNombre();
-        if (plato.getIdplato() == 0) {
-            platoRepository.save(plato);
-            Optional<Plato> platoguardado = platoRepository.buscarPlato(nombreplato);
-            if(platoguardado.isPresent()){
-                System.out.println("TRACE2");
-                Plato plato1 = platoguardado.get();
-                FotosPlatos fotosPlatos = new FotosPlatos();
-                fotosPlatos.setIdplato(plato1);
-                /**Se intentar guardar la imagen**/
-                try {
-                    fotosPlatos.setFoto(file.getBytes());
-                    fotosPlatos.setFotocontenttype(file.getContentType());
-                    fotosPlatos.setFotonombre(file.getOriginalFilename());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                fotosPlatosRepository.save(fotosPlatos);
-                attr.addFlashAttribute("msg", "Plato creado exitosamente");
-            }
-            return "redirect:/adminrest/menu";
-        } else {
-            platoRepository.save(plato);
-            System.out.println("TRACE3");
-            if(!(file.isEmpty())){
-                System.out.println("TRACE4");
-                Optional<FotosPlatos> optFoto = fotosPlatosRepository.encontrarIdPlato(plato.getIdplato());
-                if(optFoto.isPresent()) {
-                    System.out.println("TRACE5");
-                    FotosPlatos fotosPlatos = optFoto.get();
-                    try {
-                        fotosPlatos.setFoto(file.getBytes());
-                        fotosPlatos.setFotocontenttype(file.getContentType());
-                        fotosPlatos.setFotonombre(file.getOriginalFilename());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    fotosPlatosRepository.save(fotosPlatos);
-                }else{
-                    System.out.println("TRACE6");
+        if(bindingResult.hasErrors()) {
+
+            /**Se obtiene Id de Restaurante**/
+            Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+            Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
+            /********************************/
+            model.addAttribute("plato",plato);
+            model.addAttribute("iddelrestaurante", idrestaurante);
+            return "AdminRestaurantes/newPlato";
+
+        }else{
+
+            String nombreplato = plato.getNombre();
+
+            if (plato.getIdplato() == 0) {
+
+                platoRepository.save(plato);
+                Optional<Plato> platoguardado = platoRepository.buscarPlato(nombreplato);
+
+                if (platoguardado.isPresent()) {
+
+                    Plato plato1 = platoguardado.get();
                     FotosPlatos fotosPlatos = new FotosPlatos();
-                    fotosPlatos.setIdplato(plato);
+                    fotosPlatos.setIdplato(plato1);
+
                     try {
                         fotosPlatos.setFoto(file.getBytes());
                         fotosPlatos.setFotocontenttype(file.getContentType());
                         fotosPlatos.setFotonombre(file.getOriginalFilename());
                     } catch (IOException e) {
                         e.printStackTrace();
+                        plato1.setActivo(0);
+                        platoRepository.save(plato1);
                     }
+
                     fotosPlatosRepository.save(fotosPlatos);
+                    attr.addFlashAttribute("msg1", "Plato creado exitosamente");
                 }
+
+                return "redirect:/adminrest/menu";
+
+            }else{
+
+                platoRepository.save(plato);
+
+                if (!(file.isEmpty())) {
+
+                    Optional<FotosPlatos> optFoto = fotosPlatosRepository.encontrarIdPlato(plato.getIdplato());
+
+                    if (optFoto.isPresent()) {
+
+                        FotosPlatos fotosPlatos = optFoto.get();
+                        try {
+                            fotosPlatos.setFoto(file.getBytes());
+                            fotosPlatos.setFotocontenttype(file.getContentType());
+                            fotosPlatos.setFotonombre(file.getOriginalFilename());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        fotosPlatosRepository.save(fotosPlatos);
+
+                    }else{
+
+                        FotosPlatos fotosPlatos = new FotosPlatos();
+                        fotosPlatos.setIdplato(plato);
+                        try {
+                            fotosPlatos.setFoto(file.getBytes());
+                            fotosPlatos.setFotocontenttype(file.getContentType());
+                            fotosPlatos.setFotonombre(file.getOriginalFilename());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        fotosPlatosRepository.save(fotosPlatos);
+                    }
+                }
+                attr.addFlashAttribute("msg2", "Plato actualizado exitosamente");
+                return "redirect:/adminrest/menu";
             }
-            attr.addFlashAttribute("msg", "Plato actualizado exitosamente");
-            return "redirect:/adminrest/menu";
         }
     }
 
@@ -415,7 +427,7 @@ public class AdminRestauranteController {
 
         if(optCupon.isPresent()){
             cuponesRepository.deleteById(id);
-            attr.addFlashAttribute("msg", "Cupon borrado exitosamente");
+            attr.addFlashAttribute("msg3", "Cupon borrado exitosamente");
             return "redirect:/adminrest/cupones";
         }else{
             return "redirect:/adminrest/cupones";
@@ -423,18 +435,36 @@ public class AdminRestauranteController {
     }
 
     @PostMapping("/guardarCupon")
-    public String guardarCupon(@ModelAttribute("cupon") Cupones cupon, RedirectAttributes attr,
-                               Model model){
+    public String guardarCupon(@ModelAttribute("cupon") @Valid Cupones cupon, BindingResult bindingResult, RedirectAttributes attr,
+                               Model model, HttpSession session){
 
-        if (cupon.getIdcupones() == 0) {
-            cuponesRepository.save(cupon);
-            attr.addFlashAttribute("msg", "Cupon creado exitosamente");
-            return "redirect:/adminrest/cupones";
+        if(bindingResult.hasErrors()){
 
-        } else {
-            cuponesRepository.save(cupon);
-            attr.addFlashAttribute("msg", "Cupon actualizado exitosamente");
-            return "redirect:/adminrest/cupones";
+            /**Se obtiene Id de Restaurante**/
+            Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+            Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
+            /********************************/
+            model.addAttribute("cupon",cupon);
+            List<Plato> listaPlatos = platoRepository.buscarPlatosPorIdRestaurante(idrestaurante);
+            model.addAttribute("listaPlatos",listaPlatos);
+            return "AdminRestaurantes/generarCupon";
+
+        }else {
+
+            if (cupon.getIdcupones() == 0) {
+
+                cuponesRepository.save(cupon);
+                attr.addFlashAttribute("msg1", "Cupon creado exitosamente");
+                return "redirect:/adminrest/cupones";
+
+            } else {
+
+                cuponesRepository.save(cupon);
+                attr.addFlashAttribute("msg2", "Cupon actualizado exitosamente");
+                return "redirect:/adminrest/cupones";
+
+            }
+
         }
     }
 

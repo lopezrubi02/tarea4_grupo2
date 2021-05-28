@@ -121,18 +121,19 @@
                         <div class="title">
                             <div th:if="${alerta != null}" th:text="${alerta}" class="alert alert-warning" role="alert"></div>
                             <div th:if="${alerta2 != null}" th:text="${alerta2}" class="alert alert-warning" role="alert"></div>
-                            <div class="row g-2">
-                                <div class="col-md">
-                                    <form class="form-group mb-3" method="post" th:action="@{/cliente/recepcionCliente}">
-                                        <div class="input-group-append">
-                                            <input type="month" id="fechaprueba" name="fechahorapedido"
-                                            th:value="${fechaseleccionada}">
-                                            <!--th:selected="${generos.idgenero == juego.genero.idgenero}"></option-->
-                                            <button class="btn btn-warning" type="submit">Buscar</button>
-                                            <button class="btn btn-dark" th:href="@{/clientes/reportes}">Limpiar</button>
-                                        </div>
-                                    </form>
-                                </div>
+                            <div class="row justify-content-center">
+                                <div class="col-sm-2"><button class="btn btn-warning">Exportar a Excel</button></div>
+                            </div>
+                            <div class="row justify-content-center col-md-12">
+                                <div class="center-block"><div class="col-sm-2"><form class="form-group mb-3" method="post" th:action="@{/cliente/recepcionCliente}">
+                                    <div class="input-group-append">
+                                        <input type="month" id="fechaprueba" name="fechahorapedido"
+                                               th:value="${fechaseleccionada}">
+                                        <!--th:selected="${generos.idgenero == juego.genero.idgenero}"></option-->
+                                        <button class="btn btn-warning" type="submit">Buscar</button>
+                                        <button class="btn btn-dark" th:href="@{/clientes/reportes}">Limpiar</button>
+                                    </div>
+                                </form></div></div>
                             </div>
                         </div>
                     </div>

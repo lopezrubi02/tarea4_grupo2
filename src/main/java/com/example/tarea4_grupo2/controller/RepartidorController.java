@@ -191,7 +191,6 @@ public class RepartidorController {
             model.addAttribute("listaFindReporte", listaFindReporte);
             return "repartidor/repartidor_resultado_buscador";
         }
-
     }
 
     @GetMapping("/repartidor/Reportes")
@@ -251,7 +250,7 @@ public class RepartidorController {
         return "redirect:/repartidor/home";
     }
 
-    @GetMapping("/repartidor/perfil")
+    @GetMapping("/repartidor/miperfil")
     public String perfilRepartidor(@ModelAttribute("repartidor") Repartidor repartidor, Model model,
                                    HttpSession session) {
 
