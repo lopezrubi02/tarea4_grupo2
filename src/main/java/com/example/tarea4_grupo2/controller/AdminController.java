@@ -1,5 +1,6 @@
 package com.example.tarea4_grupo2.controller;
 
+import com.example.tarea4_grupo2.service.*;
 import com.example.tarea4_grupo2.dto.DeliveryReportes_DTO;
 import com.example.tarea4_grupo2.dto.RepartidoresReportes_DTO;
 import com.example.tarea4_grupo2.dto.RestauranteReportes_DTO;
@@ -46,6 +47,9 @@ public class AdminController {
 
     @Autowired
     PedidosRepository pedidosRepository;
+
+    @Autowired
+    SendMailService sendMailService;
 
     @GetMapping("/usuariosActuales")
     public String usuariosActuales(
@@ -348,7 +352,31 @@ public class AdminController {
             if(usuario.getCuentaActiva()==2){
                     usuario.setCuentaActiva(1);
                     usuarioRepository.save(usuario);
-                    attr.addFlashAttribute("msg","Cuenta aceptada exitosamente");
+                    if(usuario.getRol().equals("AdminRestaurante")){
+                        String direccion = "http://localhost:8090/login";
+                        String correoDestino = usuario.getEmail();
+                        String subject = "SPYCYO - Restaurante agregado";
+                        String texto = "<p><strong>Bienvenido a SPYCYO - Restaurante agregado</strong></p>\n" +
+                                "<p>Tenemos el agrado de comunicarle que el restaurante asociado a su cuenta ha sido aprobado.</p>\n" +
+                                "<p>Comienze a operar en la plataforma de SPYCYO ahora mismo, con el siguiente link.</p>\n" +
+                                "<p>&nbsp;</p>\n" +
+                                "<a href='"+direccion+"'>SPYCYO</a> <br><br>Atte. Equipo de Spicyo</b>";
+
+                        sendMailService.sendMail(correoDestino,"saritaatanacioarenas@gmail.com",subject,texto);
+                    }
+                    if(usuario.getRol().equals("Repartidor")){
+                        String direccion = "http://localhost:8090/login";
+                        String correoDestino = usuario.getEmail();
+                        String subject = "SPYCYO - Cuenta Repartidor Aceptada";
+                        String texto = "<p><strong>Bienvenido a SPYCYO - Cuenta Repartidor Aceptada</strong></p>\n" +
+                                "<p>Tenemos el agrado de comunicarle que la cuenta de repartidor creada ha sido aprobada.</p>\n" +
+                                "<p>Comienze a operar en la plataforma de SPYCYO ahora mismo, con el siguiente link.</p>\n" +
+                                "<p>&nbsp;</p>\n" +
+                                "<a href='"+direccion+"'>SPYCYO</a> <br><br>Atte. Equipo de Spicyo</b>";
+                        sendMailService.sendMail(correoDestino,"saritaatanacioarenas@gmail.com",subject,texto);
+                    }
+
+                    attr.addFlashAttribute("msg1","Cuenta aceptada exitosamente");
                     return "redirect:/admin/nuevosUsuarios";
                 }
             }
@@ -363,14 +391,53 @@ public class AdminController {
         return "adminsistema/ADMIN_RazonDenegacionCuenta";
     }
 
-    @GetMapping("/denegar")
-    public String denegarCuenta(@RequestParam(value="id") int id,RedirectAttributes attr){
+    @PostMapping("/denegar")
+    public String denegarCuenta(@RequestParam(value="id") int id,
+                                @RequestParam(value = "message", defaultValue = "Sin razón") String message,
+                                RedirectAttributes attr){
         Optional<Usuario> optional = usuarioRepository.findById(id);
         if(optional.isPresent()){
             Usuario usuario = optional.get();
-            usuario.setCuentaActiva(-1);
-            usuarioRepository.save(usuario);
-            attr.addFlashAttribute("msg","Cuenta denegada exitosamente");
+            if(usuario.getRol().equals("Repartidor")){
+                usuarioRepository.deleteById(id);
+                //Envio de correo a usuario
+                String correoDestino = usuario.getEmail();
+                String subject = "SPYCYO - Cuenta Denegada";
+                String texto = "<p><strong>Mensaje de SPYCYO - Cuenta Repartidor Denegada</strong></p>\n" +
+                        "<p>La cuenta nueva de repartidor que ha registrado se le ha denegado la solicitud de aprobación.</p>\n" +
+                        "<p>Motivo: '" +message +"'</p>\n" +
+                        "<p>&nbsp;</p>\n" +
+                        "<p>Nota: Si en el motivo de denegación se le indicaron puntos que mejorar o detallar, puede volver a intentar a registrar su cuenta</p>\n" +
+                        "<p>&nbsp;</p>\n" +
+                        "<br>Atte. Equipo de Spicyo</br>";
+                sendMailService.sendMail(correoDestino,"saritaatanacioarenas@gmail.com",subject,texto);
+
+                attr.addFlashAttribute("msg","Cuenta denegada exitosamente");
+                return "redirect:/admin/nuevosUsuarios";
+
+            }else if(usuario.getRol().equals("AdminRestaurante")){
+                Restaurante restaurante = restauranteRepository.findRestauranteByUsuario_Idusuarios(id);
+                restauranteRepository.deleteById(restaurante.getIdrestaurante());
+                usuario.setCuentaActiva(-1);
+                usuarioRepository.save(usuario);
+
+                //Envio de correo a usuario
+                String correoDestino = usuario.getEmail();
+                String subject = "SPYCYO - Cuenta de Restaurante Denegada";
+                String texto = "<p><strong>Mensaje de SPYCYO - Cuenta de Restaurante Denegada</strong></p>\n" +
+                        "<p>El restaurante asociado a la cuenta que ha registrado se le ha denegado la solicitud de aprobación.</p>\n" +
+                        "<p>Motivo: '" +message +"'</p>\n" +
+                        "<p>&nbsp;</p>\n" +
+                        "<p>Nota: Si en el motivo de denegación se le indicaron puntos que mejorar o detallar, puede volver a intentar a registrar su cuenta</p>\n" +
+                        "<p>&nbsp;</p>\n" +
+                        "<br>Atte. Equipo de Spicyo</br>";
+
+                sendMailService.sendMail(correoDestino,"saritaatanacioarenas@gmail.com",subject,texto);
+
+                attr.addFlashAttribute("msg","Cuenta denegada exitosamente");
+                return "redirect:/admin/nuevosUsuarios";
+            }
+            attr.addFlashAttribute("msg","Ocurrio un error al denegar la cuenta");
             return "redirect:/admin/nuevosUsuarios";
         }
         attr.addFlashAttribute("msg","Ocurrio un error al denegar la cuenta");
