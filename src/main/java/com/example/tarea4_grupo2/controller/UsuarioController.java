@@ -639,7 +639,7 @@ public class UsuarioController {
              pedidos.setRestaurante_idrestaurante(idrestaurante);
              pedidos.setIdmetodopago(1);
              pedidos.setIdrepartidor(11);
-
+            pedidos.setDireccionentrega(9);
              List<Pedidos> listapedidoscliente = pedidosRepository.listapedidoxcliente(idcliente,idrestaurante);
              int tam = listapedidoscliente.size();
              Pedidos ultimopedido = listapedidoscliente.get(tam-1);
@@ -648,6 +648,7 @@ public class UsuarioController {
              PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido,idplato);
              PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey,pedidos,platoelegido,descripcion,cantidad,cubiertos);
             pedidos.addpedido(pedidoHasPlato);
+
             pedidosRepository.save(pedidos);
              listapedidoscliente = pedidosRepository.listapedidoxcliente(idcliente,idrestaurante);
              tam = listapedidoscliente.size();
@@ -668,11 +669,26 @@ public class UsuarioController {
     @GetMapping("/cliente/carritoproductos")
     public String carritoproductos(Model model, HttpSession session){
 
-
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-        int idusuario=sessionUser.getIdusuarios();
+        int idusuario = sessionUser.getIdusuarios();
 
+        List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idusuario);
 
+        if(listapedidospendientes.isEmpty()){
+            model.addAttribute("lista",0);
+        }else{
+            model.addAttribute("lista",1);
+
+            List<PedidoHasPlato> listaxpedido = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(55);
+            System.out.println(listaxpedido.get(0).getPlato().getIdplato());
+            System.out.println(listaxpedido.get(0).getPlato().getNombre());
+            System.out.println("*********************************+");
+
+            List<PedidoHasPlato> listaplatosxpedido = pedidoHasPlatoRepository.findAll();
+            System.out.println(listaplatosxpedido.get(1).getId().getPedidosidpedidos());
+            System.out.println(listaplatosxpedido.get(1).getPlato().getNombre());
+
+        }
         return "cliente/carrito_productos";
     }
 

@@ -93,6 +93,7 @@
                                     </li><li>
                                     <a href="#"><img style="margin-right: 15px;" th:src="@{/images/carrito.png}" width="45" height="45"></a></li>
                                     <li>
+
                                         <button type="button" id="sidebarCollapse">
                                             <img th:src="@{/images/menu_icon.png}" alt="#">
                                         </button>
@@ -128,12 +129,61 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-6 offset-md-3">
-                            <div class="Client_box">
-                                <h3>Roock Due</h3>
-                                <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don’t look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn’t anything embarrassing hidden in the middle of text.</p>
-                                <i><button class="button" style="padding: 0px 15px; font-size: 14px;height: 40px;width: 100.5px;background:#e3d105" type="submit">Vaciar carrito</button>
-                                <button class="button" style="padding: 0px 15px; font-size: 14px;height: 40px;width: 100.5px;background:#e3d105" type="submit">Ir a pagar</button></i>
+                        <div class="col-md-6 offset-md-3"> <!-- canasta vacia -->
+                            <div class="Client_box" th:if="${lista == 0}">
+                                <h3>Tu canasta está vacía</h3>
+                                <p>Te invitamos a volver a nuestros restaurante y agregar productos a tu canasta.</p>
+
+                            </div>
+                            <div class="Client_box" th:unless="${lista == 0}">  <!-- canasta con algún plato -->
+
+                                <div>
+                                    <ul class="list-unstyled components">
+                                        <li class="active">
+                                            <h4 style="color: white;">Entregar en: <strong>Avenida Peru 3081</strong></h4>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="right_header_info" style="width: 370px;">
+                                    <ul class="list-unstyled components" >
+                                        <li class="active">
+                                            <figure><img src="https://img.freepik.com/psd-gratis/maqueta-logotipo-fachada-restaurante_204971-178.jpg?size=626&ext=jpg" width="70" height="70"/></figure>
+                                        </li>
+                                        <li class="active">
+                                            <h4 style="color: white;">Restaurante Jisoo Chicken</h4>
+                                           <a><h4 style="color: white;">Volver a restaurante</h4></a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                </br>
+                                </br>
+                                <div style="padding-top: 60px;">
+                                    <table class="table" style="color: white;">
+                                        <tbody>
+                                        <tr>
+                                            <td><figure><img src="https://cdn2.cocinadelirante.com/sites/default/files/styles/gallerie/public/images/2017/04/pizzapepperoni0.jpg" width="70" height="70"/></figure>
+                                            </td>
+                                            <td>Pizza americana </br> S/.17.50</td>
+                                            <td style="width: 100px;"><input style="border: transparent; padding: 9px 11px; color: white; background-color: transparent" class="form-control" placeholder="Cantidad" type="number" id="cantidad" name="cantidad" min="1">
+                                            </td>
+                                            <td>Eliminar</td>
+                                        </tr>
+                                        <tr>
+                                            <td><figure><img src="https://cdn2.cocinadelirante.com/sites/default/files/styles/gallerie/public/images/2017/04/pizzapepperoni0.jpg" width="70" height="70"/></figure>
+                                            </td>
+                                            <td>Pizza americana </br> S/.17.50</td>
+                                            <td style="width: 100px;"><input style="border: transparent; padding: 9px 11px; color: white; background-color: transparent" class="form-control" placeholder="Cantidad" type="number" id="cantidad" name="cantidad" min="1">
+                                            </td>
+                                            <td>Eliminar</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                </br>
+                                <div class="row" style="justify-content: space-between;">
+                                    <button class="button" style="margin: 15px;font-size: 14px;height: 40px;width: 120px;background:#e3d105" type="submit">Vaciar carrito</button>
+                                    <button class="button" style=" margin:15px; font-size: 14px;height: 40px;width: 120px;background:#e3d105" type="submit">Ir a pagar</button></i>
+                                </div>
                             </div>
                         </div>
                     </div>
