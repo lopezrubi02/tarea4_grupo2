@@ -45,8 +45,14 @@ public class UsuarioController {
     @Autowired
     FotosPlatosRepository fotosPlatosRepository;
 
+    @Autowired
+    MetodosDePagoRepository metodosDePagoRepository;
+
     @GetMapping("/cliente/paginaprincipal")
-    public String paginaprincipal() {
+    public String paginaprincipal(HttpSession session) {
+
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuarios=sessionUser.getIdusuarios();
 
         return "cliente/paginaPrincipal";
     }
@@ -70,30 +76,18 @@ public class UsuarioController {
                                  BindingResult bindingResult) {
 
         if(bindingResult.hasErrors()){
-            System.out.println("hay algun error");
             List<Distritos> listadistritos = distritosRepository.findAll();
             model.addAttribute("listadistritos",listadistritos);
-            System.out.println(bindingResult.getFieldErrors());
-            System.out.println(pass2);
-            System.out.println(usuario.getContraseniaHash());
             return "cliente/registroCliente";
         }else{
-            System.out.println("mo hay error de binding");
-            System.out.println(pass2);
-            System.out.println(usuario.getContraseniaHash());
-            System.out.println("#####################################33");
             if (usuario.getContraseniaHash().equals(pass2)) {
-                System.out.println(pass2);
-                System.out.println(usuario.getContraseniaHash());
                 String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
-
 
                 usuario.setContraseniaHash(contraseniahashbcrypt);
                 usuario.setRol("Cliente");
                 usuario.setCuentaActiva(1);
 
                 usuarioRepository.save(usuario);
-                System.out.println("guarda");
 
                 Usuario usuarionuevo = usuarioRepository.findByDni(usuario.getDni());
 
@@ -607,33 +601,17 @@ public class UsuarioController {
                               Model model){
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-        int idusuario=sessionUser.getIdusuarios();
+        int idcliente=sessionUser.getIdusuarios();
 
          Optional<Restaurante> restauranteopt = restauranteRepository.findById(idrestaurante);
          Optional<Plato> platoopt = platoRepository.findById(idplato);
 
          if(platoopt.isPresent() && restauranteopt.isPresent()){
-
              Plato platoelegido = platoopt.get();
-             Optional<Usuario> usuarioopt = usuarioRepository.findById(idusuario);
-             Usuario usuarioactual = usuarioopt.get();
 
-             int idcliente = usuarioactual.getIdusuarios();
-             System.out.println("idcliente");
-             System.out.println(idcliente);
-             System.out.println(cubiertos);
-             System.out.println("**********************+");
-             System.out.println(cantidad);
-             System.out.println(descripcion);
-             System.out.println("idrestaurante: ");
-             System.out.println(idrestaurante);
-             System.out.println("gggggggggggggggggg");
             // List<PedidoHasPlato> pedidoHasPlatoList =  pedidoHasPlatoRepository.findAll();
              //System.out.println(pedidoHasPlatoList.get(1).getPlato().getIdplato());
             // System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaa");
-             System.out.println("idplato:");
-             System.out.println(idplato);
-
              Pedidos pedidos = new Pedidos();
              pedidos.setIdcliente(idcliente);
              pedidos.setRestaurante_idrestaurante(idrestaurante);
@@ -693,12 +671,24 @@ public class UsuarioController {
     }
 
     @GetMapping("/cliente/checkout")
-    public String checkout(Model model, HttpSession session){
+    public String checkout(Model model, HttpSession session,
+                           @RequestParam(value = "idmetodo" ,defaultValue = "0") int idmetodo){
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuario=sessionUser.getIdusuarios();
+        System.out.println(idmetodo);
+        Optional<MetodosDePago> metodoopt = metodosDePagoRepository.findById(idmetodo);
+        if(metodoopt.isPresent()){
+            MetodosDePago metodosel = metodoopt.get();
+            model.addAttribute("metodoelegido",idmetodo);
+            System.out.println(idmetodo);
+        }
+        List<MetodosDePago> listametodos = metodosDePagoRepository.findAll();
+        model.addAttribute("listametodospago",listametodos);
 
-        return "cliente/carrito_cliente";
+        return "cliente/checkoutcarrito";
     }
+
+
 
     /** Mi perfil **/
 
