@@ -692,11 +692,18 @@ public class UsuarioController {
         return "cliente/carrito_productos";
     }
 
+    @GetMapping("/cliente/checkout")
+    public String checkout(Model model, HttpSession session){
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuario=sessionUser.getIdusuarios();
+
+        return "cliente/carrito_cliente";
+    }
+
     /** Mi perfil **/
 
     @GetMapping("/cliente/miperfil")
     public String miperfil(Model model, HttpSession session) {
-        //int idusuario = 7;
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuario=sessionUser.getIdusuarios();
