@@ -601,7 +601,7 @@ public class UsuarioController {
                               @RequestParam("idplato") int idplato,
                               HttpSession session,
                               Model model){
-
+        //TODO: verificar que ya exite un pedido guardado con el idrestaurante
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idcliente=sessionUser.getIdusuarios();
 
