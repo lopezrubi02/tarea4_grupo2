@@ -49,11 +49,13 @@ public class UsuarioController {
     MetodosDePagoRepository metodosDePagoRepository;
 
     @GetMapping("/cliente/paginaprincipal")
-    public String paginaprincipal(HttpSession session) {
+    public String paginaprincipal(HttpSession session, Model model) {
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-        int idusuarios=sessionUser.getIdusuarios();
-
+        int idusuario=sessionUser.getIdusuarios();
+        
+        List<Pedidos> pedidoscanceladosxrest = pedidosRepository.listapedidoscanceladosxrest(idusuario);
+        model.addAttribute("listacancelados",pedidoscanceladosxrest);
         return "cliente/paginaPrincipal";
     }
 
@@ -688,7 +690,10 @@ public class UsuarioController {
         return "cliente/checkoutcarrito";
     }
 
-
+    @GetMapping("/cliente/progresopedido")
+    public String progresopedido(Model model, HttpSession session){
+         return "cliente/ultimopedido_cliente";
+    }
 
     /** Mi perfil **/
 
