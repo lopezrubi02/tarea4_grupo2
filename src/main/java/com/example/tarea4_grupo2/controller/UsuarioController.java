@@ -408,7 +408,7 @@ public class UsuarioController {
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuarioactual=sessionUser.getIdusuarios();
 
-        Optional<Direcciones> direccionopt = direccionesRepository.findById(direccionxenviar);
+        Optional<Direcciones> direccionopt = Optional.ofNullable(direccionesRepository.findDireccionesByIddireccionesAndUsuariosIdusuariosEquals(direccionxenviar, idusuarioactual));
         if(direccionopt.isPresent()){
             List<String> listaidprecio = new ArrayList<>();
             listaidprecio.add("Menor a 15");
@@ -484,7 +484,8 @@ public class UsuarioController {
                                      ){
 
          Optional<Restaurante> restopt = restauranteRepository.findById(idrestaurante);
-        if(restopt.isPresent()){
+         Optional<Direcciones> diropt = direccionesRepository.findById(direccionxenviar);
+        if(diropt.isPresent() && restopt.isPresent()){
             Restaurante rest = restopt.get();
 
             if (rest!=null){
@@ -515,8 +516,9 @@ public class UsuarioController {
 
          Optional<Plato> platoopt = platoRepository.findById(idplatopedir);
          Optional<Restaurante> restopt = restauranteRepository.findById(idrestaurante);
+         Optional<Direcciones> diropt = direccionesRepository.findById(direccionxenviar);
 
-         if(platoopt.isPresent() && restopt.isPresent()){
+         if(platoopt.isPresent() && restopt.isPresent() && diropt.isPresent()){
              Plato platoseleccionado = platoopt.get();
              model.addAttribute("platoseleccionado",platoseleccionado);
              model.addAttribute("idrestaurante",idrestaurante);
@@ -543,8 +545,9 @@ public class UsuarioController {
 
          Optional<Restaurante> restauranteopt = restauranteRepository.findById(idrestaurante);
          Optional<Plato> platoopt = platoRepository.findById(idplato);
+         Optional<Direcciones> diropt = direccionesRepository.findById(direccionxenviar);
 
-         if(platoopt.isPresent() && restauranteopt.isPresent()){
+         if(platoopt.isPresent() && restauranteopt.isPresent() && diropt.isPresent()){
              Plato platoelegido = platoopt.get();
 
             // List<PedidoHasPlato> pedidoHasPlatoList =  pedidoHasPlatoRepository.findAll();
