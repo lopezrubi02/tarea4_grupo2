@@ -282,7 +282,12 @@ public class UsuarioController {
     /** Realizar pedido **/
 
     @GetMapping("/cliente/realizarpedido")
-    public String realizarpedido(Model model, HttpSession session) {
+    public String realizarpedido(Model model, HttpSession session, RedirectAttributes attr,
+                                 @RequestParam(value = "idcategoriarest" ,defaultValue = "0") int idcategoriarest,
+                                 @RequestParam(value = "preciopromedio", defaultValue = "0") int precio,
+                                 @RequestParam(value = "direccion", defaultValue = "0") int direccionxenviar,
+                                 @RequestParam(value = "calificacion", defaultValue = "0") int calificacion
+                                 ) {
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuarioactual=sessionUser.getIdusuarios();
@@ -308,7 +313,88 @@ public class UsuarioController {
         model.addAttribute("listadirecciones", listadireccionescliente);
         model.addAttribute("listarestaurantes",listarestaurantes);
 
+        Optional<Direcciones> direccionopt = direccionesRepository.findById(direccionxenviar);
+        if(direccionopt.isPresent()){
+
+            Direcciones direccionseleccionada = direccionopt.get();
+            model.addAttribute("iddireccionxenviar",direccionxenviar);
+            model.addAttribute("direccionseleccionada",direccionseleccionada.getDireccion());
+        }
+
+        Optional<Categorias> catopt = categoriasRepository.findById(idcategoriarest);
+        if(catopt.isPresent()){
+
+            List<Restaurante> listarestauranteseleccionado = restauranteRepository.listarestxcategoria(idcategoriarest);
+
+            if(idcategoriarest!=0){
+                model.addAttribute("listarestaurantes",listarestauranteseleccionado);
+            }else{
+                model.addAttribute("listarestaurantes",listarestaurantes);
+            }
+            model.addAttribute("catelegida",idcategoriarest);
+        }
+
+
+        if(precio!=0){
+            switch (precio){
+                case 1:
+                    List<Restaurante> listaRestFiltroPrecio = restauranteRepository.listarestprecio1();
+                    if(listaRestFiltroPrecio.isEmpty()){
+                        attr.addFlashAttribute("alertaprecio","No se encontraron restaurantes para el filtro aplicado");
+                        return "redirect:/cliente/realizarpedido";
+                    }else{
+                        model.addAttribute("listarestaurantes", listaRestFiltroPrecio);
+                        model.addAttribute("precioselec",precio);
+                    }
+                    break;
+                case 2:
+                    listaRestFiltroPrecio = restauranteRepository.listarestprecio2();
+                    if(listaRestFiltroPrecio.isEmpty()){
+                        attr.addFlashAttribute("alertaprecio","No se encontraron restaurantes para el filtro aplicado");
+                        return "redirect:/cliente/realizarpedido";
+                    }else{
+                        model.addAttribute("listarestaurantes", listaRestFiltroPrecio);
+                        model.addAttribute("precioselec",precio);
+                    }
+                    break;
+                case 3:
+                    listaRestFiltroPrecio = restauranteRepository.listarestprecio3();
+                    if(listaRestFiltroPrecio.isEmpty()){
+                        attr.addFlashAttribute("alertaprecio","No se encontraron restaurantes para el filtro aplicado");
+                        return "redirect:/cliente/realizarpedido";
+                    }else {
+                        model.addAttribute("listarestaurantes", listaRestFiltroPrecio);
+                        model.addAttribute("precioselec", precio);
+                    }
+                    break;
+                case 4:
+                    listaRestFiltroPrecio = restauranteRepository.listarestprecio4();
+                    if(listaRestFiltroPrecio.isEmpty()){
+                        attr.addFlashAttribute("alertaprecio","No se encontraron restaurantes para el filtro aplicado");
+                        return "redirect:/cliente/realizarpedido";
+                    }else {
+                        model.addAttribute("listarestaurantes", listaRestFiltroPrecio);
+                        model.addAttribute("precioselec", precio);
+                    }
+                    break;
+            }
+        }
+
+        if(calificacion!=0) {
+            if (calificacion > 4) {
+                return "redirect:/cliente/realizarpedido";
+            } else {
+                List<Restaurante> listarestcal = restauranteRepository.listarestcalificacion(calificacion);
+                model.addAttribute("listarestaurantes", listarestcal);
+                model.addAttribute("calsel", calificacion);
+                if (listarestcal.isEmpty()) {
+                    attr.addFlashAttribute("alertaprecio", "No se encontraron restaurantes para el filtro aplicado");
+                    return "redirect:/cliente/realizarpedido";
+                }
+            }
+        }
         return "cliente/realizar_pedido_cliente";
+
     }
 
     @GetMapping("/cliente/direccionxenviar")
@@ -378,173 +464,6 @@ public class UsuarioController {
         }
 
     }
-
-     @GetMapping("/cliente/filtrocategoria")
-     public String filtrosrestaurantes1(Model model,
-     @RequestParam(value = "idcategoriarest" ,defaultValue = "0") int idcategoriarest,
-                                        HttpSession session){
-
-         Optional<Categorias> catopt = categoriasRepository.findById(idcategoriarest);
-         if(catopt.isPresent()){
-             List<String> listaidprecio = new ArrayList<>();
-             listaidprecio.add("Menor a 15");
-             listaidprecio.add("Entre 15 y 25");
-             listaidprecio.add("Entre 25 y 40");
-             listaidprecio.add("Mayor a 40");
-             model.addAttribute("listaidprecio",listaidprecio);
-             List<String> listaidcalificacion = new ArrayList<>();
-             listaidcalificacion.add("1 estrella");
-             listaidcalificacion.add("2 estrellas");
-             listaidcalificacion.add("3 estrellas");
-             listaidcalificacion.add("4 estrellas");
-             listaidcalificacion.add("5 estrellas");
-             model.addAttribute("listaidcalificacion",listaidcalificacion);
-
-             List<Restaurante> listarestauranteseleccionado = restauranteRepository.listarestxcategoria(idcategoriarest);
-
-             Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-             int idusuarioactual=sessionUser.getIdusuarios();
-
-             List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuarioactual);
-             List<Categorias> listacategorias = categoriasRepository.findAll();
-             List<Restaurante> listarestaurantes = restauranteRepository.findAll();
-             model.addAttribute("listacategorias", listacategorias);
-             model.addAttribute("listadirecciones", listadireccionescliente);
-
-             if(idcategoriarest!=0){
-                 model.addAttribute("listarestaurantes",listarestauranteseleccionado);
-             }else{
-                 model.addAttribute("listarestaurantes",listarestaurantes);
-             }
-             model.addAttribute("catelegida",idcategoriarest);
-             return "cliente/realizar_pedido_cliente";
-         }else{
-             return "redirect:/cliente/realizarpedido";
-         }
-     }
-
-     @GetMapping("cliente/filtroprecio")
-    public String filtroprecio(Model model,HttpSession session, RedirectAttributes attr,
-                               @RequestParam(value = "preciopromedio", defaultValue = "0") int precio){
-
-        if(precio!=0){
-            List<String> listaidprecio = new ArrayList<>();
-            listaidprecio.add("Menor a 15");
-            listaidprecio.add("Entre 15 y 25");
-            listaidprecio.add("Entre 25 y 40");
-            listaidprecio.add("Mayor a 40");
-            model.addAttribute("listaidprecio",listaidprecio);
-            List<String> listaidcalificacion = new ArrayList<>();
-            listaidcalificacion.add("1 estrella");
-            listaidcalificacion.add("2 estrellas");
-            listaidcalificacion.add("3 estrellas");
-            listaidcalificacion.add("4 estrellas");
-            listaidcalificacion.add("5 estrellas");
-            model.addAttribute("listaidcalificacion",listaidcalificacion);
-
-            Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-            int idusuarioactual=sessionUser.getIdusuarios();
-
-            List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuarioactual);
-            List<Categorias> listacategorias = categoriasRepository.findAll();
-            model.addAttribute("listacategorias", listacategorias);
-            model.addAttribute("listadirecciones", listadireccionescliente);
-
-            switch (precio){
-                case 1:
-                    List<Restaurante> listaRestFiltroPrecio = restauranteRepository.listarestprecio1();
-                    if(listaRestFiltroPrecio.isEmpty()){
-                        attr.addFlashAttribute("alertaprecio","No se encontraron restaurantes para el filtro aplicado");
-                        return "redirect:/cliente/realizarpedido";
-                    }else{
-                        model.addAttribute("listarestaurantes", listaRestFiltroPrecio);
-                        model.addAttribute("precioselec",precio);
-                        return "cliente/realizar_pedido_cliente";
-                    }
-                case 2:
-                    listaRestFiltroPrecio = restauranteRepository.listarestprecio2();
-                    if(listaRestFiltroPrecio.isEmpty()){
-                        attr.addFlashAttribute("alertaprecio","No se encontraron restaurantes para el filtro aplicado");
-                        return "redirect:/cliente/realizarpedido";
-                    }else{
-                        model.addAttribute("listarestaurantes", listaRestFiltroPrecio);
-                        model.addAttribute("precioselec",precio);
-                        return "cliente/realizar_pedido_cliente";
-                    }
-                case 3:
-                    listaRestFiltroPrecio = restauranteRepository.listarestprecio3();
-                    if(listaRestFiltroPrecio.isEmpty()){
-                        attr.addFlashAttribute("alertaprecio","No se encontraron restaurantes para el filtro aplicado");
-                        return "redirect:/cliente/realizarpedido";
-                    }else {
-                        model.addAttribute("listarestaurantes", listaRestFiltroPrecio);
-                        model.addAttribute("precioselec", precio);
-                        return "cliente/realizar_pedido_cliente";
-                    }
-                case 4:
-                    listaRestFiltroPrecio = restauranteRepository.listarestprecio4();
-                    if(listaRestFiltroPrecio.isEmpty()){
-                        attr.addFlashAttribute("alertaprecio","No se encontraron restaurantes para el filtro aplicado");
-                        return "redirect:/cliente/realizarpedido";
-                    }else {
-                        model.addAttribute("listarestaurantes", listaRestFiltroPrecio);
-                        model.addAttribute("precioselec", precio);
-                        return "cliente/realizar_pedido_cliente";
-                    }
-                default:
-                    return "redirect:/cliente/realizarpedido";
-            }
-        }else{
-            return "redirect:/cliente/realizarpedido";
-
-        }
-     }
-
-     @GetMapping("/cliente/filtrocalificacion")
-     private String filtrocalificacion(Model model, HttpSession session, RedirectAttributes attr,
-                                       @RequestParam(value = "calificacion", defaultValue = "0") int calificacion){
-
-        if(calificacion!=0){
-            if(calificacion > 4){
-                return "redirect:/cliente/realizarpedido";
-            }else{
-                List<String> listaidprecio = new ArrayList<>();
-                listaidprecio.add("Menor a 15");
-                listaidprecio.add("Entre 15 y 25");
-                listaidprecio.add("Entre 25 y 40");
-                listaidprecio.add("Mayor a 40");
-                model.addAttribute("listaidprecio",listaidprecio);
-                List<String> listaidcalificacion = new ArrayList<>();
-                listaidcalificacion.add("1 estrella");
-                listaidcalificacion.add("2 estrellas");
-                listaidcalificacion.add("3 estrellas");
-                listaidcalificacion.add("4 estrellas");
-                listaidcalificacion.add("5 estrellas");
-                model.addAttribute("listaidcalificacion",listaidcalificacion);
-
-                Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-                int idusuarioactual=sessionUser.getIdusuarios();
-
-                List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuarioactual);
-                List<Categorias> listacategorias = categoriasRepository.findAll();
-                model.addAttribute("listacategorias", listacategorias);
-                model.addAttribute("listadirecciones", listadireccionescliente);
-
-                List<Restaurante> listarestcal = restauranteRepository.listarestcalificacion(calificacion);
-                model.addAttribute("listarestaurantes",listarestcal);
-                model.addAttribute("calsel",calificacion);
-                if(listarestcal.isEmpty()){
-                    attr.addFlashAttribute("alertaprecio","No se encontraron restaurantes para el filtro aplicado");
-                    return "redirect:/cliente/realizarpedido";
-                }else {
-                    return "cliente/realizar_pedido_cliente";
-                }
-            }
-        }else{
-            return "redirect:/cliente/realizarpedido";
-        }
-
-     }
 
     /** restaurante a ordenar **/
 

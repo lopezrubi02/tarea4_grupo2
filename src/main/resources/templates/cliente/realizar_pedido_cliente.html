@@ -163,12 +163,12 @@
 				  <select class="form-select" id="floatingSelectGrid2" aria-label="Floating label select example" onchange="window.location=this.options[this.selectedIndex].value">
                       <option selected="true" disabled="disabled">Filtrar por categoría</option>
                       <option th:text="Todas"
-                            th:value=" 'filtrocategoria?idcategoriarest=0'">Todos</option>
+                            th:value=" 'realizarpedido?idcategoriarest=0'">Todos</option>
                       <option
                             th:each = "categoria : ${listacategorias}"
                     th:text="${categoria.getNombrecategoria()}"
                             th:selected="${categoria.getIdcategorias() == catelegida}"
-                    th:value=" 'filtrocategoria?idcategoriarest=' + ${categoria.getIdcategorias()}"
+                    th:value=" 'realizarpedido?idcategoriarest=' + ${categoria.getIdcategorias()}"
                    >Todos</option>
 				  </select>
 				  <label for="floatingSelectGrid2">Categoría</label>
@@ -178,12 +178,12 @@
 				<div class="form-floating">
 				  <select class="form-select" id="floatingSelectGrid3" aria-label="Floating label select example" onchange="window.location=this.options[this.selectedIndex].value">
                       <option selected="true" disabled="disabled">Filtrar por precio</option>
-					  <option value="filtroprecio?preciopromedio=0">Todos</option>
+					  <option value="realizarpedido?preciopromedio=0">Todos</option>
                       <option
                               th:each = "preciopromedio, info : ${listaidprecio}"
                               th:text="${preciopromedio}"
                               th:selected="${info.index + 1 == precioselec}"
-                              th:value=" 'filtroprecio?preciopromedio=' + ${info.index + 1}">Todos</option>
+                              th:value=" 'realizarpedido?preciopromedio=' + ${info.index + 1}">Todos</option>
 				  </select>
 				  <label for="floatingSelectGrid3">Precio base promedio</label>
 				</div>
@@ -192,12 +192,12 @@
 				<div class="form-floating">
 				  <select class="form-select" id="floatingSelectGrid4" aria-label="Floating label select example" onchange="window.location=this.options[this.selectedIndex].value">
                     <option selected="true" disabled="disabled">Filtrar por calificación</option>
-                    <option value="filtrocalificacion?calificacion=0">Todos</option>
+                    <option value="realizarpedido?calificacion=0">Todos</option>
                       <option
                               th:each = "calificacion, info : ${listaidcalificacion}"
                               th:text="${calificacion}"
                               th:selected="${info.index + 1 == calsel}"
-                              th:value=" 'filtrocalificacion?calificacion=' + ${info.index + 1}">Todos</option>
+                              th:value=" 'realizarpedido?calificacion=' + ${info.index + 1}">Todos</option>
 				  </select>
 				  <label for="floatingSelectGrid4">Calificación promedio</label>
 				</div>
