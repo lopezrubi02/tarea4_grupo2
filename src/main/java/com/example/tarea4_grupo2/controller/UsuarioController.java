@@ -313,20 +313,22 @@ public class UsuarioController {
         model.addAttribute("listadirecciones", listadireccionescliente);
         model.addAttribute("listarestaurantes",listarestaurantes);
 
-        try {
+
             if (direccionxenviar == 0) {
                 model.addAttribute("direccionseleccionada", listadireccionescliente.get(0).getDireccion());
                 model.addAttribute("iddireccionxenviar", listadireccionescliente.get(0).getIddirecciones());
             } else {
+                try {
                 Optional<Direcciones> direccionopt = direccionesRepository.findById(direccionxenviar);
                 if (direccionopt.isPresent()) {
                     Direcciones direccionseleccionada = direccionopt.get();
                     model.addAttribute("iddireccionxenviar", direccionxenviar);
                     model.addAttribute("direccionseleccionada", direccionseleccionada.getDireccion());
                 }
+                }catch (NumberFormatException e){
+                    return "cliente/realizar_pedido_cliente";
             }
-        }catch (Exception e){
-        return "cliente/realizar_pedido_cliente";
+
     }
 
         Optional<Categorias> catopt = categoriasRepository.findById(idcategoriarest);
