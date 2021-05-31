@@ -637,11 +637,12 @@ public class UsuarioController {
             model.addAttribute("lista",1);
 
             for (Pedidos pedidoencurso : listapedidospendientes){
+                List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(pedidoencurso.getIdpedidos());
                 System.out.println(pedidoencurso.getIdpedidos());
                 System.out.println(pedidoencurso.getDireccionentrega().getIddirecciones());
+                model.addAttribute("platosxpedido",platosxpedido);
                 model.addAttribute("pedidoencurso",pedidoencurso);
             }
-
         }
         return "cliente/carrito_productos";
     }
