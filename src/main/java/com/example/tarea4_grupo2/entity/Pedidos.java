@@ -24,7 +24,9 @@ public class Pedidos {
 
     private String montoexacto;
 
-    private int idmetodopago;
+    @ManyToOne
+    @JoinColumn(name = "idmetodopago")
+    private MetodosDePago metododepago;
 
     private int calificacionrestaurante;
 
@@ -42,8 +44,9 @@ public class Pedidos {
     @Column(nullable = false)
     private int idcliente;
 
-
-    private int idrepartidor;
+    @ManyToOne
+    @JoinColumn(name = "idrepartidor")
+    private Usuario repartidor;
 
     @Column(nullable = false)
     private int restaurante_idrestaurante;
@@ -68,12 +71,14 @@ public class Pedidos {
     public Pedidos() {
     }
 
-    public Pedidos(float montototal, int comisionrepartidor, int comisionsistema, String montoexacto, int idmetodopago, int calificacionrestaurante, int calificacionrepartidor, String comentario, float tiempodelivery, String estadorestaurante, String estadorepartidor, int idcliente, int idrepartidor, int restaurante_idrestaurante, Date fechahorapedido, Date fechahoraentregado, int direccionentrega) {
+    public Pedidos(int idpedidos, Set<PedidoHasPlato> pedidohasplato, float montototal, int comisionrepartidor, int comisionsistema, String montoexacto, MetodosDePago metododepago, int calificacionrestaurante, int calificacionrepartidor, String comentario, float tiempodelivery, String estadorestaurante, String estadorepartidor, int idcliente, Usuario repartidor, int restaurante_idrestaurante, Date fechahorapedido, Date fechahoraentregado, int direccionentrega) {
+        this.idpedidos = idpedidos;
+        this.pedidohasplato = pedidohasplato;
         this.montototal = montototal;
         this.comisionrepartidor = comisionrepartidor;
         this.comisionsistema = comisionsistema;
         this.montoexacto = montoexacto;
-        this.idmetodopago = idmetodopago;
+        this.metododepago = metododepago;
         this.calificacionrestaurante = calificacionrestaurante;
         this.calificacionrepartidor = calificacionrepartidor;
         this.comentario = comentario;
@@ -81,7 +86,7 @@ public class Pedidos {
         this.estadorestaurante = estadorestaurante;
         this.estadorepartidor = estadorepartidor;
         this.idcliente = idcliente;
-        this.idrepartidor = idrepartidor;
+        this.repartidor = repartidor;
         this.restaurante_idrestaurante = restaurante_idrestaurante;
         this.fechahorapedido = fechahorapedido;
         this.fechahoraentregado = fechahoraentregado;
@@ -128,12 +133,12 @@ public class Pedidos {
         this.montoexacto = montoexacto;
     }
 
-    public int getIdmetodopago() {
-        return idmetodopago;
+    public MetodosDePago getMetododepago() {
+        return metododepago;
     }
 
-    public void setIdmetodopago(int idmetodopago) {
-        this.idmetodopago = idmetodopago;
+    public void setMetododepago(MetodosDePago metododepago) {
+        this.metododepago = metododepago;
     }
 
     public int getCalificacionrestaurante() {
@@ -192,12 +197,12 @@ public class Pedidos {
         this.idcliente = idcliente;
     }
 
-    public int getIdrepartidor() {
-        return idrepartidor;
+    public Usuario getRepartidor() {
+        return repartidor;
     }
 
-    public void setIdrepartidor(int idrepartidor) {
-        this.idrepartidor = idrepartidor;
+    public void setRepartidor(Usuario repartidor) {
+        this.repartidor = repartidor;
     }
 
     public int getRestaurante_idrestaurante() {

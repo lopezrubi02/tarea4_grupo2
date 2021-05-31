@@ -98,7 +98,12 @@ public class RepartidorController {
 
         if (pedidoElegido.isPresent()) {
             Pedidos pedido = pedidoElegido.get();
-            pedido.setIdrepartidor(sessionUser.getIdusuarios());
+            //pedido.setIdrepartidor(sessionUser.getIdusuarios());
+
+            Optional<Usuario> repopt = usuarioRepository.findById(sessionUser.getIdusuarios());
+            Usuario repartidor = repopt.get();
+            pedido.setRepartidor(repartidor);
+
             pedido.setEstadorepartidor("aceptado"); //Estado de esperando recojo del restaurante
             model.addAttribute("pedido", pedido);
 

@@ -313,23 +313,24 @@ public class UsuarioController {
         model.addAttribute("listadirecciones", listadireccionescliente);
         model.addAttribute("listarestaurantes",listarestaurantes);
 
+            try{
+                if (direccionxenviar == 0) {
+                    model.addAttribute("direccionseleccionada", listadireccionescliente.get(0).getDireccion());
+                    model.addAttribute("iddireccionxenviar", listadireccionescliente.get(0).getIddirecciones());
+                } else {
 
-            if (direccionxenviar == 0) {
-                model.addAttribute("direccionseleccionada", listadireccionescliente.get(0).getDireccion());
-                model.addAttribute("iddireccionxenviar", listadireccionescliente.get(0).getIddirecciones());
-            } else {
-                try {
-                Optional<Direcciones> direccionopt = direccionesRepository.findById(direccionxenviar);
-                if (direccionopt.isPresent()) {
-                    Direcciones direccionseleccionada = direccionopt.get();
-                    model.addAttribute("iddireccionxenviar", direccionxenviar);
-                    model.addAttribute("direccionseleccionada", direccionseleccionada.getDireccion());
+                        Optional<Direcciones> direccionopt = direccionesRepository.findById(direccionxenviar);
+                        if (direccionopt.isPresent()) {
+                            Direcciones direccionseleccionada = direccionopt.get();
+                            model.addAttribute("iddireccionxenviar", direccionxenviar);
+                            model.addAttribute("direccionseleccionada", direccionseleccionada.getDireccion());
+                        }
                 }
-                }catch (NumberFormatException e){
-                    return "cliente/realizar_pedido_cliente";
+            }catch(NumberFormatException exception){
+                System.out.println(exception.getMessage());
+                return "redirect:/cliente/realizarpedido";
             }
 
-    }
 
         Optional<Categorias> catopt = categoriasRepository.findById(idcategoriarest);
         if(catopt.isPresent()){
@@ -419,38 +420,40 @@ public class UsuarioController {
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuarioactual=sessionUser.getIdusuarios();
-
+        System.out.println("****************************error numero");
         Optional<Direcciones> direccionopt = Optional.ofNullable(direccionesRepository.findDireccionesByIddireccionesAndUsuariosIdusuariosEquals(direccionxenviar, idusuarioactual));
         try {
-        if(direccionopt.isPresent()){
-            List<String> listaidprecio = new ArrayList<>();
-            listaidprecio.add("Menor a 15");
-            listaidprecio.add("Entre 15 y 25");
-            listaidprecio.add("Entre 25 y 40");
-            listaidprecio.add("Mayor a 40");
-            model.addAttribute("listaidprecio",listaidprecio);
-            List<String> listaidcalificacion = new ArrayList<>();
-            listaidcalificacion.add("1 estrella");
-            listaidcalificacion.add("2 estrellas");
-            listaidcalificacion.add("3 estrellas");
-            listaidcalificacion.add("4 estrellas");
-            listaidcalificacion.add("5 estrellas");
-            model.addAttribute("listaidcalificacion",listaidcalificacion);
+            if(direccionopt.isPresent()){
+                List<String> listaidprecio = new ArrayList<>();
+                listaidprecio.add("Menor a 15");
+                listaidprecio.add("Entre 15 y 25");
+                listaidprecio.add("Entre 25 y 40");
+                listaidprecio.add("Mayor a 40");
+                model.addAttribute("listaidprecio",listaidprecio);
+                List<String> listaidcalificacion = new ArrayList<>();
+                listaidcalificacion.add("1 estrella");
+                listaidcalificacion.add("2 estrellas");
+                listaidcalificacion.add("3 estrellas");
+                listaidcalificacion.add("4 estrellas");
+                listaidcalificacion.add("5 estrellas");
+                model.addAttribute("listaidcalificacion",listaidcalificacion);
 
-            Direcciones direccionseleccionada = direccionopt.get();
-            List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuarioactual);
-            List<Categorias> listacategorias = categoriasRepository.findAll();
-            List<Restaurante> listarestaurantes = restauranteRepository.findAll();
-            model.addAttribute("listacategorias", listacategorias);
-            model.addAttribute("listadirecciones", listadireccionescliente);
-            model.addAttribute("listarestaurantes",listarestaurantes);
-            model.addAttribute("iddireccionxenviar",direccionxenviar);
-            model.addAttribute("direccionseleccionada",direccionseleccionada.getDireccion());
-            return "cliente/realizar_pedido_cliente";
-        }else{
-            return "redirect:/cliente/realizarpedido";
-        }
+                Direcciones direccionseleccionada = direccionopt.get();
+                List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuarioactual);
+                List<Categorias> listacategorias = categoriasRepository.findAll();
+                List<Restaurante> listarestaurantes = restauranteRepository.findAll();
+                model.addAttribute("listacategorias", listacategorias);
+                model.addAttribute("listadirecciones", listadireccionescliente);
+                model.addAttribute("listarestaurantes",listarestaurantes);
+                model.addAttribute("iddireccionxenviar",direccionxenviar);
+                model.addAttribute("direccionseleccionada",direccionseleccionada.getDireccion());
+                return "cliente/realizar_pedido_cliente";
+            }else{
+                return "redirect:/cliente/realizarpedido";
+            }
         }catch (Exception e){
+            System.out.println(e.getMessage());
+            System.out.println("error");
             return "redirect:/cliente/realizarpedido";
         }
     }
@@ -554,7 +557,6 @@ public class UsuarioController {
                               Model model,
                               @RequestParam("direccion") int direccionxenviar){
 
-        //TODO: verificar que ya exite un pedido guardado con el idrestaurante
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idcliente=sessionUser.getIdusuarios();
 
@@ -576,9 +578,9 @@ public class UsuarioController {
                  Pedidos pedidos = new Pedidos();
                  pedidos.setIdcliente(idcliente);
                  pedidos.setRestaurante_idrestaurante(idrestaurante);
-                 pedidos.setIdmetodopago(1);
-                 pedidos.setIdrepartidor(11);
-                 pedidos.setDireccionentrega(9);
+                 //pedidos.setIdmetodopago(1);
+                 //pedidos.setIdrepartidor(11);
+                 pedidos.setDireccionentrega(direccionxenviar);
                  List<Pedidos> listapedidoscliente = pedidosRepository.listapedidoxcliente(idcliente,idrestaurante);
                  int tam = listapedidoscliente.size();
                  Pedidos ultimopedido = listapedidoscliente.get(tam-1);
@@ -611,7 +613,7 @@ public class UsuarioController {
                  pedidoHasPlatoRepository.save(pedidoHasPlato);
              }
 
-             return "redirect:/cliente/restaurantexordenar?idrestaurante=" + idrestaurante;
+             return "redirect:/cliente/restaurantexordenar?idrestaurante=" + idrestaurante + "&direccion=" + direccionxenviar;
          }else{
              return "redirect:/cliente/realizarpedido";
          }
