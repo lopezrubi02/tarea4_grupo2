@@ -70,7 +70,7 @@
             <div class="row">
                 <div class="col-md-3">
                     <div class="full">
-                        <a class="logo" href=""><img th:src="@{/images/logo.png}" alt="#" /></a>
+                        <a class="logo" th:href="@{'/cliente/paginaprincipal'}"><img th:src="@{/images/logo.png}" alt="#" /></a>
                     </div>
                 </div>
                 <div class="col-md-9">
@@ -118,21 +118,24 @@
 							<div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
 								
 								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-									<h5 style="padding-left: 223px;">Aceptado por el restaurante:  <strong class="white">Confirmado</strong></h5>
+                                    <h5 style="padding-left: 223px;">Estado restaurante <strong class="white" th:text="${pedido.estadorestaurante}">Confirmado</strong></h5>
+                                    <h5 style="padding-left: 223px;">Estado repartidor  <strong class="white" th:text="${pedido.estadorepartidor}">Confirmado</strong></h5>
+									<!--h5 style="padding-left: 223px;">Aceptado por el restaurante:  <strong class="white"></strong></h5>
 									<h5 style="padding-left: 223px;">Preparación finalizada: <strong class="white">Confirmado</strong></h5>
 									<h5 style="padding-left: 223px;">Pedido en camino:  <strong class="white">Confirmado</strong></h5>
-									<h5 style="padding-left: 223px;">Pedido entregado:  <strong class="white">Pendiente</strong></h5>
+									<h5 style="padding-left: 223px;">Pedido entregado:  <strong class="white">Pendiente</strong></h5-->
 								
 								</div>
 								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
 									<h2 style="padding-left: 223px;">Detalles de tu pedido</h2>
-									<h5 style="padding-left: 223px;">Costo de productos: S/25.00</h5>
-									<h5 style="padding-left: 223px;">Descuento: S/5.00</h5>
-									<h5 style="padding-left: 223px;">Costo envio: S/.6.00</h5>
-									<h5 style="padding-left: 223px;">Total a pagar: S/26.00</h5>
-									<h5 style="padding-left: 223px;">1 Combowok de la Suerte</h5>
-									<h5 style="padding-left: 223px;">2 Plato2</h5>
-								
+									<!--h5 style="padding-left: 223px;" th:text="|Costo de productos: ${pedido.montototal}|">Costo de productos: S/25.00</h5-->
+									<!--h5 style="padding-left: 223px;">Descuento: S/5.00</h5-->
+									<h5 style="padding-left: 223px;" th:text="|Costo de envío: S/ ${pedido.comisionrepartidor}|">Costo envio: S/.6.00</h5>
+									<h5 style="padding-left: 223px;" th:text="|Total a pagar: S/ ${pedido.montototal}|">Total a pagar: S/26.00</h5>
+									<h5 style="padding-left: 223px;" th:each="plato : ${lista}"
+                                                    th:text="${plato.getPlato().getNombre()}">1 Combowok de la Suerte</h5>
+									<!--h5 style="padding-left: 223px;">2 Plato2</h5-->
+
 								</div>
 							</div>
 							<div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">

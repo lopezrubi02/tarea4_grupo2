@@ -692,7 +692,21 @@ public class UsuarioController {
 
     @GetMapping("/cliente/progresopedido")
     public String progresopedido(Model model, HttpSession session){
-         return "cliente/ultimopedido_cliente";
+
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuario=sessionUser.getIdusuarios();
+
+        //Pedidos pedidoencurso = pedidosRepository.findByIdclienteEquals(idusuario);
+        List<PedidoHasPlato> pedidoHasPlatoencurso = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(55);
+        System.out.println(pedidoHasPlatoencurso.get(0).getPlato());
+        System.out.println("*****************");
+        Optional<Pedidos> pedidoencursoopt = pedidosRepository.findById(55);
+        Pedidos pedidoencurso = pedidoencursoopt.get();
+        model.addAttribute("pedido",pedidoencurso);
+        model.addAttribute("lista",pedidoHasPlatoencurso);
+
+        return "cliente/ultimopedido_cliente";
+
     }
 
     /** Mi perfil **/
