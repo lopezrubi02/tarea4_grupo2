@@ -380,7 +380,7 @@ public class AdminController {
                     return "redirect:/admin/nuevosUsuarios";
                 }
             }
-        attr.addFlashAttribute("msg","Ha ocurrido un error,cuenta no aprobada");
+        attr.addFlashAttribute("msg1","Ha ocurrido un error,cuenta no aprobada");
         return "redirect:/admin/nuevosUsuarios";
     }
 
@@ -412,11 +412,17 @@ public class AdminController {
                         "<br>Atte. Equipo de Spicyo</br>";
                 sendMailService.sendMail(correoDestino,"saritaatanacioarenas@gmail.com",subject,texto);
 
-                attr.addFlashAttribute("msg","Cuenta denegada exitosamente");
+                attr.addFlashAttribute("msg1","Cuenta denegada exitosamente");
                 return "redirect:/admin/nuevosUsuarios";
 
             }else if(usuario.getRol().equals("AdminRestaurante")){
                 Restaurante restaurante = restauranteRepository.findRestauranteByUsuario_Idusuarios(id);
+
+                if(restaurante==null){
+                    attr.addFlashAttribute("msg1","Ocurrio un error al denegar la cuenta");
+                    System.out.println("Llegamos aqui");
+                    return "redirect:/admin/gestionCuentas";
+                }
                 restauranteRepository.deleteById(restaurante.getIdrestaurante());
                 usuario.setCuentaActiva(-1);
                 usuarioRepository.save(usuario);
