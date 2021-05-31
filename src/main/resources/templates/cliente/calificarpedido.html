@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/cliente.html :: header">
+    <style>
+        #form p {
+            text-align: center;
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+
+        label {
+            color: white;
+        }
+
+        .clasificacion {
+            direction: rtl;
+            unicode-bidi: bidi-override;
+        }
+
+        label:hover,
+        label:hover ~ label {
+            color: orange;
+        }
+
+        input[type="radio"]:checked ~ label {
+            color: orange;
+        }
+    </style>
+</head>
+<!-- body -->
+
+<body class="main-layout">
+<!-- loader  -->
+<div class="loader_bg">
+    <div class="loader"><img th:src="@{/images/loading.gif}" alt="" /></div>
+</div>
+
+<div class="wrapper">
+    <!-- end loader -->
+
+    <div class="sidebar">
+        <!-- Sidebar  -->
+        <nav id="sidebar">
+
+            <div id="dismiss">
+                <i class="fa fa-arrow-left"></i>
+            </div>
+
+            <ul class="list-unstyled components">
+
+                <li class="active">
+                    <a th:href="@{cliente/paginaprincipal}">Home</a>
+                </li>
+                <li>
+                    <a th:href="@{cliente/realizarpedido}">Realizar pedido</a>
+                </li>
+                <li>
+                    <a th:href="@{/cliente/reportes}">Mis reportes</a>
+                </li>
+
+            </ul>
+
+        </nav>
+    </div>
+</div>
+    <!-- end loader -->
+
+    <div class="sidebar" ></div>
+
+    <div id="content">
+        <!-- header -->
+        <header th:replace="fragments/cliente.html :: bar"></header>
+        <!-- end header -->
+        <!-- start slider section -->
+        <!-- end slider section -->
+        <!-- section -->
+
+        <div class="bg_bg">
+            <!-- about -->
+            <!-- end about -->
+
+            <!-- blog -->
+            <!-- end blog -->
+
+            <!-- Our Client -->
+            <div class="Client">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="title" style="padding-top: 50px;">
+                                <i><img th:src="@{/images/title.png}" alt="#"/></i>
+                                <h2>¿Qué tal el pedido?</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 offset-md-3"> <!-- calificacion pedido -->
+                            <div class="Client_box">
+                                <form method="POST" class="input-group" th:action="@{/cliente/guardarcalificacion}">
+                                    <div class="row" style="width: 440px;">
+                                        <h4 style="color: white;">Calificar restaurante</h4>
+                                        </br>
+                                        <p class="clasificacion" style="width: 440px;">
+                                            <input id="radio1rest" type="radio" name="estrellasrestaurante" value="5">
+                                            <label for="radio1rest">★</label>
+                                            <input id="radio2rest" type="radio" name="estrellasrestaurante" value="4">
+                                            <label for="radio2rest">★</label>
+                                            <input id="radio3rest" type="radio" name="estrellasrestaurante" value="3">
+                                            <label for="radio3rest">★</label>
+                                            <input id="radio4rest" type="radio" name="estrellasrestaurante" value="2">
+                                            <label for="radio4rest">★</label>
+                                            <input id="radio5rest" type="radio" name="estrellasrestaurante" value="1">
+                                            <label for="radio5rest">★</label>
+                                        </p>
+                                    </div>
+                                    </br>
+                                    <div class="row" style="width: 440px;">
+                                        <h4 style="color: white;">Calificar repartidor</h4>
+                                        </br>
+                                        <p class="clasificacion" style="width: 440px;">
+                                            <input id="radio1rep" type="radio" name="estrellasrepartidor" value="5">
+                                            <label for="radio1rep">★</label>
+                                            <input id="radio2rep" type="radio" name="estrellasrepartidor" value="4">
+                                            <label for="radio2rep">★</label>
+                                            <input id="radio3rep" type="radio" name="estrellasrepartidor" value="3">
+                                            <label for="radio3rep">★</label>
+                                            <input id="radio4rep" type="radio" name="estrellasrepartidor" value="2">
+                                            <label for="radio4rep">★</label>
+                                            <input id="radio5rep" type="radio" name="estrellasrepartidor" value="1">
+                                            <label for="radio5rep">★</label>
+                                        </p>
+                                    </div>
+                                    </br>
+                                    <div class="row" style="width: 440px;">
+                                        <h4 style="color: white;">Comentarios sobre el pedido</h4>
+                                        <textarea class="textarea" placeholder="Comentarios" type="text" name="comentarios"></textarea>
+                                    </div>
+                                    </br>
+                                    <div class="row" style="width: 440px;">
+                                        <a class="button send" th:href="@{'/cliente/paginaprincipal'}" style="width: 275px;">Cancelar</a>
+                                        <button class="send" type="submit" style="background: #e3d105;">Enviar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+            <!-- end Our Client -->
+        </div>
+        <!-- footer -->
+        <fooetr>
+            <div class="footer">
+                <div class="copyright">
+                    <div class="container">
+                        <p>© 2021 Todos los derechos reservados</p>
+                    </div>
+                </div>
+            </div>
+        </fooetr>
+        <!-- end footer -->
+
+    </div>
+</div>
+<div class="overlay"></div>
+<!-- Javascript files-->
+<script th:src="@{/js/jquery.min.js}" ></script>
+<script th:src="@{/js/popper.min.js}" ></script>
+<script th:src="@{/js/bootstrap.bundle.min.js}" ></script>
+<script th:src="@{/js/owl.carousel.min.js}" ></script>
+<script th:src="@{/js/custom.js}" ></script>
+<script th:src="@{/js/jquery.mCustomScrollbar.concat.min.js}" ></script>
+
+<script th:src="@{/js/jquery-3.0.0.min.js}" ></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#sidebar").mCustomScrollbar({
+            theme: "minimal"
+        });
+
+        $('#dismiss, .overlay').on('click', function() {
+            $('#sidebar').removeClass('active');
+            $('.overlay').removeClass('active');
+        });
+
+        $('#sidebarCollapse').on('click', function() {
+            $('#sidebar').addClass('active');
+            $('.overlay').addClass('active');
+            $('.collapse.in').toggleClass('in');
+            $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+        });
+    });
+</script>
+
+<style>
+    #owl-demo .item{
+        margin: 3px;
+    }
+    #owl-demo .item img{
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+</style>
+
+
+<script>
+    $(document).ready(function() {
+        var owl = $('.owl-carousel');
+        owl.owlCarousel({
+            margin: 10,
+            nav: true,
+            loop: true,
+            responsive: {
+                0: {
+                    items: 1
+                },
+                600: {
+                    items: 2
+                },
+                1000: {
+                    items: 5
+                }
+            }
+        })
+    })
+</script>
+
+</body>
+
+</html>

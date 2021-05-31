@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+
+<head th:replace="fragments/cliente.html :: header">
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/checkout/">
+
+
+
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" href="/docs/5.0/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
+    <link rel="icon" href="/docs/5.0/assets/img/favicons/favicon-32x32.png" sizes="32x32" type="image/png">
+    <link rel="icon" href="/docs/5.0/assets/img/favicons/favicon-16x16.png" sizes="16x16" type="image/png">
+    <link rel="manifest" th:href="@{/js/manifest.json}">
+    <link rel="mask-icon" href="/docs/5.0/assets/img/favicons/safari-pinned-tab.svg" color="#7952b3">
+    <link rel="icon" href="/docs/5.0/assets/img/favicons/favicon.ico">
+    <meta name="theme-color" content="#7952b3">
+
+
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+
+
+    <!-- Custom styles for this template -->
+    <link th:href="@{/css/form-validation.css}" rel="stylesheet">
+
+</head>
+<!-- body -->
+
+<body class="main-layout">
+    <!-- loader  -->
+    <div class="loader_bg">
+        <div class="loader"><img th:src="@{/images/loading.gif}" alt="" /></div>
+    </div>
+
+    <div class="wrapper">
+        <!-- end loader -->
+
+        <div class="sidebar">
+            <!-- Sidebar  -->
+            <nav id="sidebar">
+
+                <div id="dismiss">
+                    <i class="fa fa-arrow-left"></i>
+                </div>
+
+                <ul class="list-unstyled components">
+
+                    <li class="active">
+                        <a th:href="@{cliente/paginaprincipal}">Home</a>
+                    </li>
+                    <li>
+                        <a th:href="@{cliente/realizarpedido}">Realizar pedido</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/cliente/reportes}">Mis reportes</a>
+                    </li>
+
+                </ul>
+
+            </nav>
+        </div>
+    </div>
+
+    <div id="content">
+    <!-- header -->
+    <header th:replace="fragments/cliente.html :: bar"></header>
+
+
+
+<!-- blog -->
+<!-- end blog -->
+    <!-- footer -->
+			<footer>
+				<div class="footer">
+					<div class="container-fluid">
+						<div class="row">
+						  <div class=" col-md-12">
+							<h2 style="padding-left: 223px;">Checkout</h2>
+						  </div>
+							<div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
+
+								<form class="main_form">
+									<div class="row">
+										
+										<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+											<div class="form-floating">
+											  <select class="form-select" id="floatingSelectGrid2" aria-label="Floating label select example" onchange="window.location=this.options[this.selectedIndex].value">
+                                                  <option selected="true" disabled="disabled">Método de pago</option>
+                                                  <option
+                                                          th:each = "metodo : ${listametodospago}"
+                                                          th:text="${metodo.metodo}"
+                                                          th:selected="${metodo.idmetodospago == metodoelegido}"
+                                                          th:value=" 'checkout?idmetodo=' + ${metodo.idmetodospago}">Todos
+                                                  </option>
+											  </select>
+											  <label for="floatingSelectGrid2">Seleccione su método de Pago</label>
+											  <br/>
+											</div>
+										</div>
+										<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:if="${metodoelegido == 3}">
+											<div class="form-floating">
+											  <select class="form-select" id="floatingSelectGrid" aria-label="Floating label select example">
+												<option selected>20 soles</option>
+												<option value="1">50 soles</option>
+												<option value="1">100 soles</option>												
+											  </select>
+											  <label for="floatingSelectGrid">Ingrese el monto exacto</label>
+											  <br/>
+											</div>
+										</div>
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:if="${metodoelegido == 1}">
+                                            <div class="form-floating">
+                                                <input pattern="\d*" maxlength="19" name="numerotarjeta" class="form-control" id="floatingInputGrid" type="text" placeholder="Ingrese el número de su tarjeta"/>
+                                                <label for="floatingInputGrid">Ingrese el número de su tarjeta</label>
+                                            </div>
+                                        </div>
+										<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+											<button class="send">Hacer pedido</button>
+										</div>
+									</div>
+								</form>
+							</div>
+                            <div  class="col-xl-4 col-lg-4 col-md-4 col-sm-12" >
+                                <!-- detalles monto total -->
+                                <div style="padding-right: 150px;">
+                                    <ul class="list-group mb-3">
+                                        <li class="list-group-item d-flex justify-content-between lh-sm">
+                                            <div>
+                                                <h6 class="my-0">Costo total de productos</h6>
+                                            </div>
+                                            <span class="text-muted">S/31.00</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between lh-sm">
+                                            <div>
+                                                <h6 class="my-0">Costo de envío</h6>
+                                            </div>
+                                            <span class="text-muted">S/6.00</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between lh-sm">
+                                            <div>
+                                                <h6 class="my-0">Tarifa de servicio</h6>
+                                            </div>
+                                            <span class="text-muted">S/2.00</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <span>Total</span>
+                                            <strong>S/38.00</strong>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <!-- detalles monto total -->
+                            </div>
+
+						</div>
+						
+		  </div>
+		  <div class="footer">
+					<div class="copyright" style="margin-top: -29px">
+						<div class="container">
+							<p>© 2021 Todos los derechos reservados</p>
+						</div>
+					</div>
+          </div>
+        </footer>
+    <!-- end footer -->
+
+    </div>
+    </div>
+    </div>
+    <div class="overlay"></div>
+    <!-- Javascript files-->
+
+    <script th:src="@{/js/pruebacarrito.js}" ></script>
+
+    <script th:src="@{/js/jquery.min.js}" ></script>
+    <script th:src="@{/js/popper.min.js}" ></script>
+    <script th:src="@{/js/bootstrap.bundle.min.js}" ></script>
+    <script th:src="@{/js/owl.carousel.min.js}" ></script>
+    <script th:src="@{/js/custom.js}" ></script>
+    <script th:src="@{/js/jquery.mCustomScrollbar.concat.min.js}" ></script>
+
+    <script th:src="@{/js/jquery-3.0.0.min.js}" ></script>
+   <script type="text/javascript">
+        $(document).ready(function() {
+            $("#sidebar").mCustomScrollbar({
+                theme: "minimal"
+            });
+
+            $('#dismiss, .overlay').on('click', function() {
+                $('#sidebar').removeClass('active');
+                $('.overlay').removeClass('active');
+            });
+
+            $('#sidebarCollapse').on('click', function() {
+                $('#sidebar').addClass('active');
+                $('.overlay').addClass('active');
+                $('.collapse.in').toggleClass('in');
+                $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+            });
+        });
+    </script>
+
+    <style>
+    #owl-demo .item{
+        margin: 3px;
+    }
+    #owl-demo .item img{
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+    </style>
+
+     
+      <script>
+         $(document).ready(function() {
+           var owl = $('.owl-carousel');
+           owl.owlCarousel({
+             margin: 10,
+             nav: true,
+             loop: true,
+             responsive: {
+               0: {
+                 items: 1
+               },
+               600: {
+                 items: 2
+               },
+               1000: {
+                 items: 5
+               }
+             }
+           })
+         })
+      </script>
+
+</body>
+
+</html>

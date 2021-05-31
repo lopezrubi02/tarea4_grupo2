@@ -107,27 +107,34 @@
                 </div>
             </div>
             <hr>
-            <div class="row">
-				<textarea class="form-control" rows="10" cols="40" placeholder="Escribe el correo aquí"></textarea>
-				
-			<br></br>
-			
-        </div>
-		<div class="container">
-				<div class="col-md-12">
-                    <div class="d-flex justify-content-end">
-                        <li class="button_user"><a class="button active" th:href="@{nuevosUsuarios}" >Cancelar</a></li>
-                        <li class="button_user"><a class="button active" th:href="@{'/admin/denegar'+'?id='+${id}}" >Denegar Cuenta</a></li>
-						<!--button class="btn btn-dark" style="margin-left: 10px"
-                                th:href="@{nuevasCuentas}">Cancelar</button>
-						<button class="btn btn-warning" style="margin-left: 10px"
-                                th:href="@{'/admin/denegar'+'?id='+${id}}">Enviar Correo</button-->
-					</div>	
+            <form  method="post" th:action="@{denegar}">
+                <div class="row">
+                    <textarea class="form-control" rows="10" cols="40" name="message"
+                              placeholder="Escribe el correo aquí">
+
+                    </textarea>
+                <br>
+
                 </div>
-			</div>
+                <input type="hidden" th:value="${id}" name="id"/>
+                <div class="container-md">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-end">
+                            <!--li class="button_user"><a class="button active" th:href="@{nuevosUsuarios}" >Cancelar</a></li-->
+                            <!--li class="button_user"><a class="button active" th:href="@{'/admin/denegar'+'?id='+${id}}" >Denegar Cuenta</a></li-->
+                            <!--button-- class="btn-dark" style=" margin-left: 10px" th:href="@{nuevosUsuarios}">Cancelar</button-->
+                            <!--button class="btn-warning" style=" margin-left: 10px" type="submit" >Denegar Cuenta</button-->
+                            <li class="button_user"><a class="button active" th:href="@{nuevosUsuarios}" > Cancelar </a></li>
+                            <li class="button_user" ><a class="button active"  ><button  class="btn btn-link" type="submit" >Denegar Cuenta</button></a></li>
+                            <!--button class="btn btn-outline-warning" type="submit" >Buscar</button-->
+
+                        </div>
+                    </div>
+                </div>
+            </form>
 		 
 			
-    </div>
+        </div>
 	
     </div>
     <!-- end blog -->

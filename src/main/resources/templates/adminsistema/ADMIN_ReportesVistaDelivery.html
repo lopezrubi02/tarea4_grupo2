@@ -162,13 +162,45 @@
                 </div>
                 <!-- end of table -->
 
-                <div class="col-md-12">
-                    <p>Anterior | 1 | 2 | 3 | Siguiente</p>
+                <!--h1 th:if="${maxNumberOfPages} != 0" th:text="${maxNumberOfPages}"></h1-->
+                <!-- paginacion -->
+                <div th:if="${maxNumberOfPages} != 0" class="row">
+                    <nav aria-label="Page navigation example" class = "mx-auto">
+                        <ul class="pagination justify-content-center">
+
+                            <!--  BOTON ANTERIOR -->
+                            <li class="page-item disabled" th:if="${currentPage eq 1 }">
+                                <span class="page-link">Anterior</span>
+                            </li>
+                            <li class="page-item" th:unless="${currentPage eq 1}">
+                                <a class="page-link"
+                                   th:href="@{/admin/DeliveryReportes(page=${currentPage - 1} )}">Anterior</a>
+                            </li>
+
+                            <!-- BOTONES NUMEROS -->
+                            <li th:each="i : ${#numbers.sequence( 1, maxNumberOfPages )}"
+                                th:class="${ i == currentPage ? 'page-item active .bg-secondary' : 'page-item' }">
+                                <a class="page-link"  th:href="@{/admin/DeliveryReportes(page=${i})}"
+                                   th:text="${i}"
+                                ></a>
+                            </li>
+
+                            <!--  BOTON SIGUIENTE -->
+                            <li class="page-item disabled" th:if="${currentPage eq maxNumberOfPages }">
+                                <span class="page-link">Anterior</span>
+                            </li>
+                            <li class="page-item" th:unless="${currentPage eq maxNumberOfPages}">
+                                <a class="page-link" th:href="@{/admin/DeliveryReportes(page=${currentPage + 1})}">Siguiente</a>
+                            </li>
+
+                        </ul>
+                    </nav>
                 </div>
 
+
             </div>
-			<br></br>
-			<br></br>
+			<br>
+			<br>
 			<!--div class="col-8">
                     <h3>Estadisticas</h3>
                 </div-->

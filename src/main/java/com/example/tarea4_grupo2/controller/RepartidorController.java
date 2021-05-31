@@ -53,10 +53,10 @@ public class RepartidorController {
             Pedidos pedido = pedidoElegido.get();
             model.addAttribute("pedido", pedido);
 
-            Restaurante restaurante = restauranteRepository.findRestauranteById(pedido.getRestaurante_idrestaurante());
+            Restaurante restaurante = restauranteRepository.findRestauranteById(pedido.getRestaurantepedido().getIdrestaurante());
             model.addAttribute("restaurante", restaurante);
 
-            Direcciones direccion = direccionesRepository.findDireccionById(pedido.getDireccionentrega());
+            Direcciones direccion = direccionesRepository.findDireccionById(pedido.getDireccionentrega().getIddirecciones());
             model.addAttribute("direccion", direccion);
 
             List<PlatosPorPedidoDTO> listaPlatosPorPedidoDTO = repartidorRepository.findListaPlatosPorPedido(pedido.getIdpedidos());
@@ -98,14 +98,19 @@ public class RepartidorController {
 
         if (pedidoElegido.isPresent()) {
             Pedidos pedido = pedidoElegido.get();
-            pedido.setIdrepartidor(sessionUser.getIdusuarios());
+            //pedido.setIdrepartidor(sessionUser.getIdusuarios());
+
+            Optional<Usuario> repopt = usuarioRepository.findById(sessionUser.getIdusuarios());
+            Usuario repartidor = repopt.get();
+            pedido.setRepartidor(repartidor);
+
             pedido.setEstadorepartidor("aceptado"); //Estado de esperando recojo del restaurante
             model.addAttribute("pedido", pedido);
 
-            Restaurante restaurante = restauranteRepository.findRestauranteById(pedido.getRestaurante_idrestaurante());
+            Restaurante restaurante = restauranteRepository.findRestauranteById(pedido.getRestaurantepedido().getIdrestaurante());
             model.addAttribute("restaurante", restaurante);
 
-            Direcciones direccion = direccionesRepository.findDireccionById(pedido.getDireccionentrega());
+            Direcciones direccion = direccionesRepository.findDireccionById(pedido.getDireccionentrega().getIddirecciones());
             model.addAttribute("direccion", direccion);
 
             List<PlatosPorPedidoDTO> listaPlatosPorPedidoDTO = repartidorRepository.findListaPlatosPorPedido(pedido.getIdpedidos());
@@ -137,10 +142,10 @@ public class RepartidorController {
             Usuario usuario = usuarioRepository.findUsuarioById(pedido.getIdcliente());
             model.addAttribute("usuario", usuario);
 
-            Restaurante restaurante = restauranteRepository.findRestauranteById(pedido.getRestaurante_idrestaurante());
+            Restaurante restaurante = restauranteRepository.findRestauranteById(pedido.getRestaurantepedido().getIdrestaurante());
             model.addAttribute("restaurante", restaurante);
 
-            Direcciones direccion = direccionesRepository.findDireccionById(pedido.getDireccionentrega());
+            Direcciones direccion = direccionesRepository.findDireccionById(pedido.getDireccionentrega().getIddirecciones());
             model.addAttribute("direccion", direccion);
 
             List<PlatosPorPedidoDTO> listaPlatosPorPedidoDTO = repartidorRepository.findListaPlatosPorPedido(pedido.getIdpedidos());

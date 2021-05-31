@@ -1,33 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<head>
-    <!-- basic -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- mobile metas -->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
-    <!-- site metas -->
-    <title>Spicyo</title>
-    <meta name="keywords" content="">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <!-- bootstrap css -->
-    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
-    <!-- owl css -->
-    <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}">
-    <!-- style css -->
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <!-- responsive-->
-    <link rel="stylesheet" th:href="@{/css/responsive.css}">
-
-    <!-- awesome fontfamily -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
-</head>
+<head th:replace="fragments/cliente.html :: header"></head>
 <!-- body -->
 
 <body class="main-layout">
@@ -38,7 +12,6 @@
 
 <div class="wrapper">
     <!-- end loader -->
-
 
     <div class="sidebar">
         <!-- Sidebar  -->
@@ -64,46 +37,11 @@
 
         </nav>
     </div>
+</div>
 
     <div id="content">
         <!-- header -->
-        <header>
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="full">
-                            <a class="logo" href="index.html"><img th:src="@{/images/logo.png}" alt="#" /></a>
-                        </div>
-                    </div>
-                    <div class="col-md-9">
-                        <div class="full">
-                            <div class="right_header_info">
-                                <ul>
-                                    <li class="dinone"><a th:href="@{/cliente/reportes}">Mis reportes</a></li>
-                                    <li class="dinone"><a th:href="@{/cliente/realizarpedido}">Relizar pedido</a></li>
-
-                                    <li class="button_user">
-                                        <a class="button active" th:href="@{'/cliente/miperfil'}">Mi perfil</a>
-                                        <!--a class="button" href="#">Cerrar sesión</a-->
-                                    </li>
-                                    <li style="transform: translateY(-7px)">
-                                        <form th:action="@{/logout}" method="post">
-                                            <button class="button" style="padding: 0px 15px; font-size: 14px;height: 40px;width: 100.5px;background:#e3d105" type="submit">Logout</button>
-                                        </form>
-                                    </li><li>
-                                    <a href="#"><img style="margin-right: 15px;" th:src="@{/images/carrito.png}" width="45" height="45"></a></li>
-                                    <li>
-                                        <button type="button" id="sidebarCollapse">
-                                            <img th:src="@{/images/menu_icon.png}" alt="#">
-                                        </button>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header>
+        <header th:replace="fragments/cliente.html :: bar"></header>
         <!-- end header -->
         <!-- start slider section -->
         <!-- end slider section -->
@@ -128,12 +66,65 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-6 offset-md-3">
-                            <div class="Client_box">
-                                <h3>Roock Due</h3>
-                                <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don’t look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn’t anything embarrassing hidden in the middle of text.</p>
-                                <i><button class="button" style="padding: 0px 15px; font-size: 14px;height: 40px;width: 100.5px;background:#e3d105" type="submit">Vaciar carrito</button>
-                                <button class="button" style="padding: 0px 15px; font-size: 14px;height: 40px;width: 100.5px;background:#e3d105" type="submit">Ir a pagar</button></i>
+                        <div class="col-md-6 offset-md-3"> <!-- canasta vacia -->
+                            <div class="Client_box" th:if="${lista == 0}">
+                                <h3>Tu canasta está vacía</h3>
+                                <p>Te invitamos a volver a nuestros restaurante y agregar productos a tu canasta.</p>
+
+                            </div>
+                            <div class="Client_box" th:unless="${lista == 0}">  <!-- canasta con algún plato -->
+
+                                <div>
+                                    <ul class="list-unstyled components">
+                                        <li class="active">
+                                            <h4 style="color: white;">Entregar en: <strong th:text="${pedidoencurso.direccionentrega.direccion}">Avenida Peru 3081</strong></h4>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="right_header_info" style="width: 370px;">
+                                    <ul class="list-unstyled components" >
+                                        <li class="active">
+                                            <figure><img th:src="@{|/cliente/imagerestaurante/${pedidoencurso.restaurantepedido.idrestaurante}|}" width="70" height="70"/></figure>
+                                        </li>
+                                        <li class="active">
+                                            <h4 style="color: white;" th:text="${pedidoencurso.restaurantepedido.nombre}">Restaurante Jisoo Chicken</h4>
+                                            <a th:href="@{'/cliente/restaurantexordenar?idrestaurante=' + ${pedidoencurso.restaurantepedido.idrestaurante} + '&direccion=' + ${pedidoencurso.direccionentrega.getIddirecciones()}}"><h4 style="color: white;">Volver a restaurante</h4></a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                </br>
+                                </br>
+                                <div style="padding-top: 60px;">
+                                    <table class="table" style="color: white;">
+                                        <tbody>
+                                        <tr th:each="plato : ${platosxpedido}">
+                                            <td><figure><img src="https://cdn2.cocinadelirante.com/sites/default/files/styles/gallerie/public/images/2017/04/pizzapepperoni0.jpg" width="70" height="70"/></figure>
+                                            </td>
+                                            <td th:text="${plato.getPlato().getNombre()}">Pizza americana </br> S/.17.50</td>
+                                            <td style="width: 100px;"><input style="border: transparent; padding: 9px 11px; color: white; background-color: transparent" class="form-control" placeholder="Cantidad" type="number" id="cantidad" name="cantidad" min="1" th:value="${plato.getCantidadplatos()}">
+                                            </td>
+                                            <td>Eliminar</td>
+                                        </tr>
+                                        <!--tr>
+                                            <td><figure><img src="https://cdn2.cocinadelirante.com/sites/default/files/styles/gallerie/public/images/2017/04/pizzapepperoni0.jpg" width="70" height="70"/></figure>
+                                            </td>
+                                            <td>Pizza americana </br> S/.17.50</td>
+                                            <td style="width: 100px;"><input style="border: transparent; padding: 9px 11px; color: white; background-color: transparent" class="form-control" placeholder="Cantidad" type="number" id="cantidad" name="cantidad" min="1">
+                                            </td>
+                                            <td>Eliminar</td>
+                                        </tr-->
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div>
+                                    <h4 style="color: white;">Subtotal a pagar: S/31.00</h4>
+                                </div>
+                                <div class="row" style="justify-content: space-between;">
+                                    <a><button class="button" style="margin: 15px;font-size: 14px;height: 40px;width: 120px;background:#e3d105">Vaciar carrito</button></a>
+                                    <a th:href="@{/cliente/checkout}"><button class="button" style=" margin:15px; font-size: 14px;height: 40px;width: 120px;background:#e3d105">Ir a pagar</button></a>
+                                    </i>
+                                </div>
+
                             </div>
                         </div>
                     </div>
