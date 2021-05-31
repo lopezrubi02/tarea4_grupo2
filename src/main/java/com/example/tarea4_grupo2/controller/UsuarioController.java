@@ -670,8 +670,23 @@ public class UsuarioController {
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuario=sessionUser.getIdusuarios();
 
-        return "";
+        return "cliente/calificarpedido";
 
+    }
+
+    @PostMapping("/cliente/guardarcalificacion")
+    public String guardarcalificacion(Model model, HttpSession session,
+                                      @RequestParam("comentarios") String comentarios,
+                                      @RequestParam("estrellasrestaurante") int calrest,
+                                      @RequestParam("estrellasrepartidor") int calrep){
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuario=sessionUser.getIdusuarios();
+
+        System.out.println("calificacionesssssssssssssss");
+        System.out.println(calrep);
+        System.out.println(calrest);
+        System.out.println(comentarios);
+        return "redirect:/cliente/paginaprincipal";
     }
 
     /** Mi perfil **/

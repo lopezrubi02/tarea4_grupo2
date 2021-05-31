@@ -143,11 +143,11 @@
 										<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
 											<input class="form-control" placeholder="Especifique si se le quiere quitar algun ingrediente al plato"  id="descripcion" name="descripcion">
 										</div>
-										<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <li class="button_user">
-                                                <a class="button active" th:href="'/cliente/restaurantexordenar?idrestaurante=' + ${platoseleccionado.restaurante.idrestaurante}">Cancelar</a>
-                                                <button style="background: #16181b; color: white; border-color: #16181b;" type="submit">Agregar</button>
-                                            </li>
+										<div class="row">
+
+                                                <a style="width: 170px;" th:href="'/cliente/restaurantexordenar?idrestaurante=' + ${platoseleccionado.restaurante.idrestaurante}"><button class="send">Cancelar</button></a>
+                                                <button style="background: #16181b; color: white; border-color: #16181b;" class="send" type="submit">Agregar</button>
+
                                         </div>
 									</div>
 								</form>
