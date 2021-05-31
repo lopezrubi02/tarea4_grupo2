@@ -577,10 +577,14 @@ public class UsuarioController {
              if(pedidoencurso == null){
                  Pedidos pedidos = new Pedidos();
                  pedidos.setIdcliente(idcliente);
-                 pedidos.setRestaurante_idrestaurante(idrestaurante);
-                 //pedidos.setIdmetodopago(1);
-                 //pedidos.setIdrepartidor(11);
-                 pedidos.setDireccionentrega(direccionxenviar);
+
+                 Restaurante restelegido = restauranteopt.get();
+
+                 pedidos.setRestaurantepedido(restelegido);
+
+                 Direcciones direccionentrega = diropt.get();
+
+                 pedidos.setDireccionentrega(direccionentrega);
                  List<Pedidos> listapedidoscliente = pedidosRepository.listapedidoxcliente(idcliente,idrestaurante);
                  int tam = listapedidoscliente.size();
                  Pedidos ultimopedido = listapedidoscliente.get(tam-1);
@@ -632,14 +636,11 @@ public class UsuarioController {
         }else{
             model.addAttribute("lista",1);
 
-            List<PedidoHasPlato> listaxpedido = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(55);
-            System.out.println(listaxpedido.get(0).getPlato().getIdplato());
-            System.out.println(listaxpedido.get(0).getPlato().getNombre());
-            System.out.println("*********************************+");
-
-            List<PedidoHasPlato> listaplatosxpedido = pedidoHasPlatoRepository.findAll();
-            System.out.println(listaplatosxpedido.get(1).getId().getPedidosidpedidos());
-            System.out.println(listaplatosxpedido.get(1).getPlato().getNombre());
+            for (Pedidos pedidoencurso : listapedidospendientes){
+                System.out.println(pedidoencurso.getIdpedidos());
+                System.out.println(pedidoencurso.getDireccionentrega().getIddirecciones());
+                model.addAttribute("pedidoencurso",pedidoencurso);
+            }
 
         }
         return "cliente/carrito_productos";

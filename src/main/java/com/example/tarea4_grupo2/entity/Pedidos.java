@@ -48,12 +48,16 @@ public class Pedidos {
     @JoinColumn(name = "idrepartidor")
     private Usuario repartidor;
 
-    @Column(nullable = false)
-    private int restaurante_idrestaurante;
+    @ManyToOne
+    @JoinColumn(name = "restaurante_idrestaurante")
+    private Restaurante restaurantepedido;
 
     private Date fechahorapedido;
     private Date fechahoraentregado;
-    private int direccionentrega;
+
+    @ManyToOne
+    @JoinColumn(name = "direccionentrega")
+    private Direcciones direccionentrega;
 
     public Set<PedidoHasPlato> getPedidohasplato() {
         return pedidohasplato;
@@ -71,7 +75,7 @@ public class Pedidos {
     public Pedidos() {
     }
 
-    public Pedidos(int idpedidos, Set<PedidoHasPlato> pedidohasplato, float montototal, int comisionrepartidor, int comisionsistema, String montoexacto, MetodosDePago metododepago, int calificacionrestaurante, int calificacionrepartidor, String comentario, float tiempodelivery, String estadorestaurante, String estadorepartidor, int idcliente, Usuario repartidor, int restaurante_idrestaurante, Date fechahorapedido, Date fechahoraentregado, int direccionentrega) {
+    public Pedidos(int idpedidos, Set<PedidoHasPlato> pedidohasplato, float montototal, int comisionrepartidor, int comisionsistema, String montoexacto, MetodosDePago metododepago, int calificacionrestaurante, int calificacionrepartidor, String comentario, float tiempodelivery, String estadorestaurante, String estadorepartidor, int idcliente, Usuario repartidor, Restaurante restaurantepedido, Date fechahorapedido, Date fechahoraentregado, Direcciones direccionentrega) {
         this.idpedidos = idpedidos;
         this.pedidohasplato = pedidohasplato;
         this.montototal = montototal;
@@ -87,7 +91,7 @@ public class Pedidos {
         this.estadorepartidor = estadorepartidor;
         this.idcliente = idcliente;
         this.repartidor = repartidor;
-        this.restaurante_idrestaurante = restaurante_idrestaurante;
+        this.restaurantepedido = restaurantepedido;
         this.fechahorapedido = fechahorapedido;
         this.fechahoraentregado = fechahoraentregado;
         this.direccionentrega = direccionentrega;
@@ -205,12 +209,12 @@ public class Pedidos {
         this.repartidor = repartidor;
     }
 
-    public int getRestaurante_idrestaurante() {
-        return restaurante_idrestaurante;
+    public Restaurante getRestaurantepedido() {
+        return restaurantepedido;
     }
 
-    public void setRestaurante_idrestaurante(int restaurante_idrestaurante) {
-        this.restaurante_idrestaurante = restaurante_idrestaurante;
+    public void setRestaurantepedido(Restaurante restaurantepedido) {
+        this.restaurantepedido = restaurantepedido;
     }
 
     public Date getFechahorapedido() {
@@ -229,11 +233,11 @@ public class Pedidos {
         this.fechahoraentregado = fechahoraentregado;
     }
 
-    public int getDireccionentrega() {
+    public Direcciones getDireccionentrega() {
         return direccionentrega;
     }
 
-    public void setDireccionentrega(int direccionentrega) {
+    public void setDireccionentrega(Direcciones direccionentrega) {
         this.direccionentrega = direccionentrega;
     }
 }

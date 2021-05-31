@@ -139,18 +139,18 @@
                                 <div>
                                     <ul class="list-unstyled components">
                                         <li class="active">
-                                            <h4 style="color: white;">Entregar en: <strong>Avenida Peru 3081</strong></h4>
+                                            <h4 style="color: white;">Entregar en: <strong th:text="${pedidoencurso.direccionentrega.direccion}">Avenida Peru 3081</strong></h4>
                                         </li>
                                     </ul>
                                 </div>
                                 <div class="right_header_info" style="width: 370px;">
                                     <ul class="list-unstyled components" >
                                         <li class="active">
-                                            <figure><img src="https://img.freepik.com/psd-gratis/maqueta-logotipo-fachada-restaurante_204971-178.jpg?size=626&ext=jpg" width="70" height="70"/></figure>
+                                            <figure><img th:src="@{|/cliente/imagerestaurante/${pedidoencurso.restaurantepedido.idrestaurante}|}" width="70" height="70"/></figure>
                                         </li>
                                         <li class="active">
-                                            <h4 style="color: white;">Restaurante Jisoo Chicken</h4>
-                                           <a><h4 style="color: white;">Volver a restaurante</h4></a>
+                                            <h4 style="color: white;" th:text="${pedidoencurso.restaurantepedido.nombre}">Restaurante Jisoo Chicken</h4>
+                                            <a th:href="@{'/cliente/restaurantexordenar?idrestaurante=' + ${pedidoencurso.restaurantepedido.idrestaurante} + '&direccion=' + ${pedidoencurso.direccionentrega.getIddirecciones()}}"><h4 style="color: white;">Volver a restaurante</h4></a>
                                         </li>
                                     </ul>
                                 </div>
@@ -167,14 +167,14 @@
                                             </td>
                                             <td>Eliminar</td>
                                         </tr>
-                                        <tr>
+                                        <!--tr>
                                             <td><figure><img src="https://cdn2.cocinadelirante.com/sites/default/files/styles/gallerie/public/images/2017/04/pizzapepperoni0.jpg" width="70" height="70"/></figure>
                                             </td>
                                             <td>Pizza americana </br> S/.17.50</td>
                                             <td style="width: 100px;"><input style="border: transparent; padding: 9px 11px; color: white; background-color: transparent" class="form-control" placeholder="Cantidad" type="number" id="cantidad" name="cantidad" min="1">
                                             </td>
                                             <td>Eliminar</td>
-                                        </tr>
+                                        </tr-->
                                         </tbody>
                                     </table>
                                 </div>
