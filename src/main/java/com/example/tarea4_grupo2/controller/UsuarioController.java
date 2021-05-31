@@ -313,17 +313,21 @@ public class UsuarioController {
         model.addAttribute("listadirecciones", listadireccionescliente);
         model.addAttribute("listarestaurantes",listarestaurantes);
 
-        if(direccionxenviar == 0){
-            model.addAttribute("direccionseleccionada",listadireccionescliente.get(0).getDireccion());
-            model.addAttribute("iddireccionxenviar",listadireccionescliente.get(0).getIddirecciones());
-        }else{
-            Optional<Direcciones> direccionopt = direccionesRepository.findById(direccionxenviar);
-            if(direccionopt.isPresent()){
-                Direcciones direccionseleccionada = direccionopt.get();
-                model.addAttribute("iddireccionxenviar",direccionxenviar);
-                model.addAttribute("direccionseleccionada",direccionseleccionada.getDireccion());
+        try {
+            if (direccionxenviar == 0) {
+                model.addAttribute("direccionseleccionada", listadireccionescliente.get(0).getDireccion());
+                model.addAttribute("iddireccionxenviar", listadireccionescliente.get(0).getIddirecciones());
+            } else {
+                Optional<Direcciones> direccionopt = direccionesRepository.findById(direccionxenviar);
+                if (direccionopt.isPresent()) {
+                    Direcciones direccionseleccionada = direccionopt.get();
+                    model.addAttribute("iddireccionxenviar", direccionxenviar);
+                    model.addAttribute("direccionseleccionada", direccionseleccionada.getDireccion());
+                }
             }
-        }
+        }catch (Exception e){
+        return "cliente/realizar_pedido_cliente";
+    }
 
         Optional<Categorias> catopt = categoriasRepository.findById(idcategoriarest);
         if(catopt.isPresent()){
@@ -337,52 +341,56 @@ public class UsuarioController {
             }
             model.addAttribute("catelegida",idcategoriarest);
         }
-
-        if(precio!=0){
-            switch (precio){
+        try {
+        if(precio!=0) {
+            switch (precio) {
                 case 1:
                     List<Restaurante> listaRestFiltroPrecio = restauranteRepository.listarestprecio1();
-                    if(listaRestFiltroPrecio.isEmpty()){
-                        attr.addFlashAttribute("alertaprecio","No se encontraron restaurantes para el filtro aplicado");
+                    if (listaRestFiltroPrecio.isEmpty()) {
+                        attr.addFlashAttribute("alertaprecio", "No se encontraron restaurantes para el filtro aplicado");
                         return "redirect:/cliente/realizarpedido";
-                    }else{
+                    } else {
                         model.addAttribute("listarestaurantes", listaRestFiltroPrecio);
-                        model.addAttribute("precioselec",precio);
+                        model.addAttribute("precioselec", precio);
                     }
                     break;
                 case 2:
                     listaRestFiltroPrecio = restauranteRepository.listarestprecio2();
-                    if(listaRestFiltroPrecio.isEmpty()){
-                        attr.addFlashAttribute("alertaprecio","No se encontraron restaurantes para el filtro aplicado");
+                    if (listaRestFiltroPrecio.isEmpty()) {
+                        attr.addFlashAttribute("alertaprecio", "No se encontraron restaurantes para el filtro aplicado");
                         return "redirect:/cliente/realizarpedido";
-                    }else{
+                    } else {
                         model.addAttribute("listarestaurantes", listaRestFiltroPrecio);
-                        model.addAttribute("precioselec",precio);
+                        model.addAttribute("precioselec", precio);
                     }
                     break;
                 case 3:
                     listaRestFiltroPrecio = restauranteRepository.listarestprecio3();
-                    if(listaRestFiltroPrecio.isEmpty()){
-                        attr.addFlashAttribute("alertaprecio","No se encontraron restaurantes para el filtro aplicado");
+                    if (listaRestFiltroPrecio.isEmpty()) {
+                        attr.addFlashAttribute("alertaprecio", "No se encontraron restaurantes para el filtro aplicado");
                         return "redirect:/cliente/realizarpedido";
-                    }else {
+                    } else {
                         model.addAttribute("listarestaurantes", listaRestFiltroPrecio);
                         model.addAttribute("precioselec", precio);
                     }
                     break;
                 case 4:
                     listaRestFiltroPrecio = restauranteRepository.listarestprecio4();
-                    if(listaRestFiltroPrecio.isEmpty()){
-                        attr.addFlashAttribute("alertaprecio","No se encontraron restaurantes para el filtro aplicado");
+                    if (listaRestFiltroPrecio.isEmpty()) {
+                        attr.addFlashAttribute("alertaprecio", "No se encontraron restaurantes para el filtro aplicado");
                         return "redirect:/cliente/realizarpedido";
-                    }else {
+                    } else {
                         model.addAttribute("listarestaurantes", listaRestFiltroPrecio);
                         model.addAttribute("precioselec", precio);
                     }
                     break;
             }
         }
+        }catch (Exception e){
+            return "cliente/realizar_pedido_cliente";
+        }
 
+        try {
         if(calificacion!=0) {
             if (calificacion > 4) {
                 return "redirect:/cliente/realizarpedido";
@@ -397,7 +405,9 @@ public class UsuarioController {
             }
         }
         return "cliente/realizar_pedido_cliente";
-
+    }catch (Exception e){
+        return "cliente/realizar_pedido_cliente";
+    }
     }
 
     @GetMapping("/cliente/direccionxenviar")
@@ -409,6 +419,7 @@ public class UsuarioController {
         int idusuarioactual=sessionUser.getIdusuarios();
 
         Optional<Direcciones> direccionopt = Optional.ofNullable(direccionesRepository.findDireccionesByIddireccionesAndUsuariosIdusuariosEquals(direccionxenviar, idusuarioactual));
+        try {
         if(direccionopt.isPresent()){
             List<String> listaidprecio = new ArrayList<>();
             listaidprecio.add("Menor a 15");
@@ -436,7 +447,9 @@ public class UsuarioController {
             return "cliente/realizar_pedido_cliente";
         }else{
             return "redirect:/cliente/realizarpedido";
-
+        }
+        }catch (Exception e){
+            return "redirect:/cliente/realizarpedido";
         }
     }
 
