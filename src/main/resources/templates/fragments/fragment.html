@@ -45,7 +45,7 @@
                         <ul>
                             <li class="dinone"><a th:href="@{'/repartidor'}">Home</a></li>
                             <li class="dinone"><a th:href="@{'/repartidor/Reportes'}">Reportes</a></li>
-                            <li class="dinone"><a th:href="@{'/repartidor/PedidosDisponibles'}">Notificaciones</a></li>
+                            <li class="dinone" th:if="${disponibilidad eq '1'}"><a th:href="@{'/repartidor/PedidosDisponibles'}">Notificaciones</a></li>
                             <!-- TODO -->
                             <li class="button_user"><a class="button active" th:href="@{'/repartidor/miperfil'}">Mi cuenta</a>
                                 <form th:action="@{/logout}" method="post">
