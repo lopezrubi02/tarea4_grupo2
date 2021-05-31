@@ -662,7 +662,22 @@ public class UsuarioController {
         List<MetodosDePago> listametodos = metodosDePagoRepository.findAll();
         model.addAttribute("listametodospago",listametodos);
 
-        return "cliente/checkoutcarrito";
+        List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idusuario);
+
+        if(listapedidospendientes.isEmpty()){
+            return "redirect:/cliente/realizarpedido";
+        }else{
+
+            for (Pedidos pedidoencurso : listapedidospendientes){
+                List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(pedidoencurso.getIdpedidos());
+                System.out.println(pedidoencurso.getIdpedidos());
+                System.out.println(pedidoencurso.getDireccionentrega().getIddirecciones());
+                model.addAttribute("platosxpedido",platosxpedido);
+                model.addAttribute("pedidoencurso",pedidoencurso);
+            }
+            return "cliente/checkoutcarrito";
+        }
+
     }
 
     @GetMapping("/cliente/progresopedido")
@@ -671,7 +686,7 @@ public class UsuarioController {
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuario=sessionUser.getIdusuarios();
 
-        //Pedidos pedidoencurso = pedidosRepository.findByIdclienteEquals(idusuario);
+        List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idusuario);
         List<PedidoHasPlato> pedidoHasPlatoencurso = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(55);
         System.out.println(pedidoHasPlatoencurso.get(0).getPlato().getNombre());
         System.out.println("*****************");
@@ -685,12 +700,8 @@ public class UsuarioController {
     }
 
     @GetMapping("/cliente/calificarpedido")
-    public String calificarpedido(Model model, HttpSession session){
-        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-        int idusuario=sessionUser.getIdusuarios();
-
+    public String calificarpedido(){
         return "cliente/calificarpedido";
-
     }
 
     @PostMapping("/cliente/guardarcalificacion")
