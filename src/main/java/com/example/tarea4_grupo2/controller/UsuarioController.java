@@ -534,7 +534,9 @@ public class UsuarioController {
                               @RequestParam(value = "idrestaurante") int idrestaurante,
                               @RequestParam("idplato") int idplato,
                               HttpSession session,
-                              Model model){
+                              Model model,
+                              @RequestParam("direccion") int direccionxenviar){
+
         //TODO: verificar que ya exite un pedido guardado con el idrestaurante
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idcliente=sessionUser.getIdusuarios();
@@ -657,6 +659,15 @@ public class UsuarioController {
         model.addAttribute("lista",pedidoHasPlatoencurso);
 
         return "cliente/ultimopedido_cliente";
+
+    }
+
+    @GetMapping("/cliente/calificarpedido")
+    public String calificarpedido(Model model, HttpSession session){
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuario=sessionUser.getIdusuarios();
+
+        return "";
 
     }
 
