@@ -140,15 +140,13 @@
           <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mar_bottom" th:each="plato : ${platosxrest}">
               <div class="blog_box">
                   <div class="blog_img_box">
-                      <figure><img th:src="@{/images/blog_img1.png}" width="70" height="70"/>
-
-                      </figure>
+                      <figure><img th:src="@{|/cliente/imagenplato/${plato.idplato}|}" width="70" height="70"/></figure>
                   </div>
                   <h3 th:text="${plato.nombre}">Combowok de la Suerte</h3>
                   <p th:text="${plato.descripcion}">Encájate Chi Jau Kay, 2 wantanes, gaseosa personal y salsa tamarindo.
                   </p>
                   <p th:text="'S/.' + ${plato.precio}">precio</p>
-                  <a th:href="@{'/cliente/platoxpedir?idrestaurante=' + ${restaurantexordenar.idrestaurante} + '&idplato=' + ${plato.idplato}}"><h4 style="text-align: right; margin-right: 10px">Agregar</h4></a>
+                  <a th:href="@{'/cliente/platoxpedir?idrestaurante=' + ${restaurantexordenar.idrestaurante} + '&idplato=' + ${plato.idplato} + '&direccion=' + ${direccionxenviar}}"><h4 style="text-align: right; margin-right: 10px">Agregar</h4></a>
                   </br>
               </div>
               </br>
