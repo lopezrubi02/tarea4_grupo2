@@ -7,6 +7,10 @@ import com.example.tarea4_grupo2.dto.RestauranteReportes_DTO;
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -214,6 +218,51 @@ public class AdminController {
             return "redirect:/admin/usuariosActuales";
         }
 
+    }
+
+//  Imagenes
+@GetMapping("/imagerestaurante/{id}")
+public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
+    Optional<Restaurante> opt = restauranteRepository.findById(id);
+
+    if(opt.isPresent()){
+        Restaurante r = opt.get();
+
+        byte[] imagenComoBytes = r.getFoto();
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(
+                MediaType.parseMediaType(r.getFotocontenttype()));
+
+        return new ResponseEntity<>(
+                imagenComoBytes,
+                httpHeaders,
+                HttpStatus.OK);
+    }else{
+        return null;
+    }
+}
+
+    @GetMapping("/imagenrepartidor/{id}")
+    public ResponseEntity<byte[]>mostrarImagenRepart(@PathVariable("id") int id){
+        Optional<Repartidor> opt = repartidorRepository.findById(id);
+
+        if(opt.isPresent()){
+            Repartidor r = opt.get();
+
+            byte[] imagenComoBytes = r.getFoto();
+
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.setContentType(
+                    MediaType.parseMediaType(r.getFotocontenttype()));
+
+            return new ResponseEntity<>(
+                    imagenComoBytes,
+                    httpHeaders,
+                    HttpStatus.OK);
+        }else{
+            return null;
+        }
     }
 
     //Gestion de Nuevas Cuentas

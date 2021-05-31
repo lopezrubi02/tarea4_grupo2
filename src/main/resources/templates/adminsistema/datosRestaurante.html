@@ -185,7 +185,8 @@
                 <div class="row">
                     <div class="col-12 col-lg-6 text-center" style="margin-bottom: 4vh;">
                         <!-- imagen -->
-                        <img th:src="@{/images/restaurant.jpg}" height="360" width="auto" class="img-responsive">
+                        <figure><img th:src="@{|/admin/imagerestaurante/${restaurante.getIdrestaurante()}|}" height="360" width="auto" class="img-responsive"/></figure>
+<!--                        <img th:src="@{/images/restaurant.jpg}" height="360" width="auto" class="img-responsive">-->
                     </div>
                     <div class="col-12 col-lg-6">
                         <!-- datos -->
