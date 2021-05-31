@@ -48,7 +48,7 @@ public class UsuarioController {
     @Autowired
     MetodosDePagoRepository metodosDePagoRepository;
 
-    @GetMapping("/cliente/paginaprincipal")
+    @GetMapping(value={"/cliente/paginaprincipal","/cliente/","/cliente"})
     public String paginaprincipal(HttpSession session, Model model) {
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
