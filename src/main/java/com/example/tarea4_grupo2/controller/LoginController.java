@@ -156,23 +156,27 @@ public class LoginController {
     public String cambiar1(@PathVariable("token") String tokenObtenido, Model model, RedirectAttributes attr) {
         Usuario usuario = new Usuario();
         usuario.setToken(tokenObtenido);
-        model.addAttribute("usuario", usuario);
-        return "login/cambiar1";
+        Optional<Usuario> usuarioToken = Optional.ofNullable(usuarioRepository.findByToken(usuario.getToken()));
+        if (usuarioToken.isPresent()) {
+            model.addAttribute("usuario", usuario);
+            return "login/cambiar1";
+        }else {
+            attr.addFlashAttribute("msg2", "¡Error en el token o expirado! debes generar otro :(");
+            return "redirect:/login";
+        }
     }
 
-    public  boolean validarContrasenia(String contrasenia1, String contrasenia2) {
-        boolean resultado1 = true;
-        boolean resultado2 = true;
-        boolean resultado = true;
-        Pattern pattern1 = Pattern.compile("(?=.[0-9])(?=.[a-z])(?=\\S+$).{8,}");
-        Matcher mather1 = pattern1.matcher(contrasenia1);
-
-        Pattern pattern2 = Pattern.compile("(?=.[0-9])(?=.[a-z])(?=\\S+$).{8,}");
-        Matcher mather2 = pattern2.matcher(contrasenia2);
-        if (mather2.find() == false || mather1.find() == false) {
-            resultado2 = false;
-        }
-        return  resultado;
+    public  boolean validarContrasenia(String contrasenia1) {
+        /*      https://mkyong.com/regular-expressions/how-to-validate-password-with-regular-expression/
+                A!@#&()–a1
+                A[{}]:;',?/*a1
+                A~$^+=<>a1
+                0123456789$abcdefgAB
+                123Aa$Aa
+         */
+        Pattern pattern1 = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$");
+        Matcher matcher1 = pattern1.matcher(contrasenia1);
+        return matcher1.matches();
     }
 
     @PostMapping("/cambiarContrasenia")
@@ -184,13 +188,11 @@ public class LoginController {
             if (contrasenia == "" || contrasenia2 == "") {
                 attr.addFlashAttribute("msg2", "¡Contraseña no puede ser nula! Intenta nuevamente con el link enviado al correo :C");
             } else if (contrasenia.equals(contrasenia2)){
-                Boolean validacionContrasenias = validarContrasenia(contrasenia, contrasenia2);
+                Boolean validacionContrasenias = validarContrasenia(contrasenia);
                 if (validacionContrasenias==true) {
                     String contraseniahashbcrypt = BCrypt.hashpw(contrasenia, BCrypt.gensalt());
                     usuarioToken.get().setContraseniaHash(contraseniahashbcrypt);
-
                     attr.addFlashAttribute("msg", "¡Contraseña cambiada! :D");
-
                     SecureRandom random = new SecureRandom();
                     byte bytes[] = new byte[20];
                     random.nextBytes(bytes);
@@ -200,13 +202,15 @@ public class LoginController {
                 } else {
                     attr.addFlashAttribute("msg2", "¡Debe tener al menos 8 caracteres, uno especial y una mayuscula");
                 }
+                return "redirect:/login";
             } else{
                 attr.addFlashAttribute("msg2", "¡Las contraseñas no coinciden!");
+                return "redirect:/login";
             }
             return "redirect:/login";
         } else {
             attr.addFlashAttribute("msg2", "¡Error en el token o expirado! debes generar otro :(");
-            return "/login/olvidoContrasenia";
+            return "login/olvidoContrasenia";
         }
     }
 

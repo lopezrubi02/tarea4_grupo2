@@ -111,6 +111,8 @@ public class RepartidorController {
             List<PlatosPorPedidoDTO> listaPlatosPorPedidoDTO = repartidorRepository.findListaPlatosPorPedido(pedido.getIdpedidos());
             model.addAttribute("listaPlatosPorPedidoDTO", listaPlatosPorPedidoDTO);
 
+            session.setAttribute("disponibilidad", repartidorRepository.findRepartidorByIdusuariosEquals(sessionUser.getIdusuarios()).isDisponibilidad());
+
             pedidosRepository.save(pedido);
 
             return "repartidor/repartidor_recojo_de_producto";
