@@ -614,31 +614,48 @@ public class UsuarioController {
             // List<PedidoHasPlato> pedidoHasPlatoList =  pedidoHasPlatoRepository.findAll();
              //System.out.println(pedidoHasPlatoList.get(1).getPlato().getIdplato());
             // System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaa");
-             Pedidos pedidos = new Pedidos();
-             pedidos.setIdcliente(idcliente);
-             pedidos.setRestaurante_idrestaurante(idrestaurante);
-             pedidos.setIdmetodopago(1);
-             pedidos.setIdrepartidor(11);
-            pedidos.setDireccionentrega(9);
-             List<Pedidos> listapedidoscliente = pedidosRepository.listapedidoxcliente(idcliente,idrestaurante);
-             int tam = listapedidoscliente.size();
-             Pedidos ultimopedido = listapedidoscliente.get(tam-1);
-             int idultimopedido = ultimopedido.getIdpedidos();
+             //    Pedidos pedidoencursoxrestaurante(int idcliente, int restaurante_idrestaurante);
 
-             PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido,idplato);
-             PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey,pedidos,platoelegido,descripcion,cantidad,cubiertos);
-            pedidos.addpedido(pedidoHasPlato);
+             Pedidos pedidoencurso = pedidosRepository.pedidoencursoxrestaurante(idcliente, idrestaurante);
 
-            pedidosRepository.save(pedidos);
-             listapedidoscliente = pedidosRepository.listapedidoxcliente(idcliente,idrestaurante);
-             tam = listapedidoscliente.size();
-             ultimopedido = listapedidoscliente.get(tam-1);
-             idultimopedido = ultimopedido.getIdpedidos();
-             pedidoHasPlatoKey.setPedidosidpedidos(idultimopedido);
-             //PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido,idplato);
-             pedidoHasPlato.setId(pedidoHasPlatoKey);
-             //PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey,pedidos,platoelegido,descripcion,cantidad,cubiertos);
-            pedidoHasPlatoRepository.save(pedidoHasPlato);
+             if(pedidoencurso == null){
+                 Pedidos pedidos = new Pedidos();
+                 pedidos.setIdcliente(idcliente);
+                 pedidos.setRestaurante_idrestaurante(idrestaurante);
+                 pedidos.setIdmetodopago(1);
+                 pedidos.setIdrepartidor(11);
+                 pedidos.setDireccionentrega(9);
+                 List<Pedidos> listapedidoscliente = pedidosRepository.listapedidoxcliente(idcliente,idrestaurante);
+                 int tam = listapedidoscliente.size();
+                 Pedidos ultimopedido = listapedidoscliente.get(tam-1);
+                 int idultimopedido = ultimopedido.getIdpedidos();
+
+                 PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido,idplato);
+                 PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey,pedidos,platoelegido,descripcion,cantidad,cubiertos);
+                 pedidos.addpedido(pedidoHasPlato);
+
+                 pedidosRepository.save(pedidos);
+                 listapedidoscliente = pedidosRepository.listapedidoxcliente(idcliente,idrestaurante);
+                 tam = listapedidoscliente.size();
+                 ultimopedido = listapedidoscliente.get(tam-1);
+                 idultimopedido = ultimopedido.getIdpedidos();
+                 pedidoHasPlatoKey.setPedidosidpedidos(idultimopedido);
+                 //PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido,idplato);
+                 pedidoHasPlato.setId(pedidoHasPlatoKey);
+                 //PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey,pedidos,platoelegido,descripcion,cantidad,cubiertos);
+                 pedidoHasPlatoRepository.save(pedidoHasPlato);
+             }else{
+                 System.out.println("+1 plato al pedido");
+                 System.out.println(platoelegido.getNombre());
+                 Pedidos pedidos = pedidoencurso;
+                 int idultimopedido = pedidoencurso.getIdpedidos();
+                 PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido,idplato);
+                 PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey,pedidos,platoelegido,descripcion,cantidad,cubiertos);
+                 pedidoHasPlatoKey.setPedidosidpedidos(idultimopedido);
+                 //PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido,idplato);
+                 pedidoHasPlato.setId(pedidoHasPlatoKey);
+                 pedidoHasPlatoRepository.save(pedidoHasPlato);
+             }
 
              return "redirect:/cliente/restaurantexordenar?idrestaurante=" + idrestaurante;
          }else{
@@ -698,7 +715,7 @@ public class UsuarioController {
 
         //Pedidos pedidoencurso = pedidosRepository.findByIdclienteEquals(idusuario);
         List<PedidoHasPlato> pedidoHasPlatoencurso = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(55);
-        System.out.println(pedidoHasPlatoencurso.get(0).getPlato());
+        System.out.println(pedidoHasPlatoencurso.get(0).getPlato().getNombre());
         System.out.println("*****************");
         Optional<Pedidos> pedidoencursoopt = pedidosRepository.findById(55);
         Pedidos pedidoencurso = pedidoencursoopt.get();
