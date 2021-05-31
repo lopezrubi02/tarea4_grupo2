@@ -578,9 +578,29 @@ public class AdminController {
     }
 
     @GetMapping("/DeliveryReportes")
-    public String deliveryReportes(Model model){
-        List<DeliveryReportes_DTO> listaDeli = pedidosRepository.reportesDelivery();
-        model.addAttribute("listadeli",listaDeli);
+    public String deliveryReportes(Model model,
+                                   @RequestParam(name = "page", defaultValue = "1") String requestedPage){
+        float numberOfUsersPerPage = 8;
+        int page = Integer.parseInt(requestedPage);
+
+        String fechaPrimerPedido = pedidosRepository.primerPedido();
+        List<DeliveryReportes_DTO> listaDeli = pedidosRepository.reportesDelivery2(fechaPrimerPedido);
+
+        int numberOfPages = (int) Math.ceil(listaDeli.size() / numberOfUsersPerPage);
+        if (page > numberOfPages) {
+            page = numberOfPages;
+        } // validation
+
+        int start = (int) numberOfUsersPerPage * (page - 1);
+        int end = (int) (start + numberOfUsersPerPage);
+
+        List<DeliveryReportes_DTO> lisOfUsersPage = listaDeli.subList(start, Math.min(end, listaDeli.size()));
+
+        //model.addAttribute("lisOfUsersPage", lisOfUsersPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("maxNumberOfPages", numberOfPages);
+        model.addAttribute("listadeli", lisOfUsersPage);
+
         return "adminsistema/ADMIN_ReportesVistaDelivery";
     }
 
