@@ -313,12 +313,16 @@ public class UsuarioController {
         model.addAttribute("listadirecciones", listadireccionescliente);
         model.addAttribute("listarestaurantes",listarestaurantes);
 
-        Optional<Direcciones> direccionopt = direccionesRepository.findById(direccionxenviar);
-        if(direccionopt.isPresent()){
-
-            Direcciones direccionseleccionada = direccionopt.get();
-            model.addAttribute("iddireccionxenviar",direccionxenviar);
-            model.addAttribute("direccionseleccionada",direccionseleccionada.getDireccion());
+        if(direccionxenviar == 0){
+            model.addAttribute("direccionseleccionada",listadireccionescliente.get(0).getDireccion());
+            model.addAttribute("iddireccionxenviar",listadireccionescliente.get(0).getIddirecciones());
+        }else{
+            Optional<Direcciones> direccionopt = direccionesRepository.findById(direccionxenviar);
+            if(direccionopt.isPresent()){
+                Direcciones direccionseleccionada = direccionopt.get();
+                model.addAttribute("iddireccionxenviar",direccionxenviar);
+                model.addAttribute("direccionseleccionada",direccionseleccionada.getDireccion());
+            }
         }
 
         Optional<Categorias> catopt = categoriasRepository.findById(idcategoriarest);
@@ -333,7 +337,6 @@ public class UsuarioController {
             }
             model.addAttribute("catelegida",idcategoriarest);
         }
-
 
         if(precio!=0){
             switch (precio){
@@ -440,8 +443,10 @@ public class UsuarioController {
     @PostMapping("/cliente/filtrarnombre")
     public String filtronombre(Model model,
                                @RequestParam(value = "searchField" ,defaultValue = "") String buscar,
+                               @RequestParam(value = "direccion") int direccionxenviar,
                                RedirectAttributes redirectAttributes,
                                HttpSession session){
+
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuarioactual=sessionUser.getIdusuarios();
         if(buscar.isEmpty()){
@@ -459,6 +464,12 @@ public class UsuarioController {
                 model.addAttribute("listarestaurantesbuscado",listarestaurantes);
                 model.addAttribute("listaplatosbuscado",listaplatos);
                 model.addAttribute("nombrebuscado",buscar);
+                Optional<Direcciones> direccionopt = direccionesRepository.findById(direccionxenviar);
+                if(direccionopt.isPresent()){
+                    Direcciones direccionseleccionada = direccionopt.get();
+                    model.addAttribute("iddireccionxenviar",direccionxenviar);
+                    model.addAttribute("direccionseleccionada",direccionseleccionada.getDireccion());
+                }
                 return "cliente/busquedanombre";
             }
         }
@@ -468,7 +479,8 @@ public class UsuarioController {
     /** restaurante a ordenar **/
 
      @GetMapping("/cliente/restaurantexordenar")
-     public String restaurantexordenar(@RequestParam("idrestaurante") int idrestaurante, Model model
+     public String restaurantexordenar(@RequestParam("idrestaurante") int idrestaurante, Model model,
+                                   @RequestParam("direccion") int direccionxenviar
                                      ){
 
          Optional<Restaurante> restopt = restauranteRepository.findById(idrestaurante);
