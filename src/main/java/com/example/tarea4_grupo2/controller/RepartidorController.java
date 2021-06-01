@@ -316,7 +316,7 @@ public class RepartidorController {
                 Direcciones dnueva = direccionesRepository.findByUsuariosIdusuarios(usuario.getIdusuarios());
                 dnueva.setDireccion(direccion);
                 direccionesRepository.save(dnueva);
-                return "redirect:/repartidor/perfil";
+                return "redirect:/repartidor/miperfil";
             }
             else{
                 if(password2.isEmpty()){
@@ -325,7 +325,7 @@ public class RepartidorController {
                     dnueva.setDireccion(direccion);
                     direccionesRepository.save(dnueva);
                     usuarioRepository.save(user);
-                    return "redirect:/repartidor/perfil";
+                    return "redirect:/repartidor/miperfil";
                 }else{
                     model.addAttribute("msg","Contraseñas no son iguales");
                     Usuario usuario2 = optional.get();
