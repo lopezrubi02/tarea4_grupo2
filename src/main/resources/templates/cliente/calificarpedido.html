@@ -41,7 +41,34 @@
 <div class="wrapper">
     <!-- end loader -->
 
-    <div class="sidebar" th:replace="fragments/cliente.html :: sidebar"></div>
+    <div class="sidebar">
+        <!-- Sidebar  -->
+        <nav id="sidebar">
+
+            <div id="dismiss">
+                <i class="fa fa-arrow-left"></i>
+            </div>
+
+            <ul class="list-unstyled components">
+
+                <li class="active">
+                    <a th:href="@{cliente/paginaprincipal}">Home</a>
+                </li>
+                <li>
+                    <a th:href="@{cliente/realizarpedido}">Realizar pedido</a>
+                </li>
+                <li>
+                    <a th:href="@{/cliente/reportes}">Mis reportes</a>
+                </li>
+
+            </ul>
+
+        </nav>
+    </div>
+</div>
+    <!-- end loader -->
+
+    <div class="sidebar" ></div>
 
     <div id="content">
         <!-- header -->

@@ -75,7 +75,7 @@
                         <div class="row">
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                                 <form class="main_form" style="align-self: center" method="post" th:action="@{/cambiarContrasenia}">
-                                    <div style="font-size: 40px;color: black;text-align: center">Escribe tu correo para validar tu cambio de contraseña</div>
+                                    <div style="font-size: 40px;color: black;text-align: center">Cambia tu contraseña</div>
                                     <div align="center" th:if="${msg != null}" th:text="${msg}" class="alert alert-success" role="alert"></div>
                                     <div align="center" th:if="${msg2 != null}" th:text="${msg2}" class="alert alert-danger" role="alert"></div>
                                     <br>
@@ -84,12 +84,12 @@
                                             <label for="contrasenia">Ingrese contraseña nueva:</label>
                                             <input class="form-control" placeholder="Contraseña nueva" type="password" aria-label="contrasenia" id="contrasenia" aria-describedby="addon-wrapping" name="contrasenia">
                                         </div>
-                                        <!-- Para validar doble contraseña
+                                        <!-- Para validar doble contraseña -->
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <label for="contrasenia2">Reingrese contraseña nueva:</label>
                                             <input class="form-control" placeholder="Contraseña nueva" type="password" aria-label="contrasenia" id="contrasenia2" aria-describedby="addon-wrapping" name="contrasenia2">
                                         </div>
-                                        -->
+
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <label for="token" ></label>
                                             <input type="hidden" th:value="${usuario.token}" class="form-control" name="token" id="token">
@@ -98,7 +98,7 @@
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <div class="row">
                                                 <div class="col-md-4">
-                                                    <button class="send" type="submit" style="text-align: center" >¡Cambiar contraseña ahora! :)</button>
+                                                    <button class="send" type="submit" style="text-align: center" >Confirmar</button>
                                                 </div>
                                             </div>
                                         </div>

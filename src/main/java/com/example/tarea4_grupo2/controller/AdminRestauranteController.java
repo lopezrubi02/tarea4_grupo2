@@ -594,6 +594,7 @@ public class AdminRestauranteController {
     public String aceptarPedido(@RequestParam("id")int id){
         Optional<Pedidos> optional = pedidosRepository.findById(id);
         optional.get().setEstadorestaurante("aceptado");
+        optional.get().setEstadorepartidor("pendiente"); //Para que le aparezca al repartidor
         pedidosRepository.save(optional.get());
         return"redirect:/adminrest/pedidos";
     }

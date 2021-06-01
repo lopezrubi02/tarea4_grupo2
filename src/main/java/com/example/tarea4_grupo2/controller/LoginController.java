@@ -156,35 +156,61 @@ public class LoginController {
     public String cambiar1(@PathVariable("token") String tokenObtenido, Model model, RedirectAttributes attr) {
         Usuario usuario = new Usuario();
         usuario.setToken(tokenObtenido);
-        model.addAttribute("usuario", usuario);
-        return "login/cambiar1";
+        Optional<Usuario> usuarioToken = Optional.ofNullable(usuarioRepository.findByToken(usuario.getToken()));
+        if (usuarioToken.isPresent()) {
+            model.addAttribute("usuario", usuario);
+            return "login/cambiar1";
+        }else {
+            attr.addFlashAttribute("msg2", "¡Error en el token o expirado! debes generar otro :(");
+            return "redirect:/login";
+        }
+    }
+
+    public  boolean validarContrasenia(String contrasenia1) {
+        /*      https://mkyong.com/regular-expressions/how-to-validate-password-with-regular-expression/
+                A!@#&()–a1
+                A[{}]:;',?/*a1
+                A~$^+=<>a1
+                0123456789$abcdefgAB
+                123Aa$Aa
+         */
+        Pattern pattern1 = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$");
+        Matcher matcher1 = pattern1.matcher(contrasenia1);
+        return matcher1.matches();
     }
 
     @PostMapping("/cambiarContrasenia")
-    public String cambiarContrasenia(Usuario usuario, RedirectAttributes attr, @RequestParam("contrasenia") String contrasenia) {
+    public String cambiarContrasenia(Usuario usuario, RedirectAttributes attr, @RequestParam("contrasenia") String contrasenia, @RequestParam("contrasenia2") String contrasenia2) {
 
         Optional<Usuario> usuarioToken = Optional.ofNullable(usuarioRepository.findByToken(usuario.getToken()));
         if (usuarioToken.isPresent()) {
             BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-            if (contrasenia == "") {
-                attr.addFlashAttribute("msg2", "¡Contraseña no puede ser nula! :C");
-            } else {
-                String contraseniahashbcrypt = BCrypt.hashpw(contrasenia, BCrypt.gensalt());
-                usuarioToken.get().setContraseniaHash(contraseniahashbcrypt);
-
-                attr.addFlashAttribute("msg", "¡Contraseña cambiada! :D");
-
-                SecureRandom random = new SecureRandom();
-                byte bytes[] = new byte[20];
-                random.nextBytes(bytes);
-                String tokenNuevo = bytes.toString();
-                usuarioToken.get().setToken(tokenNuevo);
-                usuarioRepository.save(usuarioToken.get());
+            if (contrasenia == "" || contrasenia2 == "") {
+                attr.addFlashAttribute("msg2", "¡Contraseña no puede ser nula! Intenta nuevamente con el link enviado al correo :C");
+            } else if (contrasenia.equals(contrasenia2)){
+                Boolean validacionContrasenias = validarContrasenia(contrasenia);
+                if (validacionContrasenias==true) {
+                    String contraseniahashbcrypt = BCrypt.hashpw(contrasenia, BCrypt.gensalt());
+                    usuarioToken.get().setContraseniaHash(contraseniahashbcrypt);
+                    attr.addFlashAttribute("msg", "¡Contraseña cambiada! :D");
+                    SecureRandom random = new SecureRandom();
+                    byte bytes[] = new byte[20];
+                    random.nextBytes(bytes);
+                    String tokenNuevo = bytes.toString();
+                    usuarioToken.get().setToken(tokenNuevo);
+                    usuarioRepository.save(usuarioToken.get());
+                } else {
+                    attr.addFlashAttribute("msg2", "¡Debe tener al menos 8 caracteres, uno especial y una mayuscula");
+                }
+                return "redirect:/login";
+            } else{
+                attr.addFlashAttribute("msg2", "¡Las contraseñas no coinciden!");
+                return "redirect:/login";
             }
             return "redirect:/login";
         } else {
             attr.addFlashAttribute("msg2", "¡Error en el token o expirado! debes generar otro :(");
-            return "/login/olvidoContrasenia";
+            return "login/olvidoContrasenia";
         }
     }
 
