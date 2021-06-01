@@ -320,7 +320,7 @@ public class UsuarioController {
                     model.addAttribute("iddireccionxenviar", listadireccionescliente.get(0).getIddirecciones());
                 } else {
 
-                        Optional<Direcciones> direccionopt = direccionesRepository.findById(direccionxenviar);
+                    Optional<Direcciones> direccionopt = Optional.ofNullable(direccionesRepository.findDireccionesByIddireccionesAndUsuariosIdusuariosEquals(direccionxenviar, idusuarioactual));
                         if (direccionopt.isPresent()) {
                             Direcciones direccionseleccionada = direccionopt.get();
                             model.addAttribute("iddireccionxenviar", direccionxenviar);
