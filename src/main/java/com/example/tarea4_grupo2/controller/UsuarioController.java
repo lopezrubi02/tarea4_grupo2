@@ -90,7 +90,7 @@ public class UsuarioController {
                 usuario.setCuentaActiva(1);
 
                 usuarioRepository.save(usuario);
-
+                //TODO: validar DNI y correo unico
                 Usuario usuarionuevo = usuarioRepository.findByDni(usuario.getDni());
 
                 int idusuarionuevo = usuarionuevo.getIdusuarios();
@@ -649,7 +649,7 @@ public class UsuarioController {
 
     @GetMapping("/cliente/checkout")
     public String checkout(Model model, HttpSession session,
-                           @RequestParam(value = "idmetodo" ,defaultValue = "0") int idmetodo){
+                           @RequestParam(value = "idmetodo",defaultValue = "0") int idmetodo){
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuario=sessionUser.getIdusuarios();
         System.out.println(idmetodo);
