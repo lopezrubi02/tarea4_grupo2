@@ -73,12 +73,14 @@
                 <div class="footer">
                     <div class="container-fluid">
                         <div class="row">
+                            <div class="col-md-12">
+                                <h2>Escribe tu correo para validar tu cambio de contraseña</h2>
+                                <div align="center" th:if="${msg != null}" th:text="${msg}" class="alert alert-success" role="alert"></div>
+                                <div align="center" th:if="${msg2 != null}" th:text="${msg2}" class="alert alert-danger" role="alert"></div>
+                            </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                                 <form class="main_form" style="align-self: center" method="post" th:action="@{/recuperarContrasenia}">
-                                    <div style="font-size: 40px;color: black;text-align: center">Escribe tu correo para validar tu cambio de contraseña</div>
-                                    <div align="center" th:if="${msg != null}" th:text="${msg}" class="alert alert-success" role="alert"></div>
-                                    <div align="center" th:if="${msg2 != null}" th:text="${msg2}" class="alert alert-danger" role="alert"></div>
-                                    <br>
+
                                     <div class="row">
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <label>Ingrese correo electronico</label>
@@ -86,23 +88,10 @@
                                         </div>
 
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <button class="send" type="submit" style="text-align: center" >Enviame una nueva a mi correo :)</button>
-                                                </div>
-                                            </div>
+                                                    <button class="send" type="submit" style="text-align: center" >Continuar</button>
                                         </div>
                                     </div>
                                 </form>
-                            </div>
-                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12" style="align-content: center">
-                                <br>
-                                <br>
-                                <br>
-                                <br>
-                                <div class="img-box" align="left" style="padding-bottom: 20px;padding-top: 90px">
-                                    <figure style="align-content: center"><img th:src="@{/images/perfil-hombre-dibujos-animados_18591-58484 (1).jpg}" style="height: 700px;width: 500px;padding-top: 80px"></figure>
-                                </div>
                             </div>
                         </div>
                     </div>

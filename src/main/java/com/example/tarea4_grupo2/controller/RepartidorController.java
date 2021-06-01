@@ -116,6 +116,8 @@ public class RepartidorController {
             List<PlatosPorPedidoDTO> listaPlatosPorPedidoDTO = repartidorRepository.findListaPlatosPorPedido(pedido.getIdpedidos());
             model.addAttribute("listaPlatosPorPedidoDTO", listaPlatosPorPedidoDTO);
 
+            session.setAttribute("disponibilidad", repartidorRepository.findRepartidorByIdusuariosEquals(sessionUser.getIdusuarios()).isDisponibilidad());
+
             pedidosRepository.save(pedido);
 
             return "repartidor/repartidor_recojo_de_producto";
@@ -314,7 +316,7 @@ public class RepartidorController {
                 Direcciones dnueva = direccionesRepository.findByUsuariosIdusuarios(usuario.getIdusuarios());
                 dnueva.setDireccion(direccion);
                 direccionesRepository.save(dnueva);
-                return "redirect:/repartidor/perfil";
+                return "redirect:/repartidor/miperfil";
             }
             else{
                 if(password2.isEmpty()){
@@ -323,7 +325,7 @@ public class RepartidorController {
                     dnueva.setDireccion(direccion);
                     direccionesRepository.save(dnueva);
                     usuarioRepository.save(user);
-                    return "redirect:/repartidor/perfil";
+                    return "redirect:/repartidor/miperfil";
                 }else{
                     model.addAttribute("msg","Contraseñas no son iguales");
                     Usuario usuario2 = optional.get();
