@@ -635,6 +635,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
     @GetMapping("/DeliveryReportes")
     public String deliveryReportes(Model model,
                                    @RequestParam(name = "page", defaultValue = "1") String requestedPage){
+        System.out.println("errorr ***********************");
         float numberOfUsersPerPage = 8;
         int page = Integer.parseInt(requestedPage);
 
@@ -649,8 +650,15 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
         int start = (int) numberOfUsersPerPage * (page - 1);
         int end = (int) (start + numberOfUsersPerPage);
 
+        System.out.println(listaDeli.get(0).getPedidos());
+        System.out.println("******************************");
+        System.out.println(listaDeli.get(0).getComision());
+        System.out.println(listaDeli);
         List<DeliveryReportes_DTO> lisOfUsersPage = listaDeli.subList(start, Math.min(end, listaDeli.size()));
-
+        System.out.println(lisOfUsersPage);
+        System.out.println(listaDeli.get(0));
+        System.out.println(listaDeli);
+        System.out.println("***********************************");
         //model.addAttribute("lisOfUsersPage", lisOfUsersPage);
         model.addAttribute("currentPage", page);
         model.addAttribute("maxNumberOfPages", numberOfPages);
