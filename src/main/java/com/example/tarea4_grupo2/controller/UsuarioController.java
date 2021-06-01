@@ -283,10 +283,10 @@ public class UsuarioController {
 
     @GetMapping("/cliente/realizarpedido")
     public String realizarpedido(Model model, HttpSession session, RedirectAttributes attr,
-                                 @RequestParam(value = "idcategoriarest" ,defaultValue = "0") int idcategoriarest,
-                                 @RequestParam(value = "preciopromedio", defaultValue = "0") int precio,
-                                 @RequestParam(value = "direccion", defaultValue = "0") int direccionxenviar,
-                                 @RequestParam(value = "calificacion", defaultValue = "0") int calificacion
+                                 @RequestParam(value = "idcategoriarest" ,defaultValue = "0") String categoriarest,
+                                 @RequestParam(value = "preciopromedio", defaultValue = "0") String preciopromedio,
+                                 @RequestParam(value = "direccion", defaultValue = "0") String direccion,
+                                 @RequestParam(value = "calificacion", defaultValue = "0") String calificacionpromedio
                                  ) {
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
@@ -314,6 +314,7 @@ public class UsuarioController {
         model.addAttribute("listarestaurantes",listarestaurantes);
 
             try{
+                int direccionxenviar = Integer.parseInt(direccion);
                 if (direccionxenviar == 0) {
                     model.addAttribute("direccionseleccionada", listadireccionescliente.get(0).getDireccion());
                     model.addAttribute("iddireccionxenviar", listadireccionescliente.get(0).getIddirecciones());
@@ -330,24 +331,30 @@ public class UsuarioController {
                 System.out.println(exception.getMessage());
                 return "redirect:/cliente/realizarpedido";
             }
+        try{
+            int idcategoriarest = Integer.parseInt(categoriarest);
+            Optional<Categorias> catopt = categoriasRepository.findById(idcategoriarest);
+            if(catopt.isPresent()){
 
+                List<Restaurante> listarestauranteseleccionado = restauranteRepository.listarestxcategoria(idcategoriarest);
 
-        Optional<Categorias> catopt = categoriasRepository.findById(idcategoriarest);
-        if(catopt.isPresent()){
-
-            List<Restaurante> listarestauranteseleccionado = restauranteRepository.listarestxcategoria(idcategoriarest);
-
-            if(idcategoriarest!=0){
-                model.addAttribute("listarestaurantes",listarestauranteseleccionado);
-            }else{
-                model.addAttribute("listarestaurantes",listarestaurantes);
+                if(idcategoriarest!=0){
+                    model.addAttribute("listarestaurantes",listarestauranteseleccionado);
+                }else{
+                    model.addAttribute("listarestaurantes",listarestaurantes);
+                }
+                model.addAttribute("catelegida",idcategoriarest);
             }
-            model.addAttribute("catelegida",idcategoriarest);
+        }catch(NumberFormatException exception){
+            System.out.println(exception.getMessage());
+            return "redirect:/cliente/realizarpedido";
         }
+
         try {
-        if(precio!=0) {
-            switch (precio) {
-                case 1:
+            int precio = Integer.parseInt(preciopromedio);
+            if(precio!=0) {
+                switch (precio) {
+                    case 1:
                     List<Restaurante> listaRestFiltroPrecio = restauranteRepository.listarestprecio1();
                     if (listaRestFiltroPrecio.isEmpty()) {
                         attr.addFlashAttribute("alertaprecio", "No se encontraron restaurantes para el filtro aplicado");
@@ -357,7 +364,7 @@ public class UsuarioController {
                         model.addAttribute("precioselec", precio);
                     }
                     break;
-                case 2:
+                    case 2:
                     listaRestFiltroPrecio = restauranteRepository.listarestprecio2();
                     if (listaRestFiltroPrecio.isEmpty()) {
                         attr.addFlashAttribute("alertaprecio", "No se encontraron restaurantes para el filtro aplicado");
@@ -367,7 +374,7 @@ public class UsuarioController {
                         model.addAttribute("precioselec", precio);
                     }
                     break;
-                case 3:
+                    case 3:
                     listaRestFiltroPrecio = restauranteRepository.listarestprecio3();
                     if (listaRestFiltroPrecio.isEmpty()) {
                         attr.addFlashAttribute("alertaprecio", "No se encontraron restaurantes para el filtro aplicado");
@@ -377,7 +384,7 @@ public class UsuarioController {
                         model.addAttribute("precioselec", precio);
                     }
                     break;
-                case 4:
+                    case 4:
                     listaRestFiltroPrecio = restauranteRepository.listarestprecio4();
                     if (listaRestFiltroPrecio.isEmpty()) {
                         attr.addFlashAttribute("alertaprecio", "No se encontraron restaurantes para el filtro aplicado");
@@ -389,11 +396,12 @@ public class UsuarioController {
                     break;
             }
         }
-        }catch (Exception e){
+        }catch (NumberFormatException e){
             return "cliente/realizar_pedido_cliente";
         }
 
         try {
+            int calificacion = Integer.parseInt(calificacionpromedio);
         if(calificacion!=0) {
             if (calificacion > 4) {
                 return "redirect:/cliente/realizarpedido";
@@ -408,21 +416,22 @@ public class UsuarioController {
             }
         }
         return "cliente/realizar_pedido_cliente";
-    }catch (Exception e){
+    }catch (NumberFormatException e){
         return "cliente/realizar_pedido_cliente";
     }
     }
 
     @GetMapping("/cliente/direccionxenviar")
     public String direccionxenviar(Model model,
-                                   @RequestParam(value = "direccion", defaultValue = "0") int direccionxenviar,
+                                   @RequestParam(value = "direccion", defaultValue = "0") String direccion,
                                    HttpSession session){
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuarioactual=sessionUser.getIdusuarios();
         System.out.println("****************************error numero");
-        Optional<Direcciones> direccionopt = Optional.ofNullable(direccionesRepository.findDireccionesByIddireccionesAndUsuariosIdusuariosEquals(direccionxenviar, idusuarioactual));
         try {
+            int direccionxenviar = Integer.parseInt(direccion);
+            Optional<Direcciones> direccionopt = Optional.ofNullable(direccionesRepository.findDireccionesByIddireccionesAndUsuariosIdusuariosEquals(direccionxenviar, idusuarioactual));
             if(direccionopt.isPresent()){
                 List<String> listaidprecio = new ArrayList<>();
                 listaidprecio.add("Menor a 15");
@@ -451,7 +460,7 @@ public class UsuarioController {
             }else{
                 return "redirect:/cliente/realizarpedido";
             }
-        }catch (Exception e){
+        }catch (NumberFormatException e){
             System.out.println(e.getMessage());
             System.out.println("error");
             return "redirect:/cliente/realizarpedido";

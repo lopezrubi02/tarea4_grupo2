@@ -40,6 +40,7 @@ public class Usuario implements Serializable {
 
     @Column(name = "contraseniahash",nullable = false)
     @NotBlank(message = "No puede estar vacío")
+    @Pattern(regexp = "^[a-zA-Z0-9«#$%&/()=*]*$",message = "Debe tener al menos 1 número, 1 letra mayúscula y un caracter especial")
     private String contraseniaHash;
 
     @Column(nullable = false)
