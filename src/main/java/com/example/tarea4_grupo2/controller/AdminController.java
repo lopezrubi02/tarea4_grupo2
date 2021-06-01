@@ -55,6 +55,11 @@ public class AdminController {
     @Autowired
     SendMailService sendMailService;
 
+    @GetMapping("/")
+    public String redireccion(){
+        return "redirect:/admin/gestionCuentas";
+    }
+
     @GetMapping("/usuariosActuales")
     public String usuariosActuales(
             @RequestParam(name = "page", defaultValue = "1") String requestedPage,
@@ -361,35 +366,47 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
     //----------------------------
     @GetMapping("/newuser")
     public String revisarCuenta(Model model,
-            @RequestParam(value = "id") int id){
-        Optional<Usuario> optional = usuarioRepository.findById(id);
-        if(optional.isPresent()){
-            Usuario usuario = optional.get();
-            if(usuario.getCuentaActiva()==2){
+            @RequestParam(value = "id") String idString, RedirectAttributes attr){
+        try{
+            int id = Integer.parseInt(idString);
+            Optional<Usuario> optional = usuarioRepository.findById(id);
+            if(optional.isPresent()){
+                Usuario usuario = optional.get();
+                if(usuario.getCuentaActiva()==2){
 
-                switch (usuario.getRol()){
-                    case "AdminRestaurante":
-                        model.addAttribute("usuario",usuario);
+                    switch (usuario.getRol()){
+                        case "AdminRestaurante":
+                            model.addAttribute("usuario",usuario);
 
-                        Restaurante restaurante = restauranteRepository.findRestauranteByUsuario_Idusuarios(id);
-                        List<Categorias> categorias =  restaurante.getCategoriasrestList();
+                            Restaurante restaurante = restauranteRepository.findRestauranteByUsuario_Idusuarios(id);
+                            List<Categorias> categorias =  restaurante.getCategoriasrestList();
 
-                        model.addAttribute("restaurante",restaurante);
-                        model.addAttribute("categorias",categorias);
-                        return "adminsistema/AceptarCuentaRestaurante";
-                    case "Repartidor":
-                        model.addAttribute("usuario",usuario);
-                        Repartidor repartidor = repartidorRepository.findRepartidorByIdusuariosEquals(id);
-                        List<Direcciones> listadirecciones = direccionesRepository.findAllByUsuariosIdusuariosEquals(id);
-                        model.addAttribute("repartidor",repartidor);
-                        model.addAttribute("lista",listadirecciones);
-                        return "adminsistema/AceptarCuentaRepartidor";
-                    default:
-                        return "redirect:/admin/nuevasCuentas";
+                            model.addAttribute("restaurante",restaurante);
+                            model.addAttribute("categorias",categorias);
+                            return "adminsistema/AceptarCuentaRestaurante";
+                        case "Repartidor":
+                            model.addAttribute("usuario",usuario);
+                            Repartidor repartidor = repartidorRepository.findRepartidorByIdusuariosEquals(id);
+                            List<Direcciones> listadirecciones = direccionesRepository.findAllByUsuariosIdusuariosEquals(id);
+                            model.addAttribute("repartidor",repartidor);
+                            model.addAttribute("lista",listadirecciones);
+                            return "adminsistema/AceptarCuentaRepartidor";
+                        default:
+                            return "redirect:/admin/nuevosUsuarios";
+                    }
                 }
+            }else{
+                attr.addFlashAttribute("msg","Ocurrió un error con el ID");
+                return "redirect:/admin/nuevosUsuarios";
             }
+        }catch (NumberFormatException e){
+            System.out.println(e.getMessage());
+            System.out.println("error");
+            attr.addFlashAttribute("msg","Ocurrio un error con el ID");
+            return "redirect:/admin/nuevosUsuarios";
         }
-        return "redirect:/admin/nuevasCuentas";
+
+        return "redirect:/admin/nuevosUsuarios";
     }
 
     @GetMapping("/aceptar")

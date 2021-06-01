@@ -45,6 +45,7 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
     List<DeliveryReportes_DTO> reportesDelivery();
 
     @Query(value = "select date(fechahorapedido) as 'fecha'from pedidos\n" +
+            "WHERE pedidos.fechahorapedido IS NOT NULL \n" +
             "group by YEAR(fechahoraentregado),MONTH(fechahoraentregado),DAY(fechahoraentregado)\n" +
             "ORDER BY CONCAT(SUBSTRING_INDEX(fecha , '/', -1),SUBSTRING_INDEX(SUBSTRING_INDEX(fecha , '/', 2), '/', -1),SUBSTRING_INDEX(fecha , '/', 1)) ASC limit 1;\n",
             nativeQuery = true)
