@@ -137,7 +137,7 @@ public class AdminController {
     ) {
         Optional<Usuario> optional = usuarioRepository.findById(id);
 
-        if (optional.isPresent()) {
+        if (optional.isPresent() && optional.get().getCuentaActiva() == 1) {
             Usuario usuario = optional.get();
 
             switch (usuario.getRol()) {
