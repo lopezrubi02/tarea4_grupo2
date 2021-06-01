@@ -133,8 +133,10 @@ public class AdminController {
     @GetMapping("/user")
     public String paginaUsuario(
             Model model,
-            @RequestParam("id") int id
+            @RequestParam("id") String idString
     ) {
+        try{
+            int id = Integer.parseInt(idString);
         Optional<Usuario> optional = usuarioRepository.findById(id);
 
         if (optional.isPresent() && optional.get().getCuentaActiva() == 1) {
@@ -175,6 +177,9 @@ public class AdminController {
             }
 
         } else {
+            return "redirect:/admin/usuariosActuales";
+        }
+        }catch (NumberFormatException e){
             return "redirect:/admin/usuariosActuales";
         }
     }
