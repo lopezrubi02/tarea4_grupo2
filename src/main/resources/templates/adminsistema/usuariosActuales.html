@@ -24,14 +24,13 @@
                 <ul class="list-unstyled components">
 
                     <li class="active">
-                        <!-- TODO -->
                         <a th:href="@{/admin/usuariosActuales}">Usuarios actuales</a>
                     </li>
                     <li>
-                        <a href="about.html">Gestion de nuevas cuentas</a>
+                        <a th:href="@{gestionCuentas}">Gestión de nuevas cuentas</a>
                     </li>
                     <li>
-                        <a href="recipe.html">Reportes</a>
+                        <a th:href="@{reportes}">Reportes</a>
                     </li>
                 </ul>
 
@@ -53,9 +52,9 @@
                         <div class="right_header_info">
                             <ul>
 
-                                <li class="dinone"><a href="#">Usuarios actuales</a></li>
-                                <li class="dinone"><a href="#">Gestion de nuevas cuentas</a></li>
-                                <li class="dinone"><a href="#">Reportes</a></li>
+                                <li class="dinone"><a th:href="@{usuariosActuales}">Usuarios Actuales</a></li>
+                                <li class="dinone"><a th:href="@{gestionCuentas}">Gestión de nuevas cuentas</a></li>
+                                <li class="dinone"><a th:href="@{reportes}">Reportes</a></li>
 
                                 
                                 <!-- TODO -->
@@ -75,7 +74,7 @@
                                                                                                         margin: 0 2px;">
                                         <input class="button"
                                                type="submit"
-                                               value="Logout"
+                                               value="Cerrar sesión"
                                                style="
                                                         width: 100%;
                                                         height: 100%;
