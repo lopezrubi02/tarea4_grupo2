@@ -384,11 +384,17 @@ public class RepartidorController {
                                      @RequestParam("password2") String pass2,
                                      @RequestParam("movilidad") String movilidad,
                                      @RequestParam("archivo") MultipartFile file,
+                                     @RequestParam(value = "movilidad2",defaultValue = "0") String movilidad2,
                                      Model model, RedirectAttributes attributes) {
+
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("listadistritos", distritosRepository.findAll());
             return "repartidor/registro_parte3";
+        }
+
+        if(movilidad2.equalsIgnoreCase("moto") || movilidad2.equalsIgnoreCase("bicimoto")){
+            model.addAttribute("movilidad2",movilidad2);
         }
 
         if (usuario.getContraseniaHash().equals(pass2)) {
