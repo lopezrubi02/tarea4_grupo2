@@ -36,7 +36,7 @@
         <div class="row">
             <div class="col-md-3">
                 <div class="full">
-                    <a class="logo" href="index.html"><img src="images/logo.png" alt="#" /></a>
+                    <a class="logo" th:href="@{/repartidor/miperfil}"><img src="/images/logo.png" alt="#"/></a>
                 </div>
             </div>
             <div class="col-md-9">
@@ -51,13 +51,18 @@
                             <li class="dinone" th:if="${disponibilidad eq '1'}"><a th:href="@{'/repartidor/PedidosDisponibles'}">Notificaciones</a></li>
                             -->
                             <!-- TODO -->
-                            <li class="button_user"><a class="button active" th:href="@{'/repartidor/miperfil'}">Mi cuenta</a>
+                            <li class="button_user"><a class="button active" th:href="@{'/repartidor/miperfil'}">Mi cuenta</a></li>
+                            <li style="transform: translateY(-7px)">
                                 <form th:action="@{/logout}" method="post">
-                                    <button class="button " type="submit">Logout</button>
-                                </form></li>
+                                    <button class="button"
+                                            style="padding: 0px 15px; font-size: 14px;height: 40px;width: 100.5px;background:#e3d105"
+                                            type="submit">Logout
+                                    </button>
+                                </form>
+                            </li>
                             <li>
                                 <button type="button" id="sidebarCollapse">
-                                    <img src="images/menu_icon.png" alt="#">
+                                    <img src="/images/menu_icon.png" alt="#">
                                 </button>
                             </li>
                         </ul>

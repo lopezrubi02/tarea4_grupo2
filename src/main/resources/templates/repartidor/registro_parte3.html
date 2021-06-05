@@ -179,11 +179,17 @@
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <label>Movilidad</label>
-                                                <select type="text" class="form-select" id="movilidad" name="movilidad" style="width: 100%;">
-                                                    <option value="moto" text="Moto">Moto</option>
-                                                    <option value="bicimoto" text="Bicimoto">Bicimoto</option>
-                                                    <option value="bicicleta" text="Bicicleta">Bicicleta</option>
+                                                <select type="text" class="form-select" id="movilidad2" name="movilidad2" style="width: 100%;" onchange="window.location=this.options[this.selectedIndex].value">
+                                                    <option value="new3?movilidad2=moto" text="Moto">Moto</option>
+                                                    <option value="new3?movilidad2=bicimoto" text="Bicimoto">Bicimoto</option>
+                                                    <option value="new3?movilidad2=bicicleta" text="Bicicleta">Bicicleta</option>
                                                 </select>
+                                            </div>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:if="${movilidad2 == 'moto' || movilidad2 == 'bicimoto' }">
+                                                <input class="form-control" placeholder="Placa" name="placa" id="placa">
+                                            </div>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:if="${movilidad2 == 'moto' || movilidad2 == 'bicimoto' }">
+                                                <input class="form-control" placeholder="Licencia de conducir" name="licencia" id="licencia">
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <label for="archivo">Foto</label>
