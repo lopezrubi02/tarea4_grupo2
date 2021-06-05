@@ -75,7 +75,13 @@ public class AdminController {
          */
 
         float numberOfUsersPerPage = 7;
-        int page = Integer.parseInt(requestedPage);
+        int page;
+        try{
+            page = Integer.parseInt(requestedPage);
+        }catch (Exception e){
+            page = 1;
+        }
+
 
         List<Usuario> usuarioList; // se define el contenido de la lista (la paginacion se hace a partir de esta)
 
@@ -295,7 +301,13 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
                                      RedirectAttributes attr){
 
             float numberOfUsersPerPage = 4;
-            int page = Integer.parseInt(requestedPage);
+            int page;
+            try{
+                page = Integer.parseInt(requestedPage);
+            }catch (Exception e){
+                page = 1;
+            }
+
 
             List<Usuario> usuarioList;
 
@@ -420,7 +432,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
         Optional<Usuario> optional = usuarioRepository.findById(id);
         if(optional.isPresent()){
             Usuario usuario = optional.get();
-            if(usuario.getCuentaActiva()==2){
+            if(usuario.getCuentaActiva()==2 || usuario.getCuentaActiva()==-1){
                     usuario.setCuentaActiva(1);
                     usuarioRepository.save(usuario);
                     if(usuario.getRol().equals("AdminRestaurante")){
@@ -495,7 +507,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
                     return "redirect:/admin/gestionCuentas";
                 }
                 restauranteRepository.deleteById(restaurante.getIdrestaurante());
-                usuario.setCuentaActiva(-1);
+                usuario.setCuentaActiva(3);
                 usuarioRepository.save(usuario);
 
                 //Envio de correo a usuario
@@ -572,23 +584,53 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
     }
 
     @GetMapping("/usuarioReportes")
-    public String usuariosReportes(Model model){
-        List<Usuario> usuarioList = usuarioRepository.usuarioreportes();
-        model.addAttribute("listaUsuariosreporte",usuarioList);
-        return "adminsistema/ADMIN_ReportesVistaUsuarios";
-    }
+    public String usuariosReportes(Model model,
+                                   @RequestParam(value = "rol" ,defaultValue = "Todos")String rol,
+                                   @RequestParam(value = "page",defaultValue = "1") String requestedPage){
 
+        float numberOfUsersPerPage = 8;
+        int page;
+        try {
+            page = Integer.parseInt(requestedPage);
+        }catch (Exception e){
+            page = 1;
+        }
 
-    @GetMapping("/usuarioFiltro")
-    public String usuarioFiltro(Model model,@RequestParam(value = "rolSelected" ,defaultValue = "Todos")String rol){
         List<Usuario> usuarioList;
-        if(rol.equals("Repartidor") || rol.equals("AdminRestaurante") || rol.equals("Cliente")  ){
+        if(rol.equals("Repartidor") || rol.equals("AdminRestaurante") || rol.equals("Cliente")){
             usuarioList = usuarioRepository.findAllByRolAndCuentaActiva(rol,1);
         }else{
             usuarioList = usuarioRepository.usuarioreportes();
         }
 
-        model.addAttribute("listaUsuariosreporte",usuarioList);
+        String nombreRol;
+        if(rol.equals("Repartidor")){
+            nombreRol = "Repartidores";
+        }else if(rol.equals("AdminRestaurante")){
+            nombreRol = "Restaurantes";
+        }else if(rol.equals("Cliente")){
+            nombreRol = "Clientes";
+        }else{
+            nombreRol = "Todos";
+        }
+
+        int numberOfPages = (int) Math.ceil(usuarioList.size() / numberOfUsersPerPage);
+        if (page > numberOfPages) {
+            page = numberOfPages;
+        } // validation
+
+        int start = (int) numberOfUsersPerPage * (page - 1);
+        int end = (int) (start + numberOfUsersPerPage);
+
+        List<Usuario> lisOfUsersPage = usuarioList.subList(start, Math.min(end, usuarioList.size()));
+
+        model.addAttribute("currentPage", page);
+        model.addAttribute("maxNumberOfPages", numberOfPages);
+        model.addAttribute("listaUsuariosreporte", lisOfUsersPage);
+
+        model.addAttribute("nombreRol",nombreRol);
+
+        model.addAttribute("rol",rol);
 
         return "adminsistema/ADMIN_ReportesVistaUsuarios";
     }
@@ -655,14 +697,34 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
     }
 
     @GetMapping("/DeliveryReportes")
-    public String deliveryReportes(Model model,
-                                   @RequestParam(name = "page", defaultValue = "1") String requestedPage){
+    public String deliveryReportes(@RequestParam(name= "searchField",defaultValue = "") String buscar,
+                                   @RequestParam (value="filtro",defaultValue = "Todos") String filtro,
+                                   @RequestParam(name = "page", defaultValue = "1") String requestedPage,
+                                   Model model){
         System.out.println("errorr ***********************");
         float numberOfUsersPerPage = 8;
-        int page = Integer.parseInt(requestedPage);
+        int page;
+        try {
+            page = Integer.parseInt(requestedPage);
+        }catch (Exception e){
+            page = 1;
+        }
+        List<DeliveryReportes_DTO> listaDeli;
+        if(buscar.equals("") && filtro.equals("Habiles")){
+            listaDeli = pedidosRepository.reportesDelivery();
+        }else{
+            String fechaPrimerPedido = pedidosRepository.primerPedido();
+            listaDeli = pedidosRepository.reportesDelivery2(fechaPrimerPedido);
+        }
 
-        String fechaPrimerPedido = pedidosRepository.primerPedido();
-        List<DeliveryReportes_DTO> listaDeli = pedidosRepository.reportesDelivery2(fechaPrimerPedido);
+        String nombreFiltro;
+        if(filtro.equals("Habiles")){
+            nombreFiltro = "Fechas con Pedidos";
+        }else{
+            nombreFiltro = "Todas las Fechas";
+        }
+        model.addAttribute("nombreFiltro",nombreFiltro);
+
 
         int numberOfPages = (int) Math.ceil(listaDeli.size() / numberOfUsersPerPage);
         if (page > numberOfPages) {
@@ -686,8 +748,26 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
         model.addAttribute("maxNumberOfPages", numberOfPages);
         model.addAttribute("listadeli", lisOfUsersPage);
 
+        model.addAttribute("filtro",filtro);
+
         return "adminsistema/ADMIN_ReportesVistaDelivery";
     }
+
+
+    @PostMapping("/buscadorDeli")
+    public String buscadorDelivery(@RequestParam(value="searchField",defaultValue = "") String buscar,
+                                   @RequestParam (value="filtro",defaultValue = "Todos") String filtro,
+                                   RedirectAttributes attr,Model model){
+        System.out.println("El filtro es: " + filtro);
+        model.addAttribute("filtro",filtro);
+        model.addAttribute("searchField", buscar);
+
+        //model.addAttribute("listaUsuariosNuevos",usuarioList);
+        //return "adminsistema/nuevasCuentas";
+        return "redirect:/admin/DeliveryReportes";
+
+    }
+
 
 
 }

@@ -116,12 +116,12 @@
                 <div class="row">
                     <div class="col-2">
                         <!-- search bar -->
-                        <select class="custom-select" id="rolSelected" onChange="window.location=this.options[this.selectedIndex].value">
-                            <option selected="true" disabled="disabled">Filtrar por Rol</option>
-                            <option value="usuarioFiltro?rolSelected=Todos">Todos</option>
-                            <option value="usuarioFiltro?rolSelected=Cliente">Clientes</option>
-                            <option value="usuarioFiltro?rolSelected=Repartidor">Repartidores</option>
-                            <option value="usuarioFiltro?rolSelected=AdminRestaurante">Restaurantes</option>
+                        <select class="custom-select" id="rol" onChange="window.location=this.options[this.selectedIndex].value">
+                            <option selected="true" disabled="disabled" th:text="${nombreRol}">Filtrar por Rol</option>
+                            <option value="usuarioReportes?rol=Todos">Todos</option>
+                            <option value="usuarioReportes?rol=Cliente">Clientes</option>
+                            <option value="usuarioReportes?rol=Repartidor">Repartidores</option>
+                            <option value="usuarioReportes?rol=AdminRestaurante">Restaurantes</option>
                         </select>
                     </div>
                     <!--div class="row">
@@ -135,6 +135,7 @@
                         </div>
                     </div-->
                 </div>
+                <br>
                 <div class="row table-users">
                     <!-- table -->
                     <div class="col-md-12">
@@ -163,8 +164,38 @@
                     </div>
                     <!-- end of table -->
 
-                    <div class="col-md-12">
-                        <p>Anterior | 1 | 2 | 3 | Siguiente</p>
+                    <!-- paginacion -->
+                    <div th:if="${maxNumberOfPages} != 0" class="row">
+                        <nav aria-label="Page navigation example" class = "mx-auto">
+                            <ul class="pagination justify-content-center">
+
+                                <!--  BOTON ANTERIOR -->
+                                <li class="page-item disabled" th:if="${currentPage eq 1 }">
+                                    <span class="page-link">Anterior</span>
+                                </li>
+                                <li class="page-item" th:unless="${currentPage eq 1}">
+                                    <a class="page-link"
+                                       th:href="@{/admin/usuarioReportes(page=${currentPage - 1},rol=${rol})}">Anterior</a>
+                                </li>
+
+                                <!-- BOTONES NUMEROS -->
+                                <li th:each="i : ${#numbers.sequence( 1, maxNumberOfPages )}"
+                                    th:class="${ i == currentPage ? 'page-item active .bg-secondary' : 'page-item' }">
+                                    <a class="page-link"  th:href="@{/admin/usuarioReportes(page=${i},rol=${rol})}"
+                                       th:text="${i}"
+                                    ></a>
+                                </li>
+
+                                <!--  BOTON SIGUIENTE -->
+                                <li class="page-item disabled" th:if="${currentPage eq maxNumberOfPages }">
+                                    <span class="page-link">Anterior</span>
+                                </li>
+                                <li class="page-item" th:unless="${currentPage eq maxNumberOfPages}">
+                                    <a class="page-link" th:href="@{/admin/usuarioReportes(page=${currentPage + 1},rol=${rol})}">Siguiente</a>
+                                </li>
+
+                            </ul>
+                        </nav>
                     </div>
 
                 </div>
@@ -178,8 +209,8 @@
         <div class="footer">
             <div class="container-fluid">
                 <div class="copyright">
-                    <div class="container">
-                        <p>© 2050 All Rights Reserved</p>
+                    <div class="container-fluid">
+                        <p>© 2021 Todos los Derechos Reservados</p>
                     </div>
                 </div>
             </div>
