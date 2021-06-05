@@ -184,7 +184,8 @@ public class AdminRestauranteController {
             BigDecimal calificacion = pedidosRepository.calificacionPromedio(idrestaurante);
             System.out.println(calificacion);
             Restaurante restaurante = restauranteRepository.findById(idrestaurante).get();
-            restaurante.setCalificacionpromedio(calificacion.floatValue());
+            //restaurante.setCalificacionpromedio(calificacion.floatValue());
+            restaurante.getCalificacionpromedio();
             restauranteRepository.save(restaurante);
             model.addAttribute("calificacionpromedio",calificacion);
             model.addAttribute("nombrerestaurante", restaurante.getNombre());
