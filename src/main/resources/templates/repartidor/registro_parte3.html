@@ -179,10 +179,10 @@
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <label>Movilidad</label>
-                                                <select type="text" class="form-select" id="movilidad2" name="movilidad2" style="width: 100%;" onchange="window.location=this.options[this.selectedIndex].value">
-                                                    <option value="new3?movilidad2=moto" text="Moto">Moto</option>
-                                                    <option value="new3?movilidad2=bicimoto" text="Bicimoto">Bicimoto</option>
-                                                    <option value="new3?movilidad2=bicicleta" text="Bicicleta">Bicicleta</option>
+                                                <select type="text" class="form-select" id="movilidad2"  style="width: 100%;" onchange="window.location=this.options[this.selectedIndex].value">
+                                                    <option th:selected="${movilidad2 == 'moto'}" value="new3?movilidad2=moto" text="Moto">Moto</option>
+                                                    <option th:selected="${movilidad2 == 'bicimoto'}" value="new3?movilidad2=bicimoto" text="Bicimoto">Bicimoto</option>
+                                                    <option th:selected="${movilidad2 == 'bicicleta'}" value="new3?movilidad2=bicicleta" text="Bicicleta">Bicicleta</option>
                                                 </select>
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:if="${movilidad2 == 'moto' || movilidad2 == 'bicimoto' }">

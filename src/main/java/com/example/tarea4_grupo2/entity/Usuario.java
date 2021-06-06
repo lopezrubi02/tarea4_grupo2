@@ -45,7 +45,8 @@ public class Usuario implements Serializable {
 
     @Column(nullable = false)
     @NotNull(message = "No puede estar vacío")
-    @Min(value=9,message="El teléfono no puede tener más de 9 dígitos")
+    @Digits(integer = 9,message="El teléfono no puede tener más de 9 dígitos", fraction = 0)
+    @Min(value = 9999999,message = "El teléfono no puede tener menos de 9 dígitos")
     private Integer telefono;
 
     @Column(name = "fechanacimiento",nullable = false)
@@ -58,7 +59,7 @@ public class Usuario implements Serializable {
 
     @Column(nullable = false)
     @NotBlank(message = "No puede estar vacío")
-    @Size(max=8,message = "No puede tenr más de 8 dígitos")
+    @Size(min=8,max=8,message = "No puede tenr más de 8 dígitos")
     @Pattern(regexp = "^[0-9]*$",message = "Solo puede contener números")
     private String dni;
 

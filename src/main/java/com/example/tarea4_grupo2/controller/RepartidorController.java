@@ -7,6 +7,10 @@ import com.example.tarea4_grupo2.dto.PlatosPorPedidoDTO;
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -257,6 +261,24 @@ public class RepartidorController {
         return "redirect:/repartidor/home";
     }
 
+    @GetMapping("/repartidor/imagen")
+    public ResponseEntity<byte[]> imagenRepartidor(HttpSession session) {
+
+
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int id= sessionUser.getIdusuarios();
+        /********************************/
+
+        Repartidor optional = repartidorRepository.findRepartidorByIdusuariosEquals(id);
+
+            byte[] imagen = optional.getFoto();
+            HttpHeaders httpHeaders=new HttpHeaders();
+            httpHeaders.setContentType(MediaType.parseMediaType(optional.getFotocontenttype()));
+            return new ResponseEntity<>(imagen,httpHeaders, HttpStatus.OK);
+
+
+    }
+
     @GetMapping("/repartidor/miperfil")
     public String perfilRepartidor(@ModelAttribute("repartidor") Repartidor repartidor, Model model,
                                    HttpSession session) {
@@ -286,17 +308,21 @@ public class RepartidorController {
                                           BindingResult bindingResult,
                                           @RequestParam("password2") String password2,
                                           @RequestParam("direccion") String direccion,
-                                          //HttpSession session,
+                                          HttpSession session,
                                           Model model) {
-        //Usuario user=(Usuario) session.getAttribute("usuarioLogueado");
+        Usuario user=(Usuario) session.getAttribute("usuarioLogueado");
         int id=usuario.getIdusuarios();
         Optional<Usuario> optional = usuarioRepository.findById(id);
 
-        Usuario user = optional.get();
+        Usuario user2 = optional.get();
 
 
-        if(bindingResult.hasFieldErrors("telefono")|| bindingResult.hasFieldErrors("contraseniaHash")){
 
+        if(  bindingResult.hasFieldErrors("telefono")|| bindingResult.hasFieldErrors("contraseniaHash")){
+
+            if(bindingResult.hasFieldErrors("telefono")){
+                String msgT="El teléfono no es válido";
+            }
             Usuario usuario2 = optional.get();
             model.addAttribute("usuario", usuario2);
 
@@ -371,7 +397,14 @@ public class RepartidorController {
 
     @GetMapping("/new3")
     public String nuevoRepartidor3(@ModelAttribute("usuario") Usuario usuario,
+                                   @RequestParam(value = "movilidad2",defaultValue = "0") String movilidad2,
                                    BindingResult bindingResult, Model model) {
+        System.out.println(movilidad2);
+        if(movilidad2.equalsIgnoreCase("moto") || movilidad2.equalsIgnoreCase("bicimoto")){
+            System.out.println(movilidad2);
+            model.addAttribute("movilidad2",movilidad2);
+        }
+
         model.addAttribute("listadistritos", distritosRepository.findAll());
         return "repartidor/registro_parte3";
     }
@@ -393,9 +426,7 @@ public class RepartidorController {
             return "repartidor/registro_parte3";
         }
 
-        if(movilidad2.equalsIgnoreCase("moto") || movilidad2.equalsIgnoreCase("bicimoto")){
-            model.addAttribute("movilidad2",movilidad2);
-        }
+
 
         if (usuario.getContraseniaHash().equals(pass2)) {
             Usuario usuario2 = new Usuario();
