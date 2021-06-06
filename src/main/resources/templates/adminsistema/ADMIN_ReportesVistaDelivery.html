@@ -103,7 +103,7 @@
             <div class="row">
 				
 				<div class="col-8">
-                    <h1>Reporte de Ingresos por Delivery</h1>
+                    <h1>Reporte de Ingresos por Delivery para Administrador de Sistema</h1>
                 </div>
 				<div class="col-4">
 					<div class="d-flex justify-content-end">
@@ -114,16 +114,22 @@
             </div>
 			<br></br>
             <div class="row">
-                <div class="col-2">
+                <div class="col-3">
                     <!-- search bar -->
-                    <!--select class="custom-select" id="inputGroupSelect01">
-                        <option selected value="todos">Todos</option>
-						<option value="repartidores">Bicicleta</option>
-                        <option value="repartidores">Bicimoto</option>
-                        <option value="restaurantes">Moto</option>
+                    <select class="custom-select" id="filtro" onChange="window.location=this.options[this.selectedIndex].value">
+                        <option selected="true" disabled="disabled" th:text="${nombreFiltro}">Filtrar Fechas</option>
+                        <option value="DeliveryReportes?filtro=Todos">Todas las Fechas</option>
+						<option value="DeliveryReportes?filtro=Habiles">Fechas con pedidos</option>
+                    </select>
+                    <!--select class="custom-select" id="rolSelected" onChange="window.location=this.options[this.selectedIndex].value">
+                        <option selected="true" disabled="disabled">Filtrar por Rol</option>
+                        <option value="usuarioFiltro?rolSelected=Todos">Todos</option>
+                        <option value="usuarioFiltro?rolSelected=Cliente">Clientes</option>
+                        <option value="usuarioFiltro?rolSelected=Repartidor">Repartidores</option>
+                        <option value="usuarioFiltro?rolSelected=AdminRestaurante">Restaurantes</option>
                     </select-->
-					
                 </div>
+
 				<!--div class="row">
 					<div class="col-8">
 						<input class="input-search-bar" size="40" placeholder="Busque un usuario por nombre...">
@@ -135,6 +141,7 @@
 					</div>
 				</div-->
             </div>
+            <br>
             <div class="row table-users">
                 <!-- table -->
                 <div class="col-md-12">
@@ -174,13 +181,13 @@
                             </li>
                             <li class="page-item" th:unless="${currentPage eq 1}">
                                 <a class="page-link"
-                                   th:href="@{/admin/DeliveryReportes(page=${currentPage - 1} )}">Anterior</a>
+                                   th:href="@{/admin/DeliveryReportes(page=${currentPage - 1},filtro=${filtro})}">Anterior</a>
                             </li>
 
                             <!-- BOTONES NUMEROS -->
                             <li th:each="i : ${#numbers.sequence( 1, maxNumberOfPages )}"
                                 th:class="${ i == currentPage ? 'page-item active .bg-secondary' : 'page-item' }">
-                                <a class="page-link"  th:href="@{/admin/DeliveryReportes(page=${i})}"
+                                <a class="page-link"  th:href="@{/admin/DeliveryReportes(page=${i},filtro=${filtro})}"
                                    th:text="${i}"
                                 ></a>
                             </li>
@@ -190,7 +197,7 @@
                                 <span class="page-link">Anterior</span>
                             </li>
                             <li class="page-item" th:unless="${currentPage eq maxNumberOfPages}">
-                                <a class="page-link" th:href="@{/admin/DeliveryReportes(page=${currentPage + 1})}">Siguiente</a>
+                                <a class="page-link" th:href="@{/admin/DeliveryReportes(page=${currentPage + 1},filtro=${filtro})}">Siguiente</a>
                             </li>
 
                         </ul>

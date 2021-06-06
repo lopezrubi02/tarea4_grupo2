@@ -15,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.HttpServletBean;
 import org.springframework.validation.BindingResult;
@@ -32,6 +33,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Controller
 @RequestMapping("/admin")
@@ -75,7 +78,13 @@ public class AdminController {
          */
 
         float numberOfUsersPerPage = 7;
-        int page = Integer.parseInt(requestedPage);
+        int page;
+        try{
+            page = Integer.parseInt(requestedPage);
+        }catch (Exception e){
+            page = 1;
+        }
+
 
         List<Usuario> usuarioList; // se define el contenido de la lista (la paginacion se hace a partir de esta)
 
@@ -187,8 +196,6 @@ public class AdminController {
     @GetMapping("/miCuenta")
     public String miCuenta(
             Model model,
-            @ModelAttribute("usuario") @Valid Usuario usuarioRecibido,
-            BindingResult bindingResult,
             HttpSession session){
 
         Usuario usuarioActual = (Usuario) session.getAttribute("usuarioLogueado");
@@ -210,20 +217,26 @@ public class AdminController {
     ){
 
         if(bindingResult.hasErrors()) {
+            System.out.println("error papu");
+            for( ObjectError err : bindingResult.getAllErrors()){
+                System.out.println(err.toString());
+            }
+
             return "adminsistema/miCuenta";
         } else {
             // se obtiene el usuario en la base de datos para actualizar solo los campos que han cambiado
-            Optional<Usuario> optionalUsuario = usuarioRepository.findById(usuarioRecibido.getIdusuarios());
-            Usuario usuarioEnlabasededatos = optionalUsuario.get();
-
-            usuarioEnlabasededatos.setNombre(usuarioRecibido.getNombre());
-            usuarioEnlabasededatos.setEmail(usuarioRecibido.getEmail());
-            usuarioEnlabasededatos.setDni(usuarioRecibido.getDni());
-            usuarioEnlabasededatos.setTelefono(usuarioRecibido.getTelefono());
-            usuarioEnlabasededatos.setFechaNacimiento(usuarioRecibido.getFechaNacimiento());
-            usuarioEnlabasededatos.setSexo(usuarioRecibido.getSexo());
-
-            usuarioRepository.save(usuarioEnlabasededatos);
+//            Optional<Usuario> optionalUsuario = usuarioRepository.findById(usuarioRecibido.getIdusuarios());
+//            Usuario usuarioEnlabasededatos = optionalUsuario.get();
+//
+//            usuarioEnlabasededatos.setNombre(usuarioRecibido.getNombre());
+//            usuarioEnlabasededatos.setEmail(usuarioRecibido.getEmail());
+//            usuarioEnlabasededatos.setDni(usuarioRecibido.getDni());
+//            usuarioEnlabasededatos.setTelefono(usuarioRecibido.getTelefono());
+//            usuarioEnlabasededatos.setFechaNacimiento(usuarioRecibido.getFechaNacimiento());
+//            usuarioEnlabasededatos.setSexo(usuarioRecibido.getSexo());
+//
+//            usuarioRepository.save(usuarioEnlabasededatos);
+                usuarioRepository.save(usuarioRecibido);
 
             return "redirect:/admin/usuariosActuales";
         }
@@ -295,7 +308,13 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
                                      RedirectAttributes attr){
 
             float numberOfUsersPerPage = 4;
-            int page = Integer.parseInt(requestedPage);
+            int page;
+            try{
+                page = Integer.parseInt(requestedPage);
+            }catch (Exception e){
+                page = 1;
+            }
+
 
             List<Usuario> usuarioList;
 
@@ -420,7 +439,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
         Optional<Usuario> optional = usuarioRepository.findById(id);
         if(optional.isPresent()){
             Usuario usuario = optional.get();
-            if(usuario.getCuentaActiva()==2){
+            if(usuario.getCuentaActiva()==2 || usuario.getCuentaActiva()==-1){
                     usuario.setCuentaActiva(1);
                     usuarioRepository.save(usuario);
                     if(usuario.getRol().equals("AdminRestaurante")){
@@ -495,7 +514,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
                     return "redirect:/admin/gestionCuentas";
                 }
                 restauranteRepository.deleteById(restaurante.getIdrestaurante());
-                usuario.setCuentaActiva(-1);
+                usuario.setCuentaActiva(3);
                 usuarioRepository.save(usuario);
 
                 //Envio de correo a usuario
@@ -535,6 +554,18 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
         return "adminsistema/agregarAdmin";
     }
 
+    public  boolean validarContrasenia(String contrasenia1) {
+        /*      https://mkyong.com/regular-expressions/how-to-validate-password-with-regular-expression/
+                A!@#&()–a1
+                A[{}]:;',?/*a1
+                A~$^+=<>a1
+                0123456789$abcdefgAB
+                123Aa$Aa
+         */
+        Pattern pattern1 = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$");
+        Matcher matcher1 = pattern1.matcher(contrasenia1);
+        return matcher1.matches();
+    }
 
     @PostMapping("/agregarAdmin")
     public String agregarAdmin(@ModelAttribute("usuario") @Valid Usuario usuario, BindingResult bindingResult,
@@ -546,14 +577,24 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
             return "adminsistema/agregarAdmin";
         }
         else {
-            if(usuario.getContraseniaHash().equals(password2)) {
+            Boolean validacionContrasenias = validarContrasenia(password2);
+
+            if(usuario.getContraseniaHash().equals(password2) && validacionContrasenias==true) {
+
                 String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
                 usuario.setContraseniaHash(contraseniahashbcrypt);
                 usuarioRepository.save(usuario);
                 attr.addFlashAttribute("msg", "Administrador creado exitosamente");
 
             }else {
-                model.addAttribute("contras","Contraseña no coinciden");
+
+                if (!usuario.getContraseniaHash().equals(password2)){
+                    model.addAttribute("contras","Las contraseñas no coinciden");
+                }
+                if (validacionContrasenias == false){
+                    model.addAttribute("contras","Debe tener al menos 8 caracteres, uno especial y una mayuscula");
+                }
+
                 return "adminsistema/agregarAdmin";
             }
         }
@@ -572,23 +613,53 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
     }
 
     @GetMapping("/usuarioReportes")
-    public String usuariosReportes(Model model){
-        List<Usuario> usuarioList = usuarioRepository.usuarioreportes();
-        model.addAttribute("listaUsuariosreporte",usuarioList);
-        return "adminsistema/ADMIN_ReportesVistaUsuarios";
-    }
+    public String usuariosReportes(Model model,
+                                   @RequestParam(value = "rol" ,defaultValue = "Todos")String rol,
+                                   @RequestParam(value = "page",defaultValue = "1") String requestedPage){
 
+        float numberOfUsersPerPage = 8;
+        int page;
+        try {
+            page = Integer.parseInt(requestedPage);
+        }catch (Exception e){
+            page = 1;
+        }
 
-    @GetMapping("/usuarioFiltro")
-    public String usuarioFiltro(Model model,@RequestParam(value = "rolSelected" ,defaultValue = "Todos")String rol){
         List<Usuario> usuarioList;
-        if(rol.equals("Repartidor") || rol.equals("AdminRestaurante") || rol.equals("Cliente")  ){
+        if(rol.equals("Repartidor") || rol.equals("AdminRestaurante") || rol.equals("Cliente")){
             usuarioList = usuarioRepository.findAllByRolAndCuentaActiva(rol,1);
         }else{
             usuarioList = usuarioRepository.usuarioreportes();
         }
 
-        model.addAttribute("listaUsuariosreporte",usuarioList);
+        String nombreRol;
+        if(rol.equals("Repartidor")){
+            nombreRol = "Repartidores";
+        }else if(rol.equals("AdminRestaurante")){
+            nombreRol = "Restaurantes";
+        }else if(rol.equals("Cliente")){
+            nombreRol = "Clientes";
+        }else{
+            nombreRol = "Todos";
+        }
+
+        int numberOfPages = (int) Math.ceil(usuarioList.size() / numberOfUsersPerPage);
+        if (page > numberOfPages) {
+            page = numberOfPages;
+        } // validation
+
+        int start = (int) numberOfUsersPerPage * (page - 1);
+        int end = (int) (start + numberOfUsersPerPage);
+
+        List<Usuario> lisOfUsersPage = usuarioList.subList(start, Math.min(end, usuarioList.size()));
+
+        model.addAttribute("currentPage", page);
+        model.addAttribute("maxNumberOfPages", numberOfPages);
+        model.addAttribute("listaUsuariosreporte", lisOfUsersPage);
+
+        model.addAttribute("nombreRol",nombreRol);
+
+        model.addAttribute("rol",rol);
 
         return "adminsistema/ADMIN_ReportesVistaUsuarios";
     }
@@ -655,14 +726,34 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
     }
 
     @GetMapping("/DeliveryReportes")
-    public String deliveryReportes(Model model,
-                                   @RequestParam(name = "page", defaultValue = "1") String requestedPage){
+    public String deliveryReportes(@RequestParam(name= "searchField",defaultValue = "") String buscar,
+                                   @RequestParam (value="filtro",defaultValue = "Todos") String filtro,
+                                   @RequestParam(name = "page", defaultValue = "1") String requestedPage,
+                                   Model model){
         System.out.println("errorr ***********************");
         float numberOfUsersPerPage = 8;
-        int page = Integer.parseInt(requestedPage);
+        int page;
+        try {
+            page = Integer.parseInt(requestedPage);
+        }catch (Exception e){
+            page = 1;
+        }
+        List<DeliveryReportes_DTO> listaDeli;
+        if(buscar.equals("") && filtro.equals("Habiles")){
+            listaDeli = pedidosRepository.reportesDelivery();
+        }else{
+            String fechaPrimerPedido = pedidosRepository.primerPedido();
+            listaDeli = pedidosRepository.reportesDelivery2(fechaPrimerPedido);
+        }
 
-        String fechaPrimerPedido = pedidosRepository.primerPedido();
-        List<DeliveryReportes_DTO> listaDeli = pedidosRepository.reportesDelivery2(fechaPrimerPedido);
+        String nombreFiltro;
+        if(filtro.equals("Habiles")){
+            nombreFiltro = "Fechas con Pedidos";
+        }else{
+            nombreFiltro = "Todas las Fechas";
+        }
+        model.addAttribute("nombreFiltro",nombreFiltro);
+
 
         int numberOfPages = (int) Math.ceil(listaDeli.size() / numberOfUsersPerPage);
         if (page > numberOfPages) {
@@ -686,8 +777,26 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
         model.addAttribute("maxNumberOfPages", numberOfPages);
         model.addAttribute("listadeli", lisOfUsersPage);
 
+        model.addAttribute("filtro",filtro);
+
         return "adminsistema/ADMIN_ReportesVistaDelivery";
     }
+
+
+    @PostMapping("/buscadorDeli")
+    public String buscadorDelivery(@RequestParam(value="searchField",defaultValue = "") String buscar,
+                                   @RequestParam (value="filtro",defaultValue = "Todos") String filtro,
+                                   RedirectAttributes attr,Model model){
+        System.out.println("El filtro es: " + filtro);
+        model.addAttribute("filtro",filtro);
+        model.addAttribute("searchField", buscar);
+
+        //model.addAttribute("listaUsuariosNuevos",usuarioList);
+        //return "adminsistema/nuevasCuentas";
+        return "redirect:/admin/DeliveryReportes";
+
+    }
+
 
 
 }

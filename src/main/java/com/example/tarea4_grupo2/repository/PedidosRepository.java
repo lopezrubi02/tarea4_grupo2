@@ -39,7 +39,7 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
     /******ADMINISTRADOR SISTEMA**********/
     /*Reporte De Delivery pedidos para adminsistema*/
     @Query(value = "select date(fechahorapedido) as 'fecha',count(idpedidos) as 'pedidos',sum(comisionsistema) as 'comision' from pedidos\n" +
-            "group by YEAR(fechahoraentregado),MONTH(fechahoraentregado),DAY(fechahoraentregado)\n" +
+            "where pedidos.fechahorapedido IS NOT NULL group by YEAR(fechahoraentregado),MONTH(fechahoraentregado),DAY(fechahoraentregado)\n" +
             "ORDER BY CONCAT(SUBSTRING_INDEX(fecha , '/', -1),SUBSTRING_INDEX(SUBSTRING_INDEX(fecha , '/', 2), '/', -1),SUBSTRING_INDEX(fecha , '/', 1)) DESC;\n" +
             "\n",nativeQuery = true)
     List<DeliveryReportes_DTO> reportesDelivery();

@@ -50,5 +50,11 @@ public class WebSecurityConfigAdapter extends org.springframework.security.confi
                 .usersByUsernameQuery("select email, contraseniahash, cuentaactiva from usuarios WHERE email =?")
                 .authoritiesByUsernameQuery("select u.email, u.rol from usuarios u where u.email=? and u.cuentaactiva!=-1");
     }
-
+                //valores cuenta activa:
+    /*
+                -1 -> no hay acceso (se setea al registrar repartidor) cuenta repartidor por aceptar
+                1 -> restaurante aceptado / cuenta repartidor aceptada
+                2 -> restaurante por aceptar
+                3 -> no hay restaurante registrado / no aceptado
+     */
 }
