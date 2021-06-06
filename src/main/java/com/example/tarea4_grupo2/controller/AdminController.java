@@ -33,6 +33,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Controller
 @RequestMapping("/admin")
@@ -552,6 +554,18 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
         return "adminsistema/agregarAdmin";
     }
 
+    public  boolean validarContrasenia(String contrasenia1) {
+        /*      https://mkyong.com/regular-expressions/how-to-validate-password-with-regular-expression/
+                A!@#&()–a1
+                A[{}]:;',?/*a1
+                A~$^+=<>a1
+                0123456789$abcdefgAB
+                123Aa$Aa
+         */
+        Pattern pattern1 = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$");
+        Matcher matcher1 = pattern1.matcher(contrasenia1);
+        return matcher1.matches();
+    }
 
     @PostMapping("/agregarAdmin")
     public String agregarAdmin(@ModelAttribute("usuario") @Valid Usuario usuario, BindingResult bindingResult,
@@ -563,14 +577,24 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
             return "adminsistema/agregarAdmin";
         }
         else {
-            if(usuario.getContraseniaHash().equals(password2)) {
+            Boolean validacionContrasenias = validarContrasenia(password2);
+
+            if(usuario.getContraseniaHash().equals(password2) && validacionContrasenias==true) {
+
                 String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
                 usuario.setContraseniaHash(contraseniahashbcrypt);
                 usuarioRepository.save(usuario);
                 attr.addFlashAttribute("msg", "Administrador creado exitosamente");
 
             }else {
-                model.addAttribute("contras","Contraseña no coinciden");
+
+                if (!usuario.getContraseniaHash().equals(password2)){
+                    model.addAttribute("contras","Las contraseñas no coinciden");
+                }
+                if (validacionContrasenias == false){
+                    model.addAttribute("contras","Debe tener al menos 8 caracteres, uno especial y una mayuscula");
+                }
+
                 return "adminsistema/agregarAdmin";
             }
         }
