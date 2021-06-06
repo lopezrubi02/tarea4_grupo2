@@ -22,7 +22,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
@@ -400,7 +399,7 @@ public class RepartidorController {
                                    @RequestParam(value = "movilidad2",defaultValue = "0") String movilidad2,
                                    BindingResult bindingResult, Model model) {
         System.out.println(movilidad2);
-        if(movilidad2.equalsIgnoreCase("moto") || movilidad2.equalsIgnoreCase("bicimoto")){
+        if( movilidad2.equalsIgnoreCase("bicicleta") || movilidad2.equalsIgnoreCase("moto") || movilidad2.equalsIgnoreCase("bicimoto")){
             System.out.println(movilidad2);
             model.addAttribute("movilidad2",movilidad2);
         }
@@ -415,17 +414,38 @@ public class RepartidorController {
                                      @RequestParam("direccion") String direccion,
                                      @RequestParam("distrito") Distritos distrito,
                                      @RequestParam("password2") String pass2,
-                                     @RequestParam("movilidad") String movilidad,
+                                     //@RequestParam("movilidad") String movilidad,
                                      @RequestParam("archivo") MultipartFile file,
                                      @RequestParam(value = "movilidad2",defaultValue = "0") String movilidad2,
                                      Model model, RedirectAttributes attributes) {
 
+        boolean correoExis = false;
+
+        Usuario usuario1 = usuarioRepository.findByEmail(usuario.getEmail());
+
+
+        if (usuario1 != null) {
+            if (usuario.getEmail().equalsIgnoreCase(usuario1.getEmail())) {
+                correoExis = true;
+                String msgC = "El correo ya se encuentra registrado";
+            }
+        }
+
+        boolean dniExis = false;
+        Usuario usuario3 = usuarioRepository.findByDni(usuario.getDni());
+        if (usuario3 != null) {
+            if (usuario.getDni().equalsIgnoreCase(usuario3.getDni())
+                    & usuario3.getRol().equalsIgnoreCase("Repartidor")) {
+                dniExis = true;
+            }
+        }
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("listadistritos", distritosRepository.findAll());
+            model.addAttribute("dniExis", dniExis);
+            model.addAttribute("correoExis", correoExis);
             return "repartidor/registro_parte3";
         }
-
 
 
         if (usuario.getContraseniaHash().equals(pass2)) {
@@ -447,7 +467,7 @@ public class RepartidorController {
 
             usuario2.setFechaNacimiento(usuario.getFechaNacimiento());
             usuarioRepository.save(usuario2);
-                //System.out.println(fechaNacimiento);
+            //System.out.println(fechaNacimiento);
 
             Direcciones direccionactual = new Direcciones();
             direccionactual.setDireccion(direccion);
@@ -466,23 +486,15 @@ public class RepartidorController {
                 return "repartidor/registro_parte3";
             }
             try {
-                Repartidor repartidor= new Repartidor();
+                Repartidor repartidor = new Repartidor();
                 repartidor.setIdusuarios(usuario2.getIdusuarios());
                 repartidor.setFoto(file.getBytes());
                 repartidor.setFotonombre(fileName);
                 repartidor.setFotocontenttype(file.getContentType());
                 repartidor.setDistritos(distrito);
                 repartidor.setDisponibilidad(false);
-                repartidor.setMovilidad(movilidad);
+                repartidor.setMovilidad(movilidad2);
                 repartidorRepository.save(repartidor);
-
-                if(movilidad.equalsIgnoreCase("bicicleta")){
-                    return "redirect:/login";
-                }else{
-                    //form de placa y licencia
-                    attributes.addAttribute("id",usuario2.getIdusuarios());
-                    return "redirect:/new2";
-                }
 
 
             } catch (IOException e) {
@@ -500,9 +512,7 @@ public class RepartidorController {
             return "repartidor/registro_parte3";
         }
 
-
-
-
+        return "redirect:/login";
 
     }
 
