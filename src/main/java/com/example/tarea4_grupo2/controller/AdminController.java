@@ -15,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.HttpServletBean;
 import org.springframework.validation.BindingResult;
@@ -214,20 +215,26 @@ public class AdminController {
     ){
 
         if(bindingResult.hasErrors()) {
+            System.out.println("error papu");
+            for( ObjectError err : bindingResult.getAllErrors()){
+                System.out.println(err.toString());
+            }
+
             return "adminsistema/miCuenta";
         } else {
             // se obtiene el usuario en la base de datos para actualizar solo los campos que han cambiado
-            Optional<Usuario> optionalUsuario = usuarioRepository.findById(usuarioRecibido.getIdusuarios());
-            Usuario usuarioEnlabasededatos = optionalUsuario.get();
-
-            usuarioEnlabasededatos.setNombre(usuarioRecibido.getNombre());
-            usuarioEnlabasededatos.setEmail(usuarioRecibido.getEmail());
-            usuarioEnlabasededatos.setDni(usuarioRecibido.getDni());
-            usuarioEnlabasededatos.setTelefono(usuarioRecibido.getTelefono());
-            usuarioEnlabasededatos.setFechaNacimiento(usuarioRecibido.getFechaNacimiento());
-            usuarioEnlabasededatos.setSexo(usuarioRecibido.getSexo());
-
-            usuarioRepository.save(usuarioEnlabasededatos);
+//            Optional<Usuario> optionalUsuario = usuarioRepository.findById(usuarioRecibido.getIdusuarios());
+//            Usuario usuarioEnlabasededatos = optionalUsuario.get();
+//
+//            usuarioEnlabasededatos.setNombre(usuarioRecibido.getNombre());
+//            usuarioEnlabasededatos.setEmail(usuarioRecibido.getEmail());
+//            usuarioEnlabasededatos.setDni(usuarioRecibido.getDni());
+//            usuarioEnlabasededatos.setTelefono(usuarioRecibido.getTelefono());
+//            usuarioEnlabasededatos.setFechaNacimiento(usuarioRecibido.getFechaNacimiento());
+//            usuarioEnlabasededatos.setSexo(usuarioRecibido.getSexo());
+//
+//            usuarioRepository.save(usuarioEnlabasededatos);
+                usuarioRepository.save(usuarioRecibido);
 
             return "redirect:/admin/usuariosActuales";
         }
