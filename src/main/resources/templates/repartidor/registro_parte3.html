@@ -128,8 +128,25 @@
                                           enctype="multipart/form-data" th:object="${usuario}">
                                         <div class="row">
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <label>Movilidad</label>
+                                                <select type="text" class="form-select" id="movilidad2"  style="width: 100%;" onchange="window.location=this.options[this.selectedIndex].value">
+                                                    <option selected="true" disabled="disabled">Seleccione su movilidad</option>
+                                                    <option th:selected="${movilidad2 == 'moto'}" value="new3?movilidad2=moto" text="Moto">Moto</option>
+                                                    <option th:selected="${movilidad2 == 'bicimoto'}" value="new3?movilidad2=bicimoto" text="Bicimoto">Bicimoto</option>
+                                                    <option th:selected="${movilidad2 == 'bicicleta'}" value="new3?movilidad2=bicicleta" text="Bicicleta">Bicicleta</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:if="${movilidad2 == 'moto' || movilidad2 == 'bicimoto' }">
+                                                <input class="form-control" placeholder="Placa" name="placa" id="placa">
+                                            </div>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:if="${movilidad2 == 'moto' || movilidad2 == 'bicimoto' }">
+                                                <input class="form-control" placeholder="Licencia de conducir" name="licencia" id="licencia">
+                                            </div>
+
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <input class="form-control" placeholder="Correo" type="text" th:field="*{email}">
                                                 <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                                                <div class="text-danger" th:if="${correoExis==true}" >El correo ya se encuentra registrado</div>
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <input class="form-control" placeholder="Nombres" type="text" th:field="*{nombre}">
@@ -142,6 +159,7 @@
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <input class="form-control" placeholder="DNI" type="text" th:field="*{dni}">
                                                 <div class="text-danger" th:if="${#fields.hasErrors('dni')}" th:errors="*{dni}"></div>
+                                                <div class="text-danger" th:if="${dniExis}" >El dni ya se encuentra registrado</div>
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <input class="form-control" placeholder="Celular" type="text" th:field="*{telefono}">
@@ -172,24 +190,12 @@
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <input class="form-control" placeholder="Contraseña" type="password" th:field="*{contraseniaHash}">
                                                 <div class="text-danger" th:if="${#fields.hasErrors('contraseniaHash')}" th:errors="*{contraseniaHash}"></div>
+                                                <div class="text-danger" th:if="${!cont1val}" >La contraseña debe tener al menos una letra, un número y un caracter especial</div>
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <input class="form-control" placeholder="Confirmar Contraseña" type="password" name="password2" id="password2">
                                                 <div class="text-danger" th:if="${#fields.hasErrors('contraseniaHash')}" th:errors="*{contraseniaHash}"></div>
-                                            </div>
-                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                                <label>Movilidad</label>
-                                                <select type="text" class="form-select" id="movilidad2" name="movilidad2" style="width: 100%;" onchange="window.location=this.options[this.selectedIndex].value">
-                                                    <option value="new3?movilidad2=moto" text="Moto">Moto</option>
-                                                    <option value="new3?movilidad2=bicimoto" text="Bicimoto">Bicimoto</option>
-                                                    <option value="new3?movilidad2=bicicleta" text="Bicicleta">Bicicleta</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:if="${movilidad2 == 'moto' || movilidad2 == 'bicimoto' }">
-                                                <input class="form-control" placeholder="Placa" name="placa" id="placa">
-                                            </div>
-                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:if="${movilidad2 == 'moto' || movilidad2 == 'bicimoto' }">
-                                                <input class="form-control" placeholder="Licencia de conducir" name="licencia" id="licencia">
+                                                <div class="text-danger" th:if="${!cont2val}" >La contraseña debe tener al menos una letra, un número y un caracter especial</div>
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <label for="archivo">Foto</label>

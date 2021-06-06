@@ -7,6 +7,10 @@ import com.example.tarea4_grupo2.dto.PlatosPorPedidoDTO;
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,10 +22,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Controller
 public class RepartidorController {
@@ -257,6 +262,24 @@ public class RepartidorController {
         return "redirect:/repartidor/home";
     }
 
+    @GetMapping("/repartidor/imagen")
+    public ResponseEntity<byte[]> imagenRepartidor(HttpSession session) {
+
+
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int id= sessionUser.getIdusuarios();
+        /********************************/
+
+        Repartidor optional = repartidorRepository.findRepartidorByIdusuariosEquals(id);
+
+            byte[] imagen = optional.getFoto();
+            HttpHeaders httpHeaders=new HttpHeaders();
+            httpHeaders.setContentType(MediaType.parseMediaType(optional.getFotocontenttype()));
+            return new ResponseEntity<>(imagen,httpHeaders, HttpStatus.OK);
+
+
+    }
+
     @GetMapping("/repartidor/miperfil")
     public String perfilRepartidor(@ModelAttribute("repartidor") Repartidor repartidor, Model model,
                                    HttpSession session) {
@@ -286,17 +309,21 @@ public class RepartidorController {
                                           BindingResult bindingResult,
                                           @RequestParam("password2") String password2,
                                           @RequestParam("direccion") String direccion,
-                                          //HttpSession session,
+                                          HttpSession session,
                                           Model model) {
-        //Usuario user=(Usuario) session.getAttribute("usuarioLogueado");
+        Usuario user=(Usuario) session.getAttribute("usuarioLogueado");
         int id=usuario.getIdusuarios();
         Optional<Usuario> optional = usuarioRepository.findById(id);
 
-        Usuario user = optional.get();
+        Usuario user2 = optional.get();
 
 
-        if(bindingResult.hasFieldErrors("telefono")|| bindingResult.hasFieldErrors("contraseniaHash")){
 
+        if(  bindingResult.hasFieldErrors("telefono")|| bindingResult.hasFieldErrors("contraseniaHash")){
+
+            if(bindingResult.hasFieldErrors("telefono")){
+                String msgT="El teléfono no es válido";
+            }
             Usuario usuario2 = optional.get();
             model.addAttribute("usuario", usuario2);
 
@@ -371,7 +398,14 @@ public class RepartidorController {
 
     @GetMapping("/new3")
     public String nuevoRepartidor3(@ModelAttribute("usuario") Usuario usuario,
+                                   @RequestParam(value = "movilidad2",defaultValue = "0") String movilidad2,
                                    BindingResult bindingResult, Model model) {
+        System.out.println(movilidad2);
+        if( movilidad2.equalsIgnoreCase("bicicleta") || movilidad2.equalsIgnoreCase("moto") || movilidad2.equalsIgnoreCase("bicimoto")){
+            System.out.println(movilidad2);
+            model.addAttribute("movilidad2",movilidad2);
+        }
+
         model.addAttribute("listadistritos", distritosRepository.findAll());
         return "repartidor/registro_parte3";
     }
@@ -382,20 +416,54 @@ public class RepartidorController {
                                      @RequestParam("direccion") String direccion,
                                      @RequestParam("distrito") Distritos distrito,
                                      @RequestParam("password2") String pass2,
-                                     @RequestParam("movilidad") String movilidad,
+                                     //@RequestParam("movilidad") String movilidad,
                                      @RequestParam("archivo") MultipartFile file,
                                      @RequestParam(value = "movilidad2",defaultValue = "0") String movilidad2,
                                      Model model, RedirectAttributes attributes) {
 
+        boolean correoExis = false;
+
+        Usuario usuario1 = usuarioRepository.findByEmail(usuario.getEmail());
+
+
+        if (usuario1 != null) {
+            if (usuario.getEmail().equalsIgnoreCase(usuario1.getEmail())) {
+                correoExis = true;
+                String msgC = "El correo ya se encuentra registrado";
+            }
+        }
+
+        boolean dniExis = false;
+        Usuario usuario3 = usuarioRepository.findByDni(usuario.getDni());
+        if (usuario3 != null) {
+            if (usuario.getDni().equalsIgnoreCase(usuario3.getDni())
+                    & usuario3.getRol().equalsIgnoreCase("Repartidor")) {
+                dniExis = true;
+            }
+        }
+
+        boolean cont1val=false;
+
+        Pattern pattern1 = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$");
+        Matcher matcher1 = pattern1.matcher(usuario.getContraseniaHash());
+        if( matcher1.matches()){
+             cont1val=true;
+        }
+        boolean cont2val=false;
+        Matcher matcher2 = pattern1.matcher(pass2);
+        if( matcher2.matches()){
+            cont2val=true;
+        }
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("listadistritos", distritosRepository.findAll());
+            model.addAttribute("dniExis", dniExis);
+            model.addAttribute("correoExis", correoExis);
+            model.addAttribute("cont1val",cont1val);
+            model.addAttribute("cont2val",cont2val);
             return "repartidor/registro_parte3";
         }
 
-        if(movilidad2.equalsIgnoreCase("moto") || movilidad2.equalsIgnoreCase("bicimoto")){
-            model.addAttribute("movilidad2",movilidad2);
-        }
 
         if (usuario.getContraseniaHash().equals(pass2)) {
             Usuario usuario2 = new Usuario();
@@ -416,7 +484,7 @@ public class RepartidorController {
 
             usuario2.setFechaNacimiento(usuario.getFechaNacimiento());
             usuarioRepository.save(usuario2);
-                //System.out.println(fechaNacimiento);
+            //System.out.println(fechaNacimiento);
 
             Direcciones direccionactual = new Direcciones();
             direccionactual.setDireccion(direccion);
@@ -435,23 +503,15 @@ public class RepartidorController {
                 return "repartidor/registro_parte3";
             }
             try {
-                Repartidor repartidor= new Repartidor();
+                Repartidor repartidor = new Repartidor();
                 repartidor.setIdusuarios(usuario2.getIdusuarios());
                 repartidor.setFoto(file.getBytes());
                 repartidor.setFotonombre(fileName);
                 repartidor.setFotocontenttype(file.getContentType());
                 repartidor.setDistritos(distrito);
                 repartidor.setDisponibilidad(false);
-                repartidor.setMovilidad(movilidad);
+                repartidor.setMovilidad(movilidad2);
                 repartidorRepository.save(repartidor);
-
-                if(movilidad.equalsIgnoreCase("bicicleta")){
-                    return "redirect:/login";
-                }else{
-                    //form de placa y licencia
-                    attributes.addAttribute("id",usuario2.getIdusuarios());
-                    return "redirect:/new2";
-                }
 
 
             } catch (IOException e) {
@@ -469,9 +529,7 @@ public class RepartidorController {
             return "repartidor/registro_parte3";
         }
 
-
-
-
+        return "redirect:/login";
 
     }
 
