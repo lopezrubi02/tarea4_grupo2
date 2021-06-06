@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Controller
 public class RepartidorController {
@@ -440,10 +442,25 @@ public class RepartidorController {
             }
         }
 
+        boolean cont1val=false;
+
+        Pattern pattern1 = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$");
+        Matcher matcher1 = pattern1.matcher(usuario.getContraseniaHash());
+        if( matcher1.matches()){
+             cont1val=true;
+        }
+        boolean cont2val=false;
+        Matcher matcher2 = pattern1.matcher(pass2);
+        if( matcher2.matches()){
+            cont2val=true;
+        }
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("listadistritos", distritosRepository.findAll());
             model.addAttribute("dniExis", dniExis);
             model.addAttribute("correoExis", correoExis);
+            model.addAttribute("cont1val",cont1val);
+            model.addAttribute("cont2val",cont2val);
             return "repartidor/registro_parte3";
         }
 
