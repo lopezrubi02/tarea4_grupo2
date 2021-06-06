@@ -193,8 +193,6 @@ public class AdminController {
     @GetMapping("/miCuenta")
     public String miCuenta(
             Model model,
-            @ModelAttribute("usuario") @Valid Usuario usuarioRecibido,
-            BindingResult bindingResult,
             HttpSession session){
 
         Usuario usuarioActual = (Usuario) session.getAttribute("usuarioLogueado");
