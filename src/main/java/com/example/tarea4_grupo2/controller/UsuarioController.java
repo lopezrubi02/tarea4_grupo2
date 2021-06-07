@@ -806,7 +806,7 @@ public class UsuarioController {
                 model.addAttribute("pedidoencurso",pedidoencurso);
                 model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
                 model.addAttribute("montopagar", montoPagar_pedidoHasPlatoDTO);
-                pedidosRepository.save(pedidoencurso);
+
             }
             return "cliente/checkoutcarrito";
         }
@@ -839,10 +839,17 @@ public class UsuarioController {
                     List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(pedidoencurso.getIdpedidos());
                     System.out.println(pedidoencurso.getIdpedidos());
                     System.out.println(pedidoencurso.getDireccionentrega().getIddirecciones());
-                    //model.addAttribute("platosxpedido",platosxpedido);
-                    //model.addAttribute("pedidoencurso",pedidoencurso);
-                    //Pedidos pedido = new Pedidos();
-                    //pedidosRepository.save(pedido);
+                    MontoTotal_PedidoHasPlatoDTO montoTotal_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montototal(pedidoencurso.getIdpedidos());
+                    MontoPagar_PedidoHasPlatoDTO montoPagar_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montopagar(pedidoencurso.getIdpedidos());
+                    model.addAttribute("platosxpedido",platosxpedido);
+                    model.addAttribute("pedidoencurso",pedidoencurso);
+                    model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
+                    model.addAttribute("montopagar", montoPagar_pedidoHasPlatoDTO);
+                    pedidoencurso.setMetododepago(metodosel);
+                    pedidoencurso.setMontoexacto(String.valueOf(montoTotal_pedidoHasPlatoDTO.getpreciototal()));
+                    pedidoencurso.setMontototal(String.valueOf(montoPagar_pedidoHasPlatoDTO.getpreciopagar()));
+                    pedidoencurso.setEstadorestaurante("pendiente");
+                    pedidosRepository.save(pedidoencurso);
                 }
             }
             return "redirect:/cliente/paginaprincipal";
