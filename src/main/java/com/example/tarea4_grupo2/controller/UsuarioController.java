@@ -689,7 +689,7 @@ public class UsuarioController {
                  PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido,idplato);
                  PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey,pedidos,platoelegido,descripcion,cantidad,cubiertos);
                  pedidos.addpedido(pedidoHasPlato);
-
+                 pedidos.setMontototal("0");
                  pedidosRepository.save(pedidos);
                  listapedidoscliente = pedidosRepository.listapedidoxcliente(idcliente,idrestaurante);
                  tam = listapedidoscliente.size();
@@ -889,8 +889,8 @@ public class UsuarioController {
                     model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
                     model.addAttribute("montopagar", montoPagar_pedidoHasPlatoDTO);
                     pedidoencurso.setMetododepago(metodosel);
-                    pedidoencurso.setMontoexacto(String.valueOf(montoTotal_pedidoHasPlatoDTO.getpreciototal()));
-                    //pedidoencurso.setMontototal(String.valueOf(montoPagar_pedidoHasPlatoDTO.getpreciopagar()));
+                    //pedidoencurso.setMontoexacto(String.valueOf(montoTotal_pedidoHasPlatoDTO.getpreciototal()));
+                    pedidoencurso.setMontototal(String.valueOf(montoPagar_pedidoHasPlatoDTO.getpreciopagar()));
                     pedidoencurso.setEstadorestaurante("pendiente");
                     pedidosRepository.save(pedidoencurso);
                 }
