@@ -4,6 +4,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 @Entity
@@ -59,6 +60,18 @@ public class Pedidos {
     @JoinColumn(name = "direccionentrega")
     private Direcciones direccionentrega;
 
+    public void removePlato(Plato plato){
+        for(Iterator<PedidoHasPlato> iterator = plato.getPedidohasplato().iterator();
+                    iterator.hasNext();){
+            PedidoHasPlato pedidoHasPlato1 = iterator.next();
+            if(pedidoHasPlato1.getPedido().equals(this) && pedidoHasPlato1.getPlato().equals(plato)){
+                iterator.remove();
+                pedidoHasPlato1.setPlato(null);
+                pedidoHasPlato1.setPedido(null);
+            }
+        }
+    }
+
     public Set<PedidoHasPlato> getPedidohasplato() {
         return pedidohasplato;
     }
@@ -70,6 +83,7 @@ public class Pedidos {
     public void addpedido(PedidoHasPlato pedidoHasPlato){
         this.pedidohasplato.add(pedidoHasPlato);
     }
+
 
 
     public Pedidos() {
