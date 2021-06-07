@@ -105,7 +105,7 @@
                                                 <option value="Femenino">Femenino</option>
                                             </select>
                                         </div>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" style="padding-top: 25px">
                                             <label>Direccion</label>
                                             <input class="form-control" placeholder="Direccion" type="text" id="direccion" name="direccion">
                                         </div>
@@ -119,6 +119,8 @@
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <label>Correo</label>
+                                            <div th:if="${msg2 != null}" th:text="${msg2}" class="text-danger"></div>
+                                            <div th:if="${msg3 != null}" th:text="${msg3}" class="text-danger"></div>
                                             <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
                                             <input class="form-control" placeholder="Correo" type="text" th:field="*{email}">
 
