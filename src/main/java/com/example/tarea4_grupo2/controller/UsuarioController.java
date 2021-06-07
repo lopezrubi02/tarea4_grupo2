@@ -132,7 +132,7 @@ public class UsuarioController {
                     String subject = "Cuenta creada en Spicyo";
                     //TODO modificar direcion url despues de despliegue aws.
                     String direccionurl = "http://localhost:8090/login";
-                    URL url = new URL(direccion);
+                    //URL url = new URL(direccionurl);
                     String mensaje = "¡Hola!<br><br>" +
                             "Ahora es parte de Spicyo. Para ingresar a su cuenta haga click: <a href='" + direccionurl + "'>AQUÍ</a> <br><br>Atte. Equipo de Spicy :D</b>";
                     String correoDestino = usuario.getEmail();
