@@ -356,37 +356,42 @@ public class AdminRestauranteController {
             int page = Integer.parseInt(requestedPage);
             int idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(usuario.getIdusuarios()).get().getIdrestaurante();
             List<Cupones> listaCupones = cuponesRepository.buscarCuponesPorIdRestaurante(idrestaurante);
-            List<String> listaDisponibilidad = new ArrayList<String>();
-            int numberOfPages = (int) Math.ceil(listaCupones.size() / numberOfUsersPerPage);
-            if (page > numberOfPages) {
-                page = numberOfPages;
-            } // validation
 
-            int start = (int) numberOfUsersPerPage * (page - 1);
-            int end = (int) (start + numberOfUsersPerPage);
+            if(!(listaCupones.isEmpty())) {
 
-            List<Cupones> listOfCuponesPage = listaCupones.subList(start, Math.min(end, listaCupones.size()));
-            for (Cupones i: listOfCuponesPage){
-                Date inicio = i.getFechainicio();
-                Date fin = i.getFechafin();
-                Date ahora = Date.valueOf(LocalDate.now());
+                List<String> listaDisponibilidad = new ArrayList<String>();
+                int numberOfPages = (int) Math.ceil(listaCupones.size() / numberOfUsersPerPage);
+                if (page > numberOfPages) {
+                    page = numberOfPages;
+                } // validation
 
-                if(inicio.compareTo(ahora) > 0){
-                    listaDisponibilidad.add("No");
-                }else if(fin.compareTo(ahora) < 0){
-                    listaDisponibilidad.add("No");
-                }else if((inicio.compareTo(ahora) < 0) && (fin.compareTo(ahora) > 0)){
-                    listaDisponibilidad.add("Si");
-                }else{
-                    listaDisponibilidad.add("No");
+                int start = (int) numberOfUsersPerPage * (page - 1);
+                int end = (int) (start + numberOfUsersPerPage);
+
+                List<Cupones> listOfCuponesPage = listaCupones.subList(start, Math.min(end, listaCupones.size()));
+                System.out.println("TRACE3");
+                for (Cupones i : listOfCuponesPage) {
+                    Date inicio = i.getFechainicio();
+                    Date fin = i.getFechafin();
+                    Date ahora = Date.valueOf(LocalDate.now());
+
+                    if (inicio.compareTo(ahora) > 0) {
+                        listaDisponibilidad.add("No");
+                    } else if (fin.compareTo(ahora) < 0) {
+                        listaDisponibilidad.add("No");
+                    } else if ((inicio.compareTo(ahora) < 0) && (fin.compareTo(ahora) > 0)) {
+                        listaDisponibilidad.add("Si");
+                    } else {
+                        listaDisponibilidad.add("No");
+                    }
                 }
-
+                model.addAttribute("listaCupones", listOfCuponesPage);
+                model.addAttribute("listaDisponibilidad", listaDisponibilidad);
+                model.addAttribute("currentPage", page);
+                model.addAttribute("maxNumberOfPages", numberOfPages);
+                return "/AdminRestaurantes/cupones";
             }
-            model.addAttribute("listaCupones", listOfCuponesPage);
-            model.addAttribute("listaDisponibilidad", listaDisponibilidad);
-            model.addAttribute("currentPage", page);
-            model.addAttribute("maxNumberOfPages", numberOfPages);
-            return "/AdminRestaurantes/cupones";
+            return "/AdminRestaurantes/sincupones";
         }
         else{
             return "redirect:/adminrest/login";
@@ -486,26 +491,26 @@ public class AdminRestauranteController {
             else{
                 comentariosList= pedidosRepository.buscarComentariosUsuarios(searchField,idrestaurante);
             }
-            // si no se encuentra nada, se redirige a la lista general
-            if(comentariosList.size() == 0){
-                return "redirect:/adminrest/calificaciones";
+
+            if(!(comentariosList.isEmpty())){
+                int numberOfPages = (int) Math.ceil(comentariosList.size() / numberOfUsersPerPage);
+                if (page > numberOfPages) {
+                    page = numberOfPages;
+                } // validation
+
+                int start = (int) numberOfUsersPerPage * (page - 1);
+                int end = (int) (start + numberOfUsersPerPage);
+
+                List<ComentariosDto> lisOfComentariosPage = comentariosList.subList(start, Math.min(end, comentariosList.size()));
+
+                model.addAttribute("listaComentarios", lisOfComentariosPage);
+                model.addAttribute("currentPage", page);
+                model.addAttribute("maxNumberOfPages", numberOfPages);
+                model.addAttribute("searchfield",searchField);
+                return "AdminRestaurantes/calificaciones";
+            }else{
+                return "AdminRestaurantes/sincalificaciones";
             }
-
-            int numberOfPages = (int) Math.ceil(comentariosList.size() / numberOfUsersPerPage);
-            if (page > numberOfPages) {
-                page = numberOfPages;
-            } // validation
-
-            int start = (int) numberOfUsersPerPage * (page - 1);
-            int end = (int) (start + numberOfUsersPerPage);
-
-            List<ComentariosDto> lisOfComentariosPage = comentariosList.subList(start, Math.min(end, comentariosList.size()));
-
-            model.addAttribute("listaComentarios", lisOfComentariosPage);
-            model.addAttribute("currentPage", page);
-            model.addAttribute("maxNumberOfPages", numberOfPages);
-            model.addAttribute("searchfield",searchField);
-            return "AdminRestaurantes/calificaciones";
         }else{
             return"redirect:/adminrest/login";
         }
