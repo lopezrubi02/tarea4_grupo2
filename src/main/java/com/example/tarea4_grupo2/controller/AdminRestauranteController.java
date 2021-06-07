@@ -464,9 +464,7 @@ public class AdminRestauranteController {
                 cuponesRepository.save(cupon);
                 attr.addFlashAttribute("msg2", "Cupon actualizado exitosamente");
                 return "redirect:/adminrest/cupones";
-
             }
-
         }
     }
 
@@ -679,17 +677,24 @@ public class AdminRestauranteController {
             if(Pattern.matches("^[a-z0-9_]+@gmail.com",usuario.getEmail())) {
                 Integer id = usuarioRepository.verificarEmail(usuario.getEmail(), "AdminRestaurante");
                 if(id==0 || usuario.getIdusuarios().equals(user.getIdusuarios())) {
-                    //Falta verificar la contraseña
-                    System.out.println(user.getContraseniaHash());
-                    System.out.println(BCrypt.hashpw(usuario.getContraseniaHash(),BCrypt.gensalt()));
+
                     if (user.getContraseniaHash().equals(BCrypt.hashpw(usuario.getContraseniaHash(),BCrypt.gensalt()))) {
                         user.setEmail(usuario.getEmail());
                         user.setTelefono(usuario.getTelefono());
                         usuarioRepository.save(user);
-                        if(pass.equals(pass2) && pass!=null && pass!=""){
+                        if(pass.equals(pass2) && pass!=null && pass!="" && Pattern.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$",pass)){
                             user.setContraseniaHash(BCrypt.hashpw(pass,BCrypt.gensalt()));
+                            return "redirect:/adminrest/cuentaAdmin";
                         }
-                        return "redirect:/adminrest/cuentaAdmin";
+                        else{
+                            model.addAttribute("msgpasserror", "Contraseñas no cumple con los requisitos");
+                            model.addAttribute("listadirecciones", direccionesRepository.findAllByUsuariosIdusuariosAndActivoEquals(user.getIdusuarios(), 1));
+                            model.addAttribute("restaurante", restauranteRepository.obtenerperfilRest(user.getIdusuarios()));
+                            model.addAttribute("datos", usuarioRepository.obtenerDatos(user.getIdusuarios()));
+                            model.addAttribute("ruc", restauranteRepository.buscarRuc(usuario.getIdusuarios()));
+                            model.addAttribute("listadistritos", distritosRepository.findAll());
+                            return "AdminRestaurantes/cuenta";
+                        }
                     } else {
                         model.addAttribute("msg", "Contraseñas no son iguales");
                         model.addAttribute("listadirecciones", direccionesRepository.findAllByUsuariosIdusuariosAndActivoEquals(user.getIdusuarios(), 1));

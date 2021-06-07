@@ -147,10 +147,12 @@
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <label>Nueva contraseña</label>
+                                                <div th:if="${msgpasserror != null}" th:text="${msgpasserror}" class="text-danger"></div>
                                                 <input placeholder="Confirmar contraseña" class="form-control" type="password" id="pass" name="pass">
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <label>Confirmar contraseña</label>
+                                                <div th:if="${msgpasserror != null}" th:text="${msgpasserror}" class="text-danger"></div>
                                                 <input placeholder="Confirmar contraseña" class="form-control" type="password" id="pass2" name="pass2">
                                             </div>
                                             <div class="row">
