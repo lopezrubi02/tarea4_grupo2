@@ -732,13 +732,37 @@ public class UsuarioController {
     }
 
     @PostMapping("/cliente/guardarcheckout")
-    public String getcheckout(Model model,
-                              HttpSession session, RedirectAttributes redirectAttributes){
+    public String getcheckout(@RequestParam(value = "idmetodo",defaultValue = "0") int idmetodo,
+    Model model,
+    HttpSession session,
+    RedirectAttributes redirectAttributes){
         //revisar el metodo, sale error//
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuario=sessionUser.getIdusuarios();
-        System.out.println("pago");
-        return "redirect:/cliente/paginaprincipal";
+        System.out.println(idmetodo);
+        List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idusuario);
+
+        if(listapedidospendientes.isEmpty()){
+            return "redirect:/cliente/realizarpedido";
+        }else{
+            Optional<MetodosDePago> metodoopt = metodosDePagoRepository.findById(idmetodo);
+            if(metodoopt.isPresent()) {
+                MetodosDePago metodosel = metodoopt.get();
+                model.addAttribute("metodoelegido", idmetodo);
+                System.out.println(idmetodo);
+                for (Pedidos pedidoencurso : listapedidospendientes) {
+                    List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(pedidoencurso.getIdpedidos());
+                    System.out.println(pedidoencurso.getIdpedidos());
+                    System.out.println(pedidoencurso.getDireccionentrega().getIddirecciones());
+                    //model.addAttribute("platosxpedido",platosxpedido);
+                    //model.addAttribute("pedidoencurso",pedidoencurso);
+                    Pedidos pedido = new Pedidos();
+                    pedidosRepository.save(pedido);
+
+                }
+            }
+            return "redirect:/cliente/paginaprincipal";
+        }
     }
 
 
