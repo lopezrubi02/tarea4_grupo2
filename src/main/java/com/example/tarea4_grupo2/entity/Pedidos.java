@@ -4,6 +4,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 @Entity
@@ -70,6 +71,7 @@ public class Pedidos {
     public void addpedido(PedidoHasPlato pedidoHasPlato){
         this.pedidohasplato.add(pedidoHasPlato);
     }
+
 
 
     public Pedidos() {

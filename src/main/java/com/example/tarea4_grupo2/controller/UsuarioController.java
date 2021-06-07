@@ -736,12 +736,63 @@ public class UsuarioController {
                 List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(pedidoencurso.getIdpedidos());
                 System.out.println(pedidoencurso.getIdpedidos());
                 System.out.println(pedidoencurso.getDireccionentrega().getIddirecciones());
+                MontoTotal_PedidoHasPlatoDTO montoTotal_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montototal(pedidoencurso.getIdpedidos());
                 model.addAttribute("platosxpedido",platosxpedido);
                 model.addAttribute("pedidoencurso",pedidoencurso);
+                model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
             }
         }
         return "cliente/carrito_productos";
     }
+
+    @GetMapping("/cliente/eliminarplato")
+    public String eliminarplato(HttpSession session, Model model,
+                                   @RequestParam("idplato") int idplato){
+
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuario=sessionUser.getIdusuarios();
+
+        Optional<Plato> platoopt = platoRepository.findById(idplato);
+        if(platoopt.isPresent()){
+            Plato platoxeliminar = platoopt.get();
+
+            System.out.println("prueba eliminar plato *************");
+            System.out.println(idplato);
+        }
+
+        return "redirect:/cliente/carritoproductos";
+
+    }
+
+    @GetMapping("/cliente/vaciarcarrrito")
+    public String vaciarcarrito(Model model, HttpSession session){
+
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuario=sessionUser.getIdusuarios();
+
+        List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idusuario);
+
+        if(listapedidospendientes.isEmpty()){
+            model.addAttribute("lista",0);
+        }else{
+            model.addAttribute("lista",1);
+
+            for (Pedidos pedidoencurso : listapedidospendientes){
+
+                List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(pedidoencurso.getIdpedidos());
+                for(PedidoHasPlato plato1 : platosxpedido){
+                    PedidoHasPlatoKey pedidoHasPlatoKey = plato1.getId();
+                    pedidoHasPlatoRepository.deleteById(pedidoHasPlatoKey);
+                    System.out.println("deberia borrar plato ****************************");
+                }
+                pedidosRepository.deleteById(pedidoencurso.getIdpedidos());
+            }
+        }
+
+        return "redirect:/cliente/carritoproductos";
+    }
+
+
 
     @GetMapping("/cliente/checkout")
     public String checkout(Model model, HttpSession session,
@@ -768,8 +819,13 @@ public class UsuarioController {
                 List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(pedidoencurso.getIdpedidos());
                 System.out.println(pedidoencurso.getIdpedidos());
                 System.out.println(pedidoencurso.getDireccionentrega().getIddirecciones());
+                MontoTotal_PedidoHasPlatoDTO montoTotal_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montototal(pedidoencurso.getIdpedidos());
+                MontoPagar_PedidoHasPlatoDTO montoPagar_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montopagar(pedidoencurso.getIdpedidos());
                 model.addAttribute("platosxpedido",platosxpedido);
                 model.addAttribute("pedidoencurso",pedidoencurso);
+                model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
+                model.addAttribute("montopagar", montoPagar_pedidoHasPlatoDTO);
+                pedidosRepository.save(pedidoencurso);
             }
             return "cliente/checkoutcarrito";
         }
@@ -781,9 +837,11 @@ public class UsuarioController {
     Model model,
     HttpSession session,
     RedirectAttributes redirectAttributes){
+         //TODO cuando se haya pagado por el pedido modificar el estadorestaurante = "pendiente";
         //revisar el metodo, sale error//
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuario=sessionUser.getIdusuarios();
+        System.out.println("verificando metodo de pago ***************");
         System.out.println(idmetodo);
         List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idusuario);
 
@@ -795,21 +853,20 @@ public class UsuarioController {
                 MetodosDePago metodosel = metodoopt.get();
                 model.addAttribute("metodoelegido", idmetodo);
                 System.out.println(idmetodo);
+                System.out.println(metodosel.getMetodo());
                 for (Pedidos pedidoencurso : listapedidospendientes) {
                     List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(pedidoencurso.getIdpedidos());
                     System.out.println(pedidoencurso.getIdpedidos());
                     System.out.println(pedidoencurso.getDireccionentrega().getIddirecciones());
                     //model.addAttribute("platosxpedido",platosxpedido);
                     //model.addAttribute("pedidoencurso",pedidoencurso);
-                    Pedidos pedido = new Pedidos();
-                    pedidosRepository.save(pedido);
-
+                    //Pedidos pedido = new Pedidos();
+                    //pedidosRepository.save(pedido);
                 }
             }
             return "redirect:/cliente/paginaprincipal";
         }
     }
-
 
     @GetMapping("/cliente/progresopedido")
     public String progresopedido(Model model, HttpSession session){
@@ -817,14 +874,29 @@ public class UsuarioController {
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuario=sessionUser.getIdusuarios();
 
-        List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idusuario);
-        List<PedidoHasPlato> pedidoHasPlatoencurso = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(55);
+        List<Pedidos> listapedidoscliente = pedidosRepository.pedidosfinxcliente(idusuario);
+        int tam = listapedidoscliente.size();
+        Pedidos ultimopedido = listapedidoscliente.get(tam-1);
+        int idultimopedido = ultimopedido.getIdpedidos();
+        System.out.println("verificando ultimo pedido");
+        System.out.println(idultimopedido);
+
+        List<PedidoHasPlato> pedidoHasPlatoencurso = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(idultimopedido);
         System.out.println(pedidoHasPlatoencurso.get(0).getPlato().getNombre());
+        System.out.println(pedidoHasPlatoencurso.get(0).getPedido().getIdpedidos());
         System.out.println("*****************");
-        Optional<Pedidos> pedidoencursoopt = pedidosRepository.findById(55);
+        Optional<Pedidos> pedidoencursoopt = pedidosRepository.findById(pedidoHasPlatoencurso.get(0).getPedido().getIdpedidos());
         Pedidos pedidoencurso = pedidoencursoopt.get();
         model.addAttribute("pedido",pedidoencurso);
         model.addAttribute("lista",pedidoHasPlatoencurso);
+
+        if(pedidoencurso.getCalificacionrepartidor() !=0 || pedidoencurso.getCalificacionrestaurante() != 0 || pedidoencurso.getComentario() != null){
+            boolean calificar = true;
+            model.addAttribute("calificar",calificar);
+        }else{
+            boolean calificar = false;
+            model.addAttribute("calificar",calificar);
+        }
 
         return "cliente/ultimopedido_cliente";
 
@@ -842,6 +914,28 @@ public class UsuarioController {
                                       @RequestParam("estrellasrepartidor") int calrep){
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuario=sessionUser.getIdusuarios();
+
+        List<Pedidos> listapedidoscliente = pedidosRepository.pedidosfinxcliente(idusuario);
+        int tam = listapedidoscliente.size();
+        Pedidos ultimopedido = listapedidoscliente.get(tam-1);
+        int idultimopedido = ultimopedido.getIdpedidos();
+
+        List<PedidoHasPlato> pedidoHasPlatoencurso = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(idultimopedido);
+        System.out.println(pedidoHasPlatoencurso.get(0).getPlato().getNombre());
+        System.out.println(pedidoHasPlatoencurso.get(0).getPedido().getIdpedidos());
+        System.out.println("*****************");
+        Optional<Pedidos> pedidoencursoopt = pedidosRepository.findById(pedidoHasPlatoencurso.get(0).getPedido().getIdpedidos());
+        Pedidos pedidoencurso = pedidoencursoopt.get();
+
+        if(calrest != 0){
+            pedidoencurso.setCalificacionrestaurante(calrest);
+        }
+        if(calrep != 0){
+            pedidoencurso.setCalificacionrepartidor(calrep);
+        }
+        if(comentarios != null){
+            pedidoencurso.setComentario(comentarios);
+        }
 
         System.out.println("calificacionesssssssssssssss");
         System.out.println(calrep);

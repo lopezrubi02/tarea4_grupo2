@@ -92,7 +92,6 @@
                                                         <label>Número de celular</label>
                                                         <input class="form-control" type="number" th:field="*{telefono}">
                                                         <div class="text-white" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}"></div>
-                                                        <div class="text-white" th:if="${#fields.hasErrors('telefono')}" th:errors="*{msgT}"></div>
                                                     </div>
                                                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                         <label>Fecha de nacimiento</label>
@@ -107,16 +106,15 @@
                                                         <label>Contraseña</label>
                                                         <input placeholder="Passsword" class="form-control" type="password" th:value="*{contraseniaHash}"
                                                                name="contraseniaHash">
-                                                        <div class="text-danger" th:if="${#fields.hasErrors('contraseniaHash')}" th:errors="*{contraseniaHash}"></div>
-                                                        <div th:if="${msg != null}" th:text="${msg}" class="text-danger"></div>
+                                                        <div th:if="${msgc1 != null}" th:text="${msgc1}" class="alert alert-danger" role="alert"></div>
                                                     </div>
                                                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                         <label>Confirmar contraseña</label>
                                                         <input placeholder="Passsword" class="form-control" type="password" name="password2">
-                                                        <div class="text-danger" th:if="${#fields.hasErrors('contraseniaHash')}" th:errors="*{contraseniaHash}"></div>
+                                                        <div th:if="${msgc2 != null}" th:text="${msgc2}" class="alert alert-danger" role="alert"></div>
                                                     </div>
                                                     <button class="send button" type="submit"
-                                                            style="padding : 9px 0px; font-size: 16px">Guardar cambios</button>
+                                                            style="padding : 9px 0px; font-size: 16px ">Guardar cambios</button>
                                                 </div>
                                             </div>
                                         </form>
