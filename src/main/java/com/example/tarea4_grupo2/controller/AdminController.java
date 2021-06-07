@@ -29,6 +29,7 @@ import javax.validation.Valid;
 import javax.validation.Valid;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +59,7 @@ public class AdminController {
     @Autowired
     SendMailService sendMailService;
 
-    @GetMapping("/")
+    @GetMapping(value ={"/","/*"})
     public String redireccion(){
         return "redirect:/admin/gestionCuentas";
     }
@@ -734,6 +735,25 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
                                    @RequestParam (value="filtro",defaultValue = "Todos") String filtro,
                                    @RequestParam(name = "page", defaultValue = "1") String requestedPage,
                                    Model model){
+
+        LocalDate dateactual = LocalDate.now();
+        String fechaactual1 = String.valueOf(dateactual);
+        String[] fechaactual = fechaactual1.split("-");
+        String a = fechaactual[0];
+        String m = fechaactual[1];
+        int anioactual = Integer.parseInt(a);
+        int mesactual = Integer.parseInt(m);
+        int anio = anioactual;
+        int mes = mesactual;
+        String mes_mostrar = String.valueOf(mes);
+
+        if(mes<10){
+            mes_mostrar='0' + mes_mostrar; //agrega cero si el menor de 10
+        }
+
+        String fechamostrar = anio + "-" + mes_mostrar;
+
+
         System.out.println("errorr ***********************");
         float numberOfUsersPerPage = 8;
         int page;
@@ -783,21 +803,73 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
 
         model.addAttribute("filtro",filtro);
 
+        //buscar por fecha
+        model.addAttribute("fechaseleccionada",fechamostrar);
+
         return "adminsistema/ADMIN_ReportesVistaDelivery";
+    }
+
+    @GetMapping("/buscadorDeli")
+    public String buscadorFalso(){
+        return "redirect:/admin/DeliveryReportes";
     }
 
 
     @PostMapping("/buscadorDeli")
-    public String buscadorDelivery(@RequestParam(value="searchField",defaultValue = "") String buscar,
-                                   @RequestParam (value="filtro",defaultValue = "Todos") String filtro,
+    public String buscadorDelivery(@RequestParam("fechahorapedido") String fechahorapedido,
                                    RedirectAttributes attr,Model model){
-        System.out.println("El filtro es: " + filtro);
-        model.addAttribute("filtro",filtro);
-        model.addAttribute("searchField", buscar);
 
-        //model.addAttribute("listaUsuariosNuevos",usuarioList);
-        //return "adminsistema/nuevasCuentas";
-        return "redirect:/admin/DeliveryReportes";
+
+        float numberOfUsersPerPage = 31;
+        int page = 1;
+
+        String[] fecha = fechahorapedido.split("-", 2);
+
+        LocalDate dateactual = LocalDate.now();
+        String fechaactual1 = String.valueOf(dateactual);
+
+        List<DeliveryReportes_DTO> listaDeli;
+
+        try {
+            String a = fecha[0];
+            String m = fecha[1];
+            int anio = Integer.parseInt(a);
+            int mes = Integer.parseInt(m);
+
+            listaDeli = pedidosRepository.reportesDeliveryFecha(anio,mes);
+            if(listaDeli.isEmpty()){
+                attr.addFlashAttribute("msg","No se encontraron resultados");
+                return "redirect:/admin/DeliveryReportes";
+            }
+
+            String nombreFiltro = "Mes";
+
+            int numberOfPages = (int) Math.ceil(listaDeli.size() / numberOfUsersPerPage);
+            if (page > numberOfPages) {
+                page = numberOfPages;
+            } // validation
+
+            int start = (int) numberOfUsersPerPage * (page - 1);
+            int end = (int) (start + numberOfUsersPerPage);
+
+            model.addAttribute("currentPage", page);
+            model.addAttribute("maxNumberOfPages", numberOfPages);
+            model.addAttribute("listadeli", listaDeli);
+
+            model.addAttribute("filtro","Todos");
+            model.addAttribute("nombreFiltro",nombreFiltro);
+
+            //buscar por fecha
+            model.addAttribute("fechaseleccionada",fechahorapedido);
+
+            return "adminsistema/ADMIN_ReportesVistaDelivery";
+
+        }catch (Exception e){
+            attr.addFlashAttribute("msg","Ocurrio un error - Lista no valida");
+            System.out.println(e);
+            return "redirect:/admin/DeliveryReportes";
+
+        }
 
     }
 
