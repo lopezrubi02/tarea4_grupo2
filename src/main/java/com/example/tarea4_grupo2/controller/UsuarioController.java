@@ -745,6 +745,25 @@ public class UsuarioController {
         return "cliente/carrito_productos";
     }
 
+    @GetMapping("/cliente/eliminarplato")
+    public String eliminarplato(HttpSession session, Model model,
+                                   @RequestParam("idplato") int idplato){
+
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuario=sessionUser.getIdusuarios();
+
+        Optional<Plato> platoopt = platoRepository.findById(idplato);
+        if(platoopt.isPresent()){
+            Plato platoxeliminar = platoopt.get();
+
+            System.out.println("prueba eliminar plato *************");
+            System.out.println(idplato);
+        }
+
+        return "redirect:/cliente/carritoproductos";
+
+    }
+
     @GetMapping("/cliente/vaciarcarrrito")
     public String vaciarcarrito(Model model, HttpSession session){
 
