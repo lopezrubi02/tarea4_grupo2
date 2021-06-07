@@ -763,7 +763,6 @@ public class UsuarioController {
                     PedidoHasPlatoKey pedidoHasPlatoKey = plato1.getId();
                     pedidoHasPlatoRepository.deleteById(pedidoHasPlatoKey);
                     System.out.println("deberia borrar plato ****************************");
-                    //plato1.getPedido().removePlato(plato1.getPlato());
                 }
                 pedidosRepository.deleteById(pedidoencurso.getIdpedidos());
             }
