@@ -861,6 +861,7 @@ public class UsuarioController {
     @PostMapping("/cliente/guardarcheckout")
     public String getcheckout(@RequestParam(value = "idmetodo",defaultValue = "0") int idmetodo,
                               @RequestParam(value = "montoexacto",defaultValue = "0") int montoexacto,
+                              @RequestParam(value = "numerotarjeta",defaultValue = "0") int numerotarjeta,
                               Model model,
                               HttpSession session,
                               RedirectAttributes redirectAttributes){
@@ -892,9 +893,14 @@ public class UsuarioController {
                     model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
                     model.addAttribute("montopagar", montoPagar_pedidoHasPlatoDTO);
                     pedidoencurso.setMetododepago(metodosel);
-                    if(montoexacto != 0){
-                        System.out.println(montoexacto);
-                        pedidoencurso.setMontoexacto(String.valueOf(montoexacto));
+                    if(idmetodo == 3){
+                        if(montoexacto != 0){
+                            System.out.println(montoexacto);
+                            pedidoencurso.setMontoexacto(String.valueOf(montoexacto));
+                        }
+                    }
+                    if(idmetodo == 1){
+                        System.out.println(numerotarjeta);
                     }
                     //pedidoencurso.setMontoexacto(String.valueOf(montoTotal_pedidoHasPlatoDTO.getpreciototal()));
                     pedidoencurso.setMontototal(String.valueOf(montoPagar_pedidoHasPlatoDTO.getpreciopagar()));
