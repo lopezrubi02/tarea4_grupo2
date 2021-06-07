@@ -44,6 +44,13 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
             "\n",nativeQuery = true)
     List<DeliveryReportes_DTO> reportesDelivery();
 
+    @Query(value = "select date(fechahorapedido) as 'fecha',count(idpedidos) as 'pedidos',sum(comisionsistema) as 'comision' from pedidos\n" +
+            "where pedidos.fechahorapedido IS NOT NULL and year(pedidos.fechahorapedido)= ?1 and month(pedidos.fechahorapedido) =?2 group by YEAR(fechahoraentregado),MONTH(fechahoraentregado),DAY(fechahoraentregado)\n" +
+            "ORDER BY CONCAT(SUBSTRING_INDEX(fecha , '/', -1),SUBSTRING_INDEX(SUBSTRING_INDEX(fecha , '/', 2), '/', -1),SUBSTRING_INDEX(fecha , '/', 1)) DESC;\n" +
+            "\n",nativeQuery = true)
+    List<DeliveryReportes_DTO> reportesDeliveryFecha(int anio, int mes);
+
+
     @Query(value = "select date(fechahorapedido) as 'fecha'from pedidos\n" +
             "WHERE pedidos.fechahorapedido IS NOT NULL \n" +
             "group by YEAR(fechahoraentregado),MONTH(fechahoraentregado),DAY(fechahoraentregado)\n" +
@@ -59,7 +66,7 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
             "        CROSS JOIN (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS b\n" +
             "        CROSS JOIN (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS c\n" +
             "    ) a\n" +
-            "    WHERE a.Days >= curdate() -  INTERVAL (SELECT TIMESTAMPDIFF(DAY,?1 , curdate())) DAY)  b\n" +
+            "WHERE a.Days >= curdate() -  INTERVAL (SELECT TIMESTAMPDIFF(DAY,?1 , curdate())) DAY)  b\n" +
             "LEFT JOIN pedidos\n" +
             "ON date(pedidos.fechahoraentregado) = b.Days\n" +
             "group by YEAR(b.Days),MONTH(b.Days),DAY(b.Days)\n" +

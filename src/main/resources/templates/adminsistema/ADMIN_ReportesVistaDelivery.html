@@ -113,6 +113,10 @@
 				
             </div>
 			<br></br>
+            <div class="col-md-4">
+                <button th:if="${msg != null}" th:text="${msg}" class="btn btn-dark" role="alert"></button>
+            </div>
+            <br>
             <div class="row">
                 <div class="col-3">
                     <!-- search bar -->
@@ -128,6 +132,21 @@
                         <option value="usuarioFiltro?rolSelected=Repartidor">Repartidores</option>
                         <option value="usuarioFiltro?rolSelected=AdminRestaurante">Restaurantes</option>
                     </select-->
+                </div>
+                <div class="row justify-content-center col-md-9">
+                    <div class="center-block"><div class="col-sm-2"><form class="form-group mb-3" method="post" th:action="@{buscadorDeli}">
+                        <div class="input-group-append">
+                            <input type="month" id="fechaprueba" name="fechahorapedido"
+                                   th:value="${fechaseleccionada}">
+                            <!--th:selected="${generos.idgenero == juego.genero.idgenero}"></option-->
+                            <div class="input-group-append">
+                                <li class="button_user" ><a class="button active"  ><button  class="btn btn-link" type="submit" >Buscar</button></a></li>
+                                <!--button class="btn btn-warning" type="submit">Buscar</button-->
+                                <!--button class="btn btn-dark" th:href="@{deliveryReportes}">Limpiar</button-->
+                                <li class="button_user"><a class="button active" th:href="@{DeliveryReportes}" > Limpiar </a></li>
+                            </div>
+                        </div>
+                    </form></div></div>
                 </div>
 
 				<!--div class="row">
@@ -194,7 +213,7 @@
 
                             <!--  BOTON SIGUIENTE -->
                             <li class="page-item disabled" th:if="${currentPage eq maxNumberOfPages }">
-                                <span class="page-link">Anterior</span>
+                                <span class="page-link">Siguiente</span>
                             </li>
                             <li class="page-item" th:unless="${currentPage eq maxNumberOfPages}">
                                 <a class="page-link" th:href="@{/admin/DeliveryReportes(page=${currentPage + 1},filtro=${filtro})}">Siguiente</a>
