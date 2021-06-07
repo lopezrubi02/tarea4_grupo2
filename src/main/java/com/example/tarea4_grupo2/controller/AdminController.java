@@ -7,6 +7,8 @@ import com.example.tarea4_grupo2.dto.RestauranteReportes_DTO;
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.server.Session;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,6 +29,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.Valid;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -58,6 +62,26 @@ public class AdminController {
 
     @Autowired
     SendMailService sendMailService;
+
+    @Autowired
+    Environment environment;
+
+    public List<String> getIpAndProt() throws UnknownHostException {
+        // Port
+        String puerto = environment.getProperty("server.port");
+
+        // Local address
+        String ip = InetAddress.getLocalHost().getHostAddress();
+        //InetAddress.getLocalHost().getHostName();
+
+        List<String> lista = new ArrayList<String>();
+        lista.add(0,ip);
+        lista.add(1,puerto);
+        // Remote address
+        //InetAddress.getLoopbackAddress().getHostAddress();
+        //InetAddress.getLoopbackAddress().getHostName();
+        return lista;
+    }
 
     @GetMapping(value ={"/","/*"})
     public String redireccion(){
@@ -299,6 +323,23 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
         Usuario usuarioActual = (Usuario) session.getAttribute("usuarioLogueado");
         int id = usuarioActual.getIdusuarios();
         model.addAttribute("idAdmin",id);
+
+        List<String> direccionIp = null;
+        try {
+            direccionIp = getIpAndProt();
+            String direccion1 = direccionIp.get(0);
+            String direccion2 = direccionIp.get(1);
+            System.out.println("****************************************************");
+            System.out.println(direccion1);
+            System.out.println(direccion2);
+            System.out.println("*****************************************************");
+            String direccion = "http://"+direccionIp.get(0)+":"+direccionIp.get(1)+"/login";
+            System.out.println(direccion);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+
+
         return "adminsistema/GestionCuentasPrincipal";
     }
 
@@ -441,11 +482,21 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
         if(optional.isPresent()){
             Usuario usuario = optional.get();
             if(usuario.getCuentaActiva()==2 || usuario.getCuentaActiva()==-1){
-                    usuario.setCuentaActiva(1);
-                    usuarioRepository.save(usuario);
+                usuario.setCuentaActiva(1);
+                usuarioRepository.save(usuario);
+
+                String direccion;
+                try {
+                    List<String> direccionIp = getIpAndProt();
+                    direccion = "http://"+direccionIp.get(0)+":"+direccionIp.get(1)+"/login";
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                    direccion = "http://localhost:8090/login";
+                }
+
                     if(usuario.getRol().equals("AdminRestaurante")){
-                        String direccion = "http://localhost:8090/login";
-                        //TODO modificar direcion url despues de despliegue aws.
+                        //String direccion = "http://localhost:8090/login";
+                        //Resuelto: TODO modificar direcion url despues de despliegue aws.
                         //Pegar aquí los datos del AWS;
                         // String aws =
                         //String direccion = "http://" + aws + ":8090/login";
@@ -460,7 +511,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
                         sendMailService.sendMail(correoDestino,"saritaatanacioarenas@gmail.com",subject,texto);
                     }
                     if(usuario.getRol().equals("Repartidor")){
-                        String direccion = "http://localhost:8090/login";
+
                         String correoDestino = usuario.getEmail();
                         String subject = "SPYCYO - Cuenta Repartidor Aceptada";
                         String texto = "<p><strong>Bienvenido a SPYCYO - Cuenta Repartidor Aceptada</strong></p>\n" +
