@@ -404,7 +404,8 @@ public class RepartidorController {
                                      @RequestParam("direccion") String direccion,
                                      @RequestParam("distrito") Distritos distrito,
                                      @RequestParam("password2") String pass2,
-                                     //@RequestParam("movilidad") String movilidad,
+                                     @RequestParam("placa") String placa,
+                                     @RequestParam("licencia") String licencia,
                                      @RequestParam("archivo") MultipartFile file,
                                      @RequestParam(value = "movilidad2",defaultValue = "0") String movilidad2,
                                      Model model, RedirectAttributes attributes) {
@@ -422,12 +423,9 @@ public class RepartidorController {
         }
 
         boolean dniExis = false;
-        Usuario usuario3 = usuarioRepository.findByDni(usuario.getDni());
-        if (usuario3 != null) {
-            if (usuario.getDni().equalsIgnoreCase(usuario3.getDni())
-                    & usuario3.getRol().equalsIgnoreCase("Repartidor")) {
-                dniExis = true;
-            }
+        Usuario usuario3 = usuarioRepository.findByDniAndRolEquals(usuario.getDni(),"Repartidor");
+        if (usuario3 != null ) {
+            dniExis = true;
         }
 
         boolean cont1val=false;
@@ -510,6 +508,8 @@ public class RepartidorController {
                 repartidor.setDistritos(distrito);
                 repartidor.setDisponibilidad(false);
                 repartidor.setMovilidad(movilidad2);
+                repartidor.setPlaca(placa);
+                repartidor.setLicencia(licencia);
                 repartidorRepository.save(repartidor);
 
 
