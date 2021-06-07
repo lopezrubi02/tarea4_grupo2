@@ -10,30 +10,34 @@ import java.util.List;
 
 public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
 /* Obtencion del Top 3 de Restaurantes*/
-    @Query(value = "select re.nombre as restaurante, count(*) as vecesasistida from proyecto.pedidos pe inner join proyecto.restaurante re on (re.idrestaurante = pe.restaurante_idrestaurante) where pe.idcliente = ?1 and year(pe.fechahorapedido) = ?2 and month(pe.fechahorapedido) = ?3 group by re.idrestaurante order by count(*) desc limit 0, 3", nativeQuery = true)
+    @Query(value = "select re.nombre as restaurante, count(*) as vecesasistida from proyecto.Pedidos pe inner join proyecto.Restaurante re on (re.idrestaurante = pe.restaurante_idrestaurante) where pe.idcliente = ?1 and year(pe.fechahorapedido) = ?2 and month(pe.fechahorapedido) = ?3 group by re.idrestaurante order by count(*) desc limit 0, 3", nativeQuery = true)
     List<Top3Restaurantes_ClienteDTO> obtenerTop3Restaurantes(int idcliente, int anio, int mes);
 /*Este es para hallar el dinero ahorrado*/
-    @Query(value = "select sum((pepla.cantidadplatos * p.precio) - pe.montototal) as diferencia from proyecto.pedidos pe inner join proyecto.pedidos_has_plato pepla on (pepla.pedidos_idpedidos = pe.idpedidos) inner join proyecto.plato p on (pepla.plato_idplato = p.idplato) where pe.idcliente = ?1 and year(pe.fechahorapedido) = ?2 and month(pe.fechahorapedido) = ?3", nativeQuery = true)
+    @Query(value = "select sum((pepla.cantidadplatos * p.precio) - pe.montototal) as diferencia from proyecto.Pedidos pe " +
+            "inner join proyecto.Pedidos_has_plato pepla on (pepla.pedidos_idpedidos = pe.idpedidos) " +
+            "inner join proyecto.Plato p on (pepla.plato_idplato = p.idplato) where " +
+            "pe.idcliente = ?1 and year(pe.fechahorapedido) = ?2 and month(pe.fechahorapedido) = ?3", nativeQuery = true)
     DineroAhorrado_ClienteDTO dineroAhorrado(int idcliente, int anio, int mes);
 /*Obtención del Top 3 de Platos*/
     @Query(value = "select p.nombre as nombreplato, count(*) as vecespedido \n" +
-            "from proyecto.pedidos pe \n" +
-            "inner join proyecto.pedidos_has_plato pepla on (pepla.pedidos_idpedidos = pe.idpedidos)\n" +
-            "inner join proyecto.plato p on (pepla.plato_idplato = p.idplato)\n" +
+            "from proyecto.Pedidos pe \n" +
+            "inner join proyecto.Pedidos_has_plato pepla on (pepla.pedidos_idpedidos = pe.idpedidos)\n" +
+            "inner join proyecto.Plato p on (pepla.plato_idplato = p.idplato)\n" +
             "where pe.idcliente = ?1 and year(pe.fechahorapedido) = ?2\n" +
             "and month(pe.fechahorapedido) = ?3 group by p.idplato order by count(*) desc limit 0, 3", nativeQuery = true)
     List<Top3Platos_ClientesDTO> obtenerTop3Platos(int idcliente, int anio, int mes);
 
     /*Halla el historial de consumo*/
     @Query(value = "select re.nombre as nomrestaurante, count(*) as asistencia, sum(pe.montototal) as consumomensual\n" +
-            "from proyecto.pedidos pe\n" +
-            "inner join proyecto.restaurante re on (re.idrestaurante = pe.restaurante_idrestaurante)\n" +
+            "from proyecto.Pedidos pe\n" +
+            "inner join proyecto.Restaurante re on (re.idrestaurante = pe.restaurante_idrestaurante)\n" +
             "where pe.idcliente = ?1 and year(pe.fechahorapedido) = ?2\n" +
             "and month(pe.fechahorapedido) = ?3 group by re.idrestaurante order by count(*) desc limit 0, 3 ", nativeQuery = true)
     List<HistorialConsumo_ClienteDTO> obtenerHistorialConsumo(int idcliente, int anio, int mes);
 
     /*Halla el tiempo promedio de delivery*/
-    @Query(value = "SELECT re.nombre as nombrerestaurante, avg(pe.tiempodelivery) as tiempopromedio FROM proyecto.pedidos pe inner join proyecto.restaurante re on (re.idrestaurante = pe.restaurante_idrestaurante) where pe.idcliente = ?1 and year(pe.fechahorapedido) = ?2 and month(pe.fechahorapedido) = ?3 group by re.idrestaurante order by count(*) desc", nativeQuery = true)
+    @Query(value = "SELECT re.nombre as nombrerestaurante, avg(pe.tiempodelivery) as tiempopromedio FROM proyecto.Pedidos pe inner join proyecto.Restaurante re on " +
+            "(re.idrestaurante = pe.restaurante_idrestaurante) where pe.idcliente = ?1 and year(pe.fechahorapedido) = ?2 and month(pe.fechahorapedido) = ?3 group by re.idrestaurante order by count(*) desc", nativeQuery = true)
     List<TiempoMedio_ClienteDTO> obtenerTiemposPromedio(int idcliente, int anio, int mes);
 
     /******ADMINISTRADOR SISTEMA**********/
@@ -209,7 +213,7 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
     @Query(value = "select * from pedidos where idcliente=?1 and montototal!='0'",nativeQuery = true)
     List<Pedidos> pedidosfinxcliente(int idcliente);
 
-    @Query(value = "select * from pedidos where idcliente=?1 and montototal!='0' and estadorestaurante='cancelado' and estadorepartidor='pendiente'",nativeQuery = true)
+    @Query(value = "select * from Pedidos where idcliente=?1 and montototal!='0' and estadorestaurante='cancelado' and estadorepartidor='pendiente'",nativeQuery = true)
     List<Pedidos> listapedidoscanceladosxrest(int idcliente);
 
 }
