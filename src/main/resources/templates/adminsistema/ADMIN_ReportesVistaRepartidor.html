@@ -164,8 +164,38 @@
                 </div>
                 <!-- end of table -->
 
-                <div class="col-md-12">
-                    <p>Anterior | 1 | 2 | 3 | Siguiente</p>
+                <!-- paginacion -->
+                <div th:if="${maxNumberOfPages} != 0" class="row">
+                    <nav aria-label="Page navigation example" class = "mx-auto">
+                        <ul class="pagination justify-content-center">
+
+                            <!--  BOTON ANTERIOR -->
+                            <li class="page-item disabled" th:if="${currentPage eq 1 }">
+                                <span class="page-link">Anterior</span>
+                            </li>
+                            <li class="page-item" th:unless="${currentPage eq 1}">
+                                <a class="page-link"
+                                   th:href="@{/admin/RepartidorReportes(page=${currentPage - 1})}">Anterior</a>
+                            </li>
+
+                            <!-- BOTONES NUMEROS -->
+                            <li th:each="i : ${#numbers.sequence( 1, maxNumberOfPages )}"
+                                th:class="${ i == currentPage ? 'page-item active .bg-secondary' : 'page-item' }">
+                                <a class="page-link"  th:href="@{/admin/RepartidorReportes(page=${i})}"
+                                   th:text="${i}"
+                                ></a>
+                            </li>
+
+                            <!--  BOTON SIGUIENTE -->
+                            <li class="page-item disabled" th:if="${currentPage eq maxNumberOfPages }">
+                                <span class="page-link">Siguiente</span>
+                            </li>
+                            <li class="page-item" th:unless="${currentPage eq maxNumberOfPages}">
+                                <a class="page-link" th:href="@{/admin/RepartidorReportes(page=${currentPage + 1})}">Siguiente</a>
+                            </li>
+
+                        </ul>
+                    </nav>
                 </div>
 
             </div>
