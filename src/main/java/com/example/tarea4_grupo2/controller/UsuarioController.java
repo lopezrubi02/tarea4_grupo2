@@ -858,6 +858,7 @@ public class UsuarioController {
 
     @PostMapping("/cliente/guardarcheckout")
     public String getcheckout(@RequestParam(value = "idmetodo",defaultValue = "0") int idmetodo,
+    @RequestParam("montoxpagar") int montoxpagar,
     Model model,
     HttpSession session,
     RedirectAttributes redirectAttributes){
@@ -882,10 +883,8 @@ public class UsuarioController {
                     List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(pedidoencurso.getIdpedidos());
                     System.out.println(pedidoencurso.getIdpedidos());
                     System.out.println(pedidoencurso.getDireccionentrega().getIddirecciones());
-                    //model.addAttribute("platosxpedido",platosxpedido);
-                    //model.addAttribute("pedidoencurso",pedidoencurso);
-                    //Pedidos pedido = new Pedidos();
-                    //pedidosRepository.save(pedido);
+                    pedidosRepository.save(pedidoencurso);
+                    System.out.println("verifcando actualiza metodo sel");
                 }
             }
             return "redirect:/cliente/paginaprincipal";
