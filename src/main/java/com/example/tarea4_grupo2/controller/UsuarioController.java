@@ -804,7 +804,7 @@ public class UsuarioController {
                 MontoPagar_PedidoHasPlatoDTO montoPagar_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montopagar(pedidoencurso.getIdpedidos());
                 model.addAttribute("platosxpedido",platosxpedido);
                 model.addAttribute("pedidoencurso",pedidoencurso);
-                model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
+                //model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
                 model.addAttribute("montopagar", montoPagar_pedidoHasPlatoDTO);
                 pedidosRepository.save(pedidoencurso);
             }
