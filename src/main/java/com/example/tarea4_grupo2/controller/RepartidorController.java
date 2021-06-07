@@ -317,10 +317,23 @@ public class RepartidorController {
 
         Usuario user2 = optional.get();
 
+        String msgc1=null;
+        Pattern pattern1 = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$");
+        Matcher matcher1 = pattern1.matcher(usuario.getContraseniaHash());
+        if( matcher1.matches()){
+            msgc1="La contraseña debe tener al menos una letra, un número y un caracter especial";
+        }
+        String msgc2=null;
+        Matcher matcher2 = pattern1.matcher(password2);
+        if( matcher2.matches()){
+            msgc2="La contraseña debe tener al menos una letra, un número y un caracter especial";
+        }
 
 
-        if(  bindingResult.hasFieldErrors("telefono")|| bindingResult.hasFieldErrors("contraseniaHash")){
+        if(  bindingResult.hasFieldErrors("telefono")|| msgc1!=null || msgc2!=null ){
 
+            model.addAttribute("msgc1",msgc1);
+            model.addAttribute("msgc2",msgc2);
             if(bindingResult.hasFieldErrors("telefono")){
                 String msgT="El teléfono no es válido";
             }
@@ -371,31 +384,6 @@ public class RepartidorController {
 
     }
 
-
-
-
-    @GetMapping("/new2")
-    public String nuevoRepartidor2(@ModelAttribute("repartidor") Repartidor repartidor,
-                                   @RequestParam("id") int id, Model model) {
-        Repartidor repartidor1=repartidorRepository.findRepartidorByIdusuariosEquals(id);
-        model.addAttribute("repartidor",repartidor1);
-        return "repartidor/registro_parte2";
-    }
-
-    @PostMapping("/save2")
-    public String guardarRepartidor2(Repartidor repartidor,@RequestParam("placa") String placa,
-                                     @RequestParam("licencia") String licencia  ,
-                                     @RequestParam("idusuarios") String id) {
-
-        int id1=Integer.parseInt(id);
-        Repartidor repartidor1=repartidorRepository.findRepartidorByIdusuariosEquals(id1);
-        repartidor1.setPlaca(placa);
-        repartidor1.setLicencia(licencia);
-        repartidorRepository.save(repartidor1);
-
-        return "redirect:/login";
-    }
-
     @GetMapping("/new3")
     public String nuevoRepartidor3(@ModelAttribute("usuario") Usuario usuario,
                                    @RequestParam(value = "movilidad2",defaultValue = "0") String movilidad2,
@@ -443,15 +431,19 @@ public class RepartidorController {
         }
 
         boolean cont1val=false;
+        String msgc1=null;
 
         Pattern pattern1 = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$");
         Matcher matcher1 = pattern1.matcher(usuario.getContraseniaHash());
         if( matcher1.matches()){
+             msgc1="La contraseña debe tener al menos una letra, un número y un caracter especial";
              cont1val=true;
         }
+        String msgc2=null;
         boolean cont2val=false;
         Matcher matcher2 = pattern1.matcher(pass2);
         if( matcher2.matches()){
+            msgc2="La contraseña debe tener al menos una letra, un número y un caracter especial";
             cont2val=true;
         }
 
@@ -459,8 +451,8 @@ public class RepartidorController {
             model.addAttribute("listadistritos", distritosRepository.findAll());
             model.addAttribute("dniExis", dniExis);
             model.addAttribute("correoExis", correoExis);
-            model.addAttribute("cont1val",cont1val);
-            model.addAttribute("cont2val",cont2val);
+            model.addAttribute("msgc1",msgc1);
+            model.addAttribute("msgc2",msgc2);
             return "repartidor/registro_parte3";
         }
 
