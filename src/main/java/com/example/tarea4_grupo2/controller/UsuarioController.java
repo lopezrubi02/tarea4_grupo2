@@ -19,7 +19,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -650,7 +649,7 @@ public class UsuarioController {
                               @RequestParam(value = "idrestaurante") int idrestaurante,
                               @RequestParam("idplato") int idplato,
                               HttpSession session,
-                              Model model,
+                              Model model, RedirectAttributes redirectAttributes,
                               @RequestParam("direccion") int direccionxenviar){
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
@@ -689,7 +688,7 @@ public class UsuarioController {
                  PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido,idplato);
                  PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey,pedidos,platoelegido,descripcion,cantidad,cubiertos);
                  pedidos.addpedido(pedidoHasPlato);
-
+                 pedidos.setMontototal("0");
                  pedidosRepository.save(pedidos);
                  listapedidoscliente = pedidosRepository.listapedidoxcliente(idcliente,idrestaurante);
                  tam = listapedidoscliente.size();
@@ -711,6 +710,8 @@ public class UsuarioController {
                  //PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido,idplato);
                  pedidoHasPlato.setId(pedidoHasPlatoKey);
                  pedidoHasPlatoRepository.save(pedidoHasPlato);
+                 redirectAttributes.addFlashAttribute("platoagregado", "Plato agregado al carrito");
+
              }
 
              return "redirect:/cliente/restaurantexordenar?idrestaurante=" + idrestaurante + "&direccion=" + direccionxenviar;
@@ -743,6 +744,50 @@ public class UsuarioController {
             }
         }
         return "cliente/carrito_productos";
+    }
+
+    @GetMapping("/cliente/eliminarplato")
+    public String eliminarplato(HttpSession session, Model model, RedirectAttributes redirectAttributes,
+                                   @RequestParam("idplato") String idplato){
+
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuario=sessionUser.getIdusuarios();
+
+        try{
+            int idplatoint = Integer.parseInt(idplato);
+
+            Optional<Plato> platoopt = platoRepository.findById(idplatoint);
+            if(platoopt.isPresent()){
+
+                List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idusuario);
+
+                if(listapedidospendientes.isEmpty()){
+                    model.addAttribute("lista",0);
+                }else{
+                    model.addAttribute("lista",1);
+
+                    for (Pedidos pedidoencurso : listapedidospendientes){
+                        List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(pedidoencurso.getIdpedidos());
+                        for(PedidoHasPlato plato1 : platosxpedido){
+                            int idplatoobtenido = plato1.getPlato().getIdplato();
+                            if(idplatoobtenido == idplatoint){
+                                PedidoHasPlatoKey pedidoHasPlatoKey = plato1.getId();
+                                pedidoHasPlatoRepository.deleteById(pedidoHasPlatoKey);
+                                System.out.println("deberia borrar plato ****************************");
+                            }
+                        }
+                    }
+                }
+                redirectAttributes.addFlashAttribute("platoeliminado", "Plato eliminado exitosamente");
+                System.out.println("prueba eliminar plato *************");
+                System.out.println(idplato);
+            }
+        }catch(NumberFormatException exception){
+            System.out.println(exception.getMessage());
+        }
+
+        return "redirect:/cliente/carritoproductos";
+
     }
 
     @GetMapping("/cliente/vaciarcarrrito")
@@ -778,7 +823,8 @@ public class UsuarioController {
     @GetMapping("/cliente/checkout")
     public String checkout(Model model, HttpSession session,
                            @RequestParam(value = "idmetodo",defaultValue = "0") int idmetodo){
-        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+
+         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuario=sessionUser.getIdusuarios();
         System.out.println(idmetodo);
         Optional<MetodosDePago> metodoopt = metodosDePagoRepository.findById(idmetodo);
@@ -806,7 +852,6 @@ public class UsuarioController {
                 model.addAttribute("pedidoencurso",pedidoencurso);
                 model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
                 model.addAttribute("montopagar", montoPagar_pedidoHasPlatoDTO);
-                pedidosRepository.save(pedidoencurso);
             }
             return "cliente/checkoutcarrito";
         }
@@ -815,6 +860,7 @@ public class UsuarioController {
 
     @PostMapping("/cliente/guardarcheckout")
     public String getcheckout(@RequestParam(value = "idmetodo",defaultValue = "0") int idmetodo,
+                              @RequestParam(value = "montoexacto",defaultValue = "0") int montoexacto,
                               Model model,
                               HttpSession session,
                               RedirectAttributes redirectAttributes){
@@ -846,11 +892,18 @@ public class UsuarioController {
                     model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
                     model.addAttribute("montopagar", montoPagar_pedidoHasPlatoDTO);
                     pedidoencurso.setMetododepago(metodosel);
-                    pedidoencurso.setMontoexacto(String.valueOf(montoTotal_pedidoHasPlatoDTO.getpreciototal()));
-                    //pedidoencurso.setMontototal(String.valueOf(montoPagar_pedidoHasPlatoDTO.getpreciopagar()));
+                    if(montoexacto != 0){
+                        System.out.println(montoexacto);
+                        pedidoencurso.setMontoexacto(String.valueOf(montoexacto));
+                    }
+                    //pedidoencurso.setMontoexacto(String.valueOf(montoTotal_pedidoHasPlatoDTO.getpreciototal()));
+                    pedidoencurso.setMontototal(String.valueOf(montoPagar_pedidoHasPlatoDTO.getpreciopagar()));
                     pedidoencurso.setEstadorestaurante("pendiente");
+                    System.out.println(LocalDate.now());
+                    pedidoencurso.setFechahorapedido(LocalDate.now());
                     pedidosRepository.save(pedidoencurso);
                 }
+                redirectAttributes.addFlashAttribute("checkout", "Pedido listo");
             }
             return "redirect:/cliente/paginaprincipal";
         }

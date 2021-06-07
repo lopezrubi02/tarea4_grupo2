@@ -2,6 +2,7 @@ package com.example.tarea4_grupo2.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -53,7 +54,7 @@ public class Pedidos {
     @JoinColumn(name = "restaurante_idrestaurante")
     private Restaurante restaurantepedido;
 
-    private Date fechahorapedido;
+    private LocalDate fechahorapedido;
     private Date fechahoraentregado;
 
     @ManyToOne
@@ -77,7 +78,7 @@ public class Pedidos {
     public Pedidos() {
     }
 
-    public Pedidos(int idpedidos, Set<PedidoHasPlato> pedidohasplato, String montototal, int comisionrepartidor, int comisionsistema, String montoexacto, MetodosDePago metododepago, int calificacionrestaurante, int calificacionrepartidor, String comentario, float tiempodelivery, String estadorestaurante, String estadorepartidor, int idcliente, Usuario repartidor, Restaurante restaurantepedido, Date fechahorapedido, Date fechahoraentregado, Direcciones direccionentrega) {
+    public Pedidos(int idpedidos, Set<PedidoHasPlato> pedidohasplato, String montototal, int comisionrepartidor, int comisionsistema, String montoexacto, MetodosDePago metododepago, int calificacionrestaurante, int calificacionrepartidor, String comentario, float tiempodelivery, String estadorestaurante, String estadorepartidor, int idcliente, Usuario repartidor, Restaurante restaurantepedido, LocalDate fechahorapedido, Date fechahoraentregado, Direcciones direccionentrega) {
         this.idpedidos = idpedidos;
         this.pedidohasplato = pedidohasplato;
         this.montototal = montototal;
@@ -219,11 +220,11 @@ public class Pedidos {
         this.restaurantepedido = restaurantepedido;
     }
 
-    public Date getFechahorapedido() {
+    public LocalDate getFechahorapedido() {
         return fechahorapedido;
     }
 
-    public void setFechahorapedido(Date fechahorapedido) {
+    public void setFechahorapedido(LocalDate fechahorapedido) {
         this.fechahorapedido = fechahorapedido;
     }
 

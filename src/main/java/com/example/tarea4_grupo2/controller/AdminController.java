@@ -72,11 +72,12 @@ public class AdminController {
 
         // Local address
         String ip = InetAddress.getLocalHost().getHostAddress();
-        //InetAddress.getLocalHost().getHostName();
+        String namehost = InetAddress.getLocalHost().getHostName();
 
         List<String> lista = new ArrayList<String>();
         lista.add(0,ip);
         lista.add(1,puerto);
+        lista.add(2,namehost);
         // Remote address
         //InetAddress.getLoopbackAddress().getHostAddress();
         //InetAddress.getLoopbackAddress().getHostName();
@@ -330,11 +331,9 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
             String direccion1 = direccionIp.get(0);
             String direccion2 = direccionIp.get(1);
             System.out.println("****************************************************");
-            System.out.println(direccion1);
-            System.out.println(direccion2);
-            System.out.println("*****************************************************");
             String direccion = "http://"+direccionIp.get(0)+":"+direccionIp.get(1)+"/login";
             System.out.println(direccion);
+            System.out.println(direccionIp.get(2));
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
@@ -485,21 +484,29 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
                 usuario.setCuentaActiva(1);
                 usuarioRepository.save(usuario);
 
+                /*
                 String direccion;
                 try {
                     List<String> direccionIp = getIpAndProt();
                     direccion = "http://"+direccionIp.get(0)+":"+direccionIp.get(1)+"/login";
                 } catch (UnknownHostException e) {
                     e.printStackTrace();
-                    direccion = "http://localhost:8090/login";
+                    //Tmodificar direcion url despues de despliegue aws.
+                    //Pegar aquí los datos del AWS;
+                    String aws = "";
+                    direccion = "http://" + aws + ":8090/login";
                 }
+                 */
+
+
+                //String direccion = "http://localhost:8090/login";
+                //TODO modificar direcion url despues de despliegue aws.
+                //Pegar aquí los datos del AWS;
+                String aws ="";
 
                     if(usuario.getRol().equals("AdminRestaurante")){
-                        //String direccion = "http://localhost:8090/login";
-                        //Resuelto: TODO modificar direcion url despues de despliegue aws.
-                        //Pegar aquí los datos del AWS;
-                        // String aws =
-                        //String direccion = "http://" + aws + ":8090/login";
+
+                        String direccion = "http://" + aws + ":8090/login";
                         String correoDestino = usuario.getEmail();
                         String subject = "SPYCYO - Restaurante agregado";
                         String texto = "<p><strong>Bienvenido a SPYCYO - Restaurante agregado</strong></p>\n" +
@@ -511,7 +518,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
                         sendMailService.sendMail(correoDestino,"saritaatanacioarenas@gmail.com",subject,texto);
                     }
                     if(usuario.getRol().equals("Repartidor")){
-
+                        String direccion = "http://" + aws + ":8090/login";
                         String correoDestino = usuario.getEmail();
                         String subject = "SPYCYO - Cuenta Repartidor Aceptada";
                         String texto = "<p><strong>Bienvenido a SPYCYO - Cuenta Repartidor Aceptada</strong></p>\n" +
