@@ -806,6 +806,7 @@ public class UsuarioController {
                 model.addAttribute("pedidoencurso",pedidoencurso);
                 model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
                 model.addAttribute("montopagar", montoPagar_pedidoHasPlatoDTO);
+                pedidosRepository.save(pedidoencurso);
             }
             return "cliente/checkoutcarrito";
         }
