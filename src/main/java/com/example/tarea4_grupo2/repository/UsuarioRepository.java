@@ -1,16 +1,12 @@
 package com.example.tarea4_grupo2.repository;
 
 import com.example.tarea4_grupo2.dto.DatosDTO;
-import com.example.tarea4_grupo2.entity.Direcciones;
-import com.example.tarea4_grupo2.entity.Repartidor;
 import com.example.tarea4_grupo2.entity.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
@@ -52,5 +48,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     Usuario findByEmail(String email);
     @Query(value="select nombre,apellidos,dni,fechanacimiento from usuarios where idusuarios=?1",nativeQuery = true)
     DatosDTO obtenerDatos(int id);
+    Usuario findByEmailAndAndRol(String email, String rol);
 
+    @Query(value="select count(idusuarios) from usuarios where email=?1 and rol=?2",nativeQuery = true)
+    Integer verificarEmail(String email,String rol);
 }

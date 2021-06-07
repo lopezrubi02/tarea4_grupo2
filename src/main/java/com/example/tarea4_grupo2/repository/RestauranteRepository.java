@@ -17,6 +17,8 @@ public interface RestauranteRepository extends JpaRepository<Restaurante, Intege
 
     Restaurante findRestauranteByUsuario_Idusuarios(int idAdmin);
 
+    @Query(value = "select r.direccion from restaurante r where r.idadminrest = ?1", nativeQuery = true)
+    String encontrarDireccionSegunIdRest(int idrest);
 
     @Query(value="select*from restaurante\n" +
             "where idadminrest=?1",nativeQuery = true)
