@@ -689,6 +689,17 @@ public class UsuarioController {
 
     }
 
+    @PostMapping("/cliente/guardarcheckout")
+    public String getcheckout(Model model,
+                              HttpSession session, RedirectAttributes redirectAttributes){
+        //revisar el metodo, sale error//
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuario=sessionUser.getIdusuarios();
+        System.out.println("pago");
+        return "redirect:/cliente/paginaprincipal";
+    }
+
+
     @GetMapping("/cliente/progresopedido")
     public String progresopedido(Model model, HttpSession session){
 
