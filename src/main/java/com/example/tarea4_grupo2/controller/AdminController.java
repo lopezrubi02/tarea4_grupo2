@@ -444,6 +444,10 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
                     usuarioRepository.save(usuario);
                     if(usuario.getRol().equals("AdminRestaurante")){
                         String direccion = "http://localhost:8090/login";
+                        //TODO modificar direcion url despues de despliegue aws.
+                        //Pegar aquí los datos del AWS;
+                        // String aws =
+                        //String direccion = "http://" + aws + ":8090/login";
                         String correoDestino = usuario.getEmail();
                         String subject = "SPYCYO - Restaurante agregado";
                         String texto = "<p><strong>Bienvenido a SPYCYO - Restaurante agregado</strong></p>\n" +
