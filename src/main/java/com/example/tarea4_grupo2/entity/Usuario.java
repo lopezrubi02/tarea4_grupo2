@@ -11,7 +11,7 @@ import java.util.Date;
 // TODO validaciones de No Nulo, etc
 
 @Entity
-@Table(name = "usuarios")
+@Table(name = "Usuarios")
 public class Usuario implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

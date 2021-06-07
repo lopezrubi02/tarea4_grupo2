@@ -502,9 +502,9 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
                 //String direccion = "http://localhost:8090/login";
                 //TODO modificar direcion url despues de despliegue aws.
                 //Pegar aquí los datos del AWS;
-                String aws ="";
+                String aws = "ec2-user@ec2-3-84-20-210.compute-1.amazonaws.com";
 
-                    if(usuario.getRol().equals("AdminRestaurante")){
+                if(usuario.getRol().equals("AdminRestaurante")){
 
                         String direccion = "http://" + aws + ":8090/login";
                         String correoDestino = usuario.getEmail();

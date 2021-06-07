@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name="plato")
+@Table(name="Plato")
 public class Plato {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

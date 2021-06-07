@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.sql.Blob;
 
 @Entity
-@Table(name = "datosrepartidor")
+@Table(name = "Datosrepartidor")
 public class Repartidor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "pedidos_has_plato")
+@Table(name = "Pedidos_has_plato")
 public class PedidoHasPlato{
 
     @EmbeddedId
