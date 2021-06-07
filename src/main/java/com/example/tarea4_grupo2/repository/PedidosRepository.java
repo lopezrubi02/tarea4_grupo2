@@ -209,9 +209,9 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
     Pedidos pedidoencursoxrestaurante(int idcliente, int restaurante_idrestaurante);
 
     @Query(value = "select * from Pedidos where idcliente=?1 and montototal='0'",nativeQuery = true)
-    List<Pedidos> listapedidospendientes(int idcliente);
+    List<Pedidos> listapedidospendientes(int idcpedidosfinxclienteliente);
 
-    @Query(value = "select * from pedidos where idcliente=?1 and montototal!='0'",nativeQuery = true)
+    @Query(value = "select * from Pedidos where idcliente=?1 and montototal!='0'",nativeQuery = true)
     List<Pedidos> pedidosfinxcliente(int idcliente);
 
     @Query(value = "select * from Pedidos where idcliente=?1 and montototal!='0' and estadorestaurante='cancelado' and estadorepartidor='pendiente'",nativeQuery = true)
