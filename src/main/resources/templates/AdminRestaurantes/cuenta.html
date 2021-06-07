@@ -48,7 +48,7 @@
                                 <figure><img th:src="@{/adminrest/imagen}" alt="#/"></figure>
                                 <form method="post" th:action="@{'/adminrest/guardarrestedit'}" th:object="${restaurante}" enctype="multipart/form-data">
                                     <input type="hidden" th:field="*{usuario.idusuarios}">
-                                    <div class="about_box" style="height: 620px">
+                                    <div class="about_box" style="height: 720px">
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <label>Nombre del restaurante</label>
                                             <div class="text-danger" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
@@ -65,15 +65,16 @@
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <label>Distrito</label>
-                                            <select type="text" class="form-select" th:field="*{distrito.iddistritos}"style="width: 100%;">
+                                            <select type="text" class="form-select" th:field="*{distrito.iddistritos}"style="width: 100%;height: 50px;border: #fff solid 2px;box-shadow: 0 0 0 .2rem rgba(255, 255, 255, .25);">
                                                 <option th:each="lista : ${listadistritos}"
                                                         th:text="${lista.nombredistrito}"
                                                         th:value="${lista.iddistritos}"
                                                         th:selected="${lista.nombredistrito==restaurante.distrito.nombredistrito}"></option>
                                             </select>
                                         </div>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <div style="position: relative;padding-top: 25px"><input class="form-control-file" type="file" id="imagen" name="imagen" style="opacity: 0%;position: absolute">Adjuntar Imagen</div>
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" style="padding-top: 25px">
+                                            <label>Imagen</label>
+                                            <div style="background: white;position: relative;padding-top: 25px;border: #fff solid 2px;box-shadow: 0 0 0 .2rem rgba(255, 255, 255, .25);"><input class="form-control-file" type="file" id="imagen" name="imagen" style="opacity: 0%;position: absolute;">Adjuntar Imagen</div>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-3">
@@ -100,6 +101,8 @@
                                             <input th:field="*{idusuarios}" th:value="*{idusuarios}" type="hidden">
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <label>Correo</label>
+                                                <div th:if="${mensajemail != null}" th:text="${mensajemail}" class="text-danger"></div>
+                                                <div th:if="${mensajemail2 != null}" th:text="${mensajemail2}" class="text-danger"></div>
                                                 <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
                                                 <input class="form-control" type="text" th:field="*{email}">
                                             </div>
@@ -125,25 +128,26 @@
                                                 <input class="form-control" type="date" th:value="${datos.fechanacimiento}" disabled>
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                                <label>Mis direcciones</label><br/><a th:href="@{'/adminrest/agregardireccion'}"> Agregar nueva dirección</a>
-                                                <br>
+                                                <label>Dirección</label>
                                                 <div class="form-floating">
                                                     <table class="table table-light table-hover">
                                                         <tbody>
                                                         <tr th:each="d: ${listadirecciones}">
                                                             <td th:text = "${d.direccion}"></td>
-                                                            <td><a th:href="@{'/adminrest/borrardireccion?iddireccion=' + ${d.getIddirecciones()}}"><img align="right" src="http://cdn.onlinewebfonts.com/svg/img_512185.png" width="25" height="25"/></a></td>
                                                         </tr>
                                                         </tbody>
                                                     </table>
-                                                    <br/>
                                                 </div>
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                                <label>Contraseña</label>
+                                                <label>Contraseña Actual</label>
                                                 <div th:if="${msg != null}" th:text="${msg}" class="text-danger"></div>
                                                 <div class="text-danger" th:if="${#fields.hasErrors('contraseniaHash')}" th:errors="*{contraseniaHash}"></div>
                                                 <input placeholder="Contraseña" class="form-control" type="password" th:field="*{contraseniaHash}">
+                                            </div>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <label>Nueva contraseña</label>
+                                                <input placeholder="Confirmar contraseña" class="form-control" type="password" id="pass" name="pass">
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <label>Confirmar contraseña</label>

@@ -25,6 +25,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @Controller
 @RequestMapping("/adminrest")
@@ -661,6 +662,7 @@ public class AdminRestauranteController {
     public String editPerfilUsuario(@ModelAttribute("usuario") @Valid Usuario usuario,
                                     BindingResult bindingResult,
                                     @RequestParam("pass2") String pass2,
+                                    @RequestParam("pass") String pass,
                                     HttpSession session,
                                     Model model){
         Usuario user=(Usuario) session.getAttribute("usuarioLogueado");
@@ -674,20 +676,47 @@ public class AdminRestauranteController {
             return "AdminRestaurantes/cuenta";
             }
         else {
-            if(usuario.getContraseniaHash().equals(pass2)){
-                user.setEmail(usuario.getEmail());
-                user.setTelefono(usuario.getTelefono());
-                user.setContraseniaHash(BCrypt.hashpw(usuario.getContraseniaHash(),BCrypt.gensalt()));
-                usuarioRepository.save(user);
-                return "redirect:/adminrest/cuentaAdmin";
+            if(Pattern.matches("^[a-z0-9_]+@gmail.com",usuario.getEmail())) {
+                Integer id = usuarioRepository.verificarEmail(usuario.getEmail(), "AdminRestaurante");
+                if(id==0 || usuario.getIdusuarios().equals(user.getIdusuarios())) {
+                    //Falta verificar la contraseña
+                    System.out.println(user.getContraseniaHash());
+                    System.out.println(BCrypt.hashpw(usuario.getContraseniaHash(),BCrypt.gensalt()));
+                    if (user.getContraseniaHash().equals(BCrypt.hashpw(usuario.getContraseniaHash(),BCrypt.gensalt()))) {
+                        user.setEmail(usuario.getEmail());
+                        user.setTelefono(usuario.getTelefono());
+                        usuarioRepository.save(user);
+                        if(pass.equals(pass2) && pass!=null && pass!=""){
+                            user.setContraseniaHash(BCrypt.hashpw(pass,BCrypt.gensalt()));
+                        }
+                        return "redirect:/adminrest/cuentaAdmin";
+                    } else {
+                        model.addAttribute("msg", "Contraseñas no son iguales");
+                        model.addAttribute("listadirecciones", direccionesRepository.findAllByUsuariosIdusuariosAndActivoEquals(user.getIdusuarios(), 1));
+                        model.addAttribute("restaurante", restauranteRepository.obtenerperfilRest(user.getIdusuarios()));
+                        model.addAttribute("datos", usuarioRepository.obtenerDatos(user.getIdusuarios()));
+                        model.addAttribute("ruc", restauranteRepository.buscarRuc(usuario.getIdusuarios()));
+                        model.addAttribute("listadistritos", distritosRepository.findAll());
+                        return "AdminRestaurantes/cuenta";
+                    }
+                }
+                else{
+                    model.addAttribute("datos",usuarioRepository.obtenerDatos(usuario.getIdusuarios()));
+                    model.addAttribute("listadirecciones",direccionesRepository.findAllByUsuariosIdusuariosAndActivoEquals(usuario.getIdusuarios(),1));
+                    model.addAttribute("restaurante",restauranteRepository.obtenerperfilRest(usuario.getIdusuarios()));
+                    model.addAttribute("ruc",restauranteRepository.buscarRuc(usuario.getIdusuarios()));
+                    model.addAttribute("listadistritos",distritosRepository.findAll());
+                    model.addAttribute("mensajemail2","Correo ya existe");
+                    return "AdminRestaurantes/cuenta";
+                }
             }
             else{
-                model.addAttribute("msg","Contraseñas no son iguales");
-                model.addAttribute("listadirecciones",direccionesRepository.findAllByUsuariosIdusuariosAndActivoEquals(user.getIdusuarios(),1));
-                model.addAttribute("restaurante",restauranteRepository.obtenerperfilRest(user.getIdusuarios()));
-                model.addAttribute("datos",usuarioRepository.obtenerDatos(user.getIdusuarios()));
+                model.addAttribute("datos",usuarioRepository.obtenerDatos(usuario.getIdusuarios()));
+                model.addAttribute("listadirecciones",direccionesRepository.findAllByUsuariosIdusuariosAndActivoEquals(usuario.getIdusuarios(),1));
+                model.addAttribute("restaurante",restauranteRepository.obtenerperfilRest(usuario.getIdusuarios()));
                 model.addAttribute("ruc",restauranteRepository.buscarRuc(usuario.getIdusuarios()));
                 model.addAttribute("listadistritos",distritosRepository.findAll());
+                model.addAttribute("mensajemail","Ingrese un correo valido");
                 return "AdminRestaurantes/cuenta";
             }
         }
@@ -707,18 +736,18 @@ public class AdminRestauranteController {
             model.addAttribute("usuario",user);
             return "AdminRestaurantes/cuentarest";
         }
-        Restaurante rest=restauranteRepository.buscarRestaurantePorIdAdmin(user.getIdusuarios()).get();
-        try {
-            rest.setFoto(file.getBytes());
-            rest.setFotocontenttype(file.getContentType());
-            rest.setFotonombre(file.getOriginalFilename());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        rest.setNombre(restaurante.getNombre());
-        rest.setDireccion(restaurante.getDireccion());
-        restauranteRepository.save(rest);
-        return"redirect:/adminrest/cuentaAdmin";
+            Restaurante rest = restauranteRepository.buscarRestaurantePorIdAdmin(user.getIdusuarios()).get();
+            try {
+                rest.setFoto(file.getBytes());
+                rest.setFotocontenttype(file.getContentType());
+                rest.setFotonombre(file.getOriginalFilename());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            rest.setNombre(restaurante.getNombre());
+            rest.setDireccion(restaurante.getDireccion());
+            restauranteRepository.save(rest);
+            return "redirect:/adminrest/cuentaAdmin";
     }
     @GetMapping("/categoriaedit")
     public String llenarcategoriasedit(@ModelAttribute("restaurante") Restaurante restaurante,Model model,HttpSession session){
