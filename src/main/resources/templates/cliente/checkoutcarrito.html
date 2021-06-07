@@ -98,9 +98,8 @@
 						  </div>
 							<div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
 
-								<form class="main_form">
+								<form class="main_form" method="post" th:action="@{/cliente/guardarcheckout}">
 									<div class="row">
-										
 										<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
 											<div class="form-floating">
 											  <select class="form-select" id="floatingSelectGrid2" aria-label="Floating label select example" onchange="window.location=this.options[this.selectedIndex].value">
@@ -134,7 +133,7 @@
                                             </div>
                                         </div>
 										<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-											<button class="send" type="submit">Hacer pedido</button>
+                                            <button class="send" type="submit">Hacer pedido</button>
 										</div>
 									</div>
 								</form>
