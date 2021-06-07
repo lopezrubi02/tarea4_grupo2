@@ -46,14 +46,17 @@
                                     <input th:field="*{restaurante}" type="hidden"/>
                                     <div class="row">
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                            <label class="col-xl-12 col-lg-12 col-md-12 col-sm-12" for="nombre">Nombre del cupon</label>
                                             <input class="form-control" th:field="*{nombre}" placeholder="Nombre del cupon" type="text" name="nombre" id="nombre">
                                             <div class="text-danger" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                            <label class="col-xl-12 col-lg-12 col-md-12 col-sm-12" for="descripcion">Descripcion</label>
                                             <input class="form-control" th:field="*{descripcion}" placeholder="Descripcion" type="text" name="descripcion" id="descripcion">
                                             <div class="text-danger" th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></div>
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                            <label class="col-xl-12 col-lg-12 col-md-12 col-sm-12" for="valordescuento">Valor de descuento (S/.)</label>
                                             <input class="form-control" th:field="*{valordescuento}" placeholder="Descuento (S/.)" type="text" name="valordescuento" id="valordescuento">
                                             <div class="text-danger" th:if="${#fields.hasErrors('valordescuento')}" th:errors="*{valordescuento}"></div>
                                         </div>
@@ -67,15 +70,15 @@
                                                 <input class="form-control" type="date" th:field="${cupon.fechafin}">
                                             </div>
                                         </form>
-                                        <div class="form-group col-6" th:if="${cupon.idcupones}">
-                                            <label for="plato">Plato asociado</label>
-                                            <select class="form-control-sm" th:field="*{plato}">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:if="${cupon.idcupones}">
+                                            <label for="plato">Plato asociado</label><br>
+                                            <select class="form-select" style="margin-bottom:20px;width: 100%;height: 50px;border: #fff solid 2px;box-shadow: 0 0 0 .2rem rgba(255, 255, 255, .25);" th:field="*{plato}">
                                                 <option th:each="plato: ${listaPlatos}" th:value="${plato.idplato}" th:text="${plato.nombre}"></option>
                                             </select>
                                         </div>
-                                        <div class="form-group col-6" th:unless="${cupon.idcupones}">
-                                            <label for="plato">Plato asociado</label>
-                                            <select class="form-control-sm" th:field="*{plato}">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:unless="${cupon.idcupones}">
+                                            <label for="plato">Plato asociado</label><br>
+                                            <select class="form-select" style="margin-bottom:20px;width: 100%;height: 50px;border: #fff solid 2px;box-shadow: 0 0 0 .2rem rgba(255, 255, 255, .25);" th:field="*{plato}">
                                                 <option th:each="plato: ${listaPlatos}" th:value="${plato.idplato}" th:text="${plato.nombre}"
                                                         th:selected="${plato.idplato == cupon.plato}"></option>
                                             </select>
@@ -99,7 +102,6 @@
                                 <div class="img-box" align="center">
                                     <figure><img src="/images/cupon.jpg" style="width:475px;height:800px"></figure>
                                 </div>
-                                <div style="text-align: center;font-size: 30px;color: black">Imagen del cupon</div>
                             </div>
                         </div>
                     </div>
