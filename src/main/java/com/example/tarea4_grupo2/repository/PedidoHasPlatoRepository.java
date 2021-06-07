@@ -14,4 +14,6 @@ public interface PedidoHasPlatoRepository extends JpaRepository<PedidoHasPlato, 
     PedidoHasPlato findAllByIdEquals(int idkey);
 
     List<PedidoHasPlato> findAllByPedidoIdpedidos(int idpedido);
+
+
 }

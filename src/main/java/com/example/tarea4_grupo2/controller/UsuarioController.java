@@ -743,6 +743,34 @@ public class UsuarioController {
         return "cliente/carrito_productos";
     }
 
+    @GetMapping("/cliente/vaciarcarrrito")
+    public String vaciarcarrito(Model model, HttpSession session){
+
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuario=sessionUser.getIdusuarios();
+
+        List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idusuario);
+
+        if(listapedidospendientes.isEmpty()){
+            model.addAttribute("lista",0);
+        }else{
+            model.addAttribute("lista",1);
+
+            for (Pedidos pedidoencurso : listapedidospendientes){
+
+                List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(pedidoencurso.getIdpedidos());
+                for(PedidoHasPlato plato1 : platosxpedido){
+                    PedidoHasPlatoKey pedidoHasPlatoKey = plato1.getId();
+                    pedidoHasPlatoRepository.deleteById(pedidoHasPlatoKey);
+                    System.out.println("deberia borrar plato ****************************");
+                    //plato1.getPedido().removePlato(plato1.getPlato());
+                }
+                pedidosRepository.deleteById(pedidoencurso.getIdpedidos());
+            }
+        }
+
+        return "redirect:/cliente/carritoproductos";
+    }
     @GetMapping("/cliente/checkout")
     public String checkout(Model model, HttpSession session,
                            @RequestParam(value = "idmetodo",defaultValue = "0") int idmetodo){
