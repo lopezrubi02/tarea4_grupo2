@@ -118,11 +118,15 @@
 										</div>
 										<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:if="${metodoelegido == 3}">
 											<div class="form-floating">
-											  <select class="form-select" id="floatingSelectGrid" aria-label="Floating label select example">
-												<option selected>20 soles</option>
-												<option value="1">50 soles</option>
-												<option value="1">100 soles</option>												
-											  </select>
+											  <select class="form-select" id="floatingSelectGrid" aria-label="Floating label select example" name = "montoexacto">
+												<option value="20">20 soles</option>
+												<option value="50">50 soles</option>
+                                                  <option value="50">60 soles</option>
+                                                  <option value="70">70 soles</option>
+                                                  <option value="100">100 soles</option>
+                                                  <option value="120">120 soles</option>
+                                                  <option value="150">150 soles</option>
+                                              </select>
 											  <label for="floatingSelectGrid">Ingrese el monto exacto</label>
 											  <br/>
 											</div>

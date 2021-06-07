@@ -19,7 +19,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -822,7 +821,8 @@ public class UsuarioController {
     @GetMapping("/cliente/checkout")
     public String checkout(Model model, HttpSession session,
                            @RequestParam(value = "idmetodo",defaultValue = "0") int idmetodo){
-        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+
+         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuario=sessionUser.getIdusuarios();
         System.out.println(idmetodo);
         Optional<MetodosDePago> metodoopt = metodosDePagoRepository.findById(idmetodo);
@@ -858,6 +858,7 @@ public class UsuarioController {
 
     @PostMapping("/cliente/guardarcheckout")
     public String getcheckout(@RequestParam(value = "idmetodo",defaultValue = "0") int idmetodo,
+                              @RequestParam(value = "montoexacto",defaultValue = "0") int montoexacto,
                               Model model,
                               HttpSession session,
                               RedirectAttributes redirectAttributes){
@@ -889,9 +890,15 @@ public class UsuarioController {
                     model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
                     model.addAttribute("montopagar", montoPagar_pedidoHasPlatoDTO);
                     pedidoencurso.setMetododepago(metodosel);
+                    if(montoexacto != 0){
+                        System.out.println(montoexacto);
+                        pedidoencurso.setMontoexacto(String.valueOf(montoexacto));
+                    }
                     //pedidoencurso.setMontoexacto(String.valueOf(montoTotal_pedidoHasPlatoDTO.getpreciototal()));
                     pedidoencurso.setMontototal(String.valueOf(montoPagar_pedidoHasPlatoDTO.getpreciopagar()));
                     pedidoencurso.setEstadorestaurante("pendiente");
+                    System.out.println(LocalDate.now());
+                    pedidoencurso.setFechahorapedido(LocalDate.now());
                     pedidosRepository.save(pedidoencurso);
                 }
             }
