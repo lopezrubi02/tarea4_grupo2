@@ -745,50 +745,6 @@ public class UsuarioController {
         return "cliente/carrito_productos";
     }
 
-    @GetMapping("/cliente/eliminarplato")
-    public String eliminarplato(HttpSession session, Model model,
-                                   @RequestParam("idplato") String idplato){
-
-        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-        int idusuario=sessionUser.getIdusuarios();
-
-        try{
-            int idplatoint = Integer.parseInt(idplato);
-
-            Optional<Plato> platoopt = platoRepository.findById(idplatoint);
-            if(platoopt.isPresent()){
-
-                List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idusuario);
-
-                if(listapedidospendientes.isEmpty()){
-                    model.addAttribute("lista",0);
-                }else{
-                    model.addAttribute("lista",1);
-
-                    for (Pedidos pedidoencurso : listapedidospendientes){
-                        List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(pedidoencurso.getIdpedidos());
-                        for(PedidoHasPlato plato1 : platosxpedido){
-                            int idplatoobtenido = plato1.getPlato().getIdplato();
-                            if(idplatoobtenido == idplatoint){
-                                PedidoHasPlatoKey pedidoHasPlatoKey = plato1.getId();
-                                pedidoHasPlatoRepository.deleteById(pedidoHasPlatoKey);
-                                System.out.println("deberia borrar plato ****************************");
-                            }
-                        }
-                    }
-                }
-
-                System.out.println("prueba eliminar plato *************");
-                System.out.println(idplato);
-            }
-        }catch(NumberFormatException exception){
-            System.out.println(exception.getMessage());
-        }
-
-        return "redirect:/cliente/carritoproductos";
-
-    }
-
     @GetMapping("/cliente/vaciarcarrrito")
     public String vaciarcarrito(Model model, HttpSession session){
 
@@ -859,10 +815,10 @@ public class UsuarioController {
 
     @PostMapping("/cliente/guardarcheckout")
     public String getcheckout(@RequestParam(value = "idmetodo",defaultValue = "0") int idmetodo,
-    Model model,
-    HttpSession session,
-    RedirectAttributes redirectAttributes){
-         //TODO cuando se haya pagado por el pedido modificar el estadorestaurante = "pendiente";
+                              Model model,
+                              HttpSession session,
+                              RedirectAttributes redirectAttributes){
+        //TODO cuando se haya pagado por el pedido modificar el estadorestaurante = "pendiente";
         //revisar el metodo, sale error//
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuario=sessionUser.getIdusuarios();
@@ -883,10 +839,17 @@ public class UsuarioController {
                     List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(pedidoencurso.getIdpedidos());
                     System.out.println(pedidoencurso.getIdpedidos());
                     System.out.println(pedidoencurso.getDireccionentrega().getIddirecciones());
-                    //model.addAttribute("platosxpedido",platosxpedido);
-                    //model.addAttribute("pedidoencurso",pedidoencurso);
-                    //Pedidos pedido = new Pedidos();
-                    //pedidosRepository.save(pedido);
+                    MontoTotal_PedidoHasPlatoDTO montoTotal_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montototal(pedidoencurso.getIdpedidos());
+                    MontoPagar_PedidoHasPlatoDTO montoPagar_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montopagar(pedidoencurso.getIdpedidos());
+                    model.addAttribute("platosxpedido",platosxpedido);
+                    model.addAttribute("pedidoencurso",pedidoencurso);
+                    model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
+                    model.addAttribute("montopagar", montoPagar_pedidoHasPlatoDTO);
+                    pedidoencurso.setMetododepago(metodosel);
+                    pedidoencurso.setMontoexacto(String.valueOf(montoTotal_pedidoHasPlatoDTO.getpreciototal()));
+                    //pedidoencurso.setMontototal(String.valueOf(montoPagar_pedidoHasPlatoDTO.getpreciopagar()));
+                    pedidoencurso.setEstadorestaurante("pendiente");
+                    pedidosRepository.save(pedidoencurso);
                 }
             }
             return "redirect:/cliente/paginaprincipal";

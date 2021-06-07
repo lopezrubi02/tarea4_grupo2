@@ -17,7 +17,7 @@ public class Pedidos {
     @OneToMany(mappedBy = "pedido")
     private Set<PedidoHasPlato> pedidohasplato = new HashSet<>();
 
-    private float montototal;
+    private String montototal;
 
     private int comisionrepartidor;
 
@@ -77,7 +77,7 @@ public class Pedidos {
     public Pedidos() {
     }
 
-    public Pedidos(int idpedidos, Set<PedidoHasPlato> pedidohasplato, float montototal, int comisionrepartidor, int comisionsistema, String montoexacto, MetodosDePago metododepago, int calificacionrestaurante, int calificacionrepartidor, String comentario, float tiempodelivery, String estadorestaurante, String estadorepartidor, int idcliente, Usuario repartidor, Restaurante restaurantepedido, Date fechahorapedido, Date fechahoraentregado, Direcciones direccionentrega) {
+    public Pedidos(int idpedidos, Set<PedidoHasPlato> pedidohasplato, String montototal, int comisionrepartidor, int comisionsistema, String montoexacto, MetodosDePago metododepago, int calificacionrestaurante, int calificacionrepartidor, String comentario, float tiempodelivery, String estadorestaurante, String estadorepartidor, int idcliente, Usuario repartidor, Restaurante restaurantepedido, Date fechahorapedido, Date fechahoraentregado, Direcciones direccionentrega) {
         this.idpedidos = idpedidos;
         this.pedidohasplato = pedidohasplato;
         this.montototal = montototal;
@@ -107,11 +107,11 @@ public class Pedidos {
         this.idpedidos = idpedidos;
     }
 
-    public float getMontototal() {
+    public String getMontototal() {
         return montototal;
     }
 
-    public void setMontototal(float montototal) {
+    public void setMontototal(String montototal) {
         this.montototal = montototal;
     }
 

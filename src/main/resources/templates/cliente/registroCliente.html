@@ -117,6 +117,7 @@
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <label>Celular</label>
                                     <input class="form-control" placeholder="Celular" type="number" th:field="*{telefono}">
+                                    <div class="text-danger" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}"></div>
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <label>Fecha de Nacimiento</label>
