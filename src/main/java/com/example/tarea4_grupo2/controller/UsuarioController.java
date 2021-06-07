@@ -812,6 +812,7 @@ public class UsuarioController {
         //revisar el metodo, sale error//
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuario=sessionUser.getIdusuarios();
+        System.out.println("verificando metodo de pago ***************");
         System.out.println(idmetodo);
         List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idusuario);
 
@@ -823,15 +824,15 @@ public class UsuarioController {
                 MetodosDePago metodosel = metodoopt.get();
                 model.addAttribute("metodoelegido", idmetodo);
                 System.out.println(idmetodo);
+                System.out.println(metodosel.getMetodo());
                 for (Pedidos pedidoencurso : listapedidospendientes) {
                     List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(pedidoencurso.getIdpedidos());
                     System.out.println(pedidoencurso.getIdpedidos());
                     System.out.println(pedidoencurso.getDireccionentrega().getIddirecciones());
                     //model.addAttribute("platosxpedido",platosxpedido);
                     //model.addAttribute("pedidoencurso",pedidoencurso);
-                    Pedidos pedido = new Pedidos();
-                    pedidosRepository.save(pedido);
-
+                    //Pedidos pedido = new Pedidos();
+                    //pedidosRepository.save(pedido);
                 }
             }
             return "redirect:/cliente/paginaprincipal";
