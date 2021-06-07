@@ -10,7 +10,9 @@ import java.util.List;
 
 public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
 /* Obtencion del Top 3 de Restaurantes*/
-    @Query(value = "select re.nombre as restaurante, count(*) as vecesasistida from proyecto.Pedidos pe inner join proyecto.Restaurante re on (re.idrestaurante = pe.restaurante_idrestaurante) where pe.idcliente = ?1 and year(pe.fechahorapedido) = ?2 and month(pe.fechahorapedido) = ?3 group by re.idrestaurante order by count(*) desc limit 0, 3", nativeQuery = true)
+    @Query(value = "select re.nombre as restaurante, count(*) as vecesasistida from " +
+            "proyecto.Pedidos pe inner join proyecto.Restaurante re " +
+            "on (re.idrestaurante = pe.restaurante_idrestaurante) where pe.idcliente = ?1 and year(pe.fechahorapedido) = ?2 and month(pe.fechahorapedido) = ?3 group by re.idrestaurante order by count(*) desc limit 0, 3", nativeQuery = true)
     List<Top3Restaurantes_ClienteDTO> obtenerTop3Restaurantes(int idcliente, int anio, int mes);
 /*Este es para hallar el dinero ahorrado*/
     @Query(value = "select sum((pepla.cantidadplatos * p.precio) - pe.montototal) as diferencia from proyecto.Pedidos pe " +
