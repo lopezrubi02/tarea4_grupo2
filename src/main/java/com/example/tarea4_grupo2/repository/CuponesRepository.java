@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface CuponesRepository extends JpaRepository<Cupones,Integer> {
 
-    @Query(value = "select * from cupones where restaurante_idrestaurante = ?1",
+    @Query(value = "select * from Cupones where restaurante_idrestaurante = ?1",
             nativeQuery = true)
     List<Cupones> buscarCuponesPorIdRestaurante(int idrestaurante);
 }
