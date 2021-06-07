@@ -747,17 +747,23 @@ public class UsuarioController {
 
     @GetMapping("/cliente/eliminarplato")
     public String eliminarplato(HttpSession session, Model model,
-                                   @RequestParam("idplato") int idplato){
+                                   @RequestParam("idplato") String idplato){
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuario=sessionUser.getIdusuarios();
 
-        Optional<Plato> platoopt = platoRepository.findById(idplato);
-        if(platoopt.isPresent()){
-            Plato platoxeliminar = platoopt.get();
+        try{
+            int idplatoint = Integer.parseInt(idplato);
 
-            System.out.println("prueba eliminar plato *************");
-            System.out.println(idplato);
+            Optional<Plato> platoopt = platoRepository.findById(idplatoint);
+            if(platoopt.isPresent()){
+                Plato platoxeliminar = platoopt.get();
+
+                System.out.println("prueba eliminar plato *************");
+                System.out.println(idplato);
+            }
+        }catch(NumberFormatException exception){
+            System.out.println(exception.getMessage());
         }
 
         return "redirect:/cliente/carritoproductos";
