@@ -135,7 +135,7 @@ public class LoginController {
                 subject = "Recuperacion de contraseña - Spicy";
                 //TODO modificar direcion url despues de despliegue aws.
                 String direccion = "http://localhost:8090/cambiar1/";
-                //Pegar aquí los datos del AWS;
+                //Pegar aquí los datos del AWS
                 // String aws =
                 //String direccion = "http://" + aws + ":8080/proyecto/cambiar1/";
                 URL url = new URL(direccion + token);
