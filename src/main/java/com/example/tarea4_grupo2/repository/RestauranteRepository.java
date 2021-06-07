@@ -34,8 +34,8 @@ public interface RestauranteRepository extends JpaRepository<Restaurante, Intege
 
     //seleccionar restaurantes por categoria
     @Query(value = "select r.idrestaurante,r.direccion,r.ruc,r.nombre,r.calificacionpromedio,r.idadminrest,r.foto, r.fotonombre, r.fotocontenttype, r.iddistrito\n" +
-            " from proyecto.restaurante r\n" +
-            "inner join proyecto.restaurante_has_categorias rc\n" +
+            " from proyecto.Restaurante r\n" +
+            "inner join proyecto.Restaurante_has_categorias rc\n" +
             "on rc.restaurante_idrestaurante = r.idrestaurante where rc.categorias_idcategorias=?1",nativeQuery = true)
     List<Restaurante> listarestxcategoria (int categorias_idcategorias);
     @Query(value="select * from restaurante where idadminrest = ?1 limit 1", nativeQuery = true)
@@ -46,7 +46,7 @@ public interface RestauranteRepository extends JpaRepository<Restaurante, Intege
     Integer cantreviews(int restaurante_idrestaurante);
 
     // filtro restaurante por nombre
-    @Query(value = "select * from restaurante r where lower(r.nombre) like concat('%',lower(:nombre),'%')",nativeQuery = true)
+    @Query(value = "select * from Restaurante r where lower(r.nombre) like concat('%',lower(:nombre),'%')",nativeQuery = true)
     List<Restaurante> buscarRestaurantexNombre(@Param("nombre") String nombre);
 
     @Query(value="select ruc from restaurante where idadminrest=?1",nativeQuery = true)
@@ -54,34 +54,34 @@ public interface RestauranteRepository extends JpaRepository<Restaurante, Intege
 
     // filtro por precio de platos promedio
     @Query(value = "select r.*\n" +
-            "from plato p \n" +
-            "inner join restaurante r \n" +
+            "from Plato p \n" +
+            "inner join Restaurante r \n" +
             "on r.idrestaurante = p.restaurante_idrestaurante\n" +
             " group by p.restaurante_idrestaurante having sum(p.precio)/count(p.precio) <15",nativeQuery = true)
     List<Restaurante> listarestprecio1();
 
     @Query(value = "select r.*\n" +
-            "from plato p \n" +
-            "inner join restaurante r \n" +
+            "from Plato p \n" +
+            "inner join Restaurante r \n" +
             "on r.idrestaurante = p.restaurante_idrestaurante\n" +
             " group by p.restaurante_idrestaurante having sum(p.precio)/count(p.precio) <25 and sum(p.precio)/count(p.precio) > 15",nativeQuery = true)
     List<Restaurante> listarestprecio2();
 
     @Query(value = "select r.*\n" +
-            "from plato p \n" +
-            "inner join restaurante r \n" +
+            "from Plato p \n" +
+            "inner join Restaurante r \n" +
             "on r.idrestaurante = p.restaurante_idrestaurante\n" +
             " group by p.restaurante_idrestaurante having sum(p.precio)/count(p.precio) <40 and sum(p.precio)/count(p.precio) > 25",nativeQuery = true)
     List<Restaurante> listarestprecio3();
 
     @Query(value = "select r.*\n" +
-            "from plato p \n" +
-            "inner join restaurante r \n" +
+            "from Plato p \n" +
+            "inner join Restaurante r \n" +
             "on r.idrestaurante = p.restaurante_idrestaurante\n" +
             "group by p.restaurante_idrestaurante having sum(p.precio)/count(p.precio) > 40",nativeQuery = true)
     List<Restaurante> listarestprecio4();
 
-    @Query(value = "select * from restaurante r \n" +
+    @Query(value = "select * from Restaurante r \n" +
             "where round(calificacionpromedio) = ?1",nativeQuery = true)
     List<Restaurante> listarestcalificacion(int numestrellas);
 

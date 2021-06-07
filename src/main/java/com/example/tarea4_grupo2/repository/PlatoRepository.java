@@ -20,7 +20,7 @@ public interface PlatoRepository extends JpaRepository<Plato,Integer> {
             nativeQuery = true)
     List<Plato> buscarPlatosPorIdRestauranteDisponilidadActivo(int idrestaurante);
 
-    @Query(value = "select * from plato p where lower(p.nombre) like concat('%',lower(:nombre),'%')",nativeQuery = true)
+    @Query(value = "select * from Plato p where lower(p.nombre) like concat('%',lower(:nombre),'%')",nativeQuery = true)
     List<Plato> buscarPlatoxNombre(@Param("nombre") String nombre);
 
     @Query(value = "select * from plato p where p.nombre = ?1 limit 1",nativeQuery = true)

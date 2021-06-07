@@ -36,7 +36,8 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
     List<HistorialConsumo_ClienteDTO> obtenerHistorialConsumo(int idcliente, int anio, int mes);
 
     /*Halla el tiempo promedio de delivery*/
-    @Query(value = "SELECT re.nombre as nombrerestaurante, avg(pe.tiempodelivery) as tiempopromedio FROM proyecto.Pedidos pe inner join proyecto.Restaurante re on " +
+    @Query(value = "SELECT re.nombre as nombrerestaurante, avg(pe.tiempodelivery) as tiempopromedio " +
+            "FROM proyecto.Pedidos pe inner join proyecto.Restaurante re on " +
             "(re.idrestaurante = pe.restaurante_idrestaurante) where pe.idcliente = ?1 and year(pe.fechahorapedido) = ?2 and month(pe.fechahorapedido) = ?3 group by re.idrestaurante order by count(*) desc", nativeQuery = true)
     List<TiempoMedio_ClienteDTO> obtenerTiemposPromedio(int idcliente, int anio, int mes);
 
