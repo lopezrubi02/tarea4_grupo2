@@ -689,7 +689,7 @@ public class UsuarioController {
                  PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido,idplato);
                  PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey,pedidos,platoelegido,descripcion,cantidad,cubiertos);
                  pedidos.addpedido(pedidoHasPlato);
-
+                 pedidos.setMontototal("0");
                  pedidosRepository.save(pedidos);
                  listapedidoscliente = pedidosRepository.listapedidoxcliente(idcliente,idrestaurante);
                  tam = listapedidoscliente.size();
@@ -743,6 +743,50 @@ public class UsuarioController {
             }
         }
         return "cliente/carrito_productos";
+    }
+
+    @GetMapping("/cliente/eliminarplato")
+    public String eliminarplato(HttpSession session, Model model,
+                                   @RequestParam("idplato") String idplato){
+
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuario=sessionUser.getIdusuarios();
+
+        try{
+            int idplatoint = Integer.parseInt(idplato);
+
+            Optional<Plato> platoopt = platoRepository.findById(idplatoint);
+            if(platoopt.isPresent()){
+
+                List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idusuario);
+
+                if(listapedidospendientes.isEmpty()){
+                    model.addAttribute("lista",0);
+                }else{
+                    model.addAttribute("lista",1);
+
+                    for (Pedidos pedidoencurso : listapedidospendientes){
+                        List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(pedidoencurso.getIdpedidos());
+                        for(PedidoHasPlato plato1 : platosxpedido){
+                            int idplatoobtenido = plato1.getPlato().getIdplato();
+                            if(idplatoobtenido == idplatoint){
+                                PedidoHasPlatoKey pedidoHasPlatoKey = plato1.getId();
+                                pedidoHasPlatoRepository.deleteById(pedidoHasPlatoKey);
+                                System.out.println("deberia borrar plato ****************************");
+                            }
+                        }
+                    }
+                }
+
+                System.out.println("prueba eliminar plato *************");
+                System.out.println(idplato);
+            }
+        }catch(NumberFormatException exception){
+            System.out.println(exception.getMessage());
+        }
+
+        return "redirect:/cliente/carritoproductos";
+
     }
 
     @GetMapping("/cliente/vaciarcarrrito")
@@ -806,7 +850,6 @@ public class UsuarioController {
                 model.addAttribute("pedidoencurso",pedidoencurso);
                 model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
                 model.addAttribute("montopagar", montoPagar_pedidoHasPlatoDTO);
-                pedidosRepository.save(pedidoencurso);
             }
             return "cliente/checkoutcarrito";
         }
@@ -846,8 +889,8 @@ public class UsuarioController {
                     model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
                     model.addAttribute("montopagar", montoPagar_pedidoHasPlatoDTO);
                     pedidoencurso.setMetododepago(metodosel);
-                    pedidoencurso.setMontoexacto(String.valueOf(montoTotal_pedidoHasPlatoDTO.getpreciototal()));
-                    //pedidoencurso.setMontototal(String.valueOf(montoPagar_pedidoHasPlatoDTO.getpreciopagar()));
+                    //pedidoencurso.setMontoexacto(String.valueOf(montoTotal_pedidoHasPlatoDTO.getpreciototal()));
+                    pedidoencurso.setMontototal(String.valueOf(montoPagar_pedidoHasPlatoDTO.getpreciopagar()));
                     pedidoencurso.setEstadorestaurante("pendiente");
                     pedidosRepository.save(pedidoencurso);
                 }
