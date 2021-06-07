@@ -649,7 +649,7 @@ public class UsuarioController {
                               @RequestParam(value = "idrestaurante") int idrestaurante,
                               @RequestParam("idplato") int idplato,
                               HttpSession session,
-                              Model model,
+                              Model model, RedirectAttributes redirectAttributes,
                               @RequestParam("direccion") int direccionxenviar){
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
@@ -710,6 +710,8 @@ public class UsuarioController {
                  //PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido,idplato);
                  pedidoHasPlato.setId(pedidoHasPlatoKey);
                  pedidoHasPlatoRepository.save(pedidoHasPlato);
+                 redirectAttributes.addFlashAttribute("platoagregado", "Plato agregado al carrito");
+
              }
 
              return "redirect:/cliente/restaurantexordenar?idrestaurante=" + idrestaurante + "&direccion=" + direccionxenviar;
@@ -745,7 +747,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/cliente/eliminarplato")
-    public String eliminarplato(HttpSession session, Model model,
+    public String eliminarplato(HttpSession session, Model model, RedirectAttributes redirectAttributes,
                                    @RequestParam("idplato") String idplato){
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
@@ -776,7 +778,7 @@ public class UsuarioController {
                         }
                     }
                 }
-
+                redirectAttributes.addFlashAttribute("platoeliminado", "Plato eliminado exitosamente");
                 System.out.println("prueba eliminar plato *************");
                 System.out.println(idplato);
             }
@@ -901,6 +903,7 @@ public class UsuarioController {
                     pedidoencurso.setFechahorapedido(LocalDate.now());
                     pedidosRepository.save(pedidoencurso);
                 }
+                redirectAttributes.addFlashAttribute("checkout", "Pedido listo");
             }
             return "redirect:/cliente/paginaprincipal";
         }
