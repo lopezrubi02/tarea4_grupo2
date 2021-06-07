@@ -837,21 +837,35 @@ public class UsuarioController {
         }
     }
 
-
     @GetMapping("/cliente/progresopedido")
     public String progresopedido(Model model, HttpSession session){
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuario=sessionUser.getIdusuarios();
 
-        List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idusuario);
-        List<PedidoHasPlato> pedidoHasPlatoencurso = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(55);
+        List<Pedidos> listapedidoscliente = pedidosRepository.pedidosfinxcliente(idusuario);
+        int tam = listapedidoscliente.size();
+        Pedidos ultimopedido = listapedidoscliente.get(tam-1);
+        int idultimopedido = ultimopedido.getIdpedidos();
+        System.out.println("verificando ultimo pedido");
+        System.out.println(idultimopedido);
+
+        List<PedidoHasPlato> pedidoHasPlatoencurso = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(idultimopedido);
         System.out.println(pedidoHasPlatoencurso.get(0).getPlato().getNombre());
+        System.out.println(pedidoHasPlatoencurso.get(0).getPedido().getIdpedidos());
         System.out.println("*****************");
-        Optional<Pedidos> pedidoencursoopt = pedidosRepository.findById(55);
+        Optional<Pedidos> pedidoencursoopt = pedidosRepository.findById(pedidoHasPlatoencurso.get(0).getPedido().getIdpedidos());
         Pedidos pedidoencurso = pedidoencursoopt.get();
         model.addAttribute("pedido",pedidoencurso);
         model.addAttribute("lista",pedidoHasPlatoencurso);
+
+        if(pedidoencurso.getCalificacionrepartidor() !=0 || pedidoencurso.getCalificacionrestaurante() != 0 || pedidoencurso.getComentario() != null){
+            boolean calificar = true;
+            model.addAttribute("calificar",calificar);
+        }else{
+            boolean calificar = false;
+            model.addAttribute("calificar",calificar);
+        }
 
         return "cliente/ultimopedido_cliente";
 
@@ -869,6 +883,28 @@ public class UsuarioController {
                                       @RequestParam("estrellasrepartidor") int calrep){
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuario=sessionUser.getIdusuarios();
+
+        List<Pedidos> listapedidoscliente = pedidosRepository.pedidosfinxcliente(idusuario);
+        int tam = listapedidoscliente.size();
+        Pedidos ultimopedido = listapedidoscliente.get(tam-1);
+        int idultimopedido = ultimopedido.getIdpedidos();
+
+        List<PedidoHasPlato> pedidoHasPlatoencurso = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(idultimopedido);
+        System.out.println(pedidoHasPlatoencurso.get(0).getPlato().getNombre());
+        System.out.println(pedidoHasPlatoencurso.get(0).getPedido().getIdpedidos());
+        System.out.println("*****************");
+        Optional<Pedidos> pedidoencursoopt = pedidosRepository.findById(pedidoHasPlatoencurso.get(0).getPedido().getIdpedidos());
+        Pedidos pedidoencurso = pedidoencursoopt.get();
+
+        if(calrest != 0){
+            pedidoencurso.setCalificacionrestaurante(calrest);
+        }
+        if(calrep != 0){
+            pedidoencurso.setCalificacionrepartidor(calrep);
+        }
+        if(comentarios != null){
+            pedidoencurso.setComentario(comentarios);
+        }
 
         System.out.println("calificacionesssssssssssssss");
         System.out.println(calrep);
