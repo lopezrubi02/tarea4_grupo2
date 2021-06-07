@@ -134,6 +134,9 @@ public class LoginController {
                 String token = bytes.toString();
                 subject = "Recuperacion de contraseña - Spicy";
                 String direccion = "http://localhost:8090/cambiar1/";
+                //Pegar aquí los datos del AWS;
+                // String aws =
+                //String direccion = "http://" + aws + ":8080/proyecto/cambiar1/";
                 URL url = new URL(direccion + token);
                 mensaje = "¡Hola!<br><br>Para reestablecer su contraseña haga click: <a href='" + direccion + token + "'>AQUÍ</a> <br><br>Atte. Equipo de Spicy :D</b>";
                 attr.addFlashAttribute("msg", "¡Revisa tu correo para continuar el proceso! :D");
