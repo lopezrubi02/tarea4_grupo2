@@ -65,7 +65,6 @@ public class UsuarioController {
     }
 
     /** para validar patron de contraseña **/
-
     public  boolean validarContrasenia(String contrasenia1) {
         Pattern pattern1 = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$");
         Matcher matcher1 = pattern1.matcher(contrasenia1);
@@ -74,9 +73,37 @@ public class UsuarioController {
         return matcher1.matches();
     }
 
+    public boolean validarcorreounico(String correo, Usuario usuario){
+        boolean errorcorreo = false;
+        Usuario usuarioxcorreo = usuarioRepository.findByEmail(usuario.getEmail());
+        if(usuarioxcorreo != null){
+            errorcorreo = true;
+        }
+        return errorcorreo;
+    }
 
-    /** Registro cliente**/
+    public boolean validardnixrolunico(String dni, String rol, Usuario usuario){
+        boolean errordni = false;
+        Usuario usuarioxdni = usuarioRepository.findByDniAndRolEquals(usuario.getDni(),"Cliente");
+        if(usuarioxdni != null){
+            errordni = true;
+        }
+        return errordni;
+    }
+    public boolean validarstringsexo(String stringsexo){
+        boolean errorstring = true;
+        if(stringsexo.equalsIgnoreCase("Femenino")){
+            errorstring = false;
+        }else if(stringsexo.equalsIgnoreCase("Masculino")){
+            errorstring = false;
+        }else{
+            errorstring = true;
+        }
+        return errorstring;
+    }
 
+
+    /**                     Registro cliente                **/
     @GetMapping("/nuevocliente")
     public String nuevoCliente(Model model,@ModelAttribute("usuario") Usuario usuario)
     {
@@ -93,65 +120,83 @@ public class UsuarioController {
                                  @ModelAttribute("usuario") @Valid Usuario usuario,
                                  BindingResult bindingResult) throws MalformedURLException {
 
-        if(bindingResult.hasErrors()){
+        if (bindingResult.hasErrors()) {
             List<Distritos> listadistritos = distritosRepository.findAll();
-            model.addAttribute("listadistritos",listadistritos);
+            model.addAttribute("listadistritos", listadistritos);
             return "cliente/registroCliente";
-        }else{
-            if (usuario.getContraseniaHash().equals(pass2)) {
-                String contraxvalidarpatron = usuario.getContraseniaHash();
+        } else {
+            boolean errorcorreo = validarcorreounico(usuario.getEmail(), usuario);
+            boolean errordnixrol = validardnixrolunico(usuario.getDni(), "Cliente", usuario);
+            boolean errorstringsexo = validarstringsexo(usuario.getSexo());
 
-                Boolean validarcontra = validarContrasenia(contraxvalidarpatron);
+            if (errorcorreo == true || errordnixrol == true || errorstringsexo == true) {
+                if(errorcorreo==true){
+                    model.addAttribute("errorcorreo", "Ya hay una cuenta registrada con el correo ingresado.");
+                }
+                if(errordnixrol==true){
+                    model.addAttribute("errordni", "Ya hay una cuenta registrada con este dni en este rol");
+                }
+                List<Distritos> listadistritos = distritosRepository.findAll();
+                model.addAttribute("listadistritos", listadistritos);
+                return "cliente/registroCliente";
+            } else {
+                if (usuario.getContraseniaHash().equals(pass2)) {
+                    String contraxvalidarpatron = usuario.getContraseniaHash();
 
-                if(validarcontra == true){
+                    boolean validarcontra = validarContrasenia(contraxvalidarpatron);
 
-                    String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
+                    if (validarcontra == true) {
 
-                    usuario.setContraseniaHash(contraseniahashbcrypt);
-                    usuario.setRol("Cliente");
-                    usuario.setCuentaActiva(1);
+                        String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
 
-                    usuarioRepository.save(usuario);
-                    //TODO: validar DNI y correo unico
-                    Usuario usuarionuevo = usuarioRepository.findByDni(usuario.getDni());
+                        usuario.setContraseniaHash(contraseniahashbcrypt);
+                        usuario.setRol("Cliente");
+                        usuario.setCuentaActiva(1);
 
-                    int idusuarionuevo = usuarionuevo.getIdusuarios();
+                        usuarioRepository.save(usuario);
 
-                    Direcciones direccionactual = new Direcciones();
-                    direccionactual.setDireccion(direccion);
-                    Optional<Distritos> distritoopt = distritosRepository.findById(iddistrito);
-                    Distritos distritosactual = distritoopt.get();
+                        //Para guardar direccion
+                        Usuario usuarionuevo = usuarioRepository.findByDniAndEmailEquals(usuario.getDni(), usuario.getEmail());
+                        int idusuarionuevo = usuarionuevo.getIdusuarios();
+                        Direcciones direccionactual = new Direcciones();
+                        direccionactual.setDireccion(direccion);
+                        Optional<Distritos> distritoopt = distritosRepository.findById(iddistrito);
 
-                    direccionactual.setDistrito(distritosactual);
-                    direccionactual.setUsuariosIdusuarios(idusuarionuevo);
-                    direccionactual.setActivo(1);
-                    direccionesRepository.save(direccionactual);
-                    System.out.println("no hay error de patron de contraseña");
+                        if(distritoopt.isPresent()){
+                            Distritos distritosactual = distritoopt.get();
+                            direccionactual.setDistrito(distritosactual);
+                            direccionactual.setUsuariosIdusuarios(idusuarionuevo);
+                            direccionactual.setActivo(1);
+                            direccionesRepository.save(direccionactual);
 
-                    /* Envio de correo de confirmacion */
-                    String subject = "Cuenta creada en Spicyo";
-                    //TODO modificar direcion url despues de despliegue aws.
-                    String direccionurl = "http://localhost:8090/login";
-                    //URL url = new URL(direccionurl);
-                    String mensaje = "¡Hola!<br><br>" +
-                            "Ahora es parte de Spicyo. Para ingresar a su cuenta haga click: <a href='" + direccionurl + "'>AQUÍ</a> <br><br>Atte. Equipo de Spicy :D</b>";
-                    String correoDestino = usuario.getEmail();
-                    sendMailService.sendMail(correoDestino, "saritaatanacioarenas@gmail.com", subject, mensaje);
+                            /* Envio de correo de confirmacion */
+                            String subject = "Cuenta creada en Spicyo";
+                            //TODO modificar direcion url despues de despliegue aws.
+                            String direccionurl = "http://localhost:8090/login";
+                            //URL url = new URL(direccionurl);
+                            String mensaje = "¡Hola!<br><br>" +
+                                    "Ahora es parte de Spicyo. Para ingresar a su cuenta haga click: <a href='" + direccionurl + "'>AQUÍ</a> <br><br>Atte. Equipo de Spicy :D</b>";
+                            String correoDestino = usuario.getEmail();
+                            sendMailService.sendMail(correoDestino, "saritaatanacioarenas@gmail.com", subject, mensaje);
 
-                    return "cliente/confirmarCuenta";
-                }else{
+                            return "cliente/confirmarCuenta";
+                        }else{
+                            List<Distritos> listadistritos = distritosRepository.findAll();
+                            model.addAttribute("listadistritos", listadistritos);
+                            return "cliente/registroCliente";
+                        }
+                    } else {
+                        List<Distritos> listadistritos = distritosRepository.findAll();
+                        model.addAttribute("listadistritos", listadistritos);
+                        model.addAttribute("errorpatroncontra", "La contraseña no cumple con los requisitos: mínimo 8 caracteres, un número y un caracter especial");
+                        model.addAttribute("usuario", usuario);
+                        return "cliente/registroCliente";
+                    }
+                } else {
                     List<Distritos> listadistritos = distritosRepository.findAll();
-                    model.addAttribute("listadistritos",listadistritos);
-                    model.addAttribute("errorpatroncontra","La contraseña no cumple con los requisitos: mínimo 8 caracteres, un número y un caracter especial");
-                    System.out.println("error patron de contraseña");
-                    System.out.println(contraxvalidarpatron);
-                    model.addAttribute("usuario",usuario);
+                    model.addAttribute("listadistritos", listadistritos);
                     return "cliente/registroCliente";
                 }
-            } else {
-                List<Distritos> listadistritos = distritosRepository.findAll();
-                model.addAttribute("listadistritos",listadistritos);
-                return "cliente/registroCliente";
             }
         }
     }

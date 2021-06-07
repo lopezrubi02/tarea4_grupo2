@@ -70,7 +70,7 @@
                     <div class="full">
                         <div class="right_header_info">
                             <ul>
-                                <li class="button_user"><a class="button active" href="">Iniciar sesión</a><a class="button" href="#">Soy parte de la empresa</a></li>
+                                <li class="button_user"><a class="button active" th:href="@{/login}">Iniciar sesión</a><a class="button" th:href="@{/eleccion}">Soy parte de la empresa</a></li>
                             </ul>
                         </div>
                     </div>
@@ -96,6 +96,7 @@
                                     <label>Correo</label>
                                     <input class="form-control" placeholder="Correo" type="text" th:field="*{email}">
                                     <div class="text-dark" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                                    <div th:if="${errorcorreo != null}" th:text="${errorcorreo}" class="text-danger"></div>
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <label>Nombres</label>
@@ -111,14 +112,16 @@
                                     <label>DNI</label>
                                     <input class="form-control" placeholder="DNI" type="text" th:field="*{dni}">
                                     <div class="text-dark" th:if="${#fields.hasErrors('dni')}" th:errors="*{dni}"></div>
+                                    <div th:if="${errordni != null}" th:text="${errordni}" class="text-danger"></div>
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <label>Teléfono</label>
+                                    <label>Celular</label>
                                     <input class="form-control" placeholder="Celular" type="number" th:field="*{telefono}">
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <label>Fecha de Nacimiento</label>
                                     <input placeholder="Fecha de nacimiento"  type="date" class="form-control" th:field="*{fechaNacimiento}">
+                                    <div class="text-danger" th:if="${#fields.hasErrors('fechaNacimiento')}" th:errors="*{fechaNacimiento}"></div>
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <label>Sexo</label>
