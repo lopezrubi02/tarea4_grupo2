@@ -19,14 +19,14 @@ public interface PedidoHasPlatoRepository extends JpaRepository<PedidoHasPlato, 
     List<PedidoHasPlato> findAllByPedidoIdpedidos(int idpedido);
 
     @Query(value = "select sum((pepla.cantidadplatos * p.precio)) as preciototal\n" +
-            "from proyecto.pedidos_has_plato pepla \n" +
-            "inner join proyecto.plato p on (pepla.plato_idplato = p.idplato)\n" +
+            "from proyecto.Pedidos_has_plato pepla \n" +
+            "inner join proyecto.Plato p on (pepla.plato_idplato = p.idplato)\n" +
             "where pepla.pedidos_idpedidos = ?1", nativeQuery = true)
     MontoTotal_PedidoHasPlatoDTO montototal(int idpedido);
 
     @Query(value = "select (sum((pepla.cantidadplatos * p.precio)) + 8)  as preciopagar\n" +
-            "from proyecto.pedidos_has_plato pepla \n" +
-            "inner join proyecto.plato p on (pepla.plato_idplato = p.idplato)\n" +
+            "from proyecto.Pedidos_has_plato pepla \n" +
+            "inner join proyecto.Plato p on (pepla.plato_idplato = p.idplato)\n" +
             "where pepla.pedidos_idpedidos = ?1", nativeQuery = true)
     MontoPagar_PedidoHasPlatoDTO montopagar(int idpedido);
 

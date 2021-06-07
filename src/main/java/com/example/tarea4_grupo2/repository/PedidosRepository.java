@@ -36,7 +36,8 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
     List<HistorialConsumo_ClienteDTO> obtenerHistorialConsumo(int idcliente, int anio, int mes);
 
     /*Halla el tiempo promedio de delivery*/
-    @Query(value = "SELECT re.nombre as nombrerestaurante, avg(pe.tiempodelivery) as tiempopromedio FROM proyecto.Pedidos pe inner join proyecto.Restaurante re on " +
+    @Query(value = "SELECT re.nombre as nombrerestaurante, avg(pe.tiempodelivery) as tiempopromedio " +
+            "FROM proyecto.Pedidos pe inner join proyecto.Restaurante re on " +
             "(re.idrestaurante = pe.restaurante_idrestaurante) where pe.idcliente = ?1 and year(pe.fechahorapedido) = ?2 and month(pe.fechahorapedido) = ?3 group by re.idrestaurante order by count(*) desc", nativeQuery = true)
     List<TiempoMedio_ClienteDTO> obtenerTiemposPromedio(int idcliente, int anio, int mes);
 
@@ -200,14 +201,14 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
             "where r.idrestaurante=?1 and p.estadorestaurante='preparado'",nativeQuery = true)
     List<PedidosPreparadosDto>preparadopedidos(Integer id);
 
-    @Query(value = "select * from pedidos where idcliente=?1 and restaurante_idrestaurante=?2",nativeQuery = true)
+    @Query(value = "select * from Pedidos where idcliente=?1 and restaurante_idrestaurante=?2",nativeQuery = true)
     List<Pedidos> listapedidoxcliente (int idcliente,int idrestaurante);
 
     //TODO: usar en     @PostMapping("/cliente/platopedido")    para verificar si ya existe un pedido iniciado
-    @Query(value = "select * from pedidos where idcliente=?1 and restaurante_idrestaurante= ?2 and montototal='0'",nativeQuery = true)
+    @Query(value = "select * from Pedidos where idcliente=?1 and restaurante_idrestaurante= ?2 and montototal='0'",nativeQuery = true)
     Pedidos pedidoencursoxrestaurante(int idcliente, int restaurante_idrestaurante);
 
-    @Query(value = "select * from pedidos where idcliente=?1 and montototal='0'",nativeQuery = true)
+    @Query(value = "select * from Pedidos where idcliente=?1 and montototal='0'",nativeQuery = true)
     List<Pedidos> listapedidospendientes(int idcliente);
 
     @Query(value = "select * from pedidos where idcliente=?1 and montototal!='0'",nativeQuery = true)
