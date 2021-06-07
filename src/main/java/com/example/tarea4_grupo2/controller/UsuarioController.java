@@ -808,6 +808,7 @@ public class UsuarioController {
     Model model,
     HttpSession session,
     RedirectAttributes redirectAttributes){
+         //TODO cuando se haya pagado por el pedido modificar el estadorestaurante = "pendiente";
         //revisar el metodo, sale error//
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuario=sessionUser.getIdusuarios();
