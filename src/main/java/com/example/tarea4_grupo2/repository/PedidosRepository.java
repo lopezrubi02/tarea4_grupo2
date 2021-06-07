@@ -63,7 +63,7 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
             nativeQuery = true)
     String primerPedido();
 
-    @Query(value = "SELECT b.Days as 'fecha', count(pedidos.idpedidos) as 'pedidos', ifnull(sum(pedidos.comisionsistema),0) as 'comision' FROM \n" +
+    @Query(value = "SELECT b.Days as 'fecha', count(Pedidos.idpedidos) as 'pedidos', ifnull(sum(Pedidos.comisionsistema),0) as 'comision' FROM \n" +
             "    (SELECT a.Days \n" +
             "    FROM (\n" +
             "        SELECT curdate() - INTERVAL (a.a + (10 * b.a) + (100 * c.a)) DAY AS Days\n" +
