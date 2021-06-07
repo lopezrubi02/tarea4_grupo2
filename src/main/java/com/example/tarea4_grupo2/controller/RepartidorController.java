@@ -332,6 +332,8 @@ public class RepartidorController {
 
         if(  bindingResult.hasFieldErrors("telefono")|| msgc1!=null || msgc2!=null ){
 
+            model.addAttribute("msgc1",msgc1);
+            model.addAttribute("msgc2",msgc2);
             if(bindingResult.hasFieldErrors("telefono")){
                 String msgT="El teléfono no es válido";
             }
