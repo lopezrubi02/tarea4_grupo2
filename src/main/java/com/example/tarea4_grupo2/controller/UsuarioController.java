@@ -736,8 +736,10 @@ public class UsuarioController {
                 List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(pedidoencurso.getIdpedidos());
                 System.out.println(pedidoencurso.getIdpedidos());
                 System.out.println(pedidoencurso.getDireccionentrega().getIddirecciones());
+                MontoTotal_PedidoHasPlatoDTO montoTotal_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montototal(pedidoencurso.getIdpedidos());
                 model.addAttribute("platosxpedido",platosxpedido);
                 model.addAttribute("pedidoencurso",pedidoencurso);
+                model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
             }
         }
         return "cliente/carrito_productos";
@@ -770,6 +772,9 @@ public class UsuarioController {
 
         return "redirect:/cliente/carritoproductos";
     }
+
+
+
     @GetMapping("/cliente/checkout")
     public String checkout(Model model, HttpSession session,
                            @RequestParam(value = "idmetodo",defaultValue = "0") int idmetodo){
