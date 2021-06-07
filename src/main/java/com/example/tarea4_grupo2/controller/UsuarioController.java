@@ -747,17 +747,42 @@ public class UsuarioController {
 
     @GetMapping("/cliente/eliminarplato")
     public String eliminarplato(HttpSession session, Model model,
-                                   @RequestParam("idplato") int idplato){
+                                   @RequestParam("idplato") String idplato){
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuario=sessionUser.getIdusuarios();
 
-        Optional<Plato> platoopt = platoRepository.findById(idplato);
-        if(platoopt.isPresent()){
-            Plato platoxeliminar = platoopt.get();
+        try{
+            int idplatoint = Integer.parseInt(idplato);
 
-            System.out.println("prueba eliminar plato *************");
-            System.out.println(idplato);
+            Optional<Plato> platoopt = platoRepository.findById(idplatoint);
+            if(platoopt.isPresent()){
+
+                List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idusuario);
+
+                if(listapedidospendientes.isEmpty()){
+                    model.addAttribute("lista",0);
+                }else{
+                    model.addAttribute("lista",1);
+
+                    for (Pedidos pedidoencurso : listapedidospendientes){
+                        List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(pedidoencurso.getIdpedidos());
+                        for(PedidoHasPlato plato1 : platosxpedido){
+                            int idplatoobtenido = plato1.getPlato().getIdplato();
+                            if(idplatoobtenido == idplatoint){
+                                PedidoHasPlatoKey pedidoHasPlatoKey = plato1.getId();
+                                pedidoHasPlatoRepository.deleteById(pedidoHasPlatoKey);
+                                System.out.println("deberia borrar plato ****************************");
+                            }
+                        }
+                    }
+                }
+
+                System.out.println("prueba eliminar plato *************");
+                System.out.println(idplato);
+            }
+        }catch(NumberFormatException exception){
+            System.out.println(exception.getMessage());
         }
 
         return "redirect:/cliente/carritoproductos";
