@@ -68,8 +68,6 @@ public class UsuarioController {
     public  boolean validarContrasenia(String contrasenia1) {
         Pattern pattern1 = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$");
         Matcher matcher1 = pattern1.matcher(contrasenia1);
-        System.out.println(matcher1.matches());
-        System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         return matcher1.matches();
     }
 
@@ -829,39 +827,70 @@ public class UsuarioController {
     /** Mi perfil **/
 
     @GetMapping("/cliente/miperfil")
-    public String miperfil(Model model, HttpSession session) {
+    public String miperfil(
+            //@ModelAttribute("usuario") Usuario usuario,
+                           Model model, HttpSession session) {
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuario=sessionUser.getIdusuarios();
 
         List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosAndActivoEquals(idusuario,1);
         model.addAttribute("listadirecciones", listadireccionescliente);
+
         Optional<Usuario> optional = usuarioRepository.findById(idusuario);
-        Usuario usuario = optional.get();
-        model.addAttribute("usuario", usuario);
-        System.out.println(usuario.getIdusuarios());
+        if(optional.isPresent()){
+            Usuario usuario = optional.get();
+            model.addAttribute("usuario", usuario);
+
+            System.out.println(usuario.getIdusuarios());
+        }
+
         return "cliente/miPerfil";
     }
 
     @PostMapping("/cliente/miperfil")
-    public String updatemiperfil(Usuario usuarioRecibido) {
-        System.out.println(usuarioRecibido.getIdusuarios());
-        Optional<Usuario> optusuario = usuarioRepository.findById(usuarioRecibido.getIdusuarios());
-        Usuario usuariodb = optusuario.get();
+    public String updatemiperfil(@ModelAttribute("usuario") @Valid Usuario usuario,
+                                 BindingResult bindingResult,
+                                 @RequestParam("pass2") String password2,
+                                 HttpSession session,
+                                 Model model) {
 
-        usuariodb.setEmail(usuarioRecibido.getEmail());
-        usuariodb.setTelefono(usuarioRecibido.getTelefono());
-        System.out.println("contra es" + usuarioRecibido.getContraseniaHash() + "     ****");
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
 
-        String contrarecibida = usuarioRecibido.getContraseniaHash();
+        int idusuario=usuario.getIdusuarios();
+        Optional<Usuario> usuarioopt = usuarioRepository.findById(idusuario);
+        Usuario usuarioperfil = usuarioopt.get();
 
-        String contraseniahashbcrypt = BCrypt.hashpw(contrarecibida, BCrypt.gensalt());
+        if(bindingResult.hasFieldErrors("Telefono") || bindingResult.hasFieldErrors("contraseniaHash")){
+            List<Distritos> listadistritos = distritosRepository.findAll();
+            model.addAttribute("listadistritos", listadistritos);
+            model.addAttribute("usuario",usuarioperfil);
+            return "cliente/miPerfil";
+        } else {
+            if (usuario.getContraseniaHash().equals(password2)) {
+                String contraxvalidarpatron = usuario.getContraseniaHash();
+                boolean validarcontra = validarContrasenia(contraxvalidarpatron);
+                if (validarcontra == true) {
+                    String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
+                    sessionUser.setTelefono(usuario.getTelefono());
+                    sessionUser.setContraseniaHash(contraseniahashbcrypt);
+                    usuarioRepository.save(sessionUser);
+                    return "redirect:/cliente/miperfil";
+                }else{
+                    List<Distritos> listadistritos = distritosRepository.findAll();
+                    model.addAttribute("listadistritos", listadistritos);
+                    model.addAttribute("errorpatroncontra", "La contraseña no cumple con los requisitos: mínimo 8 caracteres, un número y un caracter especial");
+                    model.addAttribute("usuario",usuarioperfil);
+                    return "cliente/miPerfil";
+                }
+            }else{
+                List<Distritos> listadistritos = distritosRepository.findAll();
+                model.addAttribute("listadistritos", listadistritos);
+                model.addAttribute("usuario",usuarioperfil);
+                return "cliente/miPerfil";
+            }
 
-
-        usuariodb.setContraseniaHash(contraseniahashbcrypt);
-        usuarioRepository.save(usuariodb);
-
-        return "redirect:/cliente/miperfil";
+        }
     }
 
     /** CRUD direcciones **/
@@ -902,16 +931,16 @@ public class UsuarioController {
         direccioncrear.setDireccion(direccion);
 
         Optional<Distritos> distritoopt = distritosRepository.findById(iddistrito);
-        Distritos distritonuevo = distritoopt.get();
+        if(distritoopt.isPresent()){
 
-        direccioncrear.setDistrito(distritonuevo);
+            Distritos distritonuevo = distritoopt.get();
+            direccioncrear.setDistrito(distritonuevo);
+            direccioncrear.setUsuariosIdusuarios(idusuario);
+            direccioncrear.setActivo(1);
+            direccionesRepository.save(direccioncrear);
 
-        direccioncrear.setUsuariosIdusuarios(idusuario);
-        direccioncrear.setActivo(1);
-        direccionesRepository.save(direccioncrear);
-
+        }
         return "redirect:/cliente/miperfil";
-
     }
 
 }

@@ -78,8 +78,9 @@
                     <input th:field="*{idusuarios}" type="hidden">
 				 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
 				<label>Correo</label>
-                     <input class="form-control" type="text" th:field="*{email}">
-                </div>
+                     <input class="form-control" type="text" th:field="*{email}" disabled>
+                     <div th:if="${errorcorreo != null}" th:text="${errorcorreo}" class="text-danger"></div>
+                 </div>
 				<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
 				<label>Nombres</label>
                      <input class="form-control"type="text" th:field="*{nombre}" disabled>
@@ -117,6 +118,7 @@
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
 				<label>Contraseña</label>
                     <input placeholder="Passsword" class="form-control" type="password" th:value="*{contraseniaHash}" name="contraseniaHash">
+                    <div th:if="${errorpatroncontra != null}" th:text="${errorpatroncontra}" class="text-danger"></div>
                 </div>
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                     <label>Confirmar contraseña</label>
