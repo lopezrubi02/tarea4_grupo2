@@ -112,7 +112,8 @@
             <div class="row">
                 <div class="col-12 col-lg-5 text-center" style="margin-bottom: 4vh;">
                     <!-- imagen -->
-                    <img th:src="@{/images/userImage.jpg}" class="img-responsive">
+                    <figure><img th:src="@{|/admin/imagenrepartidor/${repartidor.getIdrepartidor()}|}" height="360" width="auto" class="img-responsive"/></figure>
+                    <!--                        <img th:src="@{/images/userImage.jpg}" class="img-responsive">-->
                 </div>
                 <div class="col-12 col-lg-7">
                     <!-- datos -->

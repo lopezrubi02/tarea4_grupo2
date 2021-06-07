@@ -39,59 +39,13 @@
     <!-- end loader -->
 
      <div th:replace="fragments/adminSistema.html:: slider" class="sidebar">
-            <!-- Sidebar  -->
-            <nav id="sidebar">
 
-                <div id="dismiss">
-                    <i class="fa fa-arrow-left"></i>
-                </div>
-
-                <ul class="list-unstyled components">
-
-                    <li class="active">
-                        <!-- TODO -->
-                        <a href="index.html">Usuarios actuales</a>
-                    </li>
-                    <li>
-                        <a href="GestionCuentasPrincipal.html">Gestion de nuevas cuentas</a>
-                    </li>
-                    <li>
-                        <a href="ADMIN_Reportes.html">Reportes</a>
-                    </li>
-                </ul>
-
-            </nav>
         </div>
 
     <div id="content">
     <!-- header -->
     <header>
         <div th:replace="fragments/adminSistema.html:: barra" class="container-fluid">
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="full">
-                        <a class="logo" href="index.html"><img th:src="@{/images/logo.png}" alt="#" /></a>
-                    </div>
-                </div>
-                <div class="col-md-9">
-                    <div class="full">
-                        <div class="right_header_info">
-                            <ul>
-                                <li class="dinone"><a th:href="@{usuariosActuales}">Usuarios Actuales</a></li>
-                                <li class="dinone"><a th:href="@{gestionCuentas}">Gestión de nuevas cuentas</a></li>
-                                <li class="dinone"><a th:href="@{reportes}">Reportes</a></li>
-                                <!-- TODO -->
-                                <li class="button_user"><a class="button active" href="#login.html">Mi cuenta</a><a class="button" href="#">Logout</a></li>
-                                <li>
-                                    <button type="button" id="sidebarCollapse">
-                                        <img src="images/menu_icon.png" alt="#">
-                                    </button>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </header>
     </div>

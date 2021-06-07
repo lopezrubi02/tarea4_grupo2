@@ -7,8 +7,10 @@ import com.example.tarea4_grupo2.entity.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
@@ -41,10 +43,13 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
             "values(?1,?2,?3,?4,sha2(?5,256),?6,?7,?8,?9,?10);",nativeQuery = true)
     Usuario nuevoUsuario(int id, String nombre, String apellido, String email, String contra, int telefono,
                          Date fecha, String sexo, String dni, String rol);
-    //para guardar direccion de usuario
+
     Usuario findByDni(String dni);
+    //para guardar direccion de usuario
+    Usuario findByDniAndEmailEquals(String dni, String email);
+    Usuario findByDniAndRolEquals(String dni, String rol);
     //Repartidor findByIdusuarios(int usuarios_idusuarios);
-    public Usuario findByEmail(String email);
+    Usuario findByEmail(String email);
     @Query(value="select nombre,apellidos,dni,fechanacimiento from usuarios where idusuarios=?1",nativeQuery = true)
     DatosDTO obtenerDatos(int id);
 

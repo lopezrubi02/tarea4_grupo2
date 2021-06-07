@@ -33,7 +33,7 @@ public class Usuario implements Serializable {
     private String token;
 
     @Column(nullable = false)
-    @Email(message = "No es formato @gmail.com")
+    @Email(message = "Ingrese un correo valido")
     @NotBlank(message = "No puede estar vacío")
     @Size(max=45, message = "El email no puede tener más de 45 caracteres")
     private String email;
@@ -44,11 +44,13 @@ public class Usuario implements Serializable {
 
     @Column(nullable = false)
     @NotNull(message = "No puede estar vacío")
-    @Min(value=9,message="El teléfono no puede tener más de 9 dígitos")
+    @Min(value=111111111,message="El teléfono debe tener 9 dígitos")
+    @Max(value=999999999,message="El teléfono debe tener 9 dígitos")
     private Integer telefono;
 
     @Column(name = "fechanacimiento",nullable = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @NotNull(message = "No puede estar vacío")
     private Date fechaNacimiento;
 
     @Column(nullable = false)
@@ -58,6 +60,7 @@ public class Usuario implements Serializable {
     @Column(nullable = false)
     @NotBlank(message = "No puede estar vacío")
     @Size(max=8,message = "No puede tenr más de 8 dígitos")
+    @Size(min=8,message = "No puede tenr más de 8 dígitos")
     @Pattern(regexp = "^[0-9]*$",message = "Solo puede contener números")
     private String dni;
 

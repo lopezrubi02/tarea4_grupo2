@@ -3,6 +3,7 @@ package com.example.tarea4_grupo2.controller;
 import com.example.tarea4_grupo2.dto.*;
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
+import com.example.tarea4_grupo2.service.SendMailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,12 +18,18 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Controller
 public class UsuarioController {
 
+    @Autowired
+    SendMailService sendMailService;
     @Autowired
     UsuarioRepository usuarioRepository;
     @Autowired
@@ -41,10 +48,8 @@ public class UsuarioController {
     PedidoHasPlatoRepository pedidoHasPlatoRepository;
     @Autowired
     RepartidorRepository repartidorRepository;
-
     @Autowired
     FotosPlatosRepository fotosPlatosRepository;
-
     @Autowired
     MetodosDePagoRepository metodosDePagoRepository;
 
@@ -59,8 +64,46 @@ public class UsuarioController {
         return "cliente/paginaPrincipal";
     }
 
-    /** Registro cliente**/
+    /** para validar patron de contraseña **/
+    public  boolean validarContrasenia(String contrasenia1) {
+        Pattern pattern1 = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$");
+        Matcher matcher1 = pattern1.matcher(contrasenia1);
+        System.out.println(matcher1.matches());
+        System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        return matcher1.matches();
+    }
 
+    public boolean validarcorreounico(String correo, Usuario usuario){
+        boolean errorcorreo = false;
+        Usuario usuarioxcorreo = usuarioRepository.findByEmail(usuario.getEmail());
+        if(usuarioxcorreo != null){
+            errorcorreo = true;
+        }
+        return errorcorreo;
+    }
+
+    public boolean validardnixrolunico(String dni, String rol, Usuario usuario){
+        boolean errordni = false;
+        Usuario usuarioxdni = usuarioRepository.findByDniAndRolEquals(usuario.getDni(),"Cliente");
+        if(usuarioxdni != null){
+            errordni = true;
+        }
+        return errordni;
+    }
+    public boolean validarstringsexo(String stringsexo){
+        boolean errorstring = true;
+        if(stringsexo.equalsIgnoreCase("Femenino")){
+            errorstring = false;
+        }else if(stringsexo.equalsIgnoreCase("Masculino")){
+            errorstring = false;
+        }else{
+            errorstring = true;
+        }
+        return errorstring;
+    }
+
+
+    /**                     Registro cliente                **/
     @GetMapping("/nuevocliente")
     public String nuevoCliente(Model model,@ModelAttribute("usuario") Usuario usuario)
     {
@@ -75,41 +118,85 @@ public class UsuarioController {
                                  @RequestParam("password2") String pass2,
                                  Model model,
                                  @ModelAttribute("usuario") @Valid Usuario usuario,
-                                 BindingResult bindingResult) {
+                                 BindingResult bindingResult) throws MalformedURLException {
 
-        if(bindingResult.hasErrors()){
+        if (bindingResult.hasErrors()) {
             List<Distritos> listadistritos = distritosRepository.findAll();
-            model.addAttribute("listadistritos",listadistritos);
+            model.addAttribute("listadistritos", listadistritos);
             return "cliente/registroCliente";
-        }else{
-            if (usuario.getContraseniaHash().equals(pass2)) {
-                String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
+        } else {
+            boolean errorcorreo = validarcorreounico(usuario.getEmail(), usuario);
+            boolean errordnixrol = validardnixrolunico(usuario.getDni(), "Cliente", usuario);
+            boolean errorstringsexo = validarstringsexo(usuario.getSexo());
 
-                usuario.setContraseniaHash(contraseniahashbcrypt);
-                usuario.setRol("Cliente");
-                usuario.setCuentaActiva(1);
-
-                usuarioRepository.save(usuario);
-                //TODO: validar DNI y correo unico
-                Usuario usuarionuevo = usuarioRepository.findByDni(usuario.getDni());
-
-                int idusuarionuevo = usuarionuevo.getIdusuarios();
-
-                Direcciones direccionactual = new Direcciones();
-                direccionactual.setDireccion(direccion);
-                Optional<Distritos> distritoopt = distritosRepository.findById(iddistrito);
-                Distritos distritosactual = distritoopt.get();
-
-                direccionactual.setDistrito(distritosactual);
-                direccionactual.setUsuariosIdusuarios(idusuarionuevo);
-                direccionactual.setActivo(1);
-                direccionesRepository.save(direccionactual);
-
-                return "cliente/confirmarCuenta";
-            } else {
+            if (errorcorreo == true || errordnixrol == true || errorstringsexo == true) {
+                if(errorcorreo==true){
+                    model.addAttribute("errorcorreo", "Ya hay una cuenta registrada con el correo ingresado.");
+                }
+                if(errordnixrol==true){
+                    model.addAttribute("errordni", "Ya hay una cuenta registrada con este dni en este rol");
+                }
                 List<Distritos> listadistritos = distritosRepository.findAll();
-                model.addAttribute("listadistritos",listadistritos);
+                model.addAttribute("listadistritos", listadistritos);
                 return "cliente/registroCliente";
+            } else {
+                if (usuario.getContraseniaHash().equals(pass2)) {
+                    String contraxvalidarpatron = usuario.getContraseniaHash();
+
+                    boolean validarcontra = validarContrasenia(contraxvalidarpatron);
+
+                    if (validarcontra == true) {
+
+                        String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
+
+                        usuario.setContraseniaHash(contraseniahashbcrypt);
+                        usuario.setRol("Cliente");
+                        usuario.setCuentaActiva(1);
+
+                        usuarioRepository.save(usuario);
+
+                        //Para guardar direccion
+                        Usuario usuarionuevo = usuarioRepository.findByDniAndEmailEquals(usuario.getDni(), usuario.getEmail());
+                        int idusuarionuevo = usuarionuevo.getIdusuarios();
+                        Direcciones direccionactual = new Direcciones();
+                        direccionactual.setDireccion(direccion);
+                        Optional<Distritos> distritoopt = distritosRepository.findById(iddistrito);
+
+                        if(distritoopt.isPresent()){
+                            Distritos distritosactual = distritoopt.get();
+                            direccionactual.setDistrito(distritosactual);
+                            direccionactual.setUsuariosIdusuarios(idusuarionuevo);
+                            direccionactual.setActivo(1);
+                            direccionesRepository.save(direccionactual);
+
+                            /* Envio de correo de confirmacion */
+                            String subject = "Cuenta creada en Spicyo";
+                            //TODO modificar direcion url despues de despliegue aws.
+                            String direccionurl = "http://localhost:8090/login";
+                            //URL url = new URL(direccionurl);
+                            String mensaje = "¡Hola!<br><br>" +
+                                    "Ahora es parte de Spicyo. Para ingresar a su cuenta haga click: <a href='" + direccionurl + "'>AQUÍ</a> <br><br>Atte. Equipo de Spicy :D</b>";
+                            String correoDestino = usuario.getEmail();
+                            sendMailService.sendMail(correoDestino, "saritaatanacioarenas@gmail.com", subject, mensaje);
+
+                            return "cliente/confirmarCuenta";
+                        }else{
+                            List<Distritos> listadistritos = distritosRepository.findAll();
+                            model.addAttribute("listadistritos", listadistritos);
+                            return "cliente/registroCliente";
+                        }
+                    } else {
+                        List<Distritos> listadistritos = distritosRepository.findAll();
+                        model.addAttribute("listadistritos", listadistritos);
+                        model.addAttribute("errorpatroncontra", "La contraseña no cumple con los requisitos: mínimo 8 caracteres, un número y un caracter especial");
+                        model.addAttribute("usuario", usuario);
+                        return "cliente/registroCliente";
+                    }
+                } else {
+                    List<Distritos> listadistritos = distritosRepository.findAll();
+                    model.addAttribute("listadistritos", listadistritos);
+                    return "cliente/registroCliente";
+                }
             }
         }
     }
@@ -283,10 +370,10 @@ public class UsuarioController {
 
     @GetMapping("/cliente/realizarpedido")
     public String realizarpedido(Model model, HttpSession session, RedirectAttributes attr,
-                                 @RequestParam(value = "idcategoriarest" ,defaultValue = "0") int idcategoriarest,
-                                 @RequestParam(value = "preciopromedio", defaultValue = "0") int precio,
-                                 @RequestParam(value = "direccion", defaultValue = "0") int direccionxenviar,
-                                 @RequestParam(value = "calificacion", defaultValue = "0") int calificacion
+                                 @RequestParam(value = "idcategoriarest" ,defaultValue = "0") String categoriarest,
+                                 @RequestParam(value = "preciopromedio", defaultValue = "0") String preciopromedio,
+                                 @RequestParam(value = "direccion", defaultValue = "0") String direccion,
+                                 @RequestParam(value = "calificacion", defaultValue = "0") String calificacionpromedio
                                  ) {
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
@@ -314,12 +401,13 @@ public class UsuarioController {
         model.addAttribute("listarestaurantes",listarestaurantes);
 
             try{
+                int direccionxenviar = Integer.parseInt(direccion);
                 if (direccionxenviar == 0) {
                     model.addAttribute("direccionseleccionada", listadireccionescliente.get(0).getDireccion());
                     model.addAttribute("iddireccionxenviar", listadireccionescliente.get(0).getIddirecciones());
                 } else {
 
-                        Optional<Direcciones> direccionopt = direccionesRepository.findById(direccionxenviar);
+                    Optional<Direcciones> direccionopt = Optional.ofNullable(direccionesRepository.findDireccionesByIddireccionesAndUsuariosIdusuariosEquals(direccionxenviar, idusuarioactual));
                         if (direccionopt.isPresent()) {
                             Direcciones direccionseleccionada = direccionopt.get();
                             model.addAttribute("iddireccionxenviar", direccionxenviar);
@@ -330,24 +418,30 @@ public class UsuarioController {
                 System.out.println(exception.getMessage());
                 return "redirect:/cliente/realizarpedido";
             }
+        try{
+            int idcategoriarest = Integer.parseInt(categoriarest);
+            Optional<Categorias> catopt = categoriasRepository.findById(idcategoriarest);
+            if(catopt.isPresent()){
 
+                List<Restaurante> listarestauranteseleccionado = restauranteRepository.listarestxcategoria(idcategoriarest);
 
-        Optional<Categorias> catopt = categoriasRepository.findById(idcategoriarest);
-        if(catopt.isPresent()){
-
-            List<Restaurante> listarestauranteseleccionado = restauranteRepository.listarestxcategoria(idcategoriarest);
-
-            if(idcategoriarest!=0){
-                model.addAttribute("listarestaurantes",listarestauranteseleccionado);
-            }else{
-                model.addAttribute("listarestaurantes",listarestaurantes);
+                if(idcategoriarest!=0){
+                    model.addAttribute("listarestaurantes",listarestauranteseleccionado);
+                }else{
+                    model.addAttribute("listarestaurantes",listarestaurantes);
+                }
+                model.addAttribute("catelegida",idcategoriarest);
             }
-            model.addAttribute("catelegida",idcategoriarest);
+        }catch(NumberFormatException exception){
+            System.out.println(exception.getMessage());
+            return "redirect:/cliente/realizarpedido";
         }
+
         try {
-        if(precio!=0) {
-            switch (precio) {
-                case 1:
+            int precio = Integer.parseInt(preciopromedio);
+            if(precio!=0) {
+                switch (precio) {
+                    case 1:
                     List<Restaurante> listaRestFiltroPrecio = restauranteRepository.listarestprecio1();
                     if (listaRestFiltroPrecio.isEmpty()) {
                         attr.addFlashAttribute("alertaprecio", "No se encontraron restaurantes para el filtro aplicado");
@@ -357,7 +451,7 @@ public class UsuarioController {
                         model.addAttribute("precioselec", precio);
                     }
                     break;
-                case 2:
+                    case 2:
                     listaRestFiltroPrecio = restauranteRepository.listarestprecio2();
                     if (listaRestFiltroPrecio.isEmpty()) {
                         attr.addFlashAttribute("alertaprecio", "No se encontraron restaurantes para el filtro aplicado");
@@ -367,7 +461,7 @@ public class UsuarioController {
                         model.addAttribute("precioselec", precio);
                     }
                     break;
-                case 3:
+                    case 3:
                     listaRestFiltroPrecio = restauranteRepository.listarestprecio3();
                     if (listaRestFiltroPrecio.isEmpty()) {
                         attr.addFlashAttribute("alertaprecio", "No se encontraron restaurantes para el filtro aplicado");
@@ -377,7 +471,7 @@ public class UsuarioController {
                         model.addAttribute("precioselec", precio);
                     }
                     break;
-                case 4:
+                    case 4:
                     listaRestFiltroPrecio = restauranteRepository.listarestprecio4();
                     if (listaRestFiltroPrecio.isEmpty()) {
                         attr.addFlashAttribute("alertaprecio", "No se encontraron restaurantes para el filtro aplicado");
@@ -389,11 +483,12 @@ public class UsuarioController {
                     break;
             }
         }
-        }catch (Exception e){
+        }catch (NumberFormatException e){
             return "cliente/realizar_pedido_cliente";
         }
 
         try {
+            int calificacion = Integer.parseInt(calificacionpromedio);
         if(calificacion!=0) {
             if (calificacion > 4) {
                 return "redirect:/cliente/realizarpedido";
@@ -408,21 +503,22 @@ public class UsuarioController {
             }
         }
         return "cliente/realizar_pedido_cliente";
-    }catch (Exception e){
+    }catch (NumberFormatException e){
         return "cliente/realizar_pedido_cliente";
     }
     }
 
     @GetMapping("/cliente/direccionxenviar")
     public String direccionxenviar(Model model,
-                                   @RequestParam(value = "direccion", defaultValue = "0") int direccionxenviar,
+                                   @RequestParam(value = "direccion", defaultValue = "0") String direccion,
                                    HttpSession session){
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuarioactual=sessionUser.getIdusuarios();
         System.out.println("****************************error numero");
-        Optional<Direcciones> direccionopt = Optional.ofNullable(direccionesRepository.findDireccionesByIddireccionesAndUsuariosIdusuariosEquals(direccionxenviar, idusuarioactual));
         try {
+            int direccionxenviar = Integer.parseInt(direccion);
+            Optional<Direcciones> direccionopt = Optional.ofNullable(direccionesRepository.findDireccionesByIddireccionesAndUsuariosIdusuariosEquals(direccionxenviar, idusuarioactual));
             if(direccionopt.isPresent()){
                 List<String> listaidprecio = new ArrayList<>();
                 listaidprecio.add("Menor a 15");
@@ -451,7 +547,7 @@ public class UsuarioController {
             }else{
                 return "redirect:/cliente/realizarpedido";
             }
-        }catch (Exception e){
+        }catch (NumberFormatException e){
             System.out.println(e.getMessage());
             System.out.println("error");
             return "redirect:/cliente/realizarpedido";
@@ -679,6 +775,17 @@ public class UsuarioController {
         }
 
     }
+
+    @PostMapping("/cliente/guardarcheckout")
+    public String getcheckout(Model model,
+                              HttpSession session, RedirectAttributes redirectAttributes){
+        //revisar el metodo, sale error//
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuario=sessionUser.getIdusuarios();
+        System.out.println("pago");
+        return "redirect:/cliente/paginaprincipal";
+    }
+
 
     @GetMapping("/cliente/progresopedido")
     public String progresopedido(Model model, HttpSession session){

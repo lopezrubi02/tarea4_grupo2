@@ -55,15 +55,15 @@
             <ul class="list-unstyled components">
 
                 <li class="active">
-                    <!-- TODO -->
-                    <a th:href="@{admin/usuariosActuales}">Usuarios actuales</a>
+                    <a th:href="@{/admin/usuariosActuales}">Usuarios actuales</a>
                 </li>
                 <li>
-                    <a href="about.html">Gestion de nuevas cuentas</a>
+                    <a th:href="@{gestionCuentas}">Gestión de nuevas cuentas</a>
                 </li>
                 <li>
-                    <a href="recipe.html">Reportes</a>
+                    <a th:href="@{reportes}">Reportes</a>
                 </li>
+
             </ul>
 
         </nav>
@@ -84,13 +84,43 @@
                             <div class="right_header_info">
                                 <ul>
 
-                                    <li class="dinone"><a th:href="@{/admin/usuariosActuales}">Usuarios actuales</a></li>
-                                    <li class="dinone"><a href="#">Gestion de nuevas cuentas</a></li>
-                                    <li class="dinone"><a href="#">Reportes</a></li>
+                                    <li class="dinone"><a th:href="@{usuariosActuales}">Usuarios Actuales</a></li>
+                                    <li class="dinone"><a th:href="@{gestionCuentas}">Gestión de nuevas cuentas</a></li>
+                                    <li class="dinone"><a th:href="@{reportes}">Reportes</a></li>
 
 
                                     <!-- TODO -->
-                                    <li class="button_user"><a class="button active" href="#login.html">Mi cuenta</a><a class="button" href="#">Logout</a></li>
+                                    <li class="button_user">
+                                        <a class="button active" th:href="@{/admin/miCuenta}">Mi cuenta</a>
+
+                                        <form class="button" th:action="@{/logout}" method="post" style="
+                                                                                                        display: inline-block;
+                                                                                                        float: left;
+                                                                                                        min-width: 75px;
+                                                                                                        height: 40px;
+                                                                                                        text-align: center;
+                                                                                                        line-height: 38px;
+                                                                                                        position: relative;
+                                                                                                        top: -7px;
+                                                                                                        padding: 0 15px;
+                                                                                                        margin: 0 2px;">
+                                            <input class="button"
+                                                   type="submit"
+                                                   value="Cerrar sesión"
+                                                   style="
+                                                        width: 100%;
+                                                        height: 100%;
+                                                        display: inline-block;
+                                                        float: left;
+                                                        min-width: 75px;
+                                                        text-align: center;
+                                                        line-height: 38px;
+                                                        padding: 0 15px;
+                                                        margin: 0 2px;
+                                                        border: solid #eaeaea 1px;
+                                                    "/>
+                                        </form>
+                                    </li>
                                     <li>
                                         <button type="button" id="sidebarCollapse">
                                             <img th:src="@{/images/menu_icon.png}" alt="#">
@@ -235,14 +265,12 @@
         <!-- footer -->
         <fooetr>
             <div class="footer">
-                <div class="container-fluid">
-                    <div class="copyright">
-                        <div class="container">
-                            <p>© 2050 All Rights Reserved</p>
-                        </div>
+
+                <div class="copyright">
+                    <div class="container">
+                        <p>© 2021 Todos los derechos reservados</p>
                     </div>
                 </div>
-
             </div>
         </fooetr>
         <!-- end footer -->

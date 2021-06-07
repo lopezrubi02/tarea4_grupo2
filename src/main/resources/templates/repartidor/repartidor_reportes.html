@@ -89,9 +89,9 @@
                     </thead>
                     <tbody>
                     <tr th:each="comision : ${listaComisionMensual}">
-                        <td th:text="${comision.getMes()}"></td>
-                        <td th:text="${comision.getYear()}"></td>
-                        <td th:text="${comision.getComision_mensual()}"></td>
+                        <td th:text="${comision.getMes()}" style="width: 33%;"></td>
+                        <td th:text="${comision.getYear()}" style="width: 33%;"></td>
+                        <td th:text="${comision.getComision_mensual()}" style="width: 33%;"></td>
                     </tr>
                     </tbody>
                 </table>
