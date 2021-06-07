@@ -36,27 +36,28 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
     List<HistorialConsumo_ClienteDTO> obtenerHistorialConsumo(int idcliente, int anio, int mes);
 
     /*Halla el tiempo promedio de delivery*/
-    @Query(value = "SELECT re.nombre as nombrerestaurante, avg(pe.tiempodelivery) as tiempopromedio FROM proyecto.Pedidos pe inner join proyecto.Restaurante re on " +
+    @Query(value = "SELECT re.nombre as nombrerestaurante, avg(pe.tiempodelivery) as tiempopromedio " +
+            "FROM proyecto.Pedidos pe inner join proyecto.Restaurante re on " +
             "(re.idrestaurante = pe.restaurante_idrestaurante) where pe.idcliente = ?1 and year(pe.fechahorapedido) = ?2 and month(pe.fechahorapedido) = ?3 group by re.idrestaurante order by count(*) desc", nativeQuery = true)
     List<TiempoMedio_ClienteDTO> obtenerTiemposPromedio(int idcliente, int anio, int mes);
 
     /******ADMINISTRADOR SISTEMA**********/
     /*Reporte De Delivery pedidos para adminsistema*/
-    @Query(value = "select date(fechahorapedido) as 'fecha',count(idpedidos) as 'pedidos',sum(comisionsistema) as 'comision' from pedidos\n" +
+    @Query(value = "select date(fechahorapedido) as 'fecha',count(idpedidos) as 'pedidos',sum(comisionsistema) as 'comision' from Pedidos\n" +
             "where pedidos.fechahorapedido IS NOT NULL group by YEAR(fechahoraentregado),MONTH(fechahoraentregado),DAY(fechahoraentregado)\n" +
             "ORDER BY CONCAT(SUBSTRING_INDEX(fecha , '/', -1),SUBSTRING_INDEX(SUBSTRING_INDEX(fecha , '/', 2), '/', -1),SUBSTRING_INDEX(fecha , '/', 1)) DESC;\n" +
             "\n",nativeQuery = true)
     List<DeliveryReportes_DTO> reportesDelivery();
 
-    @Query(value = "select date(fechahorapedido) as 'fecha',count(idpedidos) as 'pedidos',sum(comisionsistema) as 'comision' from pedidos\n" +
-            "where pedidos.fechahorapedido IS NOT NULL and year(pedidos.fechahorapedido)= ?1 and month(pedidos.fechahorapedido) =?2 group by YEAR(fechahoraentregado),MONTH(fechahoraentregado),DAY(fechahoraentregado)\n" +
+    @Query(value = "select date(fechahorapedido) as 'fecha',count(idpedidos) as 'pedidos',sum(comisionsistema) as 'comision' from Pedidos\n" +
+            "where Pedidos.fechahorapedido IS NOT NULL and year(Pedidos.fechahorapedido)= ?1 and month(Pedidos.fechahorapedido) =?2 group by YEAR(fechahoraentregado),MONTH(fechahoraentregado),DAY(fechahoraentregado)\n" +
             "ORDER BY CONCAT(SUBSTRING_INDEX(fecha , '/', -1),SUBSTRING_INDEX(SUBSTRING_INDEX(fecha , '/', 2), '/', -1),SUBSTRING_INDEX(fecha , '/', 1)) DESC;\n" +
             "\n",nativeQuery = true)
     List<DeliveryReportes_DTO> reportesDeliveryFecha(int anio, int mes);
 
 
-    @Query(value = "select date(fechahorapedido) as 'fecha'from pedidos\n" +
-            "WHERE pedidos.fechahorapedido IS NOT NULL \n" +
+    @Query(value = "select date(fechahorapedido) as 'fecha'from Pedidos\n" +
+            "WHERE Pedidos.fechahorapedido IS NOT NULL \n" +
             "group by YEAR(fechahoraentregado),MONTH(fechahoraentregado),DAY(fechahoraentregado)\n" +
             "ORDER BY CONCAT(SUBSTRING_INDEX(fecha , '/', -1),SUBSTRING_INDEX(SUBSTRING_INDEX(fecha , '/', 2), '/', -1),SUBSTRING_INDEX(fecha , '/', 1)) ASC limit 1;\n",
             nativeQuery = true)
@@ -71,8 +72,8 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
             "        CROSS JOIN (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS c\n" +
             "    ) a\n" +
             "WHERE a.Days >= curdate() -  INTERVAL (SELECT TIMESTAMPDIFF(DAY,?1 , curdate())) DAY)  b\n" +
-            "LEFT JOIN pedidos\n" +
-            "ON date(pedidos.fechahoraentregado) = b.Days\n" +
+            "LEFT JOIN Pedidos\n" +
+            "ON date(Pedidos.fechahoraentregado) = b.Days\n" +
             "group by YEAR(b.Days),MONTH(b.Days),DAY(b.Days)\n" +
             "ORDER BY CONCAT(SUBSTRING_INDEX(b.Days , '/', -1),SUBSTRING_INDEX(SUBSTRING_INDEX(b.Days , '/', 2), '/', -1),SUBSTRING_INDEX(b.Days , '/', 1)) DESC;",
             nativeQuery = true)
@@ -82,24 +83,24 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
     /******ADMINISTRADOR RESTAURANTE**********/
 
     @Query(value = "select p.idpedidos,p.montototal,concat(u.nombre,' ',u.apellidos)cliente,cast(p.fechahorapedido as DATE)fechahorapedido,d.direccion,dr.nombredistrito \n" +
-            "from pedidos p\n" +
-            "inner join usuarios u on p.idcliente = u.idusuarios\n" +
-            "inner join restaurante r on p.restaurante_idrestaurante = r.idrestaurante\n" +
-            "inner join direcciones d on p.direccionentrega = d.iddirecciones\n" +
-            "inner join distritos dr on dr.iddistritos = d.iddistrito\n" +
+            "from Pedidos p\n" +
+            "inner join Usuarios u on p.idcliente = u.idusuarios\n" +
+            "inner join Restaurante r on p.restaurante_idrestaurante = r.idrestaurante\n" +
+            "inner join Direcciones d on p.direccionentrega = d.iddirecciones\n" +
+            "inner join Distritos dr on dr.iddistritos = d.iddistrito\n" +
             "where r.idrestaurante=?1 and p.estadorestaurante='pendiente'",nativeQuery = true)
     List<PedidosAdminRestDto> listaPedidos(Integer id);
 
     @Query(value = "select p.idpedidos as numeropedido, p.fechahorapedido as fechahorapedido, \n" +
             "u.nombre as nombre, u.apellidos as apellidos, p.montototal as montototal, pt.nombre as nombreplato,\n" +
             "m.metodo as metodo, d.nombredistrito as distrito\n" +
-            " from pedidos p\n" +
-            " inner join usuarios u on u.idusuarios = p.idcliente \n" +
-            " inner join direcciones dir on dir.iddirecciones = p.direccionentrega\n" +
-            "  inner join distritos d on d.iddistritos = dir.iddistrito\n" +
-            " inner join metodospago m on m.idmetodospago = p.idmetodopago\n" +
-            " inner join pedidos_has_plato pl on pl.pedidos_idpedidos = p.idpedidos\n" +
-            " inner join plato pt on pt.idplato = pl.plato_idplato\n" +
+            " from Pedidos p\n" +
+            " inner join Usuarios u on u.idusuarios = p.idcliente \n" +
+            " inner join Direcciones dir on dir.iddirecciones = p.direccionentrega\n" +
+            "  inner join Distritos d on d.iddistritos = dir.iddistrito\n" +
+            " inner join Metodospago m on m.idmetodospago = p.idmetodopago\n" +
+            " inner join Pedidos_has_plato pl on pl.pedidos_idpedidos = p.idpedidos\n" +
+            " inner join Plato pt on pt.idplato = pl.plato_idplato\n" +
             " where p.estadorestaurante = 'entregado' and p.restaurante_idrestaurante = ?1\n" +
             "  order by p.fechahorapedido asc", nativeQuery = true)
     List<PedidosReporteDto> listaPedidosReporteporFechamasantigua(Integer id);
@@ -107,13 +108,13 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
     @Query(value = "select p.idpedidos as numeropedido, p.fechahorapedido as fechahorapedido, \n" +
             "u.nombre as nombre, u.apellidos as apellidos, p.montototal as montototal, pt.nombre as nombreplato,\n" +
             "m.metodo as metodo, d.nombredistrito as distrito\n" +
-            "from pedidos p\n" +
-            "inner join usuarios u on u.idusuarios = p.idcliente \n" +
-            "inner join direcciones dir on dir.iddirecciones = p.direccionentrega\n" +
-            "inner join distritos d on d.iddistritos = dir.iddistrito\n" +
-            "inner join metodospago m on m.idmetodospago = p.idmetodopago\n" +
-            "inner join pedidos_has_plato pl on pl.pedidos_idpedidos = p.idpedidos\n" +
-            "inner join plato pt on pt.idplato = pl.plato_idplato\n" +
+            "from Pedidos p\n" +
+            "inner join Usuarios u on u.idusuarios = p.idcliente \n" +
+            "inner join Direcciones dir on dir.iddirecciones = p.direccionentrega\n" +
+            "inner join Distritos d on d.iddistritos = dir.iddistrito\n" +
+            "inner join Metodospago m on m.idmetodospago = p.idmetodopago\n" +
+            "inner join Pedidos_has_plato pl on pl.pedidos_idpedidos = p.idpedidos\n" +
+            "inner join Plato pt on pt.idplato = pl.plato_idplato\n" +
             "where p.estadorestaurante = 'entregado' and p.restaurante_idrestaurante = ?2\n" +
             "and (p.idpedidos like %?1% or p.fechahorapedido like %?1%\n" +
             "or u.nombre like %?1% or u.apellidos like %?1%\n" +
@@ -125,16 +126,16 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
     @Query(value = "select \n" +
             "MONTHNAME(p.fechahorapedido) as mes,\n" +
             "YEAR(p.fechahorapedido) as anio,\n" +
-            "sum(p.montototal) as ganancia from pedidos p where p.restaurante_idrestaurante = ?1\n" +
+            "sum(p.montototal) as ganancia from Pedidos p where p.restaurante_idrestaurante = ?1\n" +
             "group by MONTHNAME(p.fechahorapedido)", nativeQuery = true)
     List<PedidosGananciaMesDto> gananciaPorMes(Integer id);
 
     @Query(value="select pt.nombre as nombreplato,\n" +
             "count(pl.plato_idplato) as cantidad,\n" +
             "sum(p.montototal) as ganancia\n" +
-            "from plato pt\n" +
-            "inner join pedidos_has_plato pl on pl.plato_idplato = pt.idplato\n" +
-            "inner join pedidos p on p.idpedidos = pl.pedidos_idpedidos\n" +
+            "from Plato pt\n" +
+            "inner join Pedidos_has_plato pl on pl.plato_idplato = pt.idplato\n" +
+            "inner join Pedidos p on p.idpedidos = pl.pedidos_idpedidos\n" +
             "where p.restaurante_idrestaurante = ?1\n" +
             "group by pt.nombre order by cantidad desc limit 5",nativeQuery = true)
     List<PedidosTop5Dto> platosMasVendidos(Integer id);
@@ -142,9 +143,9 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
     @Query(value="select pt.nombre as nombreplato,\n" +
             "count(pl.plato_idplato) as cantidad,\n" +
             "sum(p.montototal) as ganancia\n" +
-            "from plato pt\n" +
-            "inner join pedidos_has_plato pl on pl.plato_idplato = pt.idplato\n" +
-            "inner join pedidos p on p.idpedidos = pl.pedidos_idpedidos\n" +
+            "from Plato pt\n" +
+            "inner join Pedidos_has_plato pl on pl.plato_idplato = pt.idplato\n" +
+            "inner join Pedidos p on p.idpedidos = pl.pedidos_idpedidos\n" +
             "where p.restaurante_idrestaurante = ?1\n" +
             "group by pt.nombre order by cantidad asc limit 5;",nativeQuery = true)
     List<PedidosTop5Dto> platosMenosVendidos(Integer id);
@@ -152,21 +153,21 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
     @Query(value = "select \n" +
             "p.calificacionrestaurante as calificacion,\n" +
             "p.comentario as comentario\n" +
-            "from pedidos p where p.restaurante_idrestaurante = ?1 and p.estadorestaurante = 'entregado'\n" +
+            "from Pedidos p where p.restaurante_idrestaurante = ?1 and p.estadorestaurante = 'entregado'\n" +
             "order by p.calificacionrestaurante desc", nativeQuery = true)
     List<ComentariosDto>comentariosUsuarios(Integer id);
 
     @Query(value = "select \n" +
             "p.calificacionrestaurante as calificacion,\n" +
             "p.comentario as comentario\n" +
-            "from pedidos p where p.restaurante_idrestaurante = ?2 and p.estadorestaurante = 'entregado'\n" +
+            "from Pedidos p where p.restaurante_idrestaurante = ?2 and p.estadorestaurante = 'entregado'\n" +
             "and p.calificacionrestaurante like %?1%\n" +
             "order by p.calificacionrestaurante desc", nativeQuery = true)
     List<ComentariosDto>buscarComentariosUsuarios(String name, Integer id);
 
     @Query(value="select \n" +
             "avg(p.calificacionrestaurante) as calificacionpromedio\n" +
-            "from pedidos p where p.restaurante_idrestaurante = ?1 and p.estadorestaurante = 'entregado'", nativeQuery = true)
+            "from Pedidos p where p.restaurante_idrestaurante = ?1 and p.estadorestaurante = 'entregado'", nativeQuery = true)
     BigDecimal calificacionPromedio(Integer id);
 
     @Query(value="select p.idpedidos as idpedidos,\n" +
@@ -176,41 +177,41 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
             "php.cubiertos as cubiertos,\n" +
             "d.direccion as direccion,\n" +
             "dr.nombredistrito as nombredistrito,\n" +
-            "pl.precio as precio from pedidos p\n" +
-            "inner join pedidos_has_plato php on p.idpedidos = php.pedidos_idpedidos\n" +
-            "inner join plato pl on php.plato_idplato = pl.idplato\n" +
-            "inner join direcciones d on p.direccionentrega = d.iddirecciones\n" +
-            "inner join distritos dr on dr.iddistritos = d.iddistrito\n" +
+            "pl.precio as precio from Pedidos p\n" +
+            "inner join Pedidos_has_plato php on p.idpedidos = php.pedidos_idpedidos\n" +
+            "inner join Plato pl on php.plato_idplato = pl.idplato\n" +
+            "inner join Direcciones d on p.direccionentrega = d.iddirecciones\n" +
+            "inner join Distritos dr on dr.iddistritos = d.iddistrito\n" +
             "where p.idpedidos=?1",nativeQuery = true)
     List<PedidoDetallesDto>detallepedidos(Integer id);
 
-    @Query(value="select p.idpedidos,p.montototal,concat(u.nombre,' ',u.apellidos)cliente,cast(p.fechahorapedido as DATE)fechahorapedido,d.direccion,dr.nombredistrito from pedidos p\n" +
-            "inner join usuarios u on p.idcliente = u.idusuarios\n" +
-            "inner join restaurante r on p.restaurante_idrestaurante = r.idrestaurante\n" +
-            "inner join direcciones d on p.direccionentrega = d.iddirecciones\n" +
-            "inner join distritos dr on dr.iddistritos = d.iddistrito\n" +
+    @Query(value="select p.idpedidos,p.montototal,concat(u.nombre,' ',u.apellidos)cliente,cast(p.fechahorapedido as DATE)fechahorapedido,d.direccion,dr.nombredistrito from Pedidos p\n" +
+            "inner join Usuarios u on p.idcliente = u.idusuarios\n" +
+            "inner join Restaurante r on p.restaurante_idrestaurante = r.idrestaurante\n" +
+            "inner join Direcciones d on p.direccionentrega = d.iddirecciones\n" +
+            "inner join Distritos dr on dr.iddistritos = d.iddistrito\n" +
             "where r.idrestaurante=?1 and p.estadorestaurante='aceptado'",nativeQuery = true)
     List<PedidoAceptadosDtos>aceptadopedidos(Integer id);
 
-    @Query(value="select p.idpedidos,p.montototal,concat(u.nombre,' ',u.apellidos)cliente,cast(p.fechahorapedido as DATE)fechahorapedido,d.direccion,dr.nombredistrito from pedidos p\n" +
-            "inner join usuarios u on p.idcliente = u.idusuarios\n" +
-            "inner join restaurante r on p.restaurante_idrestaurante = r.idrestaurante\n" +
-            "inner join direcciones d on p.direccionentrega = d.iddirecciones\n" +
-            "inner join distritos dr on dr.iddistritos = d.iddistrito\n" +
+    @Query(value="select p.idpedidos,p.montototal,concat(u.nombre,' ',u.apellidos)cliente,cast(p.fechahorapedido as DATE)fechahorapedido,d.direccion,dr.nombredistrito from Pedidos p\n" +
+            "inner join Usuarios u on p.idcliente = u.idusuarios\n" +
+            "inner join Restaurante r on p.restaurante_idrestaurante = r.idrestaurante\n" +
+            "inner join Direcciones d on p.direccionentrega = d.iddirecciones\n" +
+            "inner join Distritos dr on dr.iddistritos = d.iddistrito\n" +
             "where r.idrestaurante=?1 and p.estadorestaurante='preparado'",nativeQuery = true)
     List<PedidosPreparadosDto>preparadopedidos(Integer id);
 
-    @Query(value = "select * from pedidos where idcliente=?1 and restaurante_idrestaurante=?2",nativeQuery = true)
+    @Query(value = "select * from Pedidos where idcliente=?1 and restaurante_idrestaurante=?2",nativeQuery = true)
     List<Pedidos> listapedidoxcliente (int idcliente,int idrestaurante);
 
     //TODO: usar en     @PostMapping("/cliente/platopedido")    para verificar si ya existe un pedido iniciado
-    @Query(value = "select * from pedidos where idcliente=?1 and restaurante_idrestaurante= ?2 and montototal='0'",nativeQuery = true)
+    @Query(value = "select * from Pedidos where idcliente=?1 and restaurante_idrestaurante= ?2 and montototal='0'",nativeQuery = true)
     Pedidos pedidoencursoxrestaurante(int idcliente, int restaurante_idrestaurante);
 
-    @Query(value = "select * from pedidos where idcliente=?1 and montototal='0'",nativeQuery = true)
+    @Query(value = "select * from Pedidos where idcliente=?1 and montototal='0'",nativeQuery = true)
     List<Pedidos> listapedidospendientes(int idcliente);
 
-    @Query(value = "select * from pedidos where idcliente=?1 and montototal!='0'",nativeQuery = true)
+    @Query(value = "select * from Pedidos where idcliente=?1 and montototal!='0'",nativeQuery = true)
     List<Pedidos> pedidosfinxcliente(int idcliente);
 
     @Query(value = "select * from Pedidos where idcliente=?1 and montototal!='0' and estadorestaurante='cancelado' and estadorepartidor='pendiente'",nativeQuery = true)
