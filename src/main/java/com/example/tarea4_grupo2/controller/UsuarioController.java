@@ -98,60 +98,69 @@ public class UsuarioController {
             model.addAttribute("listadistritos",listadistritos);
             return "cliente/registroCliente";
         }else{
-            if (usuario.getContraseniaHash().equals(pass2)) {
-                String contraxvalidarpatron = usuario.getContraseniaHash();
+            Usuario usuaioxcorreo = usuarioRepository.findByEmail(usuario.getEmail());
 
-                Boolean validarcontra = validarContrasenia(contraxvalidarpatron);
-
-                if(validarcontra == true){
-
-                    String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
-
-                    usuario.setContraseniaHash(contraseniahashbcrypt);
-                    usuario.setRol("Cliente");
-                    usuario.setCuentaActiva(1);
-
-                    usuarioRepository.save(usuario);
-                    //TODO: validar DNI y correo unico
-                    Usuario usuarionuevo = usuarioRepository.findByDni(usuario.getDni());
-
-                    int idusuarionuevo = usuarionuevo.getIdusuarios();
-
-                    Direcciones direccionactual = new Direcciones();
-                    direccionactual.setDireccion(direccion);
-                    Optional<Distritos> distritoopt = distritosRepository.findById(iddistrito);
-                    Distritos distritosactual = distritoopt.get();
-
-                    direccionactual.setDistrito(distritosactual);
-                    direccionactual.setUsuariosIdusuarios(idusuarionuevo);
-                    direccionactual.setActivo(1);
-                    direccionesRepository.save(direccionactual);
-                    System.out.println("no hay error de patron de contraseña");
-
-                    /* Envio de correo de confirmacion */
-                    String subject = "Cuenta creada en Spicyo";
-                    //TODO modificar direcion url despues de despliegue aws.
-                    String direccionurl = "http://localhost:8090/login";
-                    //URL url = new URL(direccionurl);
-                    String mensaje = "¡Hola!<br><br>" +
-                            "Ahora es parte de Spicyo. Para ingresar a su cuenta haga click: <a href='" + direccionurl + "'>AQUÍ</a> <br><br>Atte. Equipo de Spicy :D</b>";
-                    String correoDestino = usuario.getEmail();
-                    sendMailService.sendMail(correoDestino, "saritaatanacioarenas@gmail.com", subject, mensaje);
-
-                    return "cliente/confirmarCuenta";
-                }else{
-                    List<Distritos> listadistritos = distritosRepository.findAll();
-                    model.addAttribute("listadistritos",listadistritos);
-                    model.addAttribute("errorpatroncontra","La contraseña no cumple con los requisitos: mínimo 8 caracteres, un número y un caracter especial");
-                    System.out.println("error patron de contraseña");
-                    System.out.println(contraxvalidarpatron);
-                    model.addAttribute("usuario",usuario);
-                    return "cliente/registroCliente";
-                }
-            } else {
+            if(usuaioxcorreo != null){
                 List<Distritos> listadistritos = distritosRepository.findAll();
                 model.addAttribute("listadistritos",listadistritos);
+                model.addAttribute("errorcorreo","Ya hay una cuenta registrada con el correo ingresado.");
                 return "cliente/registroCliente";
+            }else{
+                if (usuario.getContraseniaHash().equals(pass2)) {
+                    String contraxvalidarpatron = usuario.getContraseniaHash();
+
+                    Boolean validarcontra = validarContrasenia(contraxvalidarpatron);
+
+                    if(validarcontra == true){
+
+                        String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
+
+                        usuario.setContraseniaHash(contraseniahashbcrypt);
+                        usuario.setRol("Cliente");
+                        usuario.setCuentaActiva(1);
+
+                        usuarioRepository.save(usuario);
+                        //TODO: validar DNI y correo unico
+                        Usuario usuarionuevo = usuarioRepository.findByDniAndEmailEquals(usuario.getDni(), usuario.getEmail());
+
+                        int idusuarionuevo = usuarionuevo.getIdusuarios();
+
+                        Direcciones direccionactual = new Direcciones();
+                        direccionactual.setDireccion(direccion);
+                        Optional<Distritos> distritoopt = distritosRepository.findById(iddistrito);
+                        Distritos distritosactual = distritoopt.get();
+
+                        direccionactual.setDistrito(distritosactual);
+                        direccionactual.setUsuariosIdusuarios(idusuarionuevo);
+                        direccionactual.setActivo(1);
+                        direccionesRepository.save(direccionactual);
+                        System.out.println("no hay error de patron de contraseña");
+
+                        /* Envio de correo de confirmacion */
+                        String subject = "Cuenta creada en Spicyo";
+                        //TODO modificar direcion url despues de despliegue aws.
+                        String direccionurl = "http://localhost:8090/login";
+                        //URL url = new URL(direccionurl);
+                        String mensaje = "¡Hola!<br><br>" +
+                                "Ahora es parte de Spicyo. Para ingresar a su cuenta haga click: <a href='" + direccionurl + "'>AQUÍ</a> <br><br>Atte. Equipo de Spicy :D</b>";
+                        String correoDestino = usuario.getEmail();
+                        sendMailService.sendMail(correoDestino, "saritaatanacioarenas@gmail.com", subject, mensaje);
+
+                        return "cliente/confirmarCuenta";
+                    }else{
+                        List<Distritos> listadistritos = distritosRepository.findAll();
+                        model.addAttribute("listadistritos",listadistritos);
+                        model.addAttribute("errorpatroncontra","La contraseña no cumple con los requisitos: mínimo 8 caracteres, un número y un caracter especial");
+                        System.out.println("error patron de contraseña");
+                        System.out.println(contraxvalidarpatron);
+                        model.addAttribute("usuario",usuario);
+                        return "cliente/registroCliente";
+                    }
+                } else {
+                    List<Distritos> listadistritos = distritosRepository.findAll();
+                    model.addAttribute("listadistritos",listadistritos);
+                    return "cliente/registroCliente";
+                }
             }
         }
     }

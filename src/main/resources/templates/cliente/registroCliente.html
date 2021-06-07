@@ -96,6 +96,7 @@
                                     <label>Correo</label>
                                     <input class="form-control" placeholder="Correo" type="text" th:field="*{email}">
                                     <div class="text-dark" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                                    <div th:if="${errorcorreo != null}" th:text="${errorcorreo}" class="text-danger"></div>
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <label>Nombres</label>
