@@ -12,22 +12,22 @@ import java.util.Optional;
 public interface RestauranteRepository extends JpaRepository<Restaurante, Integer> {
     //Restaurante findRestauranteByIdadminrestEquals(int idAdmin);
 
-    @Query(value = "select * from restaurante where idrestaurante = ?1", nativeQuery = true)
+    @Query(value = "select * from Restaurante where idrestaurante = ?1", nativeQuery = true)
     Restaurante findRestauranteById(int id);
 
     Restaurante findRestauranteByUsuario_Idusuarios(int idAdmin);
 
-    @Query(value = "select r.direccion from restaurante r where r.idadminrest = ?1", nativeQuery = true)
+    @Query(value = "select r.direccion from Restaurante r where r.idadminrest = ?1", nativeQuery = true)
     String encontrarDireccionSegunIdRest(int idrest);
 
-    @Query(value="select*from restaurante\n" +
+    @Query(value="select*from Restaurante\n" +
             "where idadminrest=?1",nativeQuery = true)
     Restaurante obtenerperfilRest(int id);
 
     //Usado por adminsistema en reportes restaurante ,cambiar por group by por id(pendiente)
-    @Query(value = "select r.nombre as 'restnombre', u.nombre, u.apellidos, count(p.idpedidos) as 'pedidos', (sum(p.montototal) - sum(p.comisionrepartidor) - sum(p.comisionsistema)) as 'ventastotales' from restaurante r\n" +
-            "inner join usuarios u on (r.idadminrest=u.idusuarios)\n" +
-            "inner join pedidos p on (r.idrestaurante=p.restaurante_idrestaurante)\n" +
+    @Query(value = "select r.nombre as 'restnombre', u.nombre, u.apellidos, count(p.idpedidos) as 'pedidos', (sum(p.montototal) - sum(p.comisionrepartidor) - sum(p.comisionsistema)) as 'ventastotales' from Restaurante r\n" +
+            "inner join Usuarios u on (r.idadminrest=u.idusuarios)\n" +
+            "inner join Pedidos p on (r.idrestaurante=p.restaurante_idrestaurante)\n" +
             "group by r.nombre " +
             "order by r.nombre;",nativeQuery = true)
     List<RestauranteReportes_DTO> reportesRestaurantes();
