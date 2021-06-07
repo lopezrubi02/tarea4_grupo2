@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface PlatoRepository extends JpaRepository<Plato,Integer> {
 
-    @Query(value = "select * from plato p where p.restaurante_idrestaurante = ?1 and p.activo = 1 order by p.disponibilidad desc",
+    @Query(value = "select * from Plato p where p.restaurante_idrestaurante = ?1 and p.activo = 1 order by p.disponibilidad desc",
             nativeQuery = true)
     List<Plato> buscarPlatosPorIdRestaurante(int idrestaurante);
 
@@ -23,7 +23,7 @@ public interface PlatoRepository extends JpaRepository<Plato,Integer> {
     @Query(value = "select * from Plato p where lower(p.nombre) like concat('%',lower(:nombre),'%')",nativeQuery = true)
     List<Plato> buscarPlatoxNombre(@Param("nombre") String nombre);
 
-    @Query(value = "select * from plato p where p.nombre = ?1 limit 1",nativeQuery = true)
+    @Query(value = "select * from Plato p where p.nombre = ?1 limit 1",nativeQuery = true)
     Optional<Plato> buscarPlato(String nombre);
 
 }
