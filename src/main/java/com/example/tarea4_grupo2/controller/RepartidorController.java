@@ -453,6 +453,13 @@ public class RepartidorController {
             model.addAttribute("correoExis", correoExis);
             model.addAttribute("msgc1",msgc1);
             model.addAttribute("msgc2",msgc2);
+            model.addAttribute("movilidad2",movilidad2);
+            if(placa!=null){
+                model.addAttribute("placa",placa);
+            }
+            if(licencia!=null){
+                model.addAttribute("licencia",licencia);
+            }
             return "repartidor/registro_parte3";
         }
 
