@@ -608,7 +608,6 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
     }
 
 
-    //Reportes
 
     //Reportes
 
@@ -671,9 +670,35 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
 
 
     @GetMapping("/RestaurantesReportes")
-    public String restaurantesReportes(Model model){
+    public String restaurantesReportes(Model model,
+                                       @RequestParam(value = "page",defaultValue = "1") String requestedPage){
+
         List<RestauranteReportes_DTO> reporteLista = restauranteRepository.reportesRestaurantes();
-        model.addAttribute("reporteLista",reporteLista);
+
+
+        float numberOfUsersPerPage = 5;
+        int page;
+        try {
+            page = Integer.parseInt(requestedPage);
+        }catch (Exception e){
+            page = 1;
+        }
+
+        int numberOfPages = (int) Math.ceil(reporteLista.size() / numberOfUsersPerPage);
+        if (page > numberOfPages) {
+            page = numberOfPages;
+        } // validation
+
+        int start = (int) numberOfUsersPerPage * (page - 1);
+        int end = (int) (start + numberOfUsersPerPage);
+
+        List<RestauranteReportes_DTO> lisOfUsersPage = reporteLista.subList(start, Math.min(end, reporteLista.size()));
+
+        model.addAttribute("currentPage", page);
+        model.addAttribute("maxNumberOfPages", numberOfPages);
+
+        model.addAttribute("reporteLista",lisOfUsersPage);
+
 
         double max = 0;
         int indicemayor = 0;
@@ -701,9 +726,36 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
     }
 
     @GetMapping("/RepartidorReportes")
-    public String repartidorReportes(Model model){
+    public String repartidorReportes(Model model,
+                                     @RequestParam(value = "page",defaultValue = "1") String requestedPage){
+
         List<RepartidoresReportes_DTO>  reporteLista = repartidorRepository.reporteRepartidores();
-        model.addAttribute("reporteLista",reporteLista);
+
+        float numberOfUsersPerPage = 5;
+        int page;
+        try {
+            page = Integer.parseInt(requestedPage);
+        }catch (Exception e){
+            page = 1;
+        }
+
+        int numberOfPages = (int) Math.ceil(reporteLista.size() / numberOfUsersPerPage);
+        if (page > numberOfPages) {
+            page = numberOfPages;
+        } // validation
+
+        int start = (int) numberOfUsersPerPage * (page - 1);
+        int end = (int) (start + numberOfUsersPerPage);
+
+        List<RepartidoresReportes_DTO> lisOfUsersPage = reporteLista.subList(start, Math.min(end, reporteLista.size()));
+
+        model.addAttribute("currentPage", page);
+        model.addAttribute("maxNumberOfPages", numberOfPages);
+
+        model.addAttribute("reporteLista",lisOfUsersPage);
+
+
+
 
         int max = 0;
         int indicemayor = 0;

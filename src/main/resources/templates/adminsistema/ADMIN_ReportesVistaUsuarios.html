@@ -188,7 +188,7 @@
 
                                 <!--  BOTON SIGUIENTE -->
                                 <li class="page-item disabled" th:if="${currentPage eq maxNumberOfPages }">
-                                    <span class="page-link">Anterior</span>
+                                    <span class="page-link">Siguiente</span>
                                 </li>
                                 <li class="page-item" th:unless="${currentPage eq maxNumberOfPages}">
                                     <a class="page-link" th:href="@{/admin/usuarioReportes(page=${currentPage + 1},rol=${rol})}">Siguiente</a>
