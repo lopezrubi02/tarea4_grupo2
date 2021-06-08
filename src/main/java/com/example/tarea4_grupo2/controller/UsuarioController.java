@@ -172,7 +172,7 @@ public class UsuarioController {
                             //String direccionurl = "http://localhost:8090/login";
                             //Pegar aquí los datos del AWS;
                             String aws = "ec2-user@ec2-3-84-20-210.compute-1.amazonaws.com";
-                            String direccionurl = "http://" + aws + ":8080/login";
+                            String direccionurl = "http://" + aws + ":8081/login";
                             String mensaje = "¡Hola!<br><br>" +
                                     "Ahora es parte de Spicyo. Para ingresar a su cuenta haga click: <a href='" + direccionurl + "'>AQUÍ</a> <br><br>Atte. Equipo de Spicy :D</b>";
                             String correoDestino = usuario.getEmail();

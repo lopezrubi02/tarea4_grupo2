@@ -506,7 +506,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
 
                 if(usuario.getRol().equals("AdminRestaurante")){
 
-                        String direccion = "http://" + aws + ":8090/login";
+                        String direccion = "http://" + aws + ":8081/login";
                         String correoDestino = usuario.getEmail();
                         String subject = "SPYCYO - Restaurante agregado";
                         String texto = "<p><strong>Bienvenido a SPYCYO - Restaurante agregado</strong></p>\n" +
