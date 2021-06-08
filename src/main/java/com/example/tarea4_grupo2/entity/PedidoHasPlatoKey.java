@@ -7,10 +7,10 @@ import java.io.Serializable;
 @Embeddable
 public class PedidoHasPlatoKey implements Serializable {
 
-    @Column(name = "pedidos_idpedidos")
+    @Column(name = "pedidosIdpedidos")
     private int pedidosidpedidos;
 
-    @Column(name = "plato_idplato")
+    @Column(name = "platoIdplato")
     private int platoidplato;
 
     public PedidoHasPlatoKey() {

@@ -390,9 +390,9 @@ public class AdminRestauranteController {
                 model.addAttribute("listaDisponibilidad", listaDisponibilidad);
                 model.addAttribute("currentPage", page);
                 model.addAttribute("maxNumberOfPages", numberOfPages);
-                return "/AdminRestaurantes/cupones";
+                return "AdminRestaurantes/cupones";
             }
-            return "/AdminRestaurantes/sincupones";
+            return "AdminRestaurantes/sincupones";
         }
         else{
             return "redirect:/adminrest/login";

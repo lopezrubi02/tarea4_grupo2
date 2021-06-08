@@ -51,7 +51,7 @@ public class Pedidos {
     private Usuario repartidor;
 
     @ManyToOne
-    @JoinColumn(name = "restaurante_idrestaurante")
+    @JoinColumn(name = "restauranteIdrestaurante")
     private Restaurante restaurantepedido;
 
     private LocalDate fechahorapedido;

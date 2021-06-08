@@ -32,7 +32,7 @@ public class Plato {
     private float precio;
 
     @ManyToOne
-    @JoinColumn(name="restaurante_idrestaurante")
+    @JoinColumn(name="restauranteIdrestaurante")
     private Restaurante restaurante;
 
     private int disponibilidad;

@@ -35,11 +35,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
             "            where (rol = 'Cliente' or rol='AdminRestaurante' or rol='Repartidor') and cuentaactiva=1;",nativeQuery = true)
     List<Usuario> usuarioreportes();
 
-    @Query(value= "insert into Usuarios (idusuario, nombre, apellidos, email, contrasenia_hash,telefono,fecha_nacimiento,sexo,dni,rol) " +
-            "values(?1,?2,?3,?4,sha2(?5,256),?6,?7,?8,?9,?10);",nativeQuery = true)
-    Usuario nuevoUsuario(int id, String nombre, String apellido, String email, String contra, int telefono,
-                         Date fecha, String sexo, String dni, String rol);
-
     Usuario findByDni(String dni);
     //para guardar direccion de usuario
     Usuario findByDniAndEmailEquals(String dni, String email);

@@ -421,8 +421,11 @@ public class UsuarioController {
             int idcategoriarest = Integer.parseInt(categoriarest);
             Optional<Categorias> catopt = categoriasRepository.findById(idcategoriarest);
             if(catopt.isPresent()){
-
+                System.out.println("************************************");
+                System.out.println("no existe tabla pedido has categorias??????????????");
                 List<Restaurante> listarestauranteseleccionado = restauranteRepository.listarestxcategoria(idcategoriarest);
+                System.out.println("******************************************");
+                System.out.println("*****************************************");
 
                 if(idcategoriarest!=0){
                     model.addAttribute("listarestaurantes",listarestauranteseleccionado);
