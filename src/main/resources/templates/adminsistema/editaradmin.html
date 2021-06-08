@@ -195,7 +195,9 @@
                                 <option th:value="Femenino" th:text="F"></option>
                             </select>
                         </div>
-                        
+
+
+                        <a th:if="${usuario.getIdusuarios() != 1}"  th:href="@{'/admin/delete' + '?id=' + ${usuario.getIdusuarios()}}" class="btn btn-danger">Eliminar</a>
                         <button type="submit" class="btn btn-warning">Guardar cambios</button>
                         <a th:href="@{'/admin/usuariosActuales'}" class="btn btn-light">Cancelar</a>
                     </form>

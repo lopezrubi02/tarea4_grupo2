@@ -242,18 +242,7 @@ public class AdminController {
 
             return "adminsistema/miCuenta";
         } else {
-            // se obtiene el usuario en la base de datos para actualizar solo los campos que han cambiado
-//            Optional<Usuario> optionalUsuario = usuarioRepository.findById(usuarioRecibido.getIdusuarios());
-//            Usuario usuarioEnlabasededatos = optionalUsuario.get();
-//
-//            usuarioEnlabasededatos.setNombre(usuarioRecibido.getNombre());
-//            usuarioEnlabasededatos.setEmail(usuarioRecibido.getEmail());
-//            usuarioEnlabasededatos.setDni(usuarioRecibido.getDni());
-//            usuarioEnlabasededatos.setTelefono(usuarioRecibido.getTelefono());
-//            usuarioEnlabasededatos.setFechaNacimiento(usuarioRecibido.getFechaNacimiento());
-//            usuarioEnlabasededatos.setSexo(usuarioRecibido.getSexo());
-//
-//            usuarioRepository.save(usuarioEnlabasededatos);
+
             usuarioRepository.save(usuarioRecibido);
 
             return "redirect:/admin/usuariosActuales";
@@ -276,27 +265,15 @@ public class AdminController {
         return "adminsistema/miCuenta";
     }
 
-    @PostMapping("/miCuenta")
-    public String updateAdminInfo(
-            @ModelAttribute("usuario") @Valid Usuario usuarioRecibido,
-            BindingResult bindingResult,
-            RedirectAttributes redirectAttributes,
-            Model model
-    ){
+    @GetMapping("/delete")
+    public String borrarAdmin(@RequestParam("id") int id, RedirectAttributes attr) {
 
-        if(bindingResult.hasErrors()) {
-            System.out.println("error papu");
-            for( ObjectError err : bindingResult.getAllErrors()){
-                System.out.println(err.toString());
-            }
+        Optional<Usuario> optional = usuarioRepository.findById(id);
 
-            return "adminsistema/miCuenta";
-        } else {
-                usuarioRepository.save(usuarioRecibido);
-
-            return "redirect:/admin/usuariosActuales";
+        if (optional.isPresent()) {
+            usuarioRepository.deleteById(id);
         }
-
+        return "redirect:/admin/usuariosActuales";
     }
 
 //  Imagenes
