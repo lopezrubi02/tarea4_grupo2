@@ -142,7 +142,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <h1>Mi cuenta</h1>
+                    <h1>Editar administrador</h1>
                 </div>
             </div>
             <hr>
@@ -195,7 +195,8 @@
                                 <option th:value="Femenino" th:text="F"></option>
                             </select>
                         </div>
-                        
+
+                        <a th:href="@{'/admin/usuariosActuales'}" class="btn btn-light">Eliminar</a>
                         <button type="submit" class="btn btn-warning">Guardar cambios</button>
                         <a th:href="@{'/admin/usuariosActuales'}" class="btn btn-light">Cancelar</a>
                     </form>
