@@ -155,6 +155,7 @@ public class UsuarioController {
                         //Para guardar direccion
                         Usuario usuarionuevo = usuarioRepository.findByDniAndEmailEquals(usuario.getDni(), usuario.getEmail());
                         int idusuarionuevo = usuarionuevo.getIdusuarios();
+                        //TODO validar direccion no vacia
                         Direcciones direccionactual = new Direcciones();
                         direccionactual.setDireccion(direccion);
                         Optional<Distritos> distritoopt = distritosRepository.findById(iddistrito);

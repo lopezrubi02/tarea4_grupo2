@@ -68,8 +68,10 @@
                                     </br>
 									<a style="color: white;" th:text="'S/. ' + ${platoseleccionado.precio}">Precio: 20 soles</a>
 								</div>
-								<form class="main_form" method="post" th:action="@{'/cliente/platopedido?idrestaurante=' + ${idrestaurante} + '&idplato=' + ${platoseleccionado.idplato} + '&direccionxpedir=' + ${iddireccionxpedir}}">
+								<form class="main_form" method="post" th:action="@{'/cliente/platopedido'}">
                                     <input type="hidden" th:value="${iddireccionxenviar}" name="direccion">
+									<input type="hidden" th:value="${idrestaurante}" name="idrestaurante">
+									<input type="hidden" th:value="${platoseleccionado.idplato}" name="idplato">
                                     <div class="row">
 										<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
 											<div class="form-floating">
