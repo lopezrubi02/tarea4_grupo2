@@ -15,7 +15,6 @@ public interface DireccionesRepository extends JpaRepository<Direcciones, Intege
     @Query(value = "select * from Direcciones where iddirecciones = ?1", nativeQuery = true)
     Direcciones findDireccionById(int id);
 
-    //TODO: usar esto en el controller del cliente, solo remplazar
     @Query(value = "select * from Direcciones where iddirecciones = ?1 and usuariosIdusuarios = ?2", nativeQuery = true)
     Direcciones findDireccionesByIddireccionesAndUsuariosIdusuariosEquals(int iddireccion, int idcliente);
 
