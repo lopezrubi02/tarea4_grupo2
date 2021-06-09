@@ -3,6 +3,7 @@
 
 <head>
     <!-- Todo esto se repite -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
     <!-- basic -->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -33,9 +34,9 @@
 
 <body class="main-layout">
     <!-- loader  -->
-    <!--div class="loader_bg">
+    <div class="loader_bg">
         <div class="loader"><img th:src="@{/images/loading.gif}" alt="" /></div>
-    </div-->
+    </div>
 
     <div class="wrapper">
     <!-- end loader -->
@@ -115,26 +116,36 @@
                 </div>
             </div>
             <br> <br>
-            <div class="row">
-                <form class="input-group mb-lg-3" method="post" th:action="@{buscadorNuevos}"><!-- COMPLETAR -->
-                    <div class="col-2">
+            <div class="col-md-10">
+                <form class="input-group" method="post" th:action="@{buscadorNuevos}"><!-- COMPLETAR -->
+                    <div class="form-floating">
                         <!-- search bar -->
-                        <select class="custom-select" id="rolSelected" onChange="window.location=this.options[this.selectedIndex].value">
+                        <select class="form-select" id="rolSelected" aria-label="Floating label select example" onChange="window.location=this.options[this.selectedIndex].value">
                             <option th:selected="${rolSelected}" disabled="disabled" th:text="${nombreRol}">Filtrar por Rol</option>
                             <option value="nuevosUsuarios?rolSelected=Todos">Todos</option>
                             <option value="nuevosUsuarios?rolSelected=Repartidor">Repartidores</option>
                             <option value="nuevosUsuarios?rolSelected=AdminRestaurante">Restaurantes</option>
                         </select>
+                        <label for="rolSelected">Rol</label>
                     </div>
-                    <div class="col-6">
+                    <div class="col-md">
+                        <div class="form-floating">
+                            <!--input type="email" class="form-control" id="floatingInputGrid" placeholder="Buscar plato o restaurante" -->
+                            <input name="searchField" class="form-control" id="floatingInputGrid" type="text" placeholder="Buscar por nombre, apellidos o DNI"/>
+                            <label for="floatingInputGrid">Buscar por nombre, apellido o DNI</label>
+                        </div>
+                    </div>
+
+                    <!--div class="col-6">
                         <input name="searchField" class="form-control mb-3" type="text" placeholder="Busqueda por nombre,apellidos o DNI" />
-                    </div>
-                    <div class="input-group-append">
+                    </div-->
+
+                    <!--div class="input-group-append">
                         <li class="button_user" ><a class="button active"  ><button  class="btn btn-link" type="submit" >Buscar</button></a></li>
-                        <!--button class="btn btn-outline-warning" type="submit" >Buscar</button-->
+                        <button class="btn btn-outline-warning" type="submit" >Buscar</button>
                         <li class="button_user"><a class="button active" th:href="@{nuevosUsuarios}" > Limpiar </a></li>
-                        <!--a class="btn btn-outline-danger ml-2" th:href="@{nuevosUsuarios}">Limpiar</a-->
-                    </div>
+                        <a class="btn btn-outline-danger ml-2" th:href="@{nuevosUsuarios}">Limpiar</a>
+                    </div-->
 
                 </form>
             </div>
@@ -172,7 +183,7 @@
                     </div>
                 </div>
                 <!-- end of table -->
-                <h1 th:if="${maxNumberOfPages} != 0" th:text="${maxNumberOfPages}"></h1>
+                <!--h1 th:if="${maxNumberOfPages} != 0" th:text="${maxNumberOfPages}"></h1-->
                 <!-- paginacion -->
                 <div th:if="${maxNumberOfPages} != 0" class="row">
                     <nav aria-label="Page navigation example" class = "mx-auto">

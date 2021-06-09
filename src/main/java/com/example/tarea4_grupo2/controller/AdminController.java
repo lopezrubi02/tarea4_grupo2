@@ -389,13 +389,19 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
             //todo agregado para lograr paginacion
             if(usuarioList.size() == 0){
 
-                if(buscar.equals("")){
+                if(buscar.equals("") && rol.equals("Todos")){
                     attr.addFlashAttribute("msg","No hay nuevas Cuentas que aceptar");
                     return "redirect:/admin/gestionCuentas";
+                }else if(buscar.equals("") && (rol.equals("Repartidor") || rol.equals("AdminRestaurante"))){
+                    attr.addFlashAttribute("msg","No se encontraron resultados para su búsqueda");
+                    model.addAttribute("rolSelected","Todos");
+                    return "redirect:/admin/nuevosUsuarios";
+                }else{
+                    attr.addFlashAttribute("msg","No se encontraron resultados para su búsqueda");
+                    return "redirect:/admin/nuevosUsuarios";
                 }
 
-                attr.addFlashAttribute("msg","No se encontraron resultados para su busqueda");
-                return "redirect:/admin/nuevosUsuarios";
+
             }
 
 
