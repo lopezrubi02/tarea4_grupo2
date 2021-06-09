@@ -62,6 +62,13 @@ public class UsuarioController {
         List<Pedidos> pedidoscanceladosxrest = pedidosRepository.listapedidoscanceladosxrest(idusuario);
         model.addAttribute("listacancelados",pedidoscanceladosxrest);
 
+        //vista cliente nuevo
+        List<Pedidos> listapedidosusuario = pedidosRepository.findAllByIdclienteEquals(idusuario);
+        boolean ultimopedido1 = true;
+        if(listapedidosusuario.isEmpty()){
+            ultimopedido1 = false;
+        }
+        model.addAttribute("ultimopedido",ultimopedido1);
 
         return "cliente/paginaPrincipal";
     }
@@ -961,35 +968,42 @@ public class UsuarioController {
 
         //vista cliente nuevo
         List<Pedidos> listapedidosusuario = pedidosRepository.findAllByIdclienteEquals(idusuario);
-        boolean ultimopedido1 = false;
+        boolean ultimopedido1 = true; //true -> hay al menos un pedido pregistrado
+        System.out.println(ultimopedido1);
+        System.out.println("Prubaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa ultimo pedido");
         if(listapedidosusuario.isEmpty()){
-            ultimopedido1 = true;
+            System.out.println("entra al if ************************");
+            ultimopedido1 = false; //false -> no hay pedidos registrados
+            System.out.println(ultimopedido1);
         }
         model.addAttribute("ultimopedido",ultimopedido1);
 
-        //TODO mostrar más datos en la vista de progreso pedido
-        List<Pedidos> listapedidoscliente = pedidosRepository.pedidosfinxcliente(idusuario);
-        int tam = listapedidoscliente.size();
-        Pedidos ultimopedido = listapedidoscliente.get(tam-1);
-        int idultimopedido = ultimopedido.getIdpedidos();
-        System.out.println("verificando ultimo pedido");
-        System.out.println(idultimopedido);
+        if(ultimopedido1 == true){
+            //TODO mostrar más datos en la vista de progreso pedido
+            List<Pedidos> listapedidoscliente = pedidosRepository.pedidosfinxcliente(idusuario);
+            int tam = listapedidoscliente.size();
+            Pedidos ultimopedido = listapedidoscliente.get(tam-1);
+            int idultimopedido = ultimopedido.getIdpedidos();
+            System.out.println("verificando ultimo pedido");
+            System.out.println(idultimopedido);
 
-        List<PedidoHasPlato> pedidoHasPlatoencurso = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(idultimopedido);
-        System.out.println(pedidoHasPlatoencurso.get(0).getPlato().getNombre());
-        System.out.println(pedidoHasPlatoencurso.get(0).getPedido().getIdpedidos());
-        System.out.println("*****************");
-        Optional<Pedidos> pedidoencursoopt = pedidosRepository.findById(pedidoHasPlatoencurso.get(0).getPedido().getIdpedidos());
-        Pedidos pedidoencurso = pedidoencursoopt.get();
-        model.addAttribute("pedido",pedidoencurso);
-        model.addAttribute("lista",pedidoHasPlatoencurso);
+            List<PedidoHasPlato> pedidoHasPlatoencurso = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(idultimopedido);
+            System.out.println(pedidoHasPlatoencurso.get(0).getPlato().getNombre());
+            System.out.println(pedidoHasPlatoencurso.get(0).getPedido().getIdpedidos());
+            System.out.println("*****************");
+            Optional<Pedidos> pedidoencursoopt = pedidosRepository.findById(pedidoHasPlatoencurso.get(0).getPedido().getIdpedidos());
+            Pedidos pedidoencurso = pedidoencursoopt.get();
+            model.addAttribute("pedido",pedidoencurso);
+            model.addAttribute("lista",pedidoHasPlatoencurso);
 
-        if((pedidoencurso.getCalificacionrepartidor() !=0 || pedidoencurso.getCalificacionrestaurante() != 0 || pedidoencurso.getComentario() != null) && pedidoencurso.getEstadorepartidor().equalsIgnoreCase("entregado")){
-            boolean calificar = true;
-            model.addAttribute("calificar",calificar);
-        }else{
-            boolean calificar = false;
-            model.addAttribute("calificar",calificar);
+            if((pedidoencurso.getCalificacionrepartidor() !=0 || pedidoencurso.getCalificacionrestaurante() != 0 || pedidoencurso.getComentario() != null) && pedidoencurso.getEstadorepartidor().equalsIgnoreCase("entregado")){
+                boolean calificar = true;
+                model.addAttribute("calificar",calificar);
+            }else{
+                boolean calificar = false;
+                model.addAttribute("calificar",calificar);
+            }
+
         }
 
         return "cliente/ultimopedido_cliente";
