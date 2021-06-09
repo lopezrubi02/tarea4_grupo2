@@ -59,49 +59,57 @@
 			<fooetr>
 				<div class="footer">
 					<div class="container-fluid">
-						<div class="row">
-						  <div class=" col-md-12">
-							<h2 style="padding-left: 223px;">Tu pedido pendiente</h2>
-						  </div>
-							<div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
-								
-								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                    <h5 style="padding-left: 223px;">Estado restaurante <strong class="white" th:text="${pedido.estadorestaurante}">Confirmado</strong></h5>
-                                    <h5 style="padding-left: 223px;">Estado repartidor  <strong class="white" th:text="${pedido.estadorepartidor}">Confirmado</strong></h5>
-									<!--h5 style="padding-left: 223px;">Aceptado por el restaurante:  <strong class="white"></strong></h5>
-									<h5 style="padding-left: 223px;">Preparación finalizada: <strong class="white">Confirmado</strong></h5>
-									<h5 style="padding-left: 223px;">Pedido en camino:  <strong class="white">Confirmado</strong></h5>
-									<h5 style="padding-left: 223px;">Pedido entregado:  <strong class="white">Pendiente</strong></h5-->
-								
-								</div>
-								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-									<h2 style="padding-left: 223px;">Detalles de tu pedido</h2>
-									<!--h5 style="padding-left: 223px;" th:text="|Costo de productos: ${pedido.montototal}|">Costo de productos: S/25.00</h5-->
-									<!--h5 style="padding-left: 223px;">Descuento: S/5.00</h5-->
-									<h5 style="padding-left: 223px;" th:text="|Costo de envío: S/ ${pedido.comisionrepartidor}|">Costo envio: S/.6.00</h5>
-									<h5 style="padding-left: 223px;" th:text="|Total a pagar: S/ ${pedido.montototal}|">Total a pagar: S/26.00</h5>
-									<h5 style="padding-left: 223px;" th:each="plato : ${lista}"
-                                                    th:text="${plato.getPlato().getNombre()}">1 Combowok de la Suerte</h5>
-
+						<div class = "row" th:if="${ultimopedido}">
+							<div class="col-md-6 offset-md-3">
+								<div class="Client_box">
+									<h3>Aún no haz realizado ningún pedido :(</h3>
+									<p>Te invitamos a visitar nuestros restaurante y agregar productos a tu canasta.</p>
 								</div>
 							</div>
-							<div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
-								<div class="img-box">
-									<figure><img th:src="@{/images/img.jpg}" alt="img" style="width: 350; height: 350px"/></figure>
-								</div>
-							</div>
+						</div>
+						<div class="row" th:unless="${ultimopedido}" style="padding-right:190px;"> <!-- hay algun pedido -->
+							  <div class=" col-md-12">
+								<h2 style="padding-left: 223px;">Tu pedido más reciente</h2>
+							  </div>
+								<div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
 
-                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12" th:unless="${calificar}">
-                                <div class="row" style="padding-left:240px;">
-                                <a th:href="@{'/cliente/calificarpedido'}" style="width: 275px;"><button class="send">Calificar Pedido</button></a>
-                                </div>
-                            </div>
-						</div>
-                        </br>
-						<div>
-							<h3 style="padding-left: 223px;"><strong class="white">En caso hayas escogido tu método de pago como tarjeta online, se te cobrará el monto total cuando se marque como entregado el pedido</strong></h3>
-						</div>
-						
+									<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+										<h5 style="padding-left: 223px;">Estado restaurante <strong class="white" th:text="${pedido.estadorestaurante}">Confirmado</strong></h5>
+										<h5 style="padding-left: 223px;">Estado repartidor  <strong class="white" th:text="${pedido.estadorepartidor}">Confirmado</strong></h5>
+										<!--h5 style="padding-left: 223px;">Aceptado por el restaurante:  <strong class="white"></strong></h5>
+										<h5 style="padding-left: 223px;">Preparación finalizada: <strong class="white">Confirmado</strong></h5>
+										<h5 style="padding-left: 223px;">Pedido en camino:  <strong class="white">Confirmado</strong></h5>
+										<h5 style="padding-left: 223px;">Pedido entregado:  <strong class="white">Pendiente</strong></h5-->
+
+									</div>
+									<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+										<h2 style="padding-left: 207px;">Detalles de tu pedido</h2>
+										<!--h5 style="padding-left: 223px;" th:text="|Costo de productos: ${pedido.montototal}|">Costo de productos: S/25.00</h5-->
+										<!--h5 style="padding-left: 223px;">Descuento: S/5.00</h5-->
+										<h5 style="padding-left: 223px;" th:text="|Costo de envío: S/ ${pedido.comisionrepartidor}|">Costo envio: S/.6.00</h5>
+										<h5 style="padding-left: 223px;" th:text="|Total a pagar: S/ ${pedido.montototal}|">Total a pagar: S/26.00</h5>
+										<h5 style="padding-left: 223px;" th:each="plato : ${lista}"
+														th:text="${plato.getPlato().getNombre()}">1 Combowok de la Suerte</h5>
+
+									</div>
+								</div>
+								<div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+									<div class="img-box">
+										<figure><img th:src="@{/images/img.jpg}" alt="img" style="width: 350; height: 350px"/></figure>
+									</div>
+								</div>
+
+								<div class="col-xl-6 col-lg-6 col-md-6 col-sm-12" th:unless="${calificar}">
+									<div class="row" style="padding-left:240px;">
+									<a th:href="@{'/cliente/calificarpedido'}" style="width: 275px;"><button class="send">Calificar Pedido</button></a>
+									</div>
+								</div>
+							</br>
+							<div>
+								<h3 style="padding-left: 223px;"><strong class="white">En caso hayas escogido tu método de pago como tarjeta online, se te cobrará el monto total cuando se marque como entregado el pedido</strong></h3>
+							</div>
+						</div> <!--termino hay pedido -->
+
 		  </div>
 		  <div class="footer">
 					
@@ -114,7 +122,6 @@
 			</fooetr>
     <!-- end footer -->
 
-    </div>
     </div>
     <div class="overlay"></div>
 	<!-- Javascript files-->

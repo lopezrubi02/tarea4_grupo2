@@ -208,7 +208,6 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
     @Query(value = "select * from Pedidos where idcliente=?1 and restauranteIdrestaurante=?2",nativeQuery = true)
     List<Pedidos> listapedidoxcliente (int idcliente,int idrestaurante);
 
-    //TODO: usar en     @PostMapping("/cliente/platopedido")    para verificar si ya existe un pedido iniciado
     @Query(value = "select * from Pedidos where idcliente=?1 and restauranteIdrestaurante= ?2 and montototal='0'",nativeQuery = true)
     Pedidos pedidoencursoxrestaurante(int idcliente, int restauranteIdrestaurante);
 
@@ -220,5 +219,7 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
 
     @Query(value = "select * from Pedidos where idcliente=?1 and montototal!='0' and estadorestaurante='cancelado' and estadorepartidor='pendiente'",nativeQuery = true)
     List<Pedidos> listapedidoscanceladosxrest(int idcliente);
+
+    List<Pedidos> findAllByIdclienteEquals(int idcliente);
 
 }

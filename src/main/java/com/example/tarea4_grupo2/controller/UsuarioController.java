@@ -19,6 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.net.MalformedURLException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -60,6 +61,8 @@ public class UsuarioController {
         
         List<Pedidos> pedidoscanceladosxrest = pedidosRepository.listapedidoscanceladosxrest(idusuario);
         model.addAttribute("listacancelados",pedidoscanceladosxrest);
+
+
         return "cliente/paginaPrincipal";
     }
 
@@ -155,7 +158,7 @@ public class UsuarioController {
                         //Para guardar direccion
                         Usuario usuarionuevo = usuarioRepository.findByDniAndEmailEquals(usuario.getDni(), usuario.getEmail());
                         int idusuarionuevo = usuarionuevo.getIdusuarios();
-                        //TODO validar direccion no vacia
+
                         Direcciones direccionactual = new Direcciones();
                         direccionactual.setDireccion(direccion);
                         Optional<Distritos> distritoopt = distritosRepository.findById(iddistrito);
@@ -741,7 +744,7 @@ public class UsuarioController {
                  redirectAttributes.addFlashAttribute("platoagregado", "Plato agregado al carrito");
 
              }
-
+            //TODO en el html, sale error al seleccionar cancelar
              return "redirect:/cliente/restaurantexordenar?idrestaurante=" + idrestaurante + "&direccion=" + direccionxenviar;
          }else{
              return "redirect:/cliente/realizarpedido";
@@ -893,8 +896,7 @@ public class UsuarioController {
                               Model model,
                               HttpSession session,
                               RedirectAttributes redirectAttributes){
-        //TODO cuando se haya pagado por el pedido modificar el estadorestaurante = "pendiente";
-        //revisar el metodo, sale error//
+
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuario=sessionUser.getIdusuarios();
         System.out.println("verificando metodo de pago ***************");
@@ -923,18 +925,26 @@ public class UsuarioController {
                     pedidoencurso.setMetododepago(metodosel);
                     if(idmetodo == 3){
                         if(montoexacto != 0){
+                            //TODO verificar que el monto exacto sea mayor o igual que el monto total del pedido
                             System.out.println(montoexacto);
                             pedidoencurso.setMontoexacto(String.valueOf(montoexacto));
                         }
                     }
                     if(idmetodo == 1){
+                        //TODO verificar patron de tarjeta de credito ingresada, guardar en la db y mostrar en la vista mi perfil
                         System.out.println(numerotarjeta);
                     }
                     //pedidoencurso.setMontoexacto(String.valueOf(montoTotal_pedidoHasPlatoDTO.getpreciototal()));
                     pedidoencurso.setMontototal(String.valueOf(montoPagar_pedidoHasPlatoDTO.getpreciopagar()));
                     pedidoencurso.setEstadorestaurante("pendiente");
                     System.out.println(LocalDate.now());
-                    pedidoencurso.setFechahorapedido(LocalDate.now());
+                    //TODO guarda la fecha pero no la hora
+                    SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    Date now = new Date();
+                    String strDate = sdfDate.format(LocalDate.now());
+                    //manejar error con new
+                    //pedidoencurso.setFechahorapedido(strDate);
+
                     pedidosRepository.save(pedidoencurso);
                 }
                 redirectAttributes.addFlashAttribute("checkout", "Pedido listo");
@@ -949,6 +959,15 @@ public class UsuarioController {
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuario=sessionUser.getIdusuarios();
 
+        //vista cliente nuevo
+        List<Pedidos> listapedidosusuario = pedidosRepository.findAllByIdclienteEquals(idusuario);
+        boolean ultimopedido1 = false;
+        if(listapedidosusuario.isEmpty()){
+            ultimopedido1 = true;
+        }
+        model.addAttribute("ultimopedido",ultimopedido1);
+
+        //TODO mostrar más datos en la vista de progreso pedido
         List<Pedidos> listapedidoscliente = pedidosRepository.pedidosfinxcliente(idusuario);
         int tam = listapedidoscliente.size();
         Pedidos ultimopedido = listapedidoscliente.get(tam-1);
@@ -965,7 +984,7 @@ public class UsuarioController {
         model.addAttribute("pedido",pedidoencurso);
         model.addAttribute("lista",pedidoHasPlatoencurso);
 
-        if(pedidoencurso.getCalificacionrepartidor() !=0 || pedidoencurso.getCalificacionrestaurante() != 0 || pedidoencurso.getComentario() != null){
+        if((pedidoencurso.getCalificacionrepartidor() !=0 || pedidoencurso.getCalificacionrestaurante() != 0 || pedidoencurso.getComentario() != null) && pedidoencurso.getEstadorepartidor().equalsIgnoreCase("entregado")){
             boolean calificar = true;
             model.addAttribute("calificar",calificar);
         }else{

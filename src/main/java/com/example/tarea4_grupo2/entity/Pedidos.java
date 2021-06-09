@@ -1,5 +1,7 @@
 package com.example.tarea4_grupo2.entity;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
@@ -54,7 +56,9 @@ public class Pedidos {
     @JoinColumn(name = "restauranteIdrestaurante")
     private Restaurante restaurantepedido;
 
-    private LocalDate fechahorapedido;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date fechahorapedido;
+
     private Date fechahoraentregado;
 
     @ManyToOne
@@ -78,7 +82,7 @@ public class Pedidos {
     public Pedidos() {
     }
 
-    public Pedidos(int idpedidos, Set<PedidoHasPlato> pedidohasplato, String montototal, int comisionrepartidor, int comisionsistema, String montoexacto, MetodosDePago metododepago, int calificacionrestaurante, int calificacionrepartidor, String comentario, float tiempodelivery, String estadorestaurante, String estadorepartidor, int idcliente, Usuario repartidor, Restaurante restaurantepedido, LocalDate fechahorapedido, Date fechahoraentregado, Direcciones direccionentrega) {
+    public Pedidos(int idpedidos, Set<PedidoHasPlato> pedidohasplato, String montototal, int comisionrepartidor, int comisionsistema, String montoexacto, MetodosDePago metododepago, int calificacionrestaurante, int calificacionrepartidor, String comentario, float tiempodelivery, String estadorestaurante, String estadorepartidor, int idcliente, Usuario repartidor, Restaurante restaurantepedido, Date fechahorapedido, Date fechahoraentregado, Direcciones direccionentrega) {
         this.idpedidos = idpedidos;
         this.pedidohasplato = pedidohasplato;
         this.montototal = montototal;
@@ -220,11 +224,11 @@ public class Pedidos {
         this.restaurantepedido = restaurantepedido;
     }
 
-    public LocalDate getFechahorapedido() {
+    public Date getFechahorapedido() {
         return fechahorapedido;
     }
 
-    public void setFechahorapedido(LocalDate fechahorapedido) {
+    public void setFechahorapedido(Date fechahorapedido) {
         this.fechahorapedido = fechahorapedido;
     }
 
