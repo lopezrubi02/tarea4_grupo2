@@ -54,16 +54,16 @@
             <div class="row">
 				
 				<div class="col-8">
-                    <h1>Reporte de Ingresos por Delivery para Administrador de Sistema</h1>
+                    <h1>Reporte de Ingresos por Delivery de Administrador Sistema</h1>
                 </div>
 				<div class="col-4">
 					<div class="d-flex justify-content-end">
                     <button type="button" class="btn btn-success">Exportar a Excel</button>
 					</div>
                 </div>
-				
+
             </div>
-			<br></br>
+            <hr>
             <div class="col-md-4">
                 <button th:if="${msg != null}" th:text="${msg}" class="btn btn-dark" role="alert"></button>
             </div>
@@ -111,7 +111,7 @@
 					</div>
 				</div-->
             </div>
-            <hr>
+            <br>
             <div class="row table-users">
                 <!-- table -->
                 <div class="col-md-12">
@@ -176,7 +176,8 @@
 
 
             </div>
-			<br>
+			<hr>
+            <li class="button_user"><a class="button active" th:href="@{reportes}" > Regresar </a></li>
 			<br>
 			<!--div class="col-8">
                     <h3>Estadisticas</h3>

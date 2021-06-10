@@ -437,7 +437,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
                                    RedirectAttributes attr,
                                    Model model){
             System.out.println("El rol es: " + rol);
-            model.addAttribute("rolSelected",rol);
+            attr.addAttribute("rolSelected",rol);
             attr.addAttribute("searchField", buscar);
 
             //model.addAttribute("listaUsuariosNuevos",usuarioList);
@@ -692,7 +692,8 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
     }
 
     @GetMapping("/usuarioReportes")
-    public String usuariosReportes(Model model,
+    public String usuariosReportes(Model model,RedirectAttributes attr,
+                                   @RequestParam(value ="searchField",defaultValue = "") String searchField,
                                    @RequestParam(value = "rol" ,defaultValue = "Todos")String rol,
                                    @RequestParam(value = "page",defaultValue = "1") String requestedPage){
 
@@ -704,12 +705,26 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
             page = 1;
         }
 
+        System.out.println("Busqueda: "+searchField);
+        System.out.println("Rol: "+rol );
+
         List<Usuario> usuarioList;
-        if(rol.equals("Repartidor") || rol.equals("AdminRestaurante") || rol.equals("Cliente")){
+        String buscar = "%" + searchField + "%";
+
+        if(!searchField.equals("") && (rol.equals("Repartidor") || rol.equals("AdminRestaurante") || rol.equals("Cliente"))) {
+            usuarioList = usuarioRepository.cuentasActualesRol(buscar,rol);
+            System.out.println("manos1");
+        }else if(!searchField.equals("")){
+            usuarioList = usuarioRepository.cuentasActuales(buscar);
+            System.out.println("manos2");
+        }else if(rol.equals("Repartidor") || rol.equals("AdminRestaurante") || rol.equals("Cliente")){
             usuarioList = usuarioRepository.findAllByRolAndCuentaActiva(rol,1);
+            System.out.println("manos3");
         }else{
             usuarioList = usuarioRepository.usuarioreportes();
+            System.out.println("manos4");
         }
+
 
         String nombreRol;
         if(rol.equals("Repartidor")){
@@ -739,8 +754,18 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
         model.addAttribute("nombreRol",nombreRol);
 
         model.addAttribute("rol",rol);
+        model.addAttribute("searchField", buscar);
 
         return "adminsistema/ADMIN_ReportesVistaUsuarios";
+    }
+
+    @PostMapping("/buscadorReportesUsuarios")
+    public String buscadorReportesUsuarios(@RequestParam(value ="searchField",defaultValue = "") String searchField,
+                                           @RequestParam(value = "rol",defaultValue = "Todos") String rol,
+                                           RedirectAttributes attr,Model model){
+        attr.addAttribute("rol",rol);
+        attr.addAttribute("searchField", searchField);
+        return "redirect:/admin/usuarioReportes";
     }
 
 

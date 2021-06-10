@@ -73,40 +73,32 @@
                     <button th:if="${msg != null}" th:text="${msg}" class="btn btn-dark" role="alert"></button>
                 </div>
             </div>
-            <div class="col-md-10">
+            <hr>
+            <div class="col-md-12">
                 <form class="input-group" method="post" th:action="@{buscadorNuevos}"><!-- COMPLETAR -->
+                    <input name="rolSelected" th:value="${rolSelected}" type="hidden">
                     <div class="form-floating">
                         <!-- search bar -->
                         <select class="form-select" id="rolSelected" aria-label="Floating label select example" onChange="window.location=this.options[this.selectedIndex].value" >
-                            <option th:selected="${rolSelected}" disabled="disabled" th:text="${nombreRol}">Filtrar por Rol</option>
-                            <option value="nuevosUsuarios?rolSelected=Todos">Todos</option>
-                            <option value="nuevosUsuarios?rolSelected=Repartidor">Repartidores</option>
-                            <option value="nuevosUsuarios?rolSelected=AdminRestaurante">Restaurantes</option>
+                            <!--option th:selected="${rolSelected}" disabled="disabled" th:text="${nombreRol}">Filtrar por Rol</option-->
+                            <option th:selected="(${rolSelected} == 'Todos')" value="nuevosUsuarios?rolSelected=Todos">Todos</option>
+                            <option th:selected="(${rolSelected} == 'Repartidor')" value="nuevosUsuarios?rolSelected=Repartidor">Repartidores</option>
+                            <option th:selected="(${rolSelected} == 'AdminRestaurante')" value="nuevosUsuarios?rolSelected=AdminRestaurante">Restaurantes</option>
                         </select>
                         <label for="rolSelected">Rol</label>
                     </div>
                     <div class="col-md-8" style="margin-bottom: 0px;">
                         <div class="form-floating" style=" border-style: groove;margin-bottom: 0px">
-                            <!--input type="email" class="form-control" id="floatingInputGrid" placeholder="Buscar plato o restaurante" -->
                             <input name="searchField" class="form-control" id="floatingInputGrid" type="text" placeholder="Buscar por nombre, apellidos o DNI"/>
                             <label for="floatingInputGrid">Buscar por nombre, apellido o DNI</label>
                         </div>
                     </div>
-
-                    <!--div class="col-6">
-                        <input name="searchField" class="form-control mb-3" type="text" placeholder="Busqueda por nombre,apellidos o DNI" />
-                    </div-->
-
-                    <!--div class="input-group-append">
-                        <li class="button_user" ><a class="button active"  ><button  class="btn btn-link" type="submit" >Buscar</button></a></li>
-                        <button class="btn btn-outline-warning" type="submit" >Buscar</button>
-                        <li class="button_user"><a class="button active" th:href="@{nuevosUsuarios}" > Limpiar </a></li>
-                        <a class="btn btn-outline-danger ml-2" th:href="@{nuevosUsuarios}">Limpiar</a>
-                    </div-->
+                    <button class="btn btn-dark" type="submit" >Buscar</button>
+                    <button class="btn btn-warning"><a class="button active" th:href="@{/admin/nuevosUsuarios(rolSelected='Todos',searchField='')}">Limpiar</a></button>
 
                 </form>
             </div>
-            <hr>
+            <br>
             <div class="row table-users">
                 <!-- table -->
                 <div class="col-md-12">
