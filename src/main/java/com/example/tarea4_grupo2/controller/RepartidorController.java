@@ -299,6 +299,10 @@ public class RepartidorController {
 
             Direcciones direcciones = direccionesRepository.findByUsuariosIdusuarios(id);
             model.addAttribute("direcciones", direcciones);
+
+            Distritos distritoUsuario=direcciones.getDistrito();
+            model.addAttribute("distritoUsuario", distritoUsuario);
+            model.addAttribute("listadistritos", distritosRepository.findAll());
         }
 
         return "repartidor/repartidor_perfil";
@@ -309,6 +313,8 @@ public class RepartidorController {
                                           BindingResult bindingResult,
                                           @RequestParam("password2") String password2,
                                           @RequestParam("direccion") String direccion,
+                                          @RequestParam("distrito") String distrito,
+                                          @RequestParam("archivo") MultipartFile file,
                                           HttpSession session,
                                           Model model) {
         Usuario user=(Usuario) session.getAttribute("usuarioLogueado");
@@ -350,19 +356,64 @@ public class RepartidorController {
         else {
             if(usuario.getContraseniaHash().equals(password2)){
 
+
+                if (file.isEmpty()) {
+                    model.addAttribute("msg", "Debe subir un archivo");
+                    return "repartidor/repartidor_perfil";
+                }
+                String fileName = file.getOriginalFilename();
+                if (fileName.contains("..")) {
+                    model.addAttribute("msg", "No se permiten '..' en el archivo");
+                    return "repartidor/repartidor_perfil";
+                }
+                try {
+                    Repartidor repartidor = repartidorRepository.findRepartidorByIdusuariosEquals(usuario.getIdusuarios());
+                    repartidor.setFoto(file.getBytes());
+                    repartidor.setFotonombre(fileName);
+                    repartidor.setFotocontenttype(file.getContentType());
+                    repartidorRepository.save(repartidor);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    model.addAttribute("msg", "ocurrió un error al subir el archivo");
+                    return "repartidor/repartidor_perfil";
+                }
                 user.setTelefono(usuario.getTelefono());
                 user.setContraseniaHash(BCrypt.hashpw(usuario.getContraseniaHash(),BCrypt.gensalt()));
                 usuarioRepository.save(user);
                 Direcciones dnueva = direccionesRepository.findByUsuariosIdusuarios(usuario.getIdusuarios());
                 dnueva.setDireccion(direccion);
+                Distritos distrito2=distritosRepository.findByNombredistrito(distrito);
+                dnueva.setDistrito(distrito2);
                 direccionesRepository.save(dnueva);
                 return "redirect:/repartidor/miperfil";
             }
             else{
                 if(password2.isEmpty()){
+                    if (file.isEmpty()) {
+                        model.addAttribute("msg", "Debe subir un archivo");
+                        return "repartidor/repartidor_perfil";
+                    }
+                    String fileName = file.getOriginalFilename();
+                    if (fileName.contains("..")) {
+                        model.addAttribute("msg", "No se permiten '..' en el archivo");
+                        return "repartidor/repartidor_perfil";
+                    }
+                    try {
+                        Repartidor repartidor = repartidorRepository.findRepartidorByIdusuariosEquals(usuario.getIdusuarios());
+                        repartidor.setFoto(file.getBytes());
+                        repartidor.setFotonombre(fileName);
+                        repartidor.setFotocontenttype(file.getContentType());
+                        repartidorRepository.save(repartidor);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        model.addAttribute("msg", "ocurrió un error al subir el archivo");
+                        return "repartidor/repartidor_perfil";
+                    }
                     user.setTelefono(usuario.getTelefono());
                     Direcciones dnueva = direccionesRepository.findByUsuariosIdusuarios(usuario.getIdusuarios());
                     dnueva.setDireccion(direccion);
+                    Distritos distrito2=distritosRepository.findByNombredistrito(distrito);
+                    dnueva.setDistrito(distrito2);
                     direccionesRepository.save(dnueva);
                     usuarioRepository.save(user);
                     return "redirect:/repartidor/miperfil";

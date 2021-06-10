@@ -108,6 +108,19 @@
                                                         name="direccion">
                                                     </div>
                                                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                        <label>Distrito</label>
+                                                        <select class="form-select" name="distrito" style="width: 100%;">
+                                                            <option th:each="distrito : ${listadistritos}" th:value="${distrito.iddistritos}"
+                                                                    th:text="${distrito.nombredistrito}"
+                                                                    th:selected="${distrito.nombredistrito == distritoUsuario.nombredistrito} "></option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                        <label>Foto </label>
+                                                        <input type="file" class="form-control" id="archivo" name="archivo"/>
+                                                        <div th:if="${msg != null}" th:text="${msg}" class="alert alert-danger" role="alert"></div>
+                                                    </div>
+                                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                         <label>Contraseña</label>
                                                         <input placeholder="Passsword" class="form-control" type="password" th:value="*{contraseniaHash}"
                                                                name="contraseniaHash">
