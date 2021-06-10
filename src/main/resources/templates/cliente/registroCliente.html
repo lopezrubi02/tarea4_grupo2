@@ -148,13 +148,16 @@
                                     </select>
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                    <label>Contraseña</label>
                                     <input class="form-control" placeholder="Contraseña" type="password" th:field="*{contraseniaHash}">
                                     <div th:if="${errorpatroncontra != null}" th:text="${errorpatroncontra}" class="text-danger"></div>
                                     <div class="text-danger" th:if="${#fields.hasErrors('contraseniaHash')}" th:errors="*{contraseniaHash}"></div>
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                    <label>Confirmar contraseña</label>
                                     <input class="form-control" placeholder="Confirmar Contraseña" type="password" name="password2" id="password2">
-                                </div>                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                </div>
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <button class="send" type="submit" >Registrar</button>
                                 </div>
                             </div>

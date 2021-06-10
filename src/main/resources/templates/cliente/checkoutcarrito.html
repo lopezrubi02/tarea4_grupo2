@@ -66,6 +66,8 @@
     <!-- Custom styles for this template -->
     <link th:href="@{/css/form-validation.css}" rel="stylesheet">
 
+    <script th:src="@{/js/vendor/jquery.creditCardValidator.js}"></script>
+
 </head>
 <!-- body -->
 
@@ -98,7 +100,7 @@
 						  </div>
 							<div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
 
-								<form class="main_form" method="post" th:action="@{/cliente/guardarcheckout}">
+								<form class="main_form" method="post" th:action="@{/cliente/guardarcheckout}" onSubmit="return validate();">
                                     <input type="hidden" th:value="${metodoelegido}" name="idmetodo">
                                     <div class="row">
 										<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
@@ -133,12 +135,13 @@
 										</div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:if="${metodoelegido == 1}">
                                             <div class="form-floating">
-                                                <input pattern="\d*" maxlength="19" name="numerotarjeta" class="form-control" id="floatingInputGrid" type="text" placeholder="Ingrese el número de su tarjeta"/>
-                                                <label for="floatingInputGrid">Ingrese el número de su tarjeta</label>
+                                                <input type="hidden" th:value="${metodoelegido}" name="tarjeta" id="tarjeta">
+                                                <input pattern="\d*" maxlength="19" name="numerotarjeta" class="form-control" id="card-number" type="text" placeholder="Ingrese el número de su tarjeta"/>
+                                                <label for="card-number">Ingrese el número de su tarjeta</label>
                                             </div>
                                         </div>
 										<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <button class="send" type="submit">Hacer pedido</button>
+                                            <button class="send" type="submit" value="Submit">Hacer pedido</button>
 										</div>
 									</div>
 								</form>
@@ -151,7 +154,7 @@
                                             <div>
                                                 <h6 class="my-0">Costo total de productos</h6>
                                             </div>
-                                            <span class="text-muted" th:text="|S./ ${montototal.getpreciototal()}|"></span>
+                                            <span class="text-muted" th:text="|S/ ${montototal.getpreciototal()}|"></span>
                                         </li>
                                         <li class="list-group-item d-flex justify-content-between lh-sm">
                                             <div>
@@ -167,7 +170,7 @@
                                         </li>
                                         <li class="list-group-item d-flex justify-content-between">
                                             <span>Total</span>
-                                            <strong th:text="|S./ ${montopagar.getpreciopagar()}|"></strong>
+                                            <strong th:text="|S/ ${montopagar.getpreciopagar()}|"></strong>
                                         </li>
                                     </ul>
                                 </div>
@@ -203,7 +206,8 @@
 
     <script th:src="@{/js/jquery-3.0.0.min.js}" ></script>
     <script type="text/javascript">
-        $(document).ready(function() {
+        $(document).ready(
+            function() {
             $("#sidebar").mCustomScrollbar({
                 theme: "minimal"
             });
@@ -219,9 +223,56 @@
                 $('.collapse.in').toggleClass('in');
                 $('a[aria-expanded=true]').attr('aria-expanded', 'false');
             });
-        });
+        }
+
+
+        );
 
     </script>
+
+    <script>
+        console.log($('#tarjeta').val());
+
+        function validate() {
+            var valid = true;
+
+            var metodotarjeta = $('#tarjeta').val();
+
+            if(metodotarjeta == 1){
+
+                $("#card-number").css('background-color', '');
+                var message = "";
+
+                var cardNumber = $("#card-number").val();
+
+                if (cardNumber == "") {
+                    message += "<div>All Fields are Required.</div>";
+
+                    $("#card-number").css('background-color', '#FFFFDF');
+
+                    valid = false;
+                }
+
+                if (cardNumber != "") {
+                    $('#card-number').validateCreditCard(function(result) {
+                        if (!(result.valid)) {
+                            message += "<div>Card Number is Invalid</div>";
+                            $("#card-number").css('background-color', '#FFFFDF');
+                            valid = false;
+                        }
+                    });
+                }
+
+                if (message != "") {
+                    $("#error-message").show();
+                    $("#error-message").html(message);
+                }
+            }
+
+            return valid;
+        }
+    </script>
+
     <style>
         #owl-demo .item{
             margin: 3px;
