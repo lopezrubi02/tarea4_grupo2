@@ -444,6 +444,10 @@ public class RepartidorController {
             msgc2="La contraseña debe tener al menos una letra, un número y un caracter especial";
             cont2val=true;
         }
+        boolean direccionVal=false;
+        if(direccion.trim().isEmpty()){
+            direccionVal=true;
+        }
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("listadistritos", distritosRepository.findAll());
@@ -451,6 +455,7 @@ public class RepartidorController {
             model.addAttribute("correoExis", correoExis);
             model.addAttribute("msgc1",msgc1);
             model.addAttribute("msgc2",msgc2);
+            model.addAttribute("direccionVal",direccionVal);
             model.addAttribute("movilidad2",movilidad2);
             if(placa!=null){
                 model.addAttribute("placa",placa);
@@ -527,7 +532,8 @@ public class RepartidorController {
         } else {
             return "repartidor/registro_parte3";
         }
-
+        String msgR="El registro fue exitoso";
+        attributes.addFlashAttribute("msgR",msgR);
         return "redirect:/login";
 
     }

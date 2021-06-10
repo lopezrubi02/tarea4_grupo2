@@ -77,6 +77,7 @@
 
                             <div class="col-md-12">
                                 <h2>Iniciar sesión</h2>
+                                <div align="center" th:if="${msgR != null}" th:text="${msgR}" class="alert alert-success" role="alert"></div>
                                 <div align="center" th:if="${msg != null}" th:text="${msg}" class="alert alert-success" role="alert"></div>
                                 <div align="center" th:if="${msg2 != null}" th:text="${msg2}" class="alert alert-danger" role="alert"></div>
                             </div>

@@ -98,19 +98,14 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="full">
-                                    <a class="logo" href="index.html"><img th:src="@{/images/logo.png}" alt="#" /></a>
+                                    <a class="logo" href="#"><img th:src="@{/images/logo.png}" alt="#" /></a>
                                 </div>
                             </div>
                             <div class="col-md-9">
                                 <div class="full">
                                     <div class="right_header_info">
                                         <ul>
-                                            <li><img style="margin-right: 15px;" th:src="@{/images/search_icon.png}" alt="#"></li>
-                                            <li>
-                                                <button type="button" id="sidebarCollapse">
-                                                    <img th:src="@{/images/menu_icon.png}" alt="#">
-                                                </button>
-                                            </li>
+                                            <li class="button_user"><a class="button active" th:href="@{/login}">Iniciar sesión</a><a class="button" th:href="@{/eleccion}">Soy parte de la empresa</a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -125,6 +120,7 @@
                 <footer>
                     <div class="footer">
                         <div class="container-fluid">
+                            <h2>Registro repartidor</h2>
                             <div class="row">
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
 
@@ -141,31 +137,38 @@
                                                 </select>
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:if="${movilidad2 == 'moto' || movilidad2 == 'bicimoto' || placa != null}">
+                                                <label>Placa</label>
                                                 <input class="form-control" placeholder="Placa" th:value="${placa}" name="placa" id="placa">
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:if="${movilidad2 == 'moto' || movilidad2 == 'bicimoto' || licencia != null }">
+                                                <label>Licencia</label>
                                                 <input class="form-control" placeholder="Licencia de conducir" th:value="${licencia}" name="licencia" id="licencia">
                                             </div>
 
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <label>Correo</label>
                                                 <input class="form-control" placeholder="Correo" type="text" th:field="*{email}">
                                                 <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
                                                 <div class="text-danger" th:if="${correoExis==true}" >El correo ya se encuentra registrado</div>
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <label>Nombre</label>
                                                 <input class="form-control" placeholder="Nombres" type="text" th:field="*{nombre}">
                                                 <div class="text-danger" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <label>Apellidos</label>
                                                 <input class="form-control" placeholder="Apellidos" type="text" th:field="*{apellidos}">
                                                 <div class="text-danger" th:if="${#fields.hasErrors('apellidos')}" th:errors="*{apellidos}"></div>
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <label>Dni</label>
                                                 <input class="form-control" placeholder="DNI" type="text" th:field="*{dni}">
                                                 <div class="text-danger" th:if="${#fields.hasErrors('dni')}" th:errors="*{dni}"></div>
                                                 <div class="text-danger" th:if="${dniExis}" >El dni ya se encuentra registrado</div>
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <label>Celular</label>
                                                 <input class="form-control" placeholder="Celular" type="text" th:field="*{telefono}">
                                                 <div class="text-danger" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}"></div>
                                             </div>
@@ -182,7 +185,9 @@
                                                 </select>
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <label>Dirección</label>
                                                 <input class="form-control" placeholder="Dirección" type="text" name="direccion" id="direccion">
+                                                <div class="text-danger" th:if="${direccionVal==true}" >La dirección no es válida</div>
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <label class="form-label">Distrito</label>
@@ -192,11 +197,13 @@
                                                 </select>
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <label>Contraseña</label>
                                                 <input class="form-control" placeholder="Contraseña" type="password" th:field="*{contraseniaHash}">
                                                 <div class="text-danger" th:if="${#fields.hasErrors('contraseniaHash')}" th:errors="*{contraseniaHash}"></div>
                                                 <div th:if="${msgc1 != null}" th:text="${msgc1}" class="alert alert-danger" role="alert"></div>
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <label>Confirmar Contraseña</label>
                                                 <input class="form-control" placeholder="Confirmar Contraseña" type="password" name="password2" id="password2">
                                                 <div class="text-danger" th:if="${#fields.hasErrors('contraseniaHash')}" th:errors="*{contraseniaHash}"></div>
                                                 <div th:if="${msgc2 != null}" th:text="${msgc2}" class="alert alert-danger" role="alert"></div>
