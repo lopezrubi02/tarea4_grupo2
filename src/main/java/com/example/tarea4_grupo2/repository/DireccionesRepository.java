@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface DireccionesRepository extends JpaRepository<Direcciones, Integer> {
 
+    @Query(value = "select * from Direcciones where usuariosIdusuarios = ?1",nativeQuery = true)
     List<Direcciones> findAllByUsuariosIdusuariosEquals(int idusuario);
 
     @Query(value = "select * from Direcciones where iddirecciones = ?1", nativeQuery = true)

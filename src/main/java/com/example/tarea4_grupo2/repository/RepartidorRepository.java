@@ -11,7 +11,9 @@ import java.util.List;
 
 public interface RepartidorRepository  extends JpaRepository<Repartidor, Integer> {
 
+    @Query(value = "select * from Datosrepartidor where usuariosIdusuarios = ?1",nativeQuery = true)
     Repartidor findRepartidorByIdusuariosEquals(int idusuario);
+
 
     //
     @Query(value="select p.idpedidos, p.montototal, p.comisionrepartidor, p.calificacionrepartidor, r.nombre, d2.nombredistrito as restaurantedistrito, d.direccion as clienteubicacion\n" +
