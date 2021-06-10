@@ -29,6 +29,15 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
     <!--Fin repeticion-->
+    <style>
+        .form-control {
+            border: #fff solid 2px;
+            border-radius: inherit;
+            margin-bottom: 0px;
+            padding: 15px 20px;
+            font-family: poppins;
+        }
+    </style>
 </head>
 <!-- body -->
 
@@ -115,12 +124,11 @@
                     <button th:if="${msg != null}" th:text="${msg}" class="btn btn-dark" role="alert"></button>
                 </div>
             </div>
-            <br> <br>
             <div class="col-md-10">
                 <form class="input-group" method="post" th:action="@{buscadorNuevos}"><!-- COMPLETAR -->
                     <div class="form-floating">
                         <!-- search bar -->
-                        <select class="form-select" id="rolSelected" aria-label="Floating label select example" onChange="window.location=this.options[this.selectedIndex].value">
+                        <select class="form-select" id="rolSelected" aria-label="Floating label select example" onChange="window.location=this.options[this.selectedIndex].value" style="border-style: groove;">
                             <option th:selected="${rolSelected}" disabled="disabled" th:text="${nombreRol}">Filtrar por Rol</option>
                             <option value="nuevosUsuarios?rolSelected=Todos">Todos</option>
                             <option value="nuevosUsuarios?rolSelected=Repartidor">Repartidores</option>
@@ -128,8 +136,8 @@
                         </select>
                         <label for="rolSelected">Rol</label>
                     </div>
-                    <div class="col-md">
-                        <div class="form-floating">
+                    <div class="col-md-8" style="margin-bottom: 0px;">
+                        <div class="form-floating" style=" border-style: groove;margin-bottom: 0px">
                             <!--input type="email" class="form-control" id="floatingInputGrid" placeholder="Buscar plato o restaurante" -->
                             <input name="searchField" class="form-control" id="floatingInputGrid" type="text" placeholder="Buscar por nombre, apellidos o DNI"/>
                             <label for="floatingInputGrid">Buscar por nombre, apellido o DNI</label>
@@ -150,7 +158,7 @@
                 </form>
             </div>
 
-            <p></p>
+            <br>
             <div class="row table-users">
                 <!-- table -->
                 <div class="col-md-12">

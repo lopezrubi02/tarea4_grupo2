@@ -103,13 +103,17 @@ public class AdminController {
 
 
         List<Usuario> usuarioList; // se define el contenido de la lista (la paginacion se hace a partir de esta)
+        String buscar = "%"+searchField+"%";
 
         if (!searchField.equals("") && !rol.equals("")) {
             // si es que no estan vacios, se filtra por rol y nombre
-            usuarioList = usuarioRepository.findAllByRolAndCuentaActivaAndNombre(rol, 1, searchField);
+            //usuarioList = usuarioRepository.findAllByRolAndCuentaActivaAndNombre(rol, 1, searchField);
+
+            usuarioList = usuarioRepository.cuentasActualesRol(buscar,rol);
         } else if (!searchField.equals("")) {
             // si el nobre es el que no esta vacio, se filtra por nombre
-            usuarioList = usuarioRepository.findAllByNombreAndCuentaActiva(searchField, 1);
+            //usuarioList = usuarioRepository.findAllByNombreAndCuentaActiva(searchField, 1);
+            usuarioList = usuarioRepository.cuentasActuales(buscar);
         } else if (!rol.equals("")) {
             // viceversa
             usuarioList = usuarioRepository.findAllByRolAndCuentaActiva(rol, 1);
