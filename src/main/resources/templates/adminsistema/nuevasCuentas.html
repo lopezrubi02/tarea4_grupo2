@@ -46,67 +46,16 @@
     <div class="loader_bg">
         <div class="loader"><img th:src="@{/images/loading.gif}" alt="" /></div>
     </div>
-
     <div class="wrapper">
     <!-- end loader -->
-
      <div th:replace="fragments/adminSistema.html:: slider" class="sidebar">
             <!-- Sidebar  -->
-            <nav id="sidebar">
-
-                <div id="dismiss">
-                    <i class="fa fa-arrow-left"></i>
-                </div>
-
-                <ul class="list-unstyled components">
-
-                    <li class="active">
-                        <!-- TODO -->
-                        <a href="index.html">Usuarios actuales</a>
-                    </li>
-                    <li>
-                        <a th:href="GestionCuentasPrincipal.html">Gestion de nuevas cuentas</a>
-                    </li>
-                    <li>
-                        <a th:href="@{reportes}">Reportes</a>
-                    </li>
-                </ul>
-
-            </nav>
         </div>
-
     <div id="content">
     <!-- header -->
     <header>
-        <!---Poner en un fragment-->
         <div th:replace="fragments/adminSistema.html:: barra" class="container-fluid">
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="full">
-                        <a class="logo" href="index.html"><img th:src="@{/images/logo.png}" alt="#" /></a>
-                    </div>
-                </div>
-                <div class="col-md-9">
-                    <div class="full">
-                        <div class="right_header_info">
-                            <ul>
-                                <li class="dinone"><a href="#">Usuarios Actuales</a></li>
-                                <li class="dinone"><a th:href="@{gestionCuentas}">Gestión de nuevas cuentas</a></li>
-                                <li class="dinone"><a th:href="@{reportes}">Reportes</a></li>
-                                <!-- TODO -->
-                                <li class="button_user"><a class="button active" href="#login.html">Mi cuenta</a><a class="button" href="#">Logout</a></li>
-                                <li>
-                                    <button type="button" id="sidebarCollapse">
-                                        <img th:src="@{/images/menu_icon.png}" alt="#">
-                                    </button>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
-        <!-- Fin del fragment-->
     </header>
     <!-- end header -->
     </div>
@@ -128,7 +77,7 @@
                 <form class="input-group" method="post" th:action="@{buscadorNuevos}"><!-- COMPLETAR -->
                     <div class="form-floating">
                         <!-- search bar -->
-                        <select class="form-select" id="rolSelected" aria-label="Floating label select example" onChange="window.location=this.options[this.selectedIndex].value" style="border-style: groove;">
+                        <select class="form-select" id="rolSelected" aria-label="Floating label select example" onChange="window.location=this.options[this.selectedIndex].value" >
                             <option th:selected="${rolSelected}" disabled="disabled" th:text="${nombreRol}">Filtrar por Rol</option>
                             <option value="nuevosUsuarios?rolSelected=Todos">Todos</option>
                             <option value="nuevosUsuarios?rolSelected=Repartidor">Repartidores</option>
@@ -157,8 +106,7 @@
 
                 </form>
             </div>
-
-            <br>
+            <hr>
             <div class="row table-users">
                 <!-- table -->
                 <div class="col-md-12">
