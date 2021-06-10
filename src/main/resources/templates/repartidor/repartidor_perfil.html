@@ -73,7 +73,7 @@
                                         <figure><img th:src="@{/repartidor/imagen}" alt="#/"></figure>                                    </div>
 
                                     <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
-                                        <form method="post" th:action="@{'/repartidor/save_perfil'}" th:object="${usuario}">
+                                        <form method="post" th:action="@{'/repartidor/save_perfil'}" th:object="${usuario}" enctype="multipart/form-data">
                                             <div class="about_box" style="padding: 64px 40px">
                                                 <div>
                                                     <input th:field="*{idusuarios}" type="hidden">
