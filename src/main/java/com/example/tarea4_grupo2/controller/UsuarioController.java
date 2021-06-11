@@ -603,8 +603,7 @@ public class UsuarioController {
          Optional<Direcciones> diropt = direccionesRepository.findById(direccionxenviar);
         if(diropt.isPresent() && restopt.isPresent()){
             Restaurante rest = restopt.get();
-
-            if (rest!=null){
+            if (restopt.isPresent()){
                 int cantreviews = restauranteRepository.cantreviews(idrestaurante);
 
                 List<Plato> platosxrest = platoRepository.buscarPlatosPorIdRestauranteDisponilidadActivo(idrestaurante);
@@ -633,6 +632,7 @@ public class UsuarioController {
          Optional<Plato> platoopt = platoRepository.findById(idplatopedir);
          Optional<Restaurante> restopt = restauranteRepository.findById(idrestaurante);
          Optional<Direcciones> diropt = direccionesRepository.findById(direccionxenviar);
+        //TODO no está redireccionando al restaurante seleccionado cuando se da a cancelar
 
          if(platoopt.isPresent() && restopt.isPresent() && diropt.isPresent()){
              Plato platoseleccionado = platoopt.get();
