@@ -355,6 +355,8 @@ public class RepartidorController {
             Distritos distritoUsuario=direcciones2.getDistrito();
             model.addAttribute("distritoUsuario", distritoUsuario);
             model.addAttribute("listadistritos", distritosRepository.findAll());
+
+
             return "repartidor/repartidor_perfil";
         }
         else {
@@ -431,6 +433,9 @@ public class RepartidorController {
                     Direcciones direcciones2 = direccionesRepository.findByUsuario(usuario2);
                     model.addAttribute("direcciones", direcciones2);
 
+                    Distritos distritoUsuario=direcciones2.getDistrito();
+                    model.addAttribute("distritoUsuario", distritoUsuario);
+                    model.addAttribute("listadistritos", distritosRepository.findAll());
                     return "repartidor/repartidor_perfil";
                 }
 
