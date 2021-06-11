@@ -99,8 +99,9 @@
 							<h2 style="padding-left: 223px;">Pagar canasta</h2>
 						  </div>
 							<div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
-
 								<form class="main_form" method="post" th:action="@{/cliente/guardarcheckout}" onSubmit="return validate();">
+                                    <div th:if="${pago1 != null}" th:text="${pago1}" class="alert alert-warning" role="alert"></div>
+                                    <div th:if="${pago2 != null}" th:text="${pago2}" class="alert alert-warning" role="alert"></div>
                                     <input type="hidden" th:value="${metodoelegido}" name="idmetodo">
                                     <div class="row">
 										<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
