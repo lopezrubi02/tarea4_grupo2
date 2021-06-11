@@ -71,8 +71,8 @@
                         <td th:text="${pedidoDisponible.getNombre()}"></td>
                         <td th:text="${pedidoDisponible.getRestaurantedistrito()}"></td>
                         <td th:text="${pedidoDisponible.getClienteubicacion()}"></td>
-                        <td th:text="${pedidoDisponible.getComisionrepartidor()} + '.0'"></td>
-                        <td th:text="${pedidoDisponible.getMontototal()}"></td>
+                        <td th:text="${pedidoDisponible.getComisionrepartidor()} + '.00'"></td>
+                        <td th:text="${pedidoDisponible.getMontototal()}+ '0'"></td>
                         <td th:text="${pedidoDisponible.getCalificacionrepartidor()}"></td>
                     </tr>
                     </tbody>
@@ -112,7 +112,7 @@
             <div class="container-fluid">
                 <div class="copyright">
                     <div class="container">
-                        <p>© 2050 All Rights Reserved</p>
+                        <p>© 2021 Todos los derechos reservados.</p>
                     </div>
                 </div>
             </div>
