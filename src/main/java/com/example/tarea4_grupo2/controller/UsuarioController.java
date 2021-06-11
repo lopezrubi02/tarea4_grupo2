@@ -1037,7 +1037,6 @@ public class UsuarioController {
             Usuario usuario = optional.get();
             model.addAttribute("usuario", usuario);
 
-
             List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuarioAndActivoEquals(usuario,1);
             model.addAttribute("listadirecciones", listadireccionescliente);
 
@@ -1062,43 +1061,53 @@ public class UsuarioController {
         Optional<Usuario> usuarioopt = usuarioRepository.findById(idusuario);
         Usuario usuarioperfil = usuarioopt.get();
 
-        if(bindingResult.hasFieldErrors("Telefono") || bindingResult.hasFieldErrors("contraseniaHash")){
-            List<Distritos> listadistritos = distritosRepository.findAll();
-            model.addAttribute("listadistritos", listadistritos);
+        if(bindingResult.hasFieldErrors("telefono") || bindingResult.hasFieldErrors("contraseniaHash")){
+            List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuarioAndActivoEquals(usuario,1);
+            model.addAttribute("listadirecciones", listadireccionescliente);
             model.addAttribute("usuario",usuarioperfil);
             List<TarjetasOnline> listatarjetas = tarjetasOnlineRepository.findAllByClienteEquals(usuario);
             model.addAttribute("listatarjetas",listatarjetas);
-
+            System.out.println("aqui no guarda 1");
             return "cliente/miPerfil";
         } else {
-            if (usuario.getContraseniaHash().equals(password2)) {
-                String contraxvalidarpatron = usuario.getContraseniaHash();
-                boolean validarcontra = validarContrasenia(contraxvalidarpatron);
-                if (validarcontra == true) {
-                    String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
-                    sessionUser.setTelefono(usuario.getTelefono());
-                    sessionUser.setContraseniaHash(contraseniahashbcrypt);
-                    //TODO con lo de lista de tarjetas no está actualizando el perfil, revisar
-                    usuarioRepository.save(sessionUser);
-                    return "redirect:/cliente/miperfil";
+            if(password2.isEmpty()){
+                sessionUser.setTelefono(usuario.getTelefono());
+                System.out.println("deberia guardaaar solo telefono");
+                usuarioRepository.save(sessionUser);
+                return "redirect:/cliente/miperfil";
+            }else{
+                if (usuario.getContraseniaHash().equals(password2)) {
+                    String contraxvalidarpatron = usuario.getContraseniaHash();
+                    boolean validarcontra = validarContrasenia(contraxvalidarpatron);
+                    if (validarcontra == true) {
+                        String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
+                        sessionUser.setTelefono(usuario.getTelefono());
+                        sessionUser.setContraseniaHash(contraseniahashbcrypt);
+                        System.out.println("deberia guardaaar");
+                        //TODO agregar flash attribute de cuenta actualiza exitosamente
+                        usuarioRepository.save(sessionUser);
+                        return "redirect:/cliente/miperfil";
+                    }else{
+                        List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuarioAndActivoEquals(usuario,1);
+                        model.addAttribute("listadirecciones", listadireccionescliente);
+                        model.addAttribute("errorpatroncontra", "La contraseña no cumple con los requisitos: mínimo 8 caracteres, un número y un caracter especial");
+                        model.addAttribute("usuario",usuarioperfil);
+                        List<TarjetasOnline> listatarjetas = tarjetasOnlineRepository.findAllByClienteEquals(usuario);
+                        model.addAttribute("listatarjetas",listatarjetas);
+                        System.out.println("aqui no guarda 2");
+
+                        return "cliente/miPerfil";
+                    }
                 }else{
-                    List<Distritos> listadistritos = distritosRepository.findAll();
-                    model.addAttribute("listadistritos", listadistritos);
-                    model.addAttribute("errorpatroncontra", "La contraseña no cumple con los requisitos: mínimo 8 caracteres, un número y un caracter especial");
+                    List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuarioAndActivoEquals(usuario,1);
+                    model.addAttribute("listadirecciones", listadireccionescliente);
                     model.addAttribute("usuario",usuarioperfil);
                     List<TarjetasOnline> listatarjetas = tarjetasOnlineRepository.findAllByClienteEquals(usuario);
                     model.addAttribute("listatarjetas",listatarjetas);
+                    System.out.println("aqui no guarda 3");
 
                     return "cliente/miPerfil";
                 }
-            }else{
-                List<Distritos> listadistritos = distritosRepository.findAll();
-                model.addAttribute("listadistritos", listadistritos);
-                model.addAttribute("usuario",usuarioperfil);
-                List<TarjetasOnline> listatarjetas = tarjetasOnlineRepository.findAllByClienteEquals(usuario);
-                model.addAttribute("listatarjetas",listatarjetas);
-
-                return "cliente/miPerfil";
             }
 
         }
