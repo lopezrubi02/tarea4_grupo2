@@ -43,7 +43,7 @@
             box-shadow: inherit;
             border: #fff solid 2px !important;
         }
-        label{
+            label{
             color: black;
         }
     </style>
@@ -51,48 +51,45 @@
 <!-- body -->
 
 <body class="main-layout Contact_page">
-    <!-- loader  -->
-    <!--div class="loader_bg">
-        <div class="loader"><img th:src="@{/images/loading.gif}" alt="" /></div>
-    </div-->
 
     <div class="wrapper">
     <!-- end loader -->
 
     <div id="content">
     <!-- header -->
-    <header>
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="full">
-                        <a class="logo" href="#"><img th:src="@{/images/logo.png}" alt="#" /></a>
+        <header>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="full">
+                            <a class="logo" href="#"><img th:src="@{/images/logo.png}" alt="#" /></a>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-9">
-                    <div class="full">
-                        <div class="right_header_info">
-                            <ul>
-                                <li class="button_user"><a class="button active" th:href="@{/login}">Iniciar sesión</a><a class="button" th:href="@{/eleccion}">Soy parte de la empresa</a></li>
-                            </ul>
+                    <div class="col-md-9">
+                        <div class="full">
+                            <div class="right_header_info">
+                                <ul>
+                                    <li class="button_user"><a class="button active" th:href="@{/login}">Iniciar sesión</a><a class="button" th:href="@{/eleccion}">Soy parte de la empresa</a></li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </header>
+        </header>
     <!-- end header -->
     <!-- footer -->
 
 
     <footer>
         <div class="footer">
-            <h2>Llene el siguiente formulario</h2>
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                       
                         <form class="main_form" method="post" action="#" th:action="@{/guardarNuevo}" th:object="${usuario}" style="padding-bottom: 30px;">
+                            <div style="font-size: 40px;color: black;text-align: center">Llena el siguiente formulario</div>
+                            <br>
                             <div class="row">
                                 <div class="text-dark" th:if="${#fields.globalErrors()}" ></div>
 
