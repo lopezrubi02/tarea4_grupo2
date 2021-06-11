@@ -108,7 +108,7 @@
                   </span>
               </p>
               <p th:text="'S/.' + ${plato.precio}">precio</p>
-              <a th:href="@{'/cliente/platoxpedir?idrestaurante=' + ${plato.getRestaurante().getIdrestaurante()} + '&idplato=' + ${plato.getIdplato()}}"><h4 style="text-align: right; margin-right: 10px">Seleccionar</h4></a>
+              <a th:href="@{'/cliente/platoxpedir?idrestaurante=' + ${plato.getRestaurante().getIdrestaurante()} + '&idplato=' + ${plato.getIdplato()} + '&direccion=' + ${iddireccionxenviar}}"><h4 style="text-align: right; margin-right: 10px">Seleccionar</h4></a>
               </br>
             </div>
             </br>
@@ -127,7 +127,7 @@
               <div class="blog_img_box">
                 <figure><img th:src="@{|/cliente/imagerestaurante/${restaurante.idrestaurante}|}" width="70" height="70"/></figure>
               </div>
-              <a th:href=" '/cliente/restaurantexordenar?idrestaurante=' + ${restaurante.idrestaurante}">
+              <a th:href=" '/cliente/restaurantexordenar?idrestaurante=' + ${restaurante.idrestaurante} + '&direccion=' + ${iddireccionxenviar}">
                 <h3 th:text="${restaurante.nombre}">Chifa Imperial</h3></a>
               <p>
                   <span th:each="categoriarest : ${restaurante.categoriasrestList}"
