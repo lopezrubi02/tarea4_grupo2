@@ -1104,16 +1104,19 @@ public class UsuarioController {
 
     /** CRUD direcciones **/
     @GetMapping("/cliente/borrardireccion")
-    public String borrardireccion(@RequestParam("iddireccion") int iddireccion,
+    public String borrardireccion(@RequestParam("iddireccion") String iddireccion,
                                   Model model) {
-        //TODO try catch si recibe un string
-        Optional<Direcciones> direccionopt = direccionesRepository.findById(iddireccion);
-        Direcciones direccionborrar = direccionopt.get();
-        if(direccionborrar != null){
-            direccionborrar.setActivo(0);
-            direccionesRepository.save(direccionborrar);
+        try {
+            Optional<Direcciones> direccionopt = direccionesRepository.findById(Integer.valueOf(iddireccion));
+            Direcciones direccionborrar = direccionopt.get();
+            if (direccionborrar != null) {
+                direccionborrar.setActivo(0);
+                direccionesRepository.save(direccionborrar);
+            }
+            return "redirect:/cliente/miperfil";
+        }catch(NumberFormatException e){
+            return "redirect:/cliente/miperfil";
         }
-        return "redirect:/cliente/miperfil";
     }
 
     @GetMapping("/cliente/agregardireccion")
