@@ -12,11 +12,11 @@ public interface DireccionesRepository extends JpaRepository<Direcciones, Intege
 
     List<Direcciones> findAllByUsuariosIdusuariosEquals(int idusuario);
 
-    @Query(value = "select * from Direcciones where iddirecciones = ?1", nativeQuery = true)
+    @Query(value = "select * from Direcciones d where d.iddirecciones = ?1", nativeQuery = true)
     Direcciones findDireccionById(int id);
 
     //TODO: usar esto en el controller del cliente, solo remplazar
-    @Query(value = "select * from Direcciones where iddirecciones = ?1 and usuarios_idusuarios = ?2", nativeQuery = true)
+    @Query(value = "select * from Direcciones d where d.iddirecciones = ?1 and d.usuarios_idusuarios = ?2", nativeQuery = true)
     Direcciones findDireccionesByIddireccionesAndUsuariosIdusuariosEquals(int iddireccion, int idcliente);
 
     Direcciones findByUsuariosIdusuarios(int usuarios_idusuarios);
