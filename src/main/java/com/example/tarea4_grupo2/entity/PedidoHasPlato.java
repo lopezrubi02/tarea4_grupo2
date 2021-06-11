@@ -4,20 +4,20 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "Pedidoshasplato")
+@Table(name = "pedidoshasplato")
 public class PedidoHasPlato{
 
     @EmbeddedId
     PedidoHasPlatoKey id;
 
     @ManyToOne
-    @MapsId("pedidosIdpedidos")
-    @JoinColumn(name = "pedidosIdpedidos")
+    @MapsId("pedidosidpedidos")
+    @JoinColumn(name = "pedidosidpedidos")
     private Pedidos pedido;
 
     @ManyToOne
-    @MapsId("platoIdplato")
-    @JoinColumn(name = "platoIdplato")
+    @MapsId("platoidplato")
+    @JoinColumn(name = "platoidplato")
     private Plato plato;
 
     private String descripcion;

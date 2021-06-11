@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name="Plato")
+@Table(name="plato")
 public class Plato {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +32,7 @@ public class Plato {
     private float precio;
 
     @ManyToOne
-    @JoinColumn(name="restauranteIdrestaurante")
+    @JoinColumn(name="restauranteidrestaurante")
     private Restaurante restaurante;
 
     private int disponibilidad;

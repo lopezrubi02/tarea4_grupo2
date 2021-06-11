@@ -14,20 +14,23 @@ import java.util.List;
 @Repository
 public interface PedidoHasPlatoRepository extends JpaRepository<PedidoHasPlato, PedidoHasPlatoKey> {
 
-    PedidoHasPlato findAllByIdEquals(int idkey);
+    //PedidoHasPlato findAllByIdEquals(int idkey);
 
-    List<PedidoHasPlato> findAllByPedidoIdpedidos(int idpedido);
+    //List<PedidoHasPlato> findAllByPedidoIdpedidos(int idpedido);
+
+    List<PedidoHasPlato> findAllByPedido_Idpedidos(int idpedido); //TODO revisar si hay conflicto
+
 
     @Query(value = "select sum((pepla.cantidadplatos * p.precio)) as preciototal\n" +
-            "from proyecto.Pedidoshasplato pepla \n" +
-            "inner join proyecto.Plato p on (pepla.platoIdplato = p.idplato)\n" +
-            "where pepla.pedidosIdpedidos = ?1", nativeQuery = true)
+            "from proyecto.pedidoshasplato pepla \n" +
+            "inner join proyecto.plato p on (pepla.platoidplato = p.idplato)\n" +
+            "where pepla.pedidosidpedidos = ?1", nativeQuery = true)
     MontoTotal_PedidoHasPlatoDTO montototal(int idpedido);
 
     @Query(value = "select (sum((pepla.cantidadplatos * p.precio)) + 8)  as preciopagar\n" +
-            "from proyecto.Pedidoshasplato pepla \n" +
-            "inner join proyecto.Plato p on (pepla.platoIdplato = p.idplato)\n" +
-            "where pepla.pedidosIdpedidos = ?1", nativeQuery = true)
+            "from proyecto.pedidoshasplato pepla \n" +
+            "inner join proyecto.plato p on (pepla.platoidplato = p.idplato)\n" +
+            "where pepla.pedidosidpedidos = ?1", nativeQuery = true)
     MontoPagar_PedidoHasPlatoDTO montopagar(int idpedido);
 
 }

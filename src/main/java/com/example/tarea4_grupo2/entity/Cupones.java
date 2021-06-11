@@ -10,7 +10,7 @@ import javax.validation.constraints.Positive;
 import java.sql.Date;
 
 @Entity
-@Table(name="Cupones")
+@Table(name="cupones")
 public class Cupones {
 
     @Id

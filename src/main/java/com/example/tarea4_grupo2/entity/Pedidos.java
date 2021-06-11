@@ -11,7 +11,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 @Entity
-@Table(name ="Pedidos")
+@Table(name ="pedidos")
 public class Pedidos {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,7 +53,7 @@ public class Pedidos {
     private Usuario repartidor;
 
     @ManyToOne
-    @JoinColumn(name = "restauranteIdrestaurante")
+    @JoinColumn(name = "restauranteidrestaurante")
     private Restaurante restaurantepedido;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")

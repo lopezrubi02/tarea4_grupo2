@@ -297,7 +297,7 @@ public class RepartidorController {
             Repartidor repartidor2 = repartidorRepository.findRepartidorByIdusuariosEquals(id);
             model.addAttribute("repartidor", repartidor2);
 
-            Direcciones direcciones = direccionesRepository.findByUsuariosIdusuarios(id);
+            Direcciones direcciones = direccionesRepository.findByUsuario(usuario);
             model.addAttribute("direcciones", direcciones);
 
             Distritos distritoUsuario=direcciones.getDistrito();
@@ -349,7 +349,7 @@ public class RepartidorController {
             Repartidor repartidor2 = repartidorRepository.findRepartidorByIdusuariosEquals(id);
             model.addAttribute("repartidor", repartidor2);
 
-            Direcciones direcciones2 = direccionesRepository.findByUsuariosIdusuarios(id);
+            Direcciones direcciones2 = direccionesRepository.findByUsuario(usuario2);
             model.addAttribute("direcciones", direcciones2);
             return "repartidor/repartidor_perfil";
         }
@@ -380,7 +380,7 @@ public class RepartidorController {
                 user.setTelefono(usuario.getTelefono());
                 user.setContraseniaHash(BCrypt.hashpw(usuario.getContraseniaHash(),BCrypt.gensalt()));
                 usuarioRepository.save(user);
-                Direcciones dnueva = direccionesRepository.findByUsuariosIdusuarios(usuario.getIdusuarios());
+                Direcciones dnueva = direccionesRepository.findByUsuario(usuario);
                 dnueva.setDireccion(direccion);
                 Distritos distrito2=distritosRepository.findByNombredistrito(distrito);
                 dnueva.setDistrito(distrito2);
@@ -410,7 +410,7 @@ public class RepartidorController {
                         return "repartidor/repartidor_perfil";
                     }
                     user.setTelefono(usuario.getTelefono());
-                    Direcciones dnueva = direccionesRepository.findByUsuariosIdusuarios(usuario.getIdusuarios());
+                    Direcciones dnueva = direccionesRepository.findByUsuario(usuario);
                     dnueva.setDireccion(direccion);
                     Distritos distrito2=distritosRepository.findByNombredistrito(distrito);
                     dnueva.setDistrito(distrito2);
@@ -424,7 +424,7 @@ public class RepartidorController {
 
                     Repartidor repartidor2 = repartidorRepository.findRepartidorByIdusuariosEquals(id);
                     model.addAttribute("repartidor", repartidor2);
-                    Direcciones direcciones2 = direccionesRepository.findByUsuariosIdusuarios(id);
+                    Direcciones direcciones2 = direccionesRepository.findByUsuario(usuario2);
                     model.addAttribute("direcciones", direcciones2);
 
                     return "repartidor/repartidor_perfil";

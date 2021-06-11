@@ -634,7 +634,7 @@ public class AdminRestauranteController {
     public String cuenta(@ModelAttribute("restaurante") Restaurante restaurante, @ModelAttribute("usuario") Usuario usuario, Model model,HttpSession session){
         Usuario user=(Usuario)session.getAttribute("usuarioLogueado");
         if(user.getCuentaActiva()==1){
-        model.addAttribute("listadirecciones",direccionesRepository.findAllByUsuariosIdusuariosAndActivoEquals(user.getIdusuarios(),1));
+        model.addAttribute("listadirecciones",direccionesRepository.findAllByUsuarioAndActivoEquals(user,1));
         model.addAttribute("restaurante",restauranteRepository.obtenerperfilRest(user.getIdusuarios()));
         model.addAttribute("usuario",usuarioRepository.findById(user.getIdusuarios()).get());
         model.addAttribute("datos",usuarioRepository.obtenerDatos(user.getIdusuarios()));
@@ -672,7 +672,7 @@ public class AdminRestauranteController {
         System.out.println(usuario.getNombre());
         if(bindingResult.hasFieldErrors("email")||bindingResult.hasFieldErrors("telefono")|| bindingResult.hasFieldErrors("contraseniaHash")){
             model.addAttribute("datos",usuarioRepository.obtenerDatos(usuario.getIdusuarios()));
-            model.addAttribute("listadirecciones",direccionesRepository.findAllByUsuariosIdusuariosAndActivoEquals(usuario.getIdusuarios(),1));
+            model.addAttribute("listadirecciones",direccionesRepository.findAllByUsuarioAndActivoEquals(usuario,1));
             model.addAttribute("restaurante",restauranteRepository.obtenerperfilRest(usuario.getIdusuarios()));
             model.addAttribute("ruc",restauranteRepository.buscarRuc(usuario.getIdusuarios()));
             model.addAttribute("listadistritos",distritosRepository.findAll());
@@ -693,7 +693,7 @@ public class AdminRestauranteController {
                         }
                         else{
                             model.addAttribute("msgpasserror", "Contraseñas no cumple con los requisitos");
-                            model.addAttribute("listadirecciones", direccionesRepository.findAllByUsuariosIdusuariosAndActivoEquals(user.getIdusuarios(), 1));
+                            model.addAttribute("listadirecciones", direccionesRepository.findAllByUsuarioAndActivoEquals(user, 1));
                             model.addAttribute("restaurante", restauranteRepository.obtenerperfilRest(user.getIdusuarios()));
                             model.addAttribute("datos", usuarioRepository.obtenerDatos(user.getIdusuarios()));
                             model.addAttribute("ruc", restauranteRepository.buscarRuc(usuario.getIdusuarios()));
@@ -702,7 +702,7 @@ public class AdminRestauranteController {
                         }
                     } else {
                         model.addAttribute("msg", "Contraseñas no son iguales");
-                        model.addAttribute("listadirecciones", direccionesRepository.findAllByUsuariosIdusuariosAndActivoEquals(user.getIdusuarios(), 1));
+                        model.addAttribute("listadirecciones", direccionesRepository.findAllByUsuarioAndActivoEquals(user, 1));
                         model.addAttribute("restaurante", restauranteRepository.obtenerperfilRest(user.getIdusuarios()));
                         model.addAttribute("datos", usuarioRepository.obtenerDatos(user.getIdusuarios()));
                         model.addAttribute("ruc", restauranteRepository.buscarRuc(usuario.getIdusuarios()));
@@ -712,7 +712,7 @@ public class AdminRestauranteController {
                 }
                 else{
                     model.addAttribute("datos",usuarioRepository.obtenerDatos(usuario.getIdusuarios()));
-                    model.addAttribute("listadirecciones",direccionesRepository.findAllByUsuariosIdusuariosAndActivoEquals(usuario.getIdusuarios(),1));
+                    model.addAttribute("listadirecciones",direccionesRepository.findAllByUsuarioAndActivoEquals(usuario,1));
                     model.addAttribute("restaurante",restauranteRepository.obtenerperfilRest(usuario.getIdusuarios()));
                     model.addAttribute("ruc",restauranteRepository.buscarRuc(usuario.getIdusuarios()));
                     model.addAttribute("listadistritos",distritosRepository.findAll());
@@ -722,7 +722,7 @@ public class AdminRestauranteController {
             }
             else{
                 model.addAttribute("datos",usuarioRepository.obtenerDatos(usuario.getIdusuarios()));
-                model.addAttribute("listadirecciones",direccionesRepository.findAllByUsuariosIdusuariosAndActivoEquals(usuario.getIdusuarios(),1));
+                model.addAttribute("listadirecciones",direccionesRepository.findAllByUsuarioAndActivoEquals(usuario,1));
                 model.addAttribute("restaurante",restauranteRepository.obtenerperfilRest(usuario.getIdusuarios()));
                 model.addAttribute("ruc",restauranteRepository.buscarRuc(usuario.getIdusuarios()));
                 model.addAttribute("listadistritos",distritosRepository.findAll());
@@ -740,7 +740,7 @@ public class AdminRestauranteController {
         Usuario user=(Usuario) session.getAttribute("usuarioLogueado");
         if(bindingResult.hasFieldErrors("nombre")||bindingResult.hasFieldErrors("direccion")){
             model.addAttribute("datos",usuarioRepository.obtenerDatos(user.getIdusuarios()));
-            model.addAttribute("listadirecciones",direccionesRepository.findAllByUsuariosIdusuariosAndActivoEquals(user.getIdusuarios(),1));
+            model.addAttribute("listadirecciones",direccionesRepository.findAllByUsuarioAndActivoEquals(user,1));
             model.addAttribute("ruc",restauranteRepository.buscarRuc(user.getIdusuarios()));
             model.addAttribute("listadistritos",distritosRepository.findAll());
             model.addAttribute("usuario",user);

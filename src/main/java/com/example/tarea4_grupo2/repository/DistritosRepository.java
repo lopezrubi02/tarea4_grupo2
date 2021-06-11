@@ -7,4 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface DistritosRepository extends JpaRepository<Distritos, Integer> {
 
     Distritos findByNombredistrito(String nombredistrito);
+
 }

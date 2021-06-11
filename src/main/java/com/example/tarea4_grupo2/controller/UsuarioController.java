@@ -393,7 +393,7 @@ public class UsuarioController {
         listaidcalificacion.add("5 estrellas");
         model.addAttribute("listaidcalificacion",listaidcalificacion);
 
-        List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuarioactual);
+        List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuario_Idusuarios(idusuarioactual);
         List<Categorias> listacategorias = categoriasRepository.findAll();
         List<Restaurante> listarestaurantes = restauranteRepository.findAll();
         model.addAttribute("listacategorias", listacategorias);
@@ -407,7 +407,7 @@ public class UsuarioController {
                     model.addAttribute("iddireccionxenviar", listadireccionescliente.get(0).getIddirecciones());
                 } else {
 
-                    Optional<Direcciones> direccionopt = Optional.ofNullable(direccionesRepository.findDireccionesByIddireccionesAndUsuariosIdusuariosEquals(direccionxenviar, idusuarioactual));
+                    Optional<Direcciones> direccionopt = Optional.ofNullable(direccionesRepository.findDireccionesByIddireccionesAndUsuario_Idusuarios(direccionxenviar, idusuarioactual));
                         if (direccionopt.isPresent()) {
                             Direcciones direccionseleccionada = direccionopt.get();
                             model.addAttribute("iddireccionxenviar", direccionxenviar);
@@ -521,7 +521,7 @@ public class UsuarioController {
         System.out.println("****************************error numero");
         try {
             int direccionxenviar = Integer.parseInt(direccion);
-            Optional<Direcciones> direccionopt = Optional.ofNullable(direccionesRepository.findDireccionesByIddireccionesAndUsuariosIdusuariosEquals(direccionxenviar, idusuarioactual));
+            Optional<Direcciones> direccionopt = Optional.ofNullable(direccionesRepository.findDireccionesByIddireccionesAndUsuario_Idusuarios(direccionxenviar, idusuarioactual));
             if(direccionopt.isPresent()){
                 List<String> listaidprecio = new ArrayList<>();
                 listaidprecio.add("Menor a 15");
@@ -538,7 +538,7 @@ public class UsuarioController {
                 model.addAttribute("listaidcalificacion",listaidcalificacion);
 
                 Direcciones direccionseleccionada = direccionopt.get();
-                List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuarioactual);
+                List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuario_Idusuarios(idusuarioactual);
                 List<Categorias> listacategorias = categoriasRepository.findAll();
                 List<Restaurante> listarestaurantes = restauranteRepository.findAll();
                 model.addAttribute("listacategorias", listacategorias);
@@ -576,7 +576,7 @@ public class UsuarioController {
                 redirectAttributes.addFlashAttribute("alertabusqueda", "No hay coincidencia de búsqueda");
                 return "redirect:/cliente/realizarpedido";
             }else{
-                List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosEquals(idusuarioactual);
+                List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuario_Idusuarios(idusuarioactual);
                 model.addAttribute("listadirecciones", listadireccionescliente);
                 model.addAttribute("listarestaurantesbuscado",listarestaurantes);
                 model.addAttribute("listaplatosbuscado",listaplatos);
@@ -755,7 +755,7 @@ public class UsuarioController {
             model.addAttribute("lista",1);
 
             for (Pedidos pedidoencurso : listapedidospendientes){
-                List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(pedidoencurso.getIdpedidos());
+                List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
                 System.out.println(pedidoencurso.getIdpedidos());
                 System.out.println(pedidoencurso.getDireccionentrega().getIddirecciones());
                 MontoTotal_PedidoHasPlatoDTO montoTotal_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montototal(pedidoencurso.getIdpedidos());
@@ -788,7 +788,7 @@ public class UsuarioController {
                     model.addAttribute("lista",1);
 
                     for (Pedidos pedidoencurso : listapedidospendientes){
-                        List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(pedidoencurso.getIdpedidos());
+                        List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
                         for(PedidoHasPlato plato1 : platosxpedido){
                             int idplatoobtenido = plato1.getPlato().getIdplato();
                             if(idplatoobtenido == idplatoint){
@@ -821,7 +821,7 @@ public class UsuarioController {
 
             for (Pedidos pedidoencurso : listapedidospendientes){
 
-                List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(pedidoencurso.getIdpedidos());
+                List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
                 for(PedidoHasPlato plato1 : platosxpedido){
                     PedidoHasPlatoKey pedidoHasPlatoKey = plato1.getId();
                     pedidoHasPlatoRepository.deleteById(pedidoHasPlatoKey);
@@ -856,7 +856,7 @@ public class UsuarioController {
         }else{
 
             for (Pedidos pedidoencurso : listapedidospendientes){
-                List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(pedidoencurso.getIdpedidos());
+                List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
                 MontoTotal_PedidoHasPlatoDTO montoTotal_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montototal(pedidoencurso.getIdpedidos());
                 MontoPagar_PedidoHasPlatoDTO montoPagar_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montopagar(pedidoencurso.getIdpedidos());
                 model.addAttribute("platosxpedido",platosxpedido);
@@ -894,7 +894,7 @@ public class UsuarioController {
                 System.out.println(idmetodo);
                 System.out.println(metodosel.getMetodo());
                 for (Pedidos pedidoencurso : listapedidospendientes) {
-                    List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(pedidoencurso.getIdpedidos());
+                    List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
                     System.out.println(pedidoencurso.getIdpedidos());
                     System.out.println(pedidoencurso.getDireccionentrega().getIddirecciones());
                     MontoTotal_PedidoHasPlatoDTO montoTotal_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montototal(pedidoencurso.getIdpedidos());
@@ -967,7 +967,7 @@ public class UsuarioController {
             Pedidos ultimopedido = listapedidoscliente.get(tam-1);
             int idultimopedido = ultimopedido.getIdpedidos();
 
-            List<PedidoHasPlato> pedidoHasPlatoencurso = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(idultimopedido);
+            List<PedidoHasPlato> pedidoHasPlatoencurso = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(idultimopedido);
             Optional<Pedidos> pedidoencursoopt = pedidosRepository.findById(pedidoHasPlatoencurso.get(0).getPedido().getIdpedidos());
             Pedidos pedidoencurso = pedidoencursoopt.get();
             model.addAttribute("pedido",pedidoencurso);
@@ -1005,7 +1005,7 @@ public class UsuarioController {
         Pedidos ultimopedido = listapedidoscliente.get(tam-1);
         int idultimopedido = ultimopedido.getIdpedidos();
 
-        List<PedidoHasPlato> pedidoHasPlatoencurso = pedidoHasPlatoRepository.findAllByPedidoIdpedidos(idultimopedido);
+        List<PedidoHasPlato> pedidoHasPlatoencurso = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(idultimopedido);
         Optional<Pedidos> pedidoencursoopt = pedidosRepository.findById(pedidoHasPlatoencurso.get(0).getPedido().getIdpedidos());
         Pedidos pedidoencurso = pedidoencursoopt.get();
 
@@ -1030,14 +1030,16 @@ public class UsuarioController {
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuario=sessionUser.getIdusuarios();
-
-        List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuariosIdusuariosAndActivoEquals(idusuario,1);
-        model.addAttribute("listadirecciones", listadireccionescliente);
-
         Optional<Usuario> optional = usuarioRepository.findById(idusuario);
+
+
         if(optional.isPresent()){
             Usuario usuario = optional.get();
             model.addAttribute("usuario", usuario);
+
+
+            List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuarioAndActivoEquals(usuario,1);
+            model.addAttribute("listadirecciones", listadireccionescliente);
 
             List<TarjetasOnline> listatarjetas = tarjetasOnlineRepository.findAllByClienteEquals(usuario);
             model.addAttribute("listatarjetas",listatarjetas);

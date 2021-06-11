@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.sql.Blob;
 
 @Entity
-@Table(name = "Datosrepartidor")
+@Table(name = "datosrepartidor")
 public class Repartidor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +19,7 @@ public class Repartidor {
     private String fotocontenttype;
     private byte[] foto;
 
-    @Column(name ="usuariosIdusuarios")
+    @Column(name ="usuariosidusuarios")
     private int idusuarios;
 
     private boolean disponibilidad;

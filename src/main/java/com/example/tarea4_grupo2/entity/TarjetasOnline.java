@@ -3,7 +3,7 @@ package com.example.tarea4_grupo2.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "Tarjetasonline")
+@Table(name = "tarjetasonline")
 public class TarjetasOnline {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,7 +13,7 @@ public class TarjetasOnline {
     private String numerotarjeta;
 
     @ManyToOne
-    @JoinColumn(name = "usuariosIdusuarios")
+    @JoinColumn(name = "usuariosidusuarios")
     private Usuario cliente;
 
     public Integer getIdtarjetasonline() {

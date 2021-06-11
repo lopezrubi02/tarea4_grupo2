@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "Restaurante")
+@Table(name = "restaurante")
 public class Restaurante {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,8 +37,8 @@ public class Restaurante {
 
     @ManyToMany
     @JoinTable(name="Restaurantehascategorias",
-            joinColumns = @JoinColumn(name="restaurantesIdrestaurantes"),
-            inverseJoinColumns = @JoinColumn(name="categoriasIdcategorias"))
+            joinColumns = @JoinColumn(name="restaurantesidrestaurantes"),
+            inverseJoinColumns = @JoinColumn(name="categoriasidcategorias"))
     private List<Categorias> categoriasrestList;
 
     public Integer getIdrestaurante() {

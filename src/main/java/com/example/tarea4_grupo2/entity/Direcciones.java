@@ -4,7 +4,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
 @Entity
-@Table(name = "Direcciones")
+@Table(name = "direcciones")
 public class Direcciones {
 
     @Id
@@ -20,7 +20,7 @@ public class Direcciones {
     private Distritos distrito;
 
     @ManyToOne
-    @JoinColumn(name = "usuariosIdusuarios")
+    @JoinColumn(name = "usuariosidusuarios")
     private Usuario usuario;
 
     public int getIddirecciones() {

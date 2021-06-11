@@ -203,7 +203,7 @@ public class AdminController {
                 case "Cliente":
                     model.addAttribute("usuario", usuario);
 
-                    List<Direcciones> direccionesList = direccionesRepository.findAllByUsuariosIdusuariosEquals(id);
+                    List<Direcciones> direccionesList = direccionesRepository.findAllByUsuario_Idusuarios(id);
                     model.addAttribute("direccionesList", direccionesList);
 
                     return "adminsistema/datosCliente";
@@ -469,7 +469,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
                         case "Repartidor":
                             model.addAttribute("usuario",usuario);
                             Repartidor repartidor = repartidorRepository.findRepartidorByIdusuariosEquals(id);
-                            List<Direcciones> listadirecciones = direccionesRepository.findAllByUsuariosIdusuariosEquals(id);
+                            List<Direcciones> listadirecciones = direccionesRepository.findAllByUsuario_Idusuarios(id);
                             model.addAttribute("repartidor",repartidor);
                             model.addAttribute("lista",listadirecciones);
                             return "adminsistema/AceptarCuentaRepartidor";

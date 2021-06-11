@@ -7,10 +7,10 @@ import java.util.Optional;
 
 public interface FotosPlatosRepository extends JpaRepository<FotosPlatos,Integer> {
 
-    @Query(value="select * from Fotosplatos fp where fp.idplato = ?1 limit 1", nativeQuery = true)
+    @Query(value="select * from fotosplatos fp where fp.idplato = ?1 limit 1", nativeQuery = true)
     Optional<FotosPlatos> encontrarIdPlato(int idplato);
 
-    @Query(value="select * from Fotosplatos fp where fp.idplato = ?1 limit 1", nativeQuery = true)
+    @Query(value="select * from fotosplatos fp where fp.idplato = ?1 limit 1", nativeQuery = true)
     Optional<FotosPlatos> fotoplatoxidplato(int idplato);
 
 }
