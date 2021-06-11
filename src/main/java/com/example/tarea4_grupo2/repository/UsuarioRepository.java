@@ -20,10 +20,10 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     @Query(value = "select * from usuarios where idusuarios = ?1", nativeQuery = true)
     Usuario findUsuarioById(int id);
 
-    @Query(value = "select * from usuarios u where cuentaActiva = 1 and (u.nombre like ?1 or u.apellidos like ?1 or u.dni like ?1)",nativeQuery = true)
+    @Query(value = "select * from usuarios u where cuentaactiva = 1 and (u.nombre like ?1 or u.apellidos like ?1 or u.dni like ?1)",nativeQuery = true)
     List<Usuario> cuentasActuales(String nombre);
 
-    @Query(value = "select * from usuarios u where cuentaActiva = 1 and (u.nombre like ?1 or u.apellidos like ?1 or u.dni like ?1) " +
+    @Query(value = "select * from usuarios u where cuentaactiva = 1 and (u.nombre like ?1 or u.apellidos like ?1 or u.dni like ?1) " +
             " and u.rol =?2",nativeQuery = true)
     List<Usuario> cuentasActualesRol(String nombre,String rol);
 
@@ -31,10 +31,10 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
     List<Usuario> findAllByRolAndNombreAndCuentaActiva(String rol, String nombre, Integer cuentaActiva);
 
-    @Query(value = "select * from usuarios u where cuentaActiva = 2 and (u.rol ='Repartidor' or u.rol = 'AdminRestaurante')",nativeQuery = true)
+    @Query(value = "select * from usuarios u where cuentaactiva = 2 and (u.rol ='Repartidor' or u.rol = 'AdminRestaurante')",nativeQuery = true)
     List<Usuario> cuentasNuevas();
 
-    @Query(value = "select * from usuarios u where cuentaActiva = 2 and (u.nombre like ?1 or u.apellidos like ?1 or u.dni like ?1) " +
+    @Query(value = "select * from usuarios u where cuentaactiva = 2 and (u.nombre like ?1 or u.apellidos like ?1 or u.dni like ?1) " +
             " and (u.rol ='Repartidor' or u.rol = 'AdminRestaurante')",nativeQuery = true)
     List<Usuario> buscarGestionCuentasNuevas(String buscar);
 
