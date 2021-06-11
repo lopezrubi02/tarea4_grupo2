@@ -12,11 +12,11 @@ import java.util.Optional;
 @Repository
 public interface PlatoRepository extends JpaRepository<Plato,Integer> {
 
-    @Query(value = "select * from Plato p where p.restaurante_idrestaurante = ?1 and p.activo = 1 order by p.disponibilidad desc",
+    @Query(value = "select * from Plato p where p.restauranteIdrestaurante = ?1 and p.activo = 1 order by p.disponibilidad desc",
             nativeQuery = true)
     List<Plato> buscarPlatosPorIdRestaurante(int idrestaurante);
 
-    @Query(value = "select * from Plato where restaurante_idrestaurante = ?1 and disponibilidad = 1 and activo =1",
+    @Query(value = "select * from Plato where restauranteIdrestaurante = ?1 and disponibilidad = 1 and activo =1",
             nativeQuery = true)
     List<Plato> buscarPlatosPorIdRestauranteDisponilidadActivo(int idrestaurante);
 

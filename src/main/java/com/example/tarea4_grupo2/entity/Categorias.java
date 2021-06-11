@@ -11,6 +11,7 @@ public class Categorias {
     private Integer idcategorias;
     @Column(nullable = false)
     private String nombrecategoria;
+
     @ManyToMany(mappedBy = "categoriasrestList")
     private List<Restaurante> restauranteList;
 

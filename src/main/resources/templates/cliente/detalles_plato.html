@@ -68,8 +68,10 @@
                                     </br>
 									<a style="color: white;" th:text="'S/. ' + ${platoseleccionado.precio}">Precio: 20 soles</a>
 								</div>
-								<form class="main_form" method="post" th:action="@{'/cliente/platopedido?idrestaurante=' + ${idrestaurante} + '&idplato=' + ${platoseleccionado.idplato} + '&direccionxpedir=' + ${iddireccionxpedir}}">
+								<form class="main_form" method="post" th:action="@{'/cliente/platopedido'}">
                                     <input type="hidden" th:value="${iddireccionxenviar}" name="direccion">
+									<input type="hidden" th:value="${idrestaurante}" name="idrestaurante">
+									<input type="hidden" th:value="${platoseleccionado.idplato}" name="idplato">
                                     <div class="row">
 										<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
 											<div class="form-floating">
@@ -86,18 +88,23 @@
 											<input class="form-control" placeholder="Cantidad" type="number" id="cantidad" name="cantidad" min="1">
 										</div>
 										<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-											<input class="form-control" placeholder="Especifique si se le quiere quitar algun ingrediente al plato"  id="descripcion" name="descripcion">
+											<textarea class="textarea" placeholder="Especifique si le quiere quitar algun ingrediente al plato" type="text" name="descripcion" style="margin-bottom: 5px;"></textarea>
+											<h5 style="color : red;">* El precio del plato no se verá alterado si decide quitarle algún ingrediente a este
+											</h5>
 										</div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <li class="button_user">
-                                                <a class="button send" th:href="'/cliente/restaurantexordenar?idrestaurante=' + ${platoseleccionado.restaurante.idrestaurante}">Cancelar</a>
-                                                <button style="background: #16181b; color: white; border-color: #16181b;" type="submit" class="send">Agregar</button>
-                                            </li>
+											<div>
+												<!--             return "redirect:/cliente/restaurantexordenar?idrestaurante=" + idrestaurante + "&direccion=" + direccionxenviar;
+ -->
+												<a th:href="'/cliente/restaurantexordenar?idrestaurante=' + ${platoseleccionado.restaurante.idrestaurante} + '&direccion=' + ${iddireccionxenviar}">
+													<button class="button" style="font-size: 18px;height: 50px;width: 165px;background:#e3d105;">Cancelar</button></a>
+												<button style="font-size: 18px;height: 50px;width: 165px;background:black; color: white;" type="submit" class="button">Agregar</button>
+											</div>
                                         </div>
 									</div>
 								</form>
 							</div>
-							<div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+							<div class="col-xl-6 col-lg-6 col-md-6 col-sm-12" style="padding-left: 50px;">
 								<div class="img-box">
                                     <figure><img th:src="@{|/cliente/imagenplato/${platoseleccionado.idplato}|}" style="width: 350px; height: 350px"/></figure>
 								</div>

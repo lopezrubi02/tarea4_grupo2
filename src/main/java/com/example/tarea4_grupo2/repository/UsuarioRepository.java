@@ -20,25 +20,27 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     @Query(value = "select * from Usuarios where idusuarios = ?1", nativeQuery = true)
     Usuario findUsuarioById(int id);
 
+    @Query(value = "select * from Usuarios u where cuentaActiva = 1 and (u.nombre like ?1 or u.apellidos like ?1 or u.dni like ?1)",nativeQuery = true)
+    List<Usuario> cuentasActuales(String nombre);
+
+    @Query(value = "select * from Usuarios u where cuentaActiva = 1 and (u.nombre like ?1 or u.apellidos like ?1 or u.dni like ?1) " +
+            " and u.rol =?2",nativeQuery = true)
+    List<Usuario> cuentasActualesRol(String nombre,String rol);
+
     //Gestion de Nuevas Cuentas
 
     List<Usuario> findAllByRolAndNombreAndCuentaActiva(String rol, String nombre, Integer cuentaActiva);
 
-    @Query(value = "select * from Usuarios u where cuentaActiva = 2 and (u.rol ='Repartidor' or u.rol = 'AdminRestaurante');",nativeQuery = true)
+    @Query(value = "select * from Usuarios u where cuentaActiva = 2 and (u.rol ='Repartidor' or u.rol = 'AdminRestaurante')",nativeQuery = true)
     List<Usuario> cuentasNuevas();
 
     @Query(value = "select * from Usuarios u where cuentaActiva = 2 and (u.nombre like ?1 or u.apellidos like ?1 or u.dni like ?1) " +
-            " and (u.rol ='Repartidor' or u.rol = 'AdminRestaurante') ;",nativeQuery = true)
+            " and (u.rol ='Repartidor' or u.rol = 'AdminRestaurante')",nativeQuery = true)
     List<Usuario> buscarGestionCuentasNuevas(String buscar);
 
     @Query(value ="select * from Usuarios \n" +
-            "            where (rol = 'Cliente' or rol='AdminRestaurante' or rol='Repartidor') and cuentaactiva=1;",nativeQuery = true)
+            "            where (rol = 'Cliente' or rol='AdminRestaurante' or rol='Repartidor') and cuentaactiva=1",nativeQuery = true)
     List<Usuario> usuarioreportes();
-
-    @Query(value= "insert into Usuarios (idusuario, nombre, apellidos, email, contrasenia_hash,telefono,fecha_nacimiento,sexo,dni,rol) " +
-            "values(?1,?2,?3,?4,sha2(?5,256),?6,?7,?8,?9,?10);",nativeQuery = true)
-    Usuario nuevoUsuario(int id, String nombre, String apellido, String email, String contra, int telefono,
-                         Date fecha, String sexo, String dni, String rol);
 
     Usuario findByDni(String dni);
     //para guardar direccion de usuario

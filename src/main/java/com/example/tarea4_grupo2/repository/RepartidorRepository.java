@@ -11,12 +11,14 @@ import java.util.List;
 
 public interface RepartidorRepository  extends JpaRepository<Repartidor, Integer> {
 
+    @Query(value = "select * from Datosrepartidor where usuariosIdusuarios = ?1",nativeQuery = true)
     Repartidor findRepartidorByIdusuariosEquals(int idusuario);
+
 
     //
     @Query(value="select p.idpedidos, p.montototal, p.comisionrepartidor, p.calificacionrepartidor, r.nombre, d2.nombredistrito as restaurantedistrito, d.direccion as clienteubicacion\n" +
             "    from Pedidos p\n" +
-            "    inner join Restaurante r on (p.restaurante_idrestaurante=r.idrestaurante)\n" +
+            "    inner join Restaurante r on (p.restauranteIdrestaurante=r.idrestaurante)\n" +
             "    inner join Direcciones d on (p.direccionentrega = d.iddirecciones)\n" +
             "    inner join Distritos d2 on (d.iddistrito = d2.iddistritos)\n" +
             "    inner join Restaurante r2 on (r2.iddistrito= d2.iddistritos)\n" +
@@ -27,7 +29,7 @@ public interface RepartidorRepository  extends JpaRepository<Repartidor, Integer
     @Query(value = "select p.idpedidos, p.montototal, p.comisionrepartidor, p.calificacionrepartidor, r.nombre,\n" +
             "       d2.nombredistrito as restaurantedistrito, d.direccion as clienteubicacion\n" +
             "from Pedidos p\n" +
-            "         inner join Restaurante r on (p.restaurante_idrestaurante=r.idrestaurante)\n" +
+            "         inner join Restaurante r on (p.restauranteIdrestaurante=r.idrestaurante)\n" +
             "         inner join Direcciones d on (d.iddirecciones = p.direccionentrega )\n" +
             "         inner join Distritos d2 on (d2.iddistritos = d.iddistrito)\n" +
             "where (d2.nombredistrito like %?1% or r.nombre like %?1%) and p.idrepartidor = ?2\n", nativeQuery = true)
@@ -46,7 +48,8 @@ public interface RepartidorRepository  extends JpaRepository<Repartidor, Integer
     List<PedidosReporteDTOs> findPedidosByDistrito(String distritoRestaurante);*/
 
     //Listo
-    @Query(value = "SELECT sum(comisionrepartidor) as 'comision_mensual',month(fechahorapedido) as 'mes',year(fechahorapedido) as 'year'\n" +
+    @Query(value = "SELECT sum(comisionrepartidor) as 'comision_mensual',month(fechahorapedido) as 'mes'," +
+            "year(fechahorapedido) as 'year'\n" +
             "FROM proyecto.Pedidos \n" +
             "where (idrepartidor=?1) ",nativeQuery = true)
     List<RepartidorComisionMensualDTO> obtenerComisionPorMes(int id);
@@ -54,7 +57,7 @@ public interface RepartidorRepository  extends JpaRepository<Repartidor, Integer
     //Listo
     @Query(value = "select p.idpedidos ,r.nombre as restaurante, d2.nombredistrito as distritorestaurante,d.direccion as direccioncliente, p.comisionrepartidor as comision, p.montototal as monto\n" +
             "from Pedidos p\n" +
-            "    inner join  Restaurante r on (p.restaurante_idrestaurante = r.idrestaurante)\n" +
+            "    inner join  Restaurante r on (p.restauranteIdrestaurante = r.idrestaurante)\n" +
             "    inner join Direcciones d on (p.direccionentrega = d.iddirecciones)\n" +
             "    inner join Distritos d2 on (d.iddistrito = d2.iddistritos)\n" +
             "where p.estadorepartidor like concat('pendient', '%')", nativeQuery = true)
@@ -64,16 +67,17 @@ public interface RepartidorRepository  extends JpaRepository<Repartidor, Integer
     //Usado por Adminsistema en reportes de repartidores
 
     @Query(value = "select u.nombre, u.apellidos,u.dni, dr.movilidad, dr.idrepartidor, count(p.idpedidos) as 'pedidos', sum(p.comisionrepartidor) as 'comision' from Usuarios u\n" +
-            "inner join Datosrepartidor dr on (u.idusuarios = dr.usuarios_idusuarios)\n" +
-            "inner join Pedidos p on (p.idrepartidor = dr.usuarios_idusuarios)\n" +
+            "inner join Datosrepartidor dr on (u.idusuarios = dr.usuariosIdusuarios)\n" +
+            "inner join Pedidos p on (p.idrepartidor = dr.usuariosIdusuarios)\n" +
             "group by dr.idrepartidor\n" +
             "order by idrepartidor",nativeQuery = true)
     List<RepartidoresReportes_DTO> reporteRepartidores();
 
     //Listo
-    @Query(value = "select pe.idpedidos, pe.montototal, pe.comisionrepartidor, pe.restaurante_idrestaurante, php.cantidadplatos, pl.idplato, pl.nombre\n" +
-            "from Pedidos_has_plato php\n" +
-            "    inner join Pedidos pe on (pe.idpedidos=php.pedidos_idpedidos) inner join Plato pl on (pl.idplato=php.plato_idplato)\n" +
+    @Query(value = "select pe.idpedidos, pe.montototal, pe.comisionrepartidor, pe.restauranteIdrestaurante, php.cantidadplatos, pl.idplato, pl.nombre\n" +
+            "from Pedidoshasplato php\n" +
+            "    inner join Pedidos pe on (pe.idpedidos=php.pedidosIdpedidos) inner join Plato pl on " +
+            "(pl.idplato=php.platoIdplato)\n" +
             "    where pe.idpedidos= ?1", nativeQuery = true)
     List<PlatosPorPedidoDTO> findListaPlatosPorPedido(int id);
 

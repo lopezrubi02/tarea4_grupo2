@@ -19,7 +19,7 @@ public class Repartidor {
     private String fotocontenttype;
     private byte[] foto;
 
-    @Column(name ="usuarios_idusuarios")
+    @Column(name ="usuariosIdusuarios")
     private int idusuarios;
 
     private boolean disponibilidad;

@@ -46,7 +46,7 @@
     <div class="wrapper">
     <!-- end loader -->
 
-        <div th:replace="fragments/adminSistema.html:: slider" class="sidebar">
+     <div class="sidebar">
             <!-- Sidebar  -->
             <nav id="sidebar">
 
@@ -74,7 +74,7 @@
     <div id="content">
     <!-- header -->
     <header>
-        <div th:replace="fragments/adminSistema.html:: barra" class="container-fluid">
+        <div class="container-fluid">
             <div class="row">
                 <div class="col-md-3">
                     <div class="full">
@@ -142,7 +142,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <h1>Editar administrador</h1>
+                    <h1>Mi cuenta</h1>
                 </div>
             </div>
             <hr>
@@ -196,6 +196,8 @@
                             </select>
                         </div>
 
+
+                        <a th:if="${usuario.getIdusuarios() != 1}"  th:href="@{'/admin/delete' + '?id=' + ${usuario.getIdusuarios()}}" class="btn btn-danger">Eliminar</a>
                         <button type="submit" class="btn btn-warning">Guardar cambios</button>
                         <a th:href="@{'/admin/usuariosActuales'}" class="btn btn-light">Cancelar</a>
                     </form>

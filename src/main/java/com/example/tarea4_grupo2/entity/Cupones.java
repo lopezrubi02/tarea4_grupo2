@@ -37,7 +37,7 @@ public class Cupones {
     private java.sql.Date fechafin;
 
     @ManyToOne
-    @JoinColumn(name="restaurante_idrestaurante")
+    @JoinColumn(name="idrestaurante")
     private Restaurante restaurante;
 
     @ManyToOne

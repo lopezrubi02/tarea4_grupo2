@@ -4,6 +4,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "Restaurante")
@@ -35,9 +36,9 @@ public class Restaurante {
     private Distritos distrito;
 
     @ManyToMany
-    @JoinTable(name="restaurante_has_categorias",
-            joinColumns = @JoinColumn(name="restaurante_idrestaurante"),
-            inverseJoinColumns = @JoinColumn(name="categorias_idcategorias"))
+    @JoinTable(name="Restaurantehascategorias",
+            joinColumns = @JoinColumn(name="restaurantesIdrestaurantes"),
+            inverseJoinColumns = @JoinColumn(name="categoriasIdcategorias"))
     private List<Categorias> categoriasrestList;
 
     public Integer getIdrestaurante() {

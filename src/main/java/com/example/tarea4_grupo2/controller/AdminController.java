@@ -7,7 +7,6 @@ import com.example.tarea4_grupo2.dto.RestauranteReportes_DTO;
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,22 +18,13 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.HttpServletBean;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 import javax.validation.Valid;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -113,13 +103,17 @@ public class AdminController {
 
 
         List<Usuario> usuarioList; // se define el contenido de la lista (la paginacion se hace a partir de esta)
+        String buscar = "%"+searchField+"%";
 
         if (!searchField.equals("") && !rol.equals("")) {
             // si es que no estan vacios, se filtra por rol y nombre
-            usuarioList = usuarioRepository.findAllByRolAndCuentaActivaAndNombre(rol, 1, searchField);
+            //usuarioList = usuarioRepository.findAllByRolAndCuentaActivaAndNombre(rol, 1, searchField);
+
+            usuarioList = usuarioRepository.cuentasActualesRol(buscar,rol);
         } else if (!searchField.equals("")) {
             // si el nobre es el que no esta vacio, se filtra por nombre
-            usuarioList = usuarioRepository.findAllByNombreAndCuentaActiva(searchField, 1);
+            //usuarioList = usuarioRepository.findAllByNombreAndCuentaActiva(searchField, 1);
+            usuarioList = usuarioRepository.cuentasActuales(buscar);
         } else if (!rol.equals("")) {
             // viceversa
             usuarioList = usuarioRepository.findAllByRolAndCuentaActiva(rol, 1);
@@ -156,7 +150,8 @@ public class AdminController {
     public String buscarEmployee(@RequestParam(value = "searchField", defaultValue = "") String searchField,
                                  @RequestParam(value = "rol") String rol,
                                  RedirectAttributes redirectAttributes,
-                                 Model model) {
+                                 Model model,
+                                 HttpSession session) {
 
         System.out.println(rol);
 
@@ -168,7 +163,8 @@ public class AdminController {
     @GetMapping("/user")
     public String paginaUsuario(
             Model model,
-            @RequestParam("id") String idString
+            @RequestParam("id") String idString,
+            HttpSession session
     ) {
         try{
             int id = Integer.parseInt(idString);
@@ -179,8 +175,22 @@ public class AdminController {
 
             switch (usuario.getRol()) {
                 case "AdminSistema":
-                    model.addAttribute("usuario", usuario);
-                    return "adminsistema/datosAdmin";
+
+                    // se obtiene el ID del usuaio logueado
+                    Usuario usuarioActual = (Usuario) session.getAttribute("usuarioLogueado");
+                    int idUsuarioactual = usuarioActual.getIdusuarios();
+
+                    // se verifica si el super-admin (cuyo ID = 1)
+                    if(idUsuarioactual == 1){
+                        // pasar a vista editar el usuario seleccionado
+                        model.addAttribute("usuario", usuario);
+                        return "adminsistema/editaradmin";
+
+                    } else {
+                        // solo listar la data
+                        model.addAttribute("usuario", usuario);
+                        return "adminsistema/datosAdmin";
+                    }
 
                 case "Repartidor":
                     model.addAttribute("usuario", usuario);
@@ -219,6 +229,31 @@ public class AdminController {
         }
     }
 
+
+    @PostMapping("/editarAdmin")
+    public String updateAdminUser(
+            @ModelAttribute("usuario") @Valid Usuario usuarioRecibido,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes,
+            Model model
+    ){
+
+        if(bindingResult.hasErrors()) {
+            System.out.println("error papu");
+            for( ObjectError err : bindingResult.getAllErrors()){
+                System.out.println(err.toString());
+            }
+
+            return "adminsistema/miCuenta";
+        } else {
+
+            usuarioRepository.save(usuarioRecibido);
+
+            return "redirect:/admin/usuariosActuales";
+        }
+
+    }
+
     @GetMapping("/miCuenta")
     public String miCuenta(
             Model model,
@@ -234,39 +269,15 @@ public class AdminController {
         return "adminsistema/miCuenta";
     }
 
-    @PostMapping("/miCuenta")
-    public String updateAdminInfo(
-            @ModelAttribute("usuario") @Valid Usuario usuarioRecibido,
-            BindingResult bindingResult,
-            RedirectAttributes redirectAttributes,
-            Model model
-    ){
+    @GetMapping("/delete")
+    public String borrarAdmin(@RequestParam("id") int id, RedirectAttributes attr) {
 
-        if(bindingResult.hasErrors()) {
-            System.out.println("error papu");
-            for( ObjectError err : bindingResult.getAllErrors()){
-                System.out.println(err.toString());
-            }
+        Optional<Usuario> optional = usuarioRepository.findById(id);
 
-            return "adminsistema/miCuenta";
-        } else {
-            // se obtiene el usuario en la base de datos para actualizar solo los campos que han cambiado
-//            Optional<Usuario> optionalUsuario = usuarioRepository.findById(usuarioRecibido.getIdusuarios());
-//            Usuario usuarioEnlabasededatos = optionalUsuario.get();
-//
-//            usuarioEnlabasededatos.setNombre(usuarioRecibido.getNombre());
-//            usuarioEnlabasededatos.setEmail(usuarioRecibido.getEmail());
-//            usuarioEnlabasededatos.setDni(usuarioRecibido.getDni());
-//            usuarioEnlabasededatos.setTelefono(usuarioRecibido.getTelefono());
-//            usuarioEnlabasededatos.setFechaNacimiento(usuarioRecibido.getFechaNacimiento());
-//            usuarioEnlabasededatos.setSexo(usuarioRecibido.getSexo());
-//
-//            usuarioRepository.save(usuarioEnlabasededatos);
-                usuarioRepository.save(usuarioRecibido);
-
-            return "redirect:/admin/usuariosActuales";
+        if (optional.isPresent()) {
+            usuarioRepository.deleteById(id);
         }
-
+        return "redirect:/admin/usuariosActuales";
     }
 
 //  Imagenes
@@ -382,13 +393,19 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
             //todo agregado para lograr paginacion
             if(usuarioList.size() == 0){
 
-                if(buscar.equals("")){
+                if(buscar.equals("") && rol.equals("Todos")){
                     attr.addFlashAttribute("msg","No hay nuevas Cuentas que aceptar");
                     return "redirect:/admin/gestionCuentas";
+                }else if(buscar.equals("") && (rol.equals("Repartidor") || rol.equals("AdminRestaurante"))){
+                    attr.addFlashAttribute("msg","No se encontraron resultados para su búsqueda");
+                    model.addAttribute("rolSelected","Todos");
+                    return "redirect:/admin/nuevosUsuarios";
+                }else{
+                    attr.addFlashAttribute("msg","No se encontraron resultados para su búsqueda");
+                    return "redirect:/admin/nuevosUsuarios";
                 }
 
-                attr.addFlashAttribute("msg","No se encontraron resultados para su busqueda");
-                return "redirect:/admin/nuevosUsuarios";
+
             }
 
 
@@ -420,7 +437,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
                                    RedirectAttributes attr,
                                    Model model){
             System.out.println("El rol es: " + rol);
-            model.addAttribute("rolSelected",rol);
+            attr.addAttribute("rolSelected",rol);
             attr.addAttribute("searchField", buscar);
 
             //model.addAttribute("listaUsuariosNuevos",usuarioList);
@@ -675,7 +692,8 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
     }
 
     @GetMapping("/usuarioReportes")
-    public String usuariosReportes(Model model,
+    public String usuariosReportes(Model model,RedirectAttributes attr,
+                                   @RequestParam(value ="searchField",defaultValue = "") String searchField,
                                    @RequestParam(value = "rol" ,defaultValue = "Todos")String rol,
                                    @RequestParam(value = "page",defaultValue = "1") String requestedPage){
 
@@ -687,12 +705,26 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
             page = 1;
         }
 
+        System.out.println("Busqueda: "+searchField);
+        System.out.println("Rol: "+rol );
+
         List<Usuario> usuarioList;
-        if(rol.equals("Repartidor") || rol.equals("AdminRestaurante") || rol.equals("Cliente")){
+        String buscar = "%" + searchField + "%";
+
+        if(!searchField.equals("") && (rol.equals("Repartidor") || rol.equals("AdminRestaurante") || rol.equals("Cliente"))) {
+            usuarioList = usuarioRepository.cuentasActualesRol(buscar,rol);
+            System.out.println("manos1");
+        }else if(!searchField.equals("")){
+            usuarioList = usuarioRepository.cuentasActuales(buscar);
+            System.out.println("manos2");
+        }else if(rol.equals("Repartidor") || rol.equals("AdminRestaurante") || rol.equals("Cliente")){
             usuarioList = usuarioRepository.findAllByRolAndCuentaActiva(rol,1);
+            System.out.println("manos3");
         }else{
             usuarioList = usuarioRepository.usuarioreportes();
+            System.out.println("manos4");
         }
+
 
         String nombreRol;
         if(rol.equals("Repartidor")){
@@ -722,8 +754,18 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
         model.addAttribute("nombreRol",nombreRol);
 
         model.addAttribute("rol",rol);
+        model.addAttribute("searchField", buscar);
 
         return "adminsistema/ADMIN_ReportesVistaUsuarios";
+    }
+
+    @PostMapping("/buscadorReportesUsuarios")
+    public String buscadorReportesUsuarios(@RequestParam(value ="searchField",defaultValue = "") String searchField,
+                                           @RequestParam(value = "rol",defaultValue = "Todos") String rol,
+                                           RedirectAttributes attr,Model model){
+        attr.addAttribute("rol",rol);
+        attr.addAttribute("searchField", searchField);
+        return "redirect:/admin/usuarioReportes";
     }
 
 
