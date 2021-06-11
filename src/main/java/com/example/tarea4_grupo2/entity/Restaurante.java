@@ -36,7 +36,7 @@ public class Restaurante {
     private Distritos distrito;
 
     @ManyToMany
-    @JoinTable(name="Restaurantehascategorias",
+    @JoinTable(name="restaurantehascategorias",
             joinColumns = @JoinColumn(name="restaurantesidrestaurantes"),
             inverseJoinColumns = @JoinColumn(name="categoriasidcategorias"))
     private List<Categorias> categoriasrestList;
