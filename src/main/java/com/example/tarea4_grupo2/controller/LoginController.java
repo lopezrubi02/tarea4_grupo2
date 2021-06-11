@@ -69,7 +69,8 @@ public class LoginController {
                         direccionactual.setDireccion(direccion);
                         Distritos distritosactual= distritosRepository.findById(iddistrito).get();
                         direccionactual.setDistrito(distritosactual);
-                        direccionactual.setUsuariosIdusuarios(usuarionuevo.getIdusuarios());
+                        //direccionactual.setUsuariosIdusuarios(usuarionuevo.getIdusuarios());
+                        direccionactual.setUsuario(usuarionuevo);
                         direccionactual.setActivo(1);
                         direccionesRepository.save(direccionactual);
                         return"AdminRestaurantes/correo";

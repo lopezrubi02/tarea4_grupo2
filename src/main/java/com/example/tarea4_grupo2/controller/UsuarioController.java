@@ -163,7 +163,8 @@ public class UsuarioController {
                         if(distritoopt.isPresent()){
                             Distritos distritosactual = distritoopt.get();
                             direccionactual.setDistrito(distritosactual);
-                            direccionactual.setUsuariosIdusuarios(idusuarionuevo);
+                            //direccionactual.setUsuariosIdusuarios(idusuarionuevo);
+                            direccionactual.setUsuario(usuarionuevo);
                             direccionactual.setActivo(1);
                             direccionesRepository.save(direccionactual);
 
@@ -1131,6 +1132,8 @@ public class UsuarioController {
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuario=sessionUser.getIdusuarios();
+        Optional<Usuario> usuarioopt = usuarioRepository.findById(idusuario);
+        Usuario usuario = usuarioopt.get();
 
         Direcciones direccioncrear = new Direcciones();
         direccioncrear.setDireccion(direccion);
@@ -1139,7 +1142,8 @@ public class UsuarioController {
         if(distritoopt.isPresent() && direccion != null){ //validando que direccion no vacía
             Distritos distritonuevo = distritoopt.get();
             direccioncrear.setDistrito(distritonuevo);
-            direccioncrear.setUsuariosIdusuarios(idusuario);
+            //direccioncrear.setUsuariosIdusuarios(idusuario);
+            direccioncrear.setUsuario(usuario);
             direccioncrear.setActivo(1);
             direccionesRepository.save(direccioncrear);
         }

@@ -19,7 +19,9 @@ public class Direcciones {
     @JoinColumn(name = "iddistrito")
     private Distritos distrito;
 
-    private int usuariosIdusuarios;
+    @ManyToOne
+    @JoinColumn(name = "usuariosIdusuarios")
+    private Usuario usuario;
 
     public int getIddirecciones() {
         return iddirecciones;
@@ -45,12 +47,12 @@ public class Direcciones {
         this.distrito = distrito;
     }
 
-    public int getUsuariosIdusuarios() {
-        return usuariosIdusuarios;
+    public Usuario getUsuario() {
+        return usuario;
     }
 
-    public void setUsuariosIdusuarios(int usuarios_idusuarios) {
-        this.usuariosIdusuarios = usuarios_idusuarios;
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     public int getActivo() {

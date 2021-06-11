@@ -542,8 +542,8 @@ public class RepartidorController {
             Direcciones direccionactual = new Direcciones();
             direccionactual.setDireccion(direccion);
             direccionactual.setDistrito(distrito);
-            direccionactual.setUsuariosIdusuarios(usuario2.getIdusuarios());
-
+            //direccionactual.setUsuariosIdusuarios(usuario2.getIdusuarios());
+            direccionactual.setUsuario(usuario2);
             direccionesRepository.save(direccionactual);
 
             if (file.isEmpty()) {

@@ -789,13 +789,15 @@ public class AdminRestauranteController {
 
         Usuario user=(Usuario) session.getAttribute("usuarioLogueado");
         int idusuario=user.getIdusuarios();
+        Optional<Usuario> usuarioxguardar = usuarioRepository.findById(idusuario);
+        Usuario usuario2 = usuarioxguardar.get();
         Direcciones direccioncrear = new Direcciones();
         direccioncrear.setDireccion(direccion);
         //direccioncrear.setDistrito(distrito);
         Optional<Distritos> distritoopt = distritosRepository.findById(iddistrito);
         Distritos distritonuevo = distritoopt.get();
         direccioncrear.setDistrito(distritonuevo);
-        direccioncrear.setUsuariosIdusuarios(idusuario);
+        direccioncrear.setUsuario(usuario2);
         direccioncrear.setActivo(1);
         direccionesRepository.save(direccioncrear);
         return "redirect:/adminrest/perfil";
