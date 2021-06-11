@@ -182,11 +182,11 @@ public class AdminRestauranteController {
         if(sessionUser.getCuentaActiva()==1){
             Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
             /********************************/
+            System.out.println(idrestaurante);
             BigDecimal calificacion = pedidosRepository.calificacionPromedio(idrestaurante);
             System.out.println(calificacion);
             Restaurante restaurante = restauranteRepository.findById(idrestaurante).get();
-            //restaurante.setCalificacionpromedio(calificacion.floatValue());
-            restaurante.getCalificacionpromedio();
+            restaurante.setCalificacionpromedio(calificacion.floatValue());
             restauranteRepository.save(restaurante);
             model.addAttribute("calificacionpromedio",calificacion);
             model.addAttribute("nombrerestaurante", restaurante.getNombre());

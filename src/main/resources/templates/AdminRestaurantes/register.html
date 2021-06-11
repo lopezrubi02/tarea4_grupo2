@@ -202,6 +202,7 @@
                 if(distrito==listaDistritos.options[i].text){
                     console.log(listaDistritos.options[i].value);
                     document.getElementById("iddistrito").value=listaDistritos.options[i].value;
+                    document.getElementById("error-direccion").innerHTML=null;
                     break;
                 }
                 else{
