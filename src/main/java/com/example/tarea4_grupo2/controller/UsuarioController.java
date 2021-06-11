@@ -1063,6 +1063,9 @@ public class UsuarioController {
             List<Distritos> listadistritos = distritosRepository.findAll();
             model.addAttribute("listadistritos", listadistritos);
             model.addAttribute("usuario",usuarioperfil);
+            List<TarjetasOnline> listatarjetas = tarjetasOnlineRepository.findAllByClienteEquals(usuario);
+            model.addAttribute("listatarjetas",listatarjetas);
+
             return "cliente/miPerfil";
         } else {
             if (usuario.getContraseniaHash().equals(password2)) {
@@ -1072,6 +1075,7 @@ public class UsuarioController {
                     String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
                     sessionUser.setTelefono(usuario.getTelefono());
                     sessionUser.setContraseniaHash(contraseniahashbcrypt);
+                    //TODO con lo de lista de tarjetas no está actualizando el perfil, revisar
                     usuarioRepository.save(sessionUser);
                     return "redirect:/cliente/miperfil";
                 }else{
@@ -1079,12 +1083,18 @@ public class UsuarioController {
                     model.addAttribute("listadistritos", listadistritos);
                     model.addAttribute("errorpatroncontra", "La contraseña no cumple con los requisitos: mínimo 8 caracteres, un número y un caracter especial");
                     model.addAttribute("usuario",usuarioperfil);
+                    List<TarjetasOnline> listatarjetas = tarjetasOnlineRepository.findAllByClienteEquals(usuario);
+                    model.addAttribute("listatarjetas",listatarjetas);
+
                     return "cliente/miPerfil";
                 }
             }else{
                 List<Distritos> listadistritos = distritosRepository.findAll();
                 model.addAttribute("listadistritos", listadistritos);
                 model.addAttribute("usuario",usuarioperfil);
+                List<TarjetasOnline> listatarjetas = tarjetasOnlineRepository.findAllByClienteEquals(usuario);
+                model.addAttribute("listatarjetas",listatarjetas);
+
                 return "cliente/miPerfil";
             }
 
