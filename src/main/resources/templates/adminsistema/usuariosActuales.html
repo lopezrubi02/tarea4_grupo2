@@ -108,6 +108,9 @@
                 <div class="col-md-12">
                     <h1>Usuarios actuales</h1>
                 </div>
+
+                <div th:if="${msg != null}" class="alert alert-dark" role="alert" th:text="${msg}">
+                </div>
             </div>
 
             <!-- BUSCADOR -->
@@ -124,7 +127,7 @@
                     </select>
                 </div>
                 <div class="col-8">
-                    <input name="searchField" class="input-search-bar" placeholder="Busque un usuario por nombre...">
+                    <input style="padding: 0 0 7px 9px; width: 100%;" name="searchField" class="input-search-bar" placeholder="Busque un usuario por nombre...">
                 </div>
                 <div class="col-2">
                     <button type="submit" class="btn btn-warning">Buscar</button>
@@ -155,7 +158,7 @@
                                     style="cursor: pointer"
                                     th:onclick="'javascript:rowClicked(\'' + ${user.getIdusuarios()} + '\');'">
 
-                                    <th scope="row" th:text="${user.getIdusuarios()}"></th>
+                                    <th scope="row" th:text="${vEst.index + 1}"></th>
                                     <td th:text="${user.getNombre()}"></td>
                                     <td th:text="${user.getDni()}"></td>
                                     <td th:text="${user.getDni()}"></td>
