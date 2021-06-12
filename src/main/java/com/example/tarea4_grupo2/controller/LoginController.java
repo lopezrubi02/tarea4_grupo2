@@ -104,6 +104,7 @@ public class LoginController {
     @GetMapping("/redirectByRol")
     public String redirectByRol(Authentication auth, HttpSession session){
         String rol="";
+        //setear la última fecha y hora de ingreso
         for(GrantedAuthority role:auth.getAuthorities()){
             rol= role.getAuthority();
             break;
