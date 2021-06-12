@@ -84,7 +84,9 @@ public class AdminController {
             @RequestParam(name = "page", defaultValue = "1") String requestedPage,
             @RequestParam(name = "searchField", defaultValue = "") String searchField,
             @RequestParam(name = "rol", defaultValue = "") String rol,
-            Model model
+            Model model,
+            RedirectAttributes attributes
+
     ) {
         /**
          * Validaciones
@@ -234,7 +236,7 @@ public class AdminController {
     public String updateAdminUser(
             @ModelAttribute("usuario") @Valid Usuario usuarioRecibido,
             BindingResult bindingResult,
-            RedirectAttributes redirectAttributes,
+            RedirectAttributes attr,
             Model model
     ){
 
@@ -248,7 +250,7 @@ public class AdminController {
         } else {
 
             usuarioRepository.save(usuarioRecibido);
-
+            attr.addFlashAttribute("msg", "Usuario actualizado correctamente");
             return "redirect:/admin/usuariosActuales";
         }
 
@@ -277,6 +279,8 @@ public class AdminController {
         if (optional.isPresent()) {
             usuarioRepository.deleteById(id);
         }
+
+        attr.addFlashAttribute("msg", "Usuario eliminado correctamente");
         return "redirect:/admin/usuariosActuales";
     }
 

@@ -18,6 +18,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import sun.security.util.math.intpoly.IntegerPolynomialP521;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -335,7 +336,6 @@ public class RepartidorController {
             msgc2="La contraseña debe tener al menos una letra, un número y un caracter especial";
         }
 
-
         if(  bindingResult.hasFieldErrors("telefono")|| msgc1!=null || msgc2!=null ){
 
             model.addAttribute("msgc1",msgc1);
@@ -355,15 +355,23 @@ public class RepartidorController {
             Distritos distritoUsuario=direcciones2.getDistrito();
             model.addAttribute("distritoUsuario", distritoUsuario);
             model.addAttribute("listadistritos", distritosRepository.findAll());
+
+
             return "repartidor/repartidor_perfil";
         }
         else {
             if(usuario.getContraseniaHash().equals(password2)){
-
-
                 if (file.isEmpty()) {
-                    model.addAttribute("msg", "Debe subir un archivo");
-                    return "repartidor/repartidor_perfil";
+                    user.setTelefono(usuario.getTelefono());
+                    Direcciones dnueva = direccionesRepository.findByUsuario(usuario);
+                    dnueva.setDireccion(direccion);
+                    int iddistrito= Integer.parseInt(distrito);
+                    Optional<Distritos> distrito2=distritosRepository.findById(iddistrito);
+                    Distritos distritos=distrito2.get();
+                    dnueva.setDistrito(distritos);
+                    direccionesRepository.save(dnueva);
+                    usuarioRepository.save(user);
+                    return "redirect:/repartidor/miperfil";
                 }
                 String fileName = file.getOriginalFilename();
                 if (fileName.contains("..")) {
@@ -382,20 +390,29 @@ public class RepartidorController {
                     return "repartidor/repartidor_perfil";
                 }
                 user.setTelefono(usuario.getTelefono());
-                user.setContraseniaHash(BCrypt.hashpw(usuario.getContraseniaHash(),BCrypt.gensalt()));
-                usuarioRepository.save(user);
                 Direcciones dnueva = direccionesRepository.findByUsuario(usuario);
                 dnueva.setDireccion(direccion);
-                Distritos distrito2=distritosRepository.findByNombredistrito(distrito);
-                dnueva.setDistrito(distrito2);
+                int iddistrito= Integer.parseInt(distrito);
+                Optional<Distritos> distrito2=distritosRepository.findById(iddistrito);
+                Distritos distritos=distrito2.get();
+                dnueva.setDistrito(distritos);
                 direccionesRepository.save(dnueva);
+                usuarioRepository.save(user);
                 return "redirect:/repartidor/miperfil";
             }
             else{
                 if(password2.isEmpty()){
                     if (file.isEmpty()) {
-                        model.addAttribute("msg", "Debe subir un archivo");
-                        return "repartidor/repartidor_perfil";
+                        user.setTelefono(usuario.getTelefono());
+                        Direcciones dnueva = direccionesRepository.findByUsuario(usuario);
+                        dnueva.setDireccion(direccion);
+                        int iddistrito= Integer.parseInt(distrito);
+                        Optional<Distritos> distrito2=distritosRepository.findById(iddistrito);
+                        Distritos distritos=distrito2.get();
+                        dnueva.setDistrito(distritos);
+                        direccionesRepository.save(dnueva);
+                        usuarioRepository.save(user);
+                        return "redirect:/repartidor/miperfil";
                     }
                     String fileName = file.getOriginalFilename();
                     if (fileName.contains("..")) {
@@ -416,8 +433,10 @@ public class RepartidorController {
                     user.setTelefono(usuario.getTelefono());
                     Direcciones dnueva = direccionesRepository.findByUsuario(usuario);
                     dnueva.setDireccion(direccion);
-                    Distritos distrito2=distritosRepository.findByNombredistrito(distrito);
-                    dnueva.setDistrito(distrito2);
+                    int iddistrito= Integer.parseInt(distrito);
+                    Optional<Distritos> distrito2=distritosRepository.findById(iddistrito);
+                    Distritos distritos=distrito2.get();
+                    dnueva.setDistrito(distritos);
                     direccionesRepository.save(dnueva);
                     usuarioRepository.save(user);
                     return "redirect:/repartidor/miperfil";
@@ -431,6 +450,9 @@ public class RepartidorController {
                     Direcciones direcciones2 = direccionesRepository.findByUsuario(usuario2);
                     model.addAttribute("direcciones", direcciones2);
 
+                    Distritos distritoUsuario=direcciones2.getDistrito();
+                    model.addAttribute("distritoUsuario", distritoUsuario);
+                    model.addAttribute("listadistritos", distritosRepository.findAll());
                     return "repartidor/repartidor_perfil";
                 }
 
