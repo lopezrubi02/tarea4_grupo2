@@ -86,7 +86,7 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
 
     /******ADMINISTRADOR RESTAURANTE**********/
 
-    @Query(value = "select p.idpedidos,p.montototal,concat(u.nombre,' ',u.apellidos)cliente,cast(p.fechahorapedido as DATE)fechahorapedido,d.direccion,dr.nombredistrito \n" +
+    @Query(value = "select p.idpedidos,p.montototal,concat(u.nombre,' ',u.apellidos)cliente,fechahorapedido,d.direccion,dr.nombredistrito \n" +
             "from Pedidos p\n" +
             "inner join usuarios u on p.idcliente = u.idusuarios\n" +
             "inner join restaurante r on p.restauranteidrestaurante = r.idrestaurante\n" +
@@ -189,7 +189,7 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
             "where p.idpedidos=?1",nativeQuery = true)
     List<PedidoDetallesDto>detallepedidos(Integer id);
 
-    @Query(value="select p.idpedidos,p.montototal,concat(u.nombre,' ',u.apellidos)cliente,cast(p.fechahorapedido as DATE)fechahorapedido,d.direccion,dr.nombredistrito " +
+    @Query(value="select p.idpedidos,p.montototal,concat(u.nombre,' ',u.apellidos)cliente,p.fechahorapedido,d.direccion,dr.nombredistrito " +
             "from pedidos p\n" +
             "inner join usuarios u on p.idcliente = u.idusuarios\n" +
             "inner join restaurante r on p.restauranteidrestaurante = r.idrestaurante\n" +
@@ -198,7 +198,7 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
             "where r.idrestaurante=?1 and p.estadorestaurante='aceptado'",nativeQuery = true)
     List<PedidoAceptadosDtos>aceptadopedidos(Integer id);
 
-    @Query(value="select p.idpedidos,p.montototal,concat(u.nombre,' ',u.apellidos)cliente,cast(p.fechahorapedido as DATE)fechahorapedido,d.direccion,dr.nombredistrito " +
+    @Query(value="select p.idpedidos,p.montototal,concat(u.nombre,' ',u.apellidos)cliente,p.fechahorapedido,d.direccion,dr.nombredistrito " +
             "from pedidos p\n" +
             "inner join usuarios u on p.idcliente = u.idusuarios\n" +
             "inner join restaurante r on p.restauranteidrestaurante = r.idrestaurante\n" +

@@ -20,6 +20,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -182,9 +183,9 @@ public class AdminRestauranteController {
         if(sessionUser.getCuentaActiva()==1){
             Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
             /********************************/
-            System.out.println(idrestaurante);
             BigDecimal calificacion = pedidosRepository.calificacionPromedio(idrestaurante);
-            System.out.println(calificacion);
+            MathContext m = new MathContext(3);
+            calificacion = calificacion.round(m);
             Restaurante restaurante = restauranteRepository.findById(idrestaurante).get();
             restaurante.setCalificacionpromedio(calificacion.floatValue());
             restauranteRepository.save(restaurante);

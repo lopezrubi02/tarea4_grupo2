@@ -15,7 +15,7 @@
         <setting name="validation-enabled" value="true" />
         <setting name="provider-name" value="Hibernate" />
         <datasource-mapping>
-          <factory-entry name="entityManagerFactory" />
+          <factory-entry name="entityManagerFactory" value="ed74574d-47d4-464e-bc43-3ac2e0c455be" />
           <factory-entry name="tarea4_grupo2" />
         </datasource-mapping>
         <naming-strategy-map />

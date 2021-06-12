@@ -43,6 +43,7 @@
                                     <th scope="col">DISTRITO</th>
                                     <th scope="col">MONTO TOTAL</th>
                                     <th scope="col">FECHA PEDIDO</th>
+                                    <th scope="col">HORA PEDIDO</th>
                                     <th></th>
                                 </tr>
                                 </thead>
@@ -53,7 +54,8 @@
                                     <td th:text="${aceptado.getdireccion()}"></td>
                                     <td th:text="${aceptado.getnombredistrito()}"></td>
                                     <td th:text="${aceptado.getmontototal()}"></td>
-                                    <td th:text="${aceptado.getfechahorapedido()}"></td>
+                                    <td th:text="${#dates.format(aceptado.getfechahorapedido(), 'dd-MM-yyyy')}"></td>
+                                    <td th:text="${#dates.format(aceptado.getfechahorapedido(), 'HH:MM')}"></td>
                                     <td><a class="send" th:href="@{'/adminrest/preparadopedido'+'?id='+${aceptado.getidpedidos()}}" style="text-align: center;background: #d8b00f">Preparado</a></td>
                                 </tr>
                                 </tbody>
@@ -76,6 +78,7 @@
                                     <th scope="col">DISTRITO</th>
                                     <th scope="col">MONTO TOTAL</th>
                                     <th scope="col">FECHA PEDIDO</th>
+                                    <th scope="col">HORA PEDIDO</th>
                                     <th></th>
                                 </tr>
                                 </thead>
@@ -86,7 +89,8 @@
                                     <td th:text="${preparado.getdireccion()}"></td>
                                     <td th:text="${preparado.getnombredistrito()}"></td>
                                     <td th:text="${preparado.getmontototal()}"></td>
-                                    <td th:text="${preparado.getfechahorapedido()}"></td>
+                                    <td th:text="${#dates.format(preparado.getfechahorapedido(), 'dd-MM-yyyy')}"></td>
+                                    <td th:text="${#dates.format(preparado.getfechahorapedido(), 'HH:MM')}"></td>
                                     <td><a class="send" th:href="@{'/adminrest/entregadopedido'+'?id='+${preparado.getidpedidos()}}" style="text-align: center;background: #d8b00f">Entregado</a></td>
                                 </tr>
                                 </tbody>
