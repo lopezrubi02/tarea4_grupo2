@@ -189,7 +189,9 @@ public class AdminRestauranteController {
             Restaurante restaurante = restauranteRepository.findById(idrestaurante).get();
             restaurante.setCalificacionpromedio(calificacion.floatValue());
             restauranteRepository.save(restaurante);
+            Integer cantidadcalificaciones = restauranteRepository.obtenerCantidadCalificaciones(idrestaurante);
             model.addAttribute("calificacionpromedio",calificacion);
+            model.addAttribute("cantidadcalificaciones",cantidadcalificaciones);
             model.addAttribute("nombrerestaurante", restaurante.getNombre());
             return "AdminRestaurantes/perfilrestaurante";
         }

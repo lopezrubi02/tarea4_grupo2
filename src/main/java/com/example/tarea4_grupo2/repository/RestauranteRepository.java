@@ -86,4 +86,9 @@ public interface RestauranteRepository extends JpaRepository<Restaurante, Intege
             "where round(calificacionpromedio) = ?1",nativeQuery = true)
     List<Restaurante> listarestcalificacion(int numestrellas);
 
+    @Query(value= "select count(p.calificacionrestaurante) from pedidos p\n" +
+            "where p.calificacionrestaurante is not null and p.restauranteidrestaurante=?1", nativeQuery = true)
+    Integer obtenerCantidadCalificaciones(int idrestaurante);
+
+
 }
