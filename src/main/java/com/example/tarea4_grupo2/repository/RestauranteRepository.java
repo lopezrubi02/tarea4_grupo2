@@ -33,6 +33,14 @@ public interface RestauranteRepository extends JpaRepository<Restaurante, Intege
             "order by r.nombre;",nativeQuery = true)
     List<RestauranteReportes_DTO> reportesRestaurantes();
 
+    @Query(value = "select r.nombre as 'restnombre', u.nombre, u.apellidos, count(p.idpedidos) as 'pedidos', (sum(p.montototal) - sum(p.comisionrepartidor) - sum(p.comisionsistema)) " +
+            "as 'ventastotales' from restaurante r\n" +
+            "inner join usuarios u on (r.idadminrest=u.idusuarios)\n" +
+            "inner join pedidos p on (r.idrestaurante=p.restauranteidrestaurante)\n" +
+            "where r.nombre like ?1 group by r.nombre " +
+            "order by r.nombre;",nativeQuery = true)
+    List<RestauranteReportes_DTO> reportesRestaurantes2(String buscar);
+
     //seleccionar restaurantes por categoria
     @Query(value = "select r.idrestaurante,r.direccion,r.ruc,r.nombre,r.calificacionpromedio,r.idadminrest,r.foto, r.fotonombre, r.fotocontenttype, r.iddistrito\n" +
             " from proyecto.restaurante r\n" +
