@@ -6,7 +6,14 @@ import com.example.tarea4_grupo2.dto.PedidosReporteDTOs;
 import com.example.tarea4_grupo2.dto.PlatosPorPedidoDTO;
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
+import org.apache.commons.math3.stat.descriptive.summary.Product;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,10 +25,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import sun.plugin.dom.core.Element;
 import sun.security.util.math.intpoly.IntegerPolynomialP521;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -221,9 +231,52 @@ public class RepartidorController {
             model.addAttribute("listaReporte1", listaReporte1);
             //Lista2
             model.addAttribute("listaComisionMensual", listaComisionMensual);
+            model.addAttribute("id",id);
             return "repartidor/repartidor_reportes";
         }
 
+    }
+
+
+    public ByteArrayInputStream exportAllData1(int id) throws IOException {
+        String[] columns = { "MES", "AÑO", "COMISIÓN MENSUAL" };
+
+        Workbook workbook = new HSSFWorkbook();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+        Sheet sheet = workbook.createSheet("Personas");
+        Row row = sheet.createRow(0);
+
+        for (int i = 0; i < columns.length; i++) {
+            Cell cell = row.createCell(i);
+            cell.setCellValue(columns[i]);
+        }
+
+        List<RepartidorComisionMensualDTO> listaComisionMensual = repartidorRepository.obtenerComisionPorMes(id);
+
+        int initRow = 1;
+        for (RepartidorComisionMensualDTO comisionMensualDTO : listaComisionMensual) {
+            row = sheet.createRow(initRow);
+            row.createCell(0).setCellValue(comisionMensualDTO.getMes());
+            row.createCell(1).setCellValue(comisionMensualDTO.getYear());
+            row.createCell(2).setCellValue(comisionMensualDTO.getComision_mensual());
+            initRow++;
+        }
+
+        workbook.write(stream);
+        workbook.close();
+        return new ByteArrayInputStream(stream.toByteArray());
+    }
+
+    @GetMapping("/repartidor/excelgananciamensual")
+    public ResponseEntity<InputStreamResource> exportAllData(@RequestParam("id") int id) throws Exception {
+
+        ByteArrayInputStream stream2 = exportAllData1(id);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=ganancia_mensual.xls");
+
+        return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream2));
     }
 
 
