@@ -48,8 +48,9 @@
                 <form method="post" th:action="@{/reportes/Buscador}">
                     <input name="valorBuscado" class="form-control mb-3" type="text" placeholder="Ingrese el nombre del restaurante o distrito del restaurante"/>
                     <button class="btn btn-dark" type="submit">Buscar</button>
+                    <button class="btn btn-warning"><a class="button active" th:href="@{'/repartidor/Reportes'}">Limpiar</a></button>
                 </form>
-                <button class="btn btn-warning"><a class="button active" th:href="@{'/repartidor/Reportes'}">Limpiar</a></button>
+
 
             <table class="table">
                 <thead>
