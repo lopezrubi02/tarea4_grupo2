@@ -224,4 +224,14 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
 
     List<Pedidos> findAllByIdclienteEquals(int idcliente);
 
+    @Query(value = "select p.montototal, r.nombre, p.fechahorapedido, d.direccion, mp.metodo from pedidos p\n" +
+            "inner join restaurante r\n" +
+            "on p.restauranteidrestaurante = r.idrestaurante\n" +
+            "inner join direcciones d\n" +
+            "on p.direccionentrega = d.iddirecciones\n" +
+            "inner join metodospago mp\n" +
+            "on mp.idmetodospago = p.idmetodopago\n" +
+            "where p.idcliente = ?1",nativeQuery = true)
+    List<PedidosclienteaexcelDTO> listapedidosexcel(int idcliente);
+
 }

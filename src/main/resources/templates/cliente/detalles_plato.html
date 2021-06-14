@@ -94,10 +94,11 @@
 										</div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
 											<div>
-												<!--             return "redirect:/cliente/restaurantexordenar?idrestaurante=" + idrestaurante + "&direccion=" + direccionxenviar;
- -->
-												<a th:href="'/cliente/restaurantexordenar?idrestaurante=' + ${platoseleccionado.restaurante.idrestaurante} + '&direccion=' + ${iddireccionxenviar}">
-													<button class="button" style="font-size: 18px;height: 50px;width: 165px;background:#e3d105;">Cancelar</button></a>
+												<!-- 													<button class="button" style="font-size: 18px;height: 50px;width: 165px;background:#e3d105;">Cancelar</button>
+-->
+												<a th:href="'/cliente/restaurantexordenar?idrestaurante=' + ${platoseleccionado.restaurante.idrestaurante} + '&direccion=' + ${iddireccionxenviar}" class="button send" style="padding: 9px; padding-left: 35px;margin-right:10px;">
+													Cancelar
+												</a>
 												<button style="font-size: 18px;height: 50px;width: 165px;background:black; color: white;" type="submit" class="button">Agregar</button>
 											</div>
                                         </div>
