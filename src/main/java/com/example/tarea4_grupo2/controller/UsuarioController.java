@@ -4,7 +4,13 @@ import com.example.tarea4_grupo2.dto.*;
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
 import com.example.tarea4_grupo2.service.SendMailService;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,6 +24,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -203,6 +212,51 @@ public class UsuarioController {
         }
     }
 
+        /**         Para exportar a excel historial de pedidos           **/
+    @GetMapping("/cliente/historialpedidosexcel")
+    public ResponseEntity<InputStreamResource> exportAllData(@RequestParam("id") int id) throws Exception {
+
+        ByteArrayInputStream stream2 = exportAllData1(id);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=historialdepedidos.xls");
+
+        return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream2));
+    }
+
+    public ByteArrayInputStream exportAllData1(int id) throws IOException {
+        String[] columns = { "MONTO TOTAL", "RESTAURANTE", "FECHA PEDIDO", "DIRECCION ENTREGA", "METODO DE PAGO"};
+
+        Workbook workbook = new HSSFWorkbook();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+        Sheet sheet = workbook.createSheet("Personas");
+        Row row = sheet.createRow(0);
+
+        for (int i = 0; i < columns.length; i++) {
+            Cell cell = row.createCell(i);
+            cell.setCellValue(columns[i]);
+        }
+
+        List<PedidosclienteaexcelDTO> listapedidos = pedidosRepository.listapedidosexcel(id);
+
+        int initRow = 1;
+        for (PedidosclienteaexcelDTO pedidoexcel : listapedidos) {
+            row = sheet.createRow(initRow);
+            row.createCell(0).setCellValue(pedidoexcel.getMontototal());
+            row.createCell(1).setCellValue(pedidoexcel.getNombre());
+            row.createCell(2).setCellValue(pedidoexcel.getFechahorapedido());
+            row.createCell(3).setCellValue(pedidoexcel.getDireccion());
+            row.createCell(3).setCellValue(pedidoexcel.getMetodo());
+            initRow++;
+        }
+
+        workbook.write(stream);
+        workbook.close();
+        return new ByteArrayInputStream(stream.toByteArray());
+    }
+
+
     @GetMapping("/cliente/reportes")
     public String reportesCliente(Model model,
                                   RedirectAttributes redirectAttributes,
@@ -251,6 +305,7 @@ public class UsuarioController {
                 model.addAttribute("diferencia", dineroAhorrado_clienteDTO);
                 model.addAttribute("listaHistorialConsumo", pedidosRepository.obtenerHistorialConsumo(idusuarios, anio, mes));
                 model.addAttribute("fechaseleccionada",fechamostrar);
+                model.addAttribute("id",idusuarios);
                 return "cliente/reportes";
             } else {
                 return "redirect:/cliente/miperfil";
@@ -299,7 +354,7 @@ public class UsuarioController {
                     model.addAttribute("listaHistorialConsumo", listaHistorialConsumo);
                     model.addAttribute("diferencia", dineroAhorrado_clienteDTO);
                     model.addAttribute("fechaseleccionada",fechahorapedido);
-                    //model.addAttribute("fechaactual",fechaactual1);
+                    model.addAttribute("id",idusuarios);
                 }
             }
         } catch (ArrayIndexOutOfBoundsException e) {
