@@ -39,7 +39,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     List<Usuario> buscarGestionCuentasNuevas(String buscar);
 
     @Query(value ="select * from usuarios \n" +
-            "            where (rol = 'Cliente' or rol='AdminRestaurante' or rol='Repartidor') and cuentaactiva=1",nativeQuery = true)
+            "            where cuentaactiva=1",nativeQuery = true)
     List<Usuario> usuarioreportes();
 
     Usuario findByDni(String dni);
