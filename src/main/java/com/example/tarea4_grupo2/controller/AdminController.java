@@ -1,13 +1,20 @@
 package com.example.tarea4_grupo2.controller;
 
+import com.example.tarea4_grupo2.dto.RepartidorComisionMensualDTO;
 import com.example.tarea4_grupo2.service.*;
 import com.example.tarea4_grupo2.dto.DeliveryReportes_DTO;
 import com.example.tarea4_grupo2.dto.RepartidoresReportes_DTO;
 import com.example.tarea4_grupo2.dto.RestauranteReportes_DTO;
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,9 +29,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -782,7 +793,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
         model.addAttribute("nombreRol",nombreRol);
 
         model.addAttribute("rol",rol);
-        model.addAttribute("searchField", buscar);
+        model.addAttribute("searchField", searchField);
 
         return "adminsistema/ADMIN_ReportesVistaUsuarios";
     }
@@ -1093,7 +1104,169 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
         }
 
     }
+    //todo:Adaptar para exportar excel
 
+    @GetMapping("/exportarUsuarios")
+    public ResponseEntity<InputStreamResource> exportUsuarios() throws Exception {
+        ByteArrayInputStream stream2 = exportAllData1();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=reportesUsuarios.xls");
 
+        return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream2));
+    }
 
+    public ByteArrayInputStream exportAllData1() throws IOException {
+        String[] columns = { "USUARIO", "ROL", "CORREO","TELEFONO","ULTIMA FECHA DE INGRESO" };
+
+        Workbook workbook = new HSSFWorkbook();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+        Sheet sheet = workbook.createSheet("Usuarios");
+        Row row = sheet.createRow(0);
+        System.out.println(columns.length);
+
+        for (int i = 0; i < columns.length; i++) {
+            Cell cell = row.createCell(i);
+            cell.setCellValue(columns[i]);
+        }
+
+        List<Usuario> usuarioList = usuarioRepository.usuarioreportes();
+
+        int initRow = 1;
+        for (Usuario usuario: usuarioList) {
+            row = sheet.createRow(initRow);
+            row.createCell(0).setCellValue(usuario.getNombre()+ " " +usuario.getApellidos());
+            row.createCell(1).setCellValue(usuario.getRol());
+            row.createCell(2).setCellValue(usuario.getEmail());
+            row.createCell(3).setCellValue(Integer.toString(usuario.getTelefono()));
+            row.createCell(4).setCellValue(String.valueOf(usuario.getUltimafechaingreso()));
+            initRow++;
+
+        }
+
+        workbook.write(stream);
+        workbook.close();
+        return new ByteArrayInputStream(stream.toByteArray());
+    }
+
+    @GetMapping("/exportarDelivery")
+    public ResponseEntity<InputStreamResource> exportDelivery() throws Exception {
+        ByteArrayInputStream stream2 = exportAllData2();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=reportesDelivery.xls");
+
+        return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream2));
+    }
+
+    public ByteArrayInputStream exportAllData2() throws IOException {
+        String[] columns = { "FECHA","PEDIDOS COMPLETADOS","COMISION SISTEMA" };
+
+        Workbook workbook = new HSSFWorkbook();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+        Sheet sheet = workbook.createSheet("Delivery");
+        Row row = sheet.createRow(0);
+        System.out.println(columns.length);
+
+        for (int i = 0; i < columns.length; i++) {
+            Cell cell = row.createCell(i);
+            cell.setCellValue(columns[i]);
+        }
+        String primerpedido = pedidosRepository.primerPedido();
+        List<DeliveryReportes_DTO> deliveryReportes = pedidosRepository.reportesDelivery2(primerpedido);
+
+        int initRow = 1;
+        for (DeliveryReportes_DTO delivery : deliveryReportes) {
+            row = sheet.createRow(initRow);
+            row.createCell(0).setCellValue(String.valueOf(delivery.getFecha()));
+            row.createCell(1).setCellValue(delivery.getPedidos());
+            row.createCell(2).setCellValue(delivery.getComision());
+            initRow++;
+
+        }
+        workbook.write(stream);
+        workbook.close();
+        return new ByteArrayInputStream(stream.toByteArray());
+    }
+
+    @GetMapping("/exportarRestaurante")
+    public ResponseEntity<InputStreamResource> exportRestaurante() throws Exception {
+        ByteArrayInputStream stream2 = exportAllData3();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=reportesRestaurantes.xls");
+
+        return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream2));
+    }
+
+    public ByteArrayInputStream exportAllData3() throws IOException {
+        String[] columns = { "RESTAURANTE","ENCARGADO","PEDIDOS COMPLETADOS","VENTAS TOTALES S/." };
+
+        Workbook workbook = new HSSFWorkbook();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+        Sheet sheet = workbook.createSheet("Restaurantes");
+        Row row = sheet.createRow(0);
+        System.out.println(columns.length);
+
+        for (int i = 0; i < columns.length; i++) {
+            Cell cell = row.createCell(i);
+            cell.setCellValue(columns[i]);
+        }
+
+        List<RestauranteReportes_DTO> restaurantesList = restauranteRepository.reportesRestaurantes();
+        int initRow = 1;
+        for (RestauranteReportes_DTO restaurante : restaurantesList) {
+            row = sheet.createRow(initRow);
+            row.createCell(0).setCellValue(restaurante.getRestnombre());
+            row.createCell(1).setCellValue(restaurante.getNombre()+" "+restaurante.getApellidos());
+            row.createCell(2).setCellValue(restaurante.getPedidos());
+            row.createCell(3).setCellValue(restaurante.getVentastotales());
+            initRow++;
+
+        }
+        workbook.write(stream);
+        workbook.close();
+        return new ByteArrayInputStream(stream.toByteArray());
+    }
+
+    @GetMapping("/exportarRepartidor")
+    public ResponseEntity<InputStreamResource> exportRepartidor() throws Exception {
+        ByteArrayInputStream stream2 = exportAllData4();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=reportesRepartidor.xls");
+
+        return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream2));
+    }
+
+    public ByteArrayInputStream exportAllData4() throws IOException {
+        String[] columns = { "REPARTIDOR","DNI","MOVILIDAD","PEDIDOS REALIZADOS","COMISION S/." };
+
+        Workbook workbook = new HSSFWorkbook();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+        Sheet sheet = workbook.createSheet("Repartidor");
+        Row row = sheet.createRow(0);
+        System.out.println(columns.length);
+
+        for (int i = 0; i < columns.length; i++) {
+            Cell cell = row.createCell(i);
+            cell.setCellValue(columns[i]);
+        }
+
+        List<RepartidoresReportes_DTO> repartidorList = repartidorRepository.reporteRepartidores();
+        int initRow = 1;
+        for (RepartidoresReportes_DTO repartidor : repartidorList) {
+            row = sheet.createRow(initRow);
+            row.createCell(0).setCellValue(repartidor.getNombre()+" "+repartidor.getApellidos());
+            row.createCell(1).setCellValue(repartidor.getDni());
+            row.createCell(2).setCellValue(repartidor.getMovilidad());
+            row.createCell(3).setCellValue(repartidor.getPedidos());
+            row.createCell(4).setCellValue(repartidor.getComision());
+            initRow++;
+
+        }
+        workbook.write(stream);
+        workbook.close();
+        return new ByteArrayInputStream(stream.toByteArray());
+    }
 }

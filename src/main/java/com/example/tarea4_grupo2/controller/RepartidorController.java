@@ -95,7 +95,7 @@ public class RepartidorController {
 
             if (listaPedidos.isEmpty()) {
                 attr.addFlashAttribute("msg", "No hay pedidos disponibles para mostrar.");
-                return "repartidor/repartidor_principal";
+                return "redirect:/repartidor";
             } else {
                 model.addAttribute("listaPedidosDisponibles", listaPedidos);
                 return "repartidor/repartidor_pedidos_disponibles";
