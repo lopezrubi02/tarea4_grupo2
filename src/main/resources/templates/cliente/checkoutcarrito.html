@@ -99,10 +99,10 @@
 							<h2 style="padding-left: 223px;">Pagar canasta</h2>
 						  </div>
 							<div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
-								<form class="main_form" method="post" th:action="@{/cliente/guardarcheckout}" onSubmit="return validate();">
+								<form class="main_form" method="post" th:action="@{/cliente/guardarcheckout}">
                                     <div th:if="${pago1 != null}" th:text="${pago1}" class="alert alert-warning" role="alert"></div>
                                     <div th:if="${pago2 != null}" th:text="${pago2}" class="alert alert-warning" role="alert"></div>
-                                    <input type="hidden" th:value="${metodoelegido}" name="idmetodo">
+                                    <input type="hidden" th:value="${metodoelegido}" name="idmetodo" id="idmetodoelegido">
                                     <div class="row">
 										<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
 											<div class="form-floating">
@@ -224,6 +224,47 @@
                 $('.collapse.in').toggleClass('in');
                 $('a[aria-expanded=true]').attr('aria-expanded', 'false');
             });
+
+            $("form").submit(function(event){
+
+                var some_flag_variable = true;
+
+                var metodo = $("#idmetodoelegido").val();
+
+                if(metodo == 1){
+
+                    var cardNumber = $("#card-number").val();
+                    var message = "";
+
+                    if (cardNumber == "") {
+                        message += "<div>Campo obligatorio.</div>";
+                        $("#card-number").css('background-color', '#FFFFDF');
+                        some_flag_variable = false;
+                    }
+
+                    if (cardNumber != "") {
+                        $('#card-number').validateCreditCard(function(result) {
+                            if (!(result.valid)) {
+                                message += "<div>Card Number is Invalid</div>";
+                                $("#card-number").css('background-color', '#FFFFDF');
+                                some_flag_variable = false;
+                                event.preventDefault();
+                            }else{
+                                return this.some_flag_variable;
+                            }
+                        });
+                    }
+
+                    if (message != "") {
+                        $("#error-message").show();
+                        $("#error-message").html(message);
+                    }
+                }else{
+                    return this.some_flag_variable;
+                }
+
+            });
+
         }
 
 
@@ -231,48 +272,6 @@
 
     </script>
 
-    <script>
-        console.log($('#tarjeta').val());
-
-        function validate() {
-            var valid = true;
-
-            var metodotarjeta = $('#tarjeta').val();
-
-            if(metodotarjeta == 1){
-
-                $("#card-number").css('background-color', '');
-                var message = "";
-
-                var cardNumber = $("#card-number").val();
-
-                if (cardNumber == "") {
-                    message += "<div>All Fields are Required.</div>";
-
-                    $("#card-number").css('background-color', '#FFFFDF');
-
-                    valid = false;
-                }
-
-                if (cardNumber != "") {
-                    $('#card-number').validateCreditCard(function(result) {
-                        if (!(result.valid)) {
-                            message += "<div>Card Number is Invalid</div>";
-                            $("#card-number").css('background-color', '#FFFFDF');
-                            valid = false;
-                        }
-                    });
-                }
-
-                if (message != "") {
-                    $("#error-message").show();
-                    $("#error-message").html(message);
-                }
-            }
-
-            return valid;
-        }
-    </script>
 
     <style>
         #owl-demo .item{

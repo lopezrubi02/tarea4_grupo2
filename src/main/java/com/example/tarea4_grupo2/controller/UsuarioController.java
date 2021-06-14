@@ -880,6 +880,41 @@ try {
 
     }
 
+    public boolean validartarjeta(String tarjetaxevaluar) {
+        boolean valido = false;
+        List<String> cards = new ArrayList<String>();
+        System.out.println("antes de validar");
+        System.out.println(valido);
+        cards.add(tarjetaxevaluar);  //Masked to avoid any inconvenience unknowingly
+
+        String regex = "^(?:(?<visa>4[0-9]{12}(?:[0-9]{3})?)|" +
+                "(?<mastercard>5[1-5][0-9]{14})|" +
+                "(?<discover>6(?:011|5[0-9]{2})[0-9]{12})|" +
+                "(?<amex>3[47][0-9]{13})|" +
+                "(?<diners>3(?:0[0-5]|[68][0-9])?[0-9]{11})|" +
+                "(?<jcb>(?:2131|1800|35[0-9]{3})[0-9]{11}))$";
+
+        Pattern pattern = Pattern.compile(regex);
+
+        for (String card : cards) {
+
+            //Match the card
+            Matcher matcher = pattern.matcher(card);
+
+            if (matcher.matches()) {
+                //If card is valid then verify which group it belong
+                valido = true;
+                System.out.println("despues de validar");
+                System.out.println(valido);
+                System.out.println(matcher.group("mastercard"));
+                System.out.println(matcher.group("visa"));
+                System.out.println(matcher.group("discover"));
+                System.out.println(matcher.group("diners"));
+            }
+        }
+        return valido;
+    }
+
     @PostMapping("/cliente/guardarcheckout")
     public String getcheckout(@RequestParam(value = "idmetodo",defaultValue = "0") int idmetodo,
                               @RequestParam(value = "montoexacto",defaultValue = "0") int montoexacto,
@@ -934,19 +969,27 @@ try {
                         }
                     }
                     if(idmetodo == 1){
-                        //TODO verificar patron de tarjeta de credito ingresada
                         System.out.println(numerotarjeta);
                         if(numerotarjeta == null){
-                            return "redirect:/cliente/realizarpedido";
+                            return "redirect:/cliente/checkout";
                         }else{
-                            List<TarjetasOnline> tarjetasxusuario = tarjetasOnlineRepository.findAllByNumerotarjetaAndClienteEquals(numerotarjeta, cliente);
 
-                            if(tarjetasxusuario.isEmpty()){
-                                TarjetasOnline tarjetaxguardar = new TarjetasOnline();
-                                tarjetaxguardar.setNumerotarjeta(numerotarjeta);
-                                tarjetaxguardar.setCliente(cliente);
-                                tarjetasOnlineRepository.save(tarjetaxguardar);
+                            boolean tarjetavalida = validartarjeta(numerotarjeta);
+
+                            if(tarjetavalida == true){
+                                List<TarjetasOnline> tarjetasxusuario = tarjetasOnlineRepository.findAllByNumerotarjetaAndClienteEquals(numerotarjeta, cliente);
+
+                                if(tarjetasxusuario.isEmpty()){
+                                    TarjetasOnline tarjetaxguardar = new TarjetasOnline();
+                                    tarjetaxguardar.setNumerotarjeta(numerotarjeta);
+                                    tarjetaxguardar.setCliente(cliente);
+                                    tarjetasOnlineRepository.save(tarjetaxguardar);
+                                }
+                            }else{
+                                //TODO agregar flash attribute de tarjeta no valida
+                                return "redirect:/cliente/checkout";
                             }
+
                         }
                     }
                     //TODO guardar comision repartidor y comision sistema dependiendo del distrito
