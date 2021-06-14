@@ -27,78 +27,79 @@
         </header>
         <!-- end header -->
 
-        <footer>
         <div class="blog">
-            <div class="row table-users">
-                <div class="col-md-12">
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
-                            <tr>
-                                <th scope="col">Nombre del cupon</th>
-                                <th scope="col">Descripcion</th>
-                                <th scope="col">Descuento (S/.)</th>
-                                <th scope="col">Fecha de inicio</th>
-                                <th scope="col">Fecha de fin</th>
-                                <th scope="col">Plato asociado</th>
-                                <th scope="col">¿Activo?</th>
-                                <th></th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:each="cupon,iterStat: ${listaCupones}">
-                                <td th:text="${cupon.nombre}"></td>
-                                <td th:text="${cupon.descripcion}"></td>
-                                <td th:text="${cupon.valordescuento}"></td>
-                                <td th:text="${#dates.format(cupon.fechainicio,'dd-MM-yyyy')}"></td>
-                                <td th:text="${cupon.fechafin}"></td>
-                                <td th:text="${cupon.plato.nombre}"></td>
-                                <td th:text="${listaDisponibilidad[__${iterStat.index}__]}">nada</td>
-                                <td><a class="btn btn-primary" th:href="@{'/adminrest/editarCupon' + '?idcupon=' + ${cupon.idcupones}}">Editar cupon</a></td>
-                                <td><a class="btn btn-danger"  th:href="@{'/adminrest/borrarCupon' + '?idcupon=' + ${cupon.idcupones}}">Borrar cupon</a></td>
-                            </tr>
-                            </tbody>
-                        </table>
-                        <!-- paginacion -->
-                        <div class="row">
-                            <nav aria-label="Page navigation example" class = "mx-auto">
-                                <ul class="pagination justify-content-center">
-
-                                    <!--  BOTON ANTERIOR -->
-                                    <li class="page-item disabled" th:if="${currentPage eq 1 }">
-                                        <span class="page-link">Anterior</span>
-                                    </li>
-                                    <li class="page-item" th:unless="${currentPage eq 1}">
-                                        <a class="page-link"
-                                           th:href="@{/adminrest/cupones(page=${currentPage - 1})}">Anterior</a>
-                                    </li>
-
-                                    <!-- BOTONES NUMEROS -->
-                                    <li th:each="i : ${#numbers.sequence( 1, maxNumberOfPages )}"
-                                        th:class="${ i == currentPage ? 'page-item active .bg-secondary' : 'page-item' }">
-                                        <a class="page-link"  th:href="@{/adminrest/cupones(page=${i})}"
-                                           th:text="${i}"
-                                        ></a>
-                                    </li>
-
-                                    <!--  BOTON SIGUIENTE -->
-                                    <li class="page-item disabled" th:if="${currentPage eq maxNumberOfPages }">
-                                        <span class="page-link">Anterior</span>
-                                    </li>
-                                    <li class="page-item" th:unless="${currentPage eq maxNumberOfPages}">
-                                        <a class="page-link" th:href="@{/adminrest/cupones(page=${currentPage + 1})}">Siguiente</a>
-                                    </li>
-                                </ul>
-                            </nav>
-                        </div>
-                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Nombre del cupon</th>
+                                    <th scope="col">Descripcion</th>
+                                    <th scope="col">Descuento (S/.)</th>
+                                    <th scope="col">Fecha de inicio</th>
+                                    <th scope="col">Fecha de fin</th>
+                                    <th scope="col">Plato asociado</th>
+                                    <th scope="col">¿Activo?</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="cupon,iterStat: ${listaCupones}">
+                                    <td th:text="${cupon.nombre}"></td>
+                                    <td th:text="${cupon.descripcion}"></td>
+                                    <td th:text="${cupon.valordescuento}"></td>
+                                    <td th:text="${#dates.format(cupon.fechainicio,'dd-MM-yyyy')}"></td>
+                                    <td th:text="${cupon.fechafin}"></td>
+                                    <td th:text="${cupon.plato.nombre}"></td>
+                                    <td th:text="${listaDisponibilidad[__${iterStat.index}__]}">nada</td>
+                                    <td><a class="btn btn-primary" th:href="@{'/adminrest/editarCupon' + '?idcupon=' + ${cupon.idcupones}}" style="text-align: center;background: #d8b00f">Editar cupon</a></td>
+                                    <td><a class="btn btn-danger"  th:href="@{'/adminrest/borrarCupon' + '?idcupon=' + ${cupon.idcupones}}" style="text-align: center;background: #d8b00f">Borrar cupon</a></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <!-- paginacion -->
                             <div class="row">
-                                <div class="col-md-3">
-                                    <a class="send" th:href="@{/adminrest/crearCupon}" style="text-align: center;background: #d8b00f">Crear Cupon</a>
-                                </div>
-                                <div class="col-md-3">
-                                    <a class="send" th:href="@{/adminrest/perfil}" style="text-align: center;background: #d8b00f">Regresar</a>
+                                <nav aria-label="Page navigation example" class = "mx-auto">
+                                    <ul class="pagination justify-content-center">
+
+                                        <!--  BOTON ANTERIOR -->
+                                        <li class="page-item disabled" th:if="${currentPage eq 1 }">
+                                            <span class="page-link">Anterior</span>
+                                        </li>
+                                        <li class="page-item" th:unless="${currentPage eq 1}">
+                                            <a class="page-link"
+                                               th:href="@{/adminrest/cupones(page=${currentPage - 1})}">Anterior</a>
+                                        </li>
+
+                                        <!-- BOTONES NUMEROS -->
+                                        <li th:each="i : ${#numbers.sequence( 1, maxNumberOfPages )}"
+                                            th:class="${ i == currentPage ? 'page-item active .bg-secondary' : 'page-item' }">
+                                            <a class="page-link"  th:href="@{/adminrest/cupones(page=${i})}"
+                                               th:text="${i}"
+                                            ></a>
+                                        </li>
+
+                                        <!--  BOTON SIGUIENTE -->
+                                        <li class="page-item disabled" th:if="${currentPage eq maxNumberOfPages }">
+                                            <span class="page-link">Anterior</span>
+                                        </li>
+                                        <li class="page-item" th:unless="${currentPage eq maxNumberOfPages}">
+                                            <a class="page-link" th:href="@{/adminrest/cupones(page=${currentPage + 1})}">Siguiente</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                <div class="row" style="margin-bottom: 10px; margin-top: 10px">
+                                    <div class="col-md-3">
+                                        <a class="send" th:href="@{/adminrest/crearCupon}" style="text-align: center;background: #d8b00f">Crear Cupon</a>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <a class="send" th:href="@{/adminrest/perfil}" style="text-align: center;background: #d8b00f">Regresar</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -111,7 +112,7 @@
                 <p>© 2021 Todos los derechos reservados.</p>
             </div>
         </div>
-    </footer>
+
 </div>
 
 <div class="overlay"></div>

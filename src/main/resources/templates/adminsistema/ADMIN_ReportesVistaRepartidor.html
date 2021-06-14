@@ -27,6 +27,15 @@
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
+    <style>
+        .form-control {
+            border: #fff solid 2px;
+            border-radius: inherit;
+            margin-bottom: 0px;
+            padding: 15px 20px;
+            font-family: poppins;
+        }
+    </style>
 </head>
 <!-- body -->
 
@@ -59,33 +68,32 @@
                 </div>
 				<div class="col-4">
 					<div class="d-flex justify-content-end">
-                    <button type="button" class="btn btn-success">Exportar a Excel</button>
+                    <button type="button" class="btn btn-outline-success">Exportar a Excel</button>
 					</div>
                 </div>
-				
-            </div>
-            <div class="row">
-                <div class="col-2">
-                    <!-- search bar -->
-                    <!--select class="custom-select" id="inputGroupSelect01">
-                        <option selected value="todos">Todos</option>
-						<option value="repartidores">Bicicleta</option>
-                        <option value="repartidores">Bicimoto</option>
-                        <option value="restaurantes">Moto</option>
-                    </select-->
+                <div class="col-7">
+                    <h1></h1>
                 </div>
-				<!--div class="row">
-					<div class="col-8">
-						<input class="input-search-bar" size="40" placeholder="Busque un usuario por nombre...">
-					</div>
-					<div class="col-4">
-						<div class="d-flex justify-content-start">
-						<li class="button_user"><a class="button active">Buscar</a></li>
-						</div>
-					</div>
-				</div-->
+                <div class="d-flex justify-content-end">
+                    <div class="col-5">
+                        <button th:if="${msg != null}" th:text="${msg}" class="btn btn-dark" role="alert"></button>
+                    </div>
+
+                </div>
             </div>
             <hr>
+            <div class="col-md-12">
+                <form class="input-group" method="post" th:action="@{RepartidorBuscador}">
+                    <div class="col-md-10" style="margin-bottom: 0px;">
+                        <div class="form-floating" style=" border-style: groove;margin-bottom: 0px">
+                            <input name="searchField" class="form-control" id="floatingInputGrid" type="text" placeholder="Buscar por nombre o apellido"/>
+                            <label for="floatingInputGrid">Buscar repartidor</label>
+                        </div>
+                    </div>
+                    <button class="btn btn-dark" type="submit" >Buscar</button>
+                    <button class="btn btn-warning"><a class="button active" th:href="@{/admin/RepartidorReportes}">Limpiar</a></button>
+                </form>
+            </div>
             <br>
             <div class="row table-users">
                 <!-- table -->
@@ -154,7 +162,7 @@
             </div>
             <hr>
 			<div class="col-8">
-                    <h3>Datos sobre los restaurantes</h3>
+                    <h3>Datos sobre los repartidores</h3>
                 </div>
 			<div class="row table-users">
 				<div class="col-md-12">

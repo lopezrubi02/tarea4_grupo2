@@ -74,6 +74,14 @@ public interface RepartidorRepository  extends JpaRepository<Repartidor, Integer
             "order by idrepartidor",nativeQuery = true)
     List<RepartidoresReportes_DTO> reporteRepartidores();
 
+    @Query(value = "select u.nombre, u.apellidos,u.dni, dr.movilidad, dr.idrepartidor, count(p.idpedidos) as 'pedidos', " +
+            "sum(p.comisionrepartidor) as 'comision' from usuarios u\n" +
+            "inner join datosrepartidor dr on (u.idusuarios = dr.usuariosidusuarios)\n" +
+            "inner join pedidos p on (p.idrepartidor = dr.usuariosidusuarios)\n" +
+            "where (u. nombre like ?1 or u.apellidos like ?1) group by dr.idrepartidor\n" +
+            "order by idrepartidor",nativeQuery = true)
+    List<RepartidoresReportes_DTO> reporteRepartidores2(String buscar);
+
     //Listo
     @Query(value = "select pe.idpedidos, pe.montototal, pe.comisionrepartidor, pe.restauranteIdrestaurante, php.cantidadplatos, pl.idplato, pl.nombre\n" +
             "from pedidoshasplato php\n" +

@@ -78,7 +78,17 @@
                     </tbody>
                 </table>
 
+                <div class="row">
+                    <div class="col-8">
+                        <h1>Reporte de Ganancia Mensual</h1>
+                    </div>
+                    <div class="col-4">
+                        <div class="d-flex justify-content-end">
+                            <a th:href="@{'/repartidor/excelgananciamensual'+ '?id=' + ${id}}"  class="btn btn-outline-success">Exportar a Excel</a>
+                        </div>
+                    </div>
 
+                </div>
                 <table class="table">
                     <thead>
                     <tr>

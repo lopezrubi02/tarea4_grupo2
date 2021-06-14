@@ -106,12 +106,12 @@
                 <div class="col-md-8">
                     <h2>Datos del Administrador de Restaurante</h2>
                 </div>
-				<div class="col-4" >
-					<div class="d-flex justify-content-end">
-					<li class="button_user"><a class="button active">Cuenta Nueva</a></li>
-					</div>
-				</div>
-				
+                <div class="col-4" >
+                    <div class="d-flex justify-content-end">
+                        <!--li class="button_user"><a class="button active">Cuenta Nueva</a></li-->
+                        <button text="Cuenta Nueva" class="btn btn-outline-dark" >Cuenta Nueva</button>
+                    </div>
+                </div>
             </div>
             <hr>
             <div class="row">
@@ -176,91 +176,87 @@
                         </div>
                     </div>
                 </div>
-					
 			</div>
-			<br></br> 
-		<div class="d-flex justify-content-end">
-						<!--utton class="btn btn-dark" style="margin-left: 10px"href="#">Denegar Cuenta</button-->
-            <li class="button_user"><a class="button active" th:href="@{'/admin/correo'+'?id='+${usuario.idusuarios}}" >Denegar Cuenta</a></li>
-						<!--button class="btn btn-warning" style="margin-left: 10px" th:href="@{'/admin/aceptar'+'?id='+${usuario.idusuarios}}">Aceptar Cuenta</button-->
-            <li class="button_user"><a class="button active" th:href="@{'/admin/aceptar'+'?id='+${usuario.idusuarios}}" >Aceptar Cuenta</a></li>
+            <div class="container" style="margin-top:5vh">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1>Datos del restaurante</h1>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-12 col-lg-6 text-center" style="margin-bottom: 4vh;">
+                        <!-- imagen -->
+                        <figure><img th:src="@{|/admin/imagerestaurante/${restaurante.getIdrestaurante()}|}" height="360" width="auto" class="img-responsive"/></figure>
+                        <!--                        <img th:src="@{/images/restaurant.jpg}" height="360" width="auto" class="img-responsive">-->
 
-        </div>
-		</div>
-			
-		
-    </div>
-		
-
-        <div class="container" style="margin-top:5vh">
-          <div class="row">
-              <div class="col-md-12">
-                  <h1>Datos del restaurante</h1>
-              </div>
-          </div>
-          <hr>
-          <div class="row">
-              <div class="col-12 col-lg-6 text-center" style="margin-bottom: 4vh;">
-                  <!-- imagen -->
-                  <figure><img th:src="@{|/admin/imagerestaurante/${restaurante.getIdrestaurante()}|}" height="360" width="auto" class="img-responsive"/></figure>
-                  <!--                        <img th:src="@{/images/restaurant.jpg}" height="360" width="auto" class="img-responsive">-->
-
-              </div>
-              <div class="col-12 col-lg-6">
-                  <!-- datos -->
-                  <div class="col-md-8">
-                      <div class="card user-data">
-                        <div class="card-body">
-                          <div class="row">
-                            <div class="col-sm-3">
-                              <h6 class="mb-0">Nombre</h6>
+                    </div>
+                    <div class="col-12 col-lg-6">
+                        <!-- datos -->
+                        <div class="col-md-8">
+                            <div class="card user-data">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0">Nombre</h6>
+                                        </div>
+                                        <div class="col-sm-9 text-secondary" th:text="${restaurante.nombre}">
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0">RUC</h6>
+                                        </div>
+                                        <div class="col-sm-9 text-secondary" th:text="${restaurante.ruc}">
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0">Direccion</h6>
+                                        </div>
+                                        <div class="col-sm-9 text-secondary" th:text="${restaurante.direccion}">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0">Distrito</h6>
+                                        </div>
+                                        <div class="col-sm-9 text-secondary" th:text="${restaurante.distrito.getNombredistrito()}">
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0">Categoria</h6>
+                                        </div>
+                                        <div class="col-sm-9 text-secondary">
+                                            <tr th:each="categoria, index : ${categorias}">
+                                                <th scope="row" th:text="${categoria.getNombrecategoria()}+'-'"></th>
+                                            </tr>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-sm-9 text-secondary" th:text="${restaurante.nombre}">
-                            </div>
-                          </div>
-                          <hr>
-                          <div class="row">
-                            <div class="col-sm-3">
-                              <h6 class="mb-0">RUC</h6>
-                            </div>
-                            <div class="col-sm-9 text-secondary" th:text="${restaurante.ruc}">
-                            </div>
-                          </div>
-                          <hr>
-                          <div class="row">
-                              <div class="col-sm-3">
-                                <h6 class="mb-0">Direccion</h6>
-                              </div>
-                              <div class="col-sm-9 text-secondary" th:text="${restaurante.direccion}">
-                              </div>
-                            </div>
-                          <div class="row">
-                            <div class="col-sm-3">
-                              <h6 class="mb-0">Distrito</h6>
-                            </div>
-                            <div class="col-sm-9 text-secondary" th:text="${restaurante.distrito.getNombredistrito()}">
-                            </div>
-                          </div>
-                          <hr>
-                          <div class="row">
-                            <div class="col-sm-3">
-                              <h6 class="mb-0">Categoria</h6>
-                            </div>
-                            <div class="col-sm-9 text-secondary">
-                              <tr th:each="categoria, index : ${categorias}">
-                                  <th scope="row" th:text="${categoria.getNombrecategoria()}+'-'"></th>
-                              </tr>
-                            </div>
-                          </div>
-  
                         </div>
-                      </div>
-                  </div>
-              </div>
-          </div>
-          
+                    </div>
+                </div>
+                <br>
+                <div class="container">
+                    <li class="button_user"><a class="button active" th:href="@{nuevosUsuarios}" > Regresar </a></li>
+                    <div class="d-flex justify-content-end">
+                        <!--utton class="btn btn-dark" style="margin-left: 10px"href="#">Denegar Cuenta</button-->
+                        <li class="button_user"><a class="button active" th:href="@{'/admin/correo'+'?id='+${usuario.idusuarios}}" >Denegar Cuenta</a></li>
+                        <!--button class="btn btn-warning" style="margin-left: 10px" th:href="@{'/admin/aceptar'+'?id='+${usuario.idusuarios}}">Aceptar Cuenta</button-->
+                        <li class="button_user"><a class="button active" th:href="@{'/admin/aceptar'+'?id='+${usuario.idusuarios}}" >Aceptar Cuenta</a></li>
+                    </div>
+                </div>
+            </div>
+		</div>
+    </div>
 
-      </div>
+
     </div>
     </div>
     <!-- end blog -->
