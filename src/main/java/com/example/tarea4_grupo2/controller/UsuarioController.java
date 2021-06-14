@@ -210,47 +210,55 @@ public class UsuarioController {
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuarios=sessionUser.getIdusuarios();
 
-        LocalDate dateactual = LocalDate.now();
-        String fechaactual1 = String.valueOf(dateactual);
-        String[] fechaactual = fechaactual1.split("-");
-        String a = fechaactual[0];
-        String m = fechaactual[1];
-        int anioactual = Integer.parseInt(a);
-        int mesactual = Integer.parseInt(m);
-        int anio = anioactual;
-        int mes = mesactual;
-        String mes_mostrar = String.valueOf(mes);
-
-        if(mes<10){
-            mes_mostrar='0' + mes_mostrar; //agrega cero si el menor de 10
-
+        List<Pedidos> listapedidosusuario = pedidosRepository.findAllByIdclienteEquals(idusuarios);
+        boolean ultimopedido1 = true; //true -> hay al menos un pedido registrado
+        if(listapedidosusuario.isEmpty()){
+            ultimopedido1 = false; //false -> no hay pedidos registrados
         }
-        String fechamostrar = anio + "-" + mes_mostrar;
+        model.addAttribute("haypedidos",ultimopedido1);
 
-        Optional<Usuario> optUsuario = usuarioRepository.findById(idusuarios);
-        if (optUsuario.isPresent()) {
-            Usuario cliente = optUsuario.get();
+        if(ultimopedido1==true){
+            LocalDate dateactual = LocalDate.now();
+            String fechaactual1 = String.valueOf(dateactual);
+            String[] fechaactual = fechaactual1.split("-");
+            String a = fechaactual[0];
+            String m = fechaactual[1];
+            int anioactual = Integer.parseInt(a);
+            int mesactual = Integer.parseInt(m);
+            int anio = anioactual;
+            int mes = mesactual;
+            String mes_mostrar = String.valueOf(mes);
 
-            List<Top3Restaurantes_ClienteDTO> top3Restaurantes_clienteDTOS = pedidosRepository.obtenerTop3Restaurantes(idusuarios, anio, mes);
-            List<Top3Platos_ClientesDTO> top3Platos_clientesDTOS = pedidosRepository.obtenerTop3Platos(idusuarios, anio, mes);
-            List<TiempoMedio_ClienteDTO> tiempoMedio_clienteDTOS = pedidosRepository.obtenerTiemposPromedio(idusuarios, anio, mes);
+            if(mes<10){
+                mes_mostrar='0' + mes_mostrar; //agrega cero si el menor de 10
 
-            for(Top3Restaurantes_ClienteDTO t : top3Restaurantes_clienteDTOS){
-                System.out.println(t.getRestaurante());
             }
+            String fechamostrar = anio + "-" + mes_mostrar;
 
-            DineroAhorrado_ClienteDTO dineroAhorrado_clienteDTO = pedidosRepository.dineroAhorrado(idusuarios, anio, mes);
-            model.addAttribute("cliente", cliente);
-            model.addAttribute("listaTop3Restaurantes",top3Restaurantes_clienteDTOS );
-            model.addAttribute("listaTop3Platos", top3Platos_clientesDTOS);
-            model.addAttribute("listaPromedioTiempo", tiempoMedio_clienteDTOS);
-            model.addAttribute("diferencia", dineroAhorrado_clienteDTO);
-            model.addAttribute("listaHistorialConsumo", pedidosRepository.obtenerHistorialConsumo(idusuarios, anio, mes));
-            model.addAttribute("fechaseleccionada",fechamostrar);
+            Optional<Usuario> optUsuario = usuarioRepository.findById(idusuarios);
+            if (optUsuario.isPresent()) {
+                Usuario cliente = optUsuario.get();
+
+                List<Top3Restaurantes_ClienteDTO> top3Restaurantes_clienteDTOS = pedidosRepository.obtenerTop3Restaurantes(idusuarios, anio, mes);
+                List<Top3Platos_ClientesDTO> top3Platos_clientesDTOS = pedidosRepository.obtenerTop3Platos(idusuarios, anio, mes);
+                List<TiempoMedio_ClienteDTO> tiempoMedio_clienteDTOS = pedidosRepository.obtenerTiemposPromedio(idusuarios, anio, mes);
+
+                DineroAhorrado_ClienteDTO dineroAhorrado_clienteDTO = pedidosRepository.dineroAhorrado(idusuarios, anio, mes);
+                model.addAttribute("cliente", cliente);
+                model.addAttribute("listaTop3Restaurantes",top3Restaurantes_clienteDTOS );
+                model.addAttribute("listaTop3Platos", top3Platos_clientesDTOS);
+                model.addAttribute("listaPromedioTiempo", tiempoMedio_clienteDTOS);
+                model.addAttribute("diferencia", dineroAhorrado_clienteDTO);
+                model.addAttribute("listaHistorialConsumo", pedidosRepository.obtenerHistorialConsumo(idusuarios, anio, mes));
+                model.addAttribute("fechaseleccionada",fechamostrar);
+                return "cliente/reportes";
+            } else {
+                return "redirect:/cliente/miperfil";
+            }
+        }else{
             return "cliente/reportes";
-        } else {
-            return "redirect:/cliente/miperfil";
         }
+
     }
 
     @PostMapping("/cliente/recepcionCliente")
@@ -968,7 +976,7 @@ try {
 
         //vista cliente nuevo
         List<Pedidos> listapedidosusuario = pedidosRepository.findAllByIdclienteEquals(idusuario);
-        boolean ultimopedido1 = true; //true -> hay al menos un pedido pregistrado
+        boolean ultimopedido1 = true; //true -> hay al menos un pedido registrado
         if(listapedidosusuario.isEmpty()){
             ultimopedido1 = false; //false -> no hay pedidos registrados
         }

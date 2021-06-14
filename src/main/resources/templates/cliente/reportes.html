@@ -63,7 +63,7 @@
 
         <!-- blog -->
         <div class="blog">
-            <div class="container">
+            <div class="container"th:if="${haypedidos}">
                 <div class="row">
                     <div class="col-md-12">
                         <div class="title">
@@ -216,6 +216,14 @@
 
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container" th:unless="${haypedidos}">
+                <div class="col-md-6 offset-md-3">
+                    <div class="Client_box">
+                        <h3>Aún no haz realizado ningún pedido :(</h3>
+                        <p>Te invitamos a visitar nuestros restaurante y agregar productos a tu canasta.</p>
                     </div>
                 </div>
             </div>
