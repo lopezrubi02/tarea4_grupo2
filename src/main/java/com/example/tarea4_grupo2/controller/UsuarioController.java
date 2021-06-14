@@ -21,6 +21,7 @@ import javax.validation.Valid;
 import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -602,8 +603,7 @@ public class UsuarioController {
          Optional<Direcciones> diropt = direccionesRepository.findById(direccionxenviar);
         if(diropt.isPresent() && restopt.isPresent()){
             Restaurante rest = restopt.get();
-
-            if (rest!=null){
+            if (restopt.isPresent()){
                 int cantreviews = restauranteRepository.cantreviews(idrestaurante);
 
                 List<Plato> platosxrest = platoRepository.buscarPlatosPorIdRestauranteDisponilidadActivo(idrestaurante);
@@ -632,6 +632,7 @@ public class UsuarioController {
          Optional<Plato> platoopt = platoRepository.findById(idplatopedir);
          Optional<Restaurante> restopt = restauranteRepository.findById(idrestaurante);
          Optional<Direcciones> diropt = direccionesRepository.findById(direccionxenviar);
+        //TODO no está redireccionando al restaurante seleccionado cuando se da a cancelar
 
          if(platoopt.isPresent() && restopt.isPresent() && diropt.isPresent()){
              Plato platoseleccionado = platoopt.get();
@@ -670,75 +671,77 @@ public class UsuarioController {
 
     @PostMapping("/cliente/platopedido")
     public String platopedido(@RequestParam("cubierto") boolean cubiertos,
-                              @RequestParam("cantidad") int cantidad,
+                              @RequestParam("cantidad") String cantidad,
                               @RequestParam("descripcion") String descripcion,
-                              @RequestParam(value = "idrestaurante") int idrestaurante,
-                              @RequestParam("idplato") int idplato,
+                              @RequestParam(value = "idrestaurante") String idrestaurante,
+                              @RequestParam("idplato") String idplato,
                               HttpSession session,
                               Model model, RedirectAttributes redirectAttributes,
-                              @RequestParam("direccion") int direccionxenviar){
+                              @RequestParam("direccion") String direccionxenviar){
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idcliente=sessionUser.getIdusuarios();
+try {
+    Optional<Restaurante> restauranteopt = restauranteRepository.findById(Integer.valueOf(idrestaurante));
+    Optional<Plato> platoopt = platoRepository.findById(Integer.valueOf(idplato));
+    Optional<Direcciones> diropt = direccionesRepository.findById(Integer.valueOf(direccionxenviar));
 
-         Optional<Restaurante> restauranteopt = restauranteRepository.findById(idrestaurante);
-         Optional<Plato> platoopt = platoRepository.findById(idplato);
-         Optional<Direcciones> diropt = direccionesRepository.findById(direccionxenviar);
+    if (platoopt.isPresent() && restauranteopt.isPresent() && diropt.isPresent()) {
+        Plato platoelegido = platoopt.get();
 
-         if(platoopt.isPresent() && restauranteopt.isPresent() && diropt.isPresent()){
-             Plato platoelegido = platoopt.get();
+        Pedidos pedidoencurso = pedidosRepository.pedidoencursoxrestaurante(idcliente, Integer.parseInt(idrestaurante));
 
-             Pedidos pedidoencurso = pedidosRepository.pedidoencursoxrestaurante(idcliente, idrestaurante);
+        if (pedidoencurso == null) {
+            Pedidos pedidos = new Pedidos();
+            pedidos.setIdcliente(idcliente);
 
-             if(pedidoencurso == null){
-                 Pedidos pedidos = new Pedidos();
-                 pedidos.setIdcliente(idcliente);
+            Restaurante restelegido = restauranteopt.get();
 
-                 Restaurante restelegido = restauranteopt.get();
+            pedidos.setRestaurantepedido(restelegido);
 
-                 pedidos.setRestaurantepedido(restelegido);
+            Direcciones direccionentrega = diropt.get();
 
-                 Direcciones direccionentrega = diropt.get();
+            pedidos.setDireccionentrega(direccionentrega);
+            List<Pedidos> listapedidoscliente = pedidosRepository.findAll();
+            int tam = listapedidoscliente.size();
+            Pedidos ultimopedido = listapedidoscliente.get(tam - 1);
+            int idultimopedido = ultimopedido.getIdpedidos();
 
-                 pedidos.setDireccionentrega(direccionentrega);
-                 List<Pedidos> listapedidoscliente = pedidosRepository.findAll();
-                 int tam = listapedidoscliente.size();
-                 Pedidos ultimopedido = listapedidoscliente.get(tam-1);
-                 int idultimopedido = ultimopedido.getIdpedidos();
+            PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido, Integer.valueOf(idplato));
+            PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey, pedidos, platoelegido, descripcion, Integer.valueOf(cantidad), cubiertos);
+            pedidos.addpedido(pedidoHasPlato);
+            pedidos.setMontototal("0");
+            pedidosRepository.save(pedidos);
+            listapedidoscliente = pedidosRepository.findAll();
+            tam = listapedidoscliente.size();
+            ultimopedido = listapedidoscliente.get(tam - 1);
+            idultimopedido = ultimopedido.getIdpedidos();
+            pedidoHasPlatoKey.setPedidosidpedidos(idultimopedido);
+            //PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido,idplato);
+            pedidoHasPlato.setId(pedidoHasPlatoKey);
+            //PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey,pedidos,platoelegido,descripcion,cantidad,cubiertos);
+            pedidoHasPlatoRepository.save(pedidoHasPlato);
+        } else {
+            System.out.println("+1 plato al pedido");
+            System.out.println(platoelegido.getNombre());
+            Pedidos pedidos = pedidoencurso;
+            int idultimopedido = pedidoencurso.getIdpedidos();
+            PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido, Integer.valueOf(idplato));
+            PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey, pedidos, platoelegido, descripcion, Integer.valueOf(cantidad), cubiertos);
+            pedidoHasPlatoKey.setPedidosidpedidos(idultimopedido);
+            //PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido,idplato);
+            pedidoHasPlato.setId(pedidoHasPlatoKey);
+            pedidoHasPlatoRepository.save(pedidoHasPlato);
+            redirectAttributes.addFlashAttribute("platoagregado", "Plato agregado al carrito");
 
-                 PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido,idplato);
-                 PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey,pedidos,platoelegido,descripcion,cantidad,cubiertos);
-                 pedidos.addpedido(pedidoHasPlato);
-                 pedidos.setMontototal("0");
-                 pedidosRepository.save(pedidos);
-                 listapedidoscliente = pedidosRepository.findAll();
-                 tam = listapedidoscliente.size();
-                 ultimopedido = listapedidoscliente.get(tam-1);
-                 idultimopedido = ultimopedido.getIdpedidos();
-                 pedidoHasPlatoKey.setPedidosidpedidos(idultimopedido);
-                 //PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido,idplato);
-                 pedidoHasPlato.setId(pedidoHasPlatoKey);
-                 //PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey,pedidos,platoelegido,descripcion,cantidad,cubiertos);
-                 pedidoHasPlatoRepository.save(pedidoHasPlato);
-             }else{
-                 System.out.println("+1 plato al pedido");
-                 System.out.println(platoelegido.getNombre());
-                 Pedidos pedidos = pedidoencurso;
-                 int idultimopedido = pedidoencurso.getIdpedidos();
-                 PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido,idplato);
-                 PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey,pedidos,platoelegido,descripcion,cantidad,cubiertos);
-                 pedidoHasPlatoKey.setPedidosidpedidos(idultimopedido);
-                 //PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido,idplato);
-                 pedidoHasPlato.setId(pedidoHasPlatoKey);
-                 pedidoHasPlatoRepository.save(pedidoHasPlato);
-                 redirectAttributes.addFlashAttribute("platoagregado", "Plato agregado al carrito");
-
-             }
-            //TODO en el html, sale error al seleccionar cancelar
-             return "redirect:/cliente/restaurantexordenar?idrestaurante=" + idrestaurante + "&direccion=" + direccionxenviar;
-         }else{
-             return "redirect:/cliente/realizarpedido";
-         }
+        }
+        return "redirect:/cliente/restaurantexordenar?idrestaurante=" + idrestaurante + "&direccion=" + direccionxenviar;
+    } else {
+        return "redirect:/cliente/realizarpedido";
+    }
+}catch(NumberFormatException e){
+    return "redirect:/cliente/realizarpedido";
+}
     }
 
     @GetMapping("/cliente/carritoproductos")
@@ -903,12 +906,23 @@ public class UsuarioController {
                     model.addAttribute("pedidoencurso",pedidoencurso);
                     model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
                     model.addAttribute("montopagar", montoPagar_pedidoHasPlatoDTO);
+                    System.out.println(montoPagar_pedidoHasPlatoDTO);
+                    System.out.println(montoTotal_pedidoHasPlatoDTO);
                     pedidoencurso.setMetododepago(metodosel);
                     if(idmetodo == 3){
                         if(montoexacto != 0){
-                            //TODO verificar que el monto exacto sea mayor o igual que el monto total del pedido
                             System.out.println(montoexacto);
-                            pedidoencurso.setMontoexacto(String.valueOf(montoexacto));
+                            if(montoexacto >= (montoPagar_pedidoHasPlatoDTO.getpreciopagar())){
+                                pedidoencurso.setMontoexacto(String.valueOf(montoexacto));
+                            }
+                            else{
+                                redirectAttributes.addFlashAttribute("pago1", "El monto exacto a pagar no es suficiente");
+                                return "redirect:/cliente/checkout";
+                            }
+                        }
+                        else{
+                            redirectAttributes.addFlashAttribute("pago2", "No ha ingresado un monto exacto");
+                            return "redirect:/cliente/checkout";
                         }
                     }
                     if(idmetodo == 1){
@@ -930,7 +944,7 @@ public class UsuarioController {
                     //TODO guardar comision repartidor y comision sistema dependiendo del distrito
                     pedidoencurso.setMontototal(String.valueOf(montoPagar_pedidoHasPlatoDTO.getpreciopagar()));
                     pedidoencurso.setEstadorestaurante("pendiente");
-                    System.out.println(LocalDate.now());
+                    System.out.println(LocalTime.now());
                     //TODO guarda la fecha pero no la hora
                     //SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     //Date now = new Date();

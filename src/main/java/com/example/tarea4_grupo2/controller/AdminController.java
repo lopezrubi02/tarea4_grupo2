@@ -54,6 +54,9 @@ public class AdminController {
     SendMailService sendMailService;
 
     @Autowired
+    DistritosRepository distritosRepository;
+
+    @Autowired
     Environment environment;
 
     public List<String> getIpAndProt() throws UnknownHostException {
@@ -84,7 +87,9 @@ public class AdminController {
             @RequestParam(name = "page", defaultValue = "1") String requestedPage,
             @RequestParam(name = "searchField", defaultValue = "") String searchField,
             @RequestParam(name = "rol", defaultValue = "") String rol,
-            Model model
+            Model model,
+            RedirectAttributes attributes
+
     ) {
         /**
          * Validaciones
@@ -234,7 +239,7 @@ public class AdminController {
     public String updateAdminUser(
             @ModelAttribute("usuario") @Valid Usuario usuarioRecibido,
             BindingResult bindingResult,
-            RedirectAttributes redirectAttributes,
+            RedirectAttributes attr,
             Model model
     ){
 
@@ -248,7 +253,7 @@ public class AdminController {
         } else {
 
             usuarioRepository.save(usuarioRecibido);
-
+            attr.addFlashAttribute("msg", "Usuario actualizado correctamente");
             return "redirect:/admin/usuariosActuales";
         }
 
@@ -277,6 +282,8 @@ public class AdminController {
         if (optional.isPresent()) {
             usuarioRepository.deleteById(id);
         }
+
+        attr.addFlashAttribute("msg", "Usuario eliminado correctamente");
         return "redirect:/admin/usuariosActuales";
     }
 
@@ -452,6 +459,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
         try{
             int id = Integer.parseInt(idString);
             Optional<Usuario> optional = usuarioRepository.findById(id);
+            List<Distritos> distritos = distritosRepository.findAll();
             if(optional.isPresent()){
                 Usuario usuario = optional.get();
                 if(usuario.getCuentaActiva()==2){
@@ -459,21 +467,38 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
                     switch (usuario.getRol()){
                         case "AdminRestaurante":
                             model.addAttribute("usuario",usuario);
-
-                            Restaurante restaurante = restauranteRepository.findRestauranteByUsuario_Idusuarios(id);
-                            List<Categorias> categorias =  restaurante.getCategoriasrestList();
-
+                            Restaurante restaurante;
+                            List<Categorias> categorias;
+                            try{
+                                restaurante = restauranteRepository.findRestauranteByUsuario_Idusuarios(id);
+                                categorias =  restaurante.getCategoriasrestList();
+                            }catch (Exception e){
+                                System.out.println(e.getMessage());
+                                attr.addFlashAttribute("msg","Error al obtener datos del restaurante");
+                                return "redirect:/admin/nuevosUsuarios";
+                            }
+                            model.addAttribute("distritos",distritos);
                             model.addAttribute("restaurante",restaurante);
                             model.addAttribute("categorias",categorias);
                             return "adminsistema/AceptarCuentaRestaurante";
                         case "Repartidor":
+                            Repartidor repartidor;
+                            List<Direcciones> listadirecciones;
+                            try {
+                                repartidor = repartidorRepository.findRepartidorByIdusuariosEquals(id);
+                                listadirecciones = direccionesRepository.findAllByUsuario_Idusuarios(id);
+                            }catch (Exception e){
+                                System.out.println(e.getMessage());
+                                attr.addFlashAttribute("msg","Error al obtener datos del repartidor");
+                                return "redirect:/admin/nuevosUsuarios";
+                            }
                             model.addAttribute("usuario",usuario);
-                            Repartidor repartidor = repartidorRepository.findRepartidorByIdusuariosEquals(id);
-                            List<Direcciones> listadirecciones = direccionesRepository.findAllByUsuario_Idusuarios(id);
+                            model.addAttribute("distritos",distritos);
                             model.addAttribute("repartidor",repartidor);
                             model.addAttribute("lista",listadirecciones);
                             return "adminsistema/AceptarCuentaRepartidor";
                         default:
+                            attr.addFlashAttribute("msg","Error al obtener el rol del usuario");
                             return "redirect:/admin/nuevosUsuarios";
                     }
                 }
@@ -569,22 +594,27 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
         if(optional.isPresent()){
             Usuario usuario = optional.get();
             if(usuario.getRol().equals("Repartidor")){
-                usuarioRepository.deleteById(id);
-                //Envio de correo a usuario
-                String correoDestino = usuario.getEmail();
-                String subject = "SPYCYO - Cuenta Denegada";
-                String texto = "<p><strong>Mensaje de SPYCYO - Cuenta Repartidor Denegada</strong></p>\n" +
-                        "<p>La cuenta nueva de repartidor que ha registrado se le ha denegado la solicitud de aprobación.</p>\n" +
-                        "<p>Motivo: '" +message +"'</p>\n" +
-                        "<p>&nbsp;</p>\n" +
-                        "<p>Nota: Si en el motivo de denegación se le indicaron puntos que mejorar o detallar, puede volver a intentar a registrar su cuenta</p>\n" +
-                        "<p>&nbsp;</p>\n" +
-                        "<br>Atte. Equipo de Spicyo</br>";
-                sendMailService.sendMail(correoDestino,"saritaatanacioarenas@gmail.com",subject,texto);
+                try {
+                    usuarioRepository.deleteById(id);
+                    //Envio de correo a usuario
+                    String correoDestino = usuario.getEmail();
+                    String subject = "SPYCYO - Cuenta Denegada";
+                    String texto = "<p><strong>Mensaje de SPYCYO - Cuenta Repartidor Denegada</strong></p>\n" +
+                            "<p>La cuenta nueva de repartidor que ha registrado se le ha denegado la solicitud de aprobación.</p>\n" +
+                            "<p>Motivo: '" + message + "'</p>\n" +
+                            "<p>&nbsp;</p>\n" +
+                            "<p>Nota: Si en el motivo de denegación se le indicaron puntos que mejorar o detallar, puede volver a intentar a registrar su cuenta</p>\n" +
+                            "<p>&nbsp;</p>\n" +
+                            "<br>Atte. Equipo de Spicyo</br>";
+                    sendMailService.sendMail(correoDestino, "saritaatanacioarenas@gmail.com", subject, texto);
 
-                attr.addFlashAttribute("msg1","Cuenta denegada exitosamente");
-                return "redirect:/admin/nuevosUsuarios";
-
+                    attr.addFlashAttribute("msg1", "Cuenta denegada exitosamente");
+                    return "redirect:/admin/nuevosUsuarios";
+                }catch (Exception e){
+                    System.out.println(e.getMessage());
+                    attr.addFlashAttribute("msg", "Ocurrió un error al denegar la cuenta");
+                    return "redirect:/admin/nuevosUsuarios";
+                }
             }else if(usuario.getRol().equals("AdminRestaurante")){
                 Restaurante restaurante = restauranteRepository.findRestauranteByUsuario_Idusuarios(id);
 
@@ -713,18 +743,16 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
 
         if(!searchField.equals("") && (rol.equals("Repartidor") || rol.equals("AdminRestaurante") || rol.equals("Cliente"))) {
             usuarioList = usuarioRepository.cuentasActualesRol(buscar,rol);
-            System.out.println("manos1");
+
         }else if(!searchField.equals("")){
             usuarioList = usuarioRepository.cuentasActuales(buscar);
-            System.out.println("manos2");
+
         }else if(rol.equals("Repartidor") || rol.equals("AdminRestaurante") || rol.equals("Cliente")){
             usuarioList = usuarioRepository.findAllByRolAndCuentaActiva(rol,1);
-            System.out.println("manos3");
+
         }else{
             usuarioList = usuarioRepository.usuarioreportes();
-            System.out.println("manos4");
         }
-
 
         String nombreRol;
         if(rol.equals("Repartidor")){
@@ -770,11 +798,22 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
 
 
     @GetMapping("/RestaurantesReportes")
-    public String restaurantesReportes(Model model,
-                                       @RequestParam(value = "page",defaultValue = "1") String requestedPage){
+    public String restaurantesReportes(Model model,RedirectAttributes attr,
+                                       @RequestParam(value = "page",defaultValue = "1") String requestedPage,
+                                       @RequestParam(value ="searchField",defaultValue = "") String searchField){
+        List<RestauranteReportes_DTO> reporteLista;
+        if(!searchField.equals("")){
+            String buscar = "%" + searchField + "%";
+            reporteLista = restauranteRepository.reportesRestaurantes2(buscar);
 
-        List<RestauranteReportes_DTO> reporteLista = restauranteRepository.reportesRestaurantes();
+            if(reporteLista.size()==0){
+                reporteLista = restauranteRepository.reportesRestaurantes();
+                model.addAttribute("msg","No se encontraron resultados para su búsqueda");
+            }
 
+        }else{
+            reporteLista = restauranteRepository.reportesRestaurantes();
+        }
 
         float numberOfUsersPerPage = 5;
         int page;
@@ -825,11 +864,33 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
         return "adminsistema/ADMIN_ReportesVistaRestaurantes";
     }
 
+    @PostMapping("/RestaurantesBuscador")
+    public String restaurantesReportes2(Model model,RedirectAttributes attr,
+                                        @RequestParam(value ="searchField",defaultValue = "") String searchField){
+
+        attr.addAttribute("searchField", searchField);
+        return "redirect:/admin/RestaurantesReportes";
+    }
+
     @GetMapping("/RepartidorReportes")
     public String repartidorReportes(Model model,
-                                     @RequestParam(value = "page",defaultValue = "1") String requestedPage){
+                                     @RequestParam(value = "page",defaultValue = "1") String requestedPage,
+                                     @RequestParam(value ="searchField",defaultValue = "") String searchField){
 
-        List<RepartidoresReportes_DTO>  reporteLista = repartidorRepository.reporteRepartidores();
+
+        List<RepartidoresReportes_DTO> reporteLista;
+        if(!searchField.equals("")){
+            String buscar = "%" + searchField + "%";
+            reporteLista = repartidorRepository.reporteRepartidores2(buscar);
+            if(reporteLista.size()==0){
+                reporteLista = repartidorRepository.reporteRepartidores();
+                model.addAttribute("msg","No se encontraron resultados para su búsqueda");
+            }
+        }else{
+            reporteLista = repartidorRepository.reporteRepartidores();
+        }
+
+
 
         float numberOfUsersPerPage = 5;
         int page;
@@ -880,6 +941,14 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
         model.addAttribute("menorrep",menor);
 
         return "adminsistema/ADMIN_ReportesVistaRepartidor";
+    }
+
+    @PostMapping("/RepartidorBuscador")
+    public String repartidorReportes2(Model model,RedirectAttributes attr,
+                                        @RequestParam(value ="searchField",defaultValue = "") String searchField){
+
+        attr.addAttribute("searchField", searchField);
+        return "redirect:/admin/RepartidorReportes";
     }
 
     @GetMapping("/DeliveryReportes")
