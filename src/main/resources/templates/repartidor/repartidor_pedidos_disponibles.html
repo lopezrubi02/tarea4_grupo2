@@ -67,10 +67,10 @@
                         <td th:text="${pedidoDisponible.getDireccioncliente()}"></td>
                         <td th:text="${pedidoDisponible.getComision()} + '.0'"></td>
                         <td th:text="${pedidoDisponible.getMonto()}"></td>
-                        <td><a class="btn btn-primary"
+                        <td><a class="btn btn-dark"
                                th:href="@{'/repartidor/VerDetalles' + '?id=' + ${pedidoDisponible.getIdpedidos()}}">Ver
                             detalles</a></td>
-                        <td><a class="btn btn-primary"
+                        <td><a class="btn btn-warning"
                                th:href="@{'/repartidor/AceptaPedido' + '?idpedido=' + ${pedidoDisponible.getIdpedidos()}}">Aceptar
                             pedido</a></td>
                     </tr>
