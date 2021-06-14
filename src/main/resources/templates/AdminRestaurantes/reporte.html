@@ -29,7 +29,27 @@
     <!-- blog -->
     <div class="blog">
       <div class="container">
-        <h1>Historial de pedidos</h1>
+        <div class="row">
+          <div class="col-10">
+          </div>
+          <div class="col-2">
+            <div class="d-flex justify-content-end">
+              <a th:href="@{/adminrest/perfil}" type="button" class="send" style="text-align: center;background: #d8b00f">Regresar</a>
+            </div>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-8">
+            <h1>Historial de pedidos</h1>
+          </div>
+          <div class="col-4">
+            <div class="d-flex justify-content-end">
+              <a th:href="@{/adminrest/excelexportar}" type="button" class="btn btn-success">Exportar a Excel</a>
+            </div>
+          </div>
+        </div>
+        <br>
         <form class="form-group mb-3" method="post" th:action="@{/buscarReporte}">
           <div class="input-group-text">
             <input style="margin: 5px" class="form-control" placeholder="Ingrese el texto a buscar" name="name">
@@ -68,9 +88,40 @@
             </div>
           </div>
           <!-- end of table -->
+          <div class="row">
+            <nav aria-label="Page navigation example" class = "mx-auto">
+              <ul class="pagination justify-content-center">
 
+                <!--  BOTON ANTERIOR -->
+                <li class="page-item disabled" th:if="${currentPage eq 1 }">
+                  <span class="page-link">Anterior</span>
+                </li>
+                <li class="page-item" th:unless="${currentPage eq 1}">
+                  <a class="page-link"
+                     th:href="@{/adminrest/reporte(page=${currentPage - 1},page2=${currentPage2})}">Anterior</a>
+                </li>
+
+                <!-- BOTONES NUMEROS -->
+                <li th:each="i : ${#numbers.sequence( 1, maxNumberOfPages )}"
+                    th:class="${ i == currentPage ? 'page-item active .bg-secondary' : 'page-item' }">
+                  <a class="page-link"  th:href="@{/adminrest/reporte(page=${i},page2=${currentPage2})}"
+                     th:text="${i}"
+                  ></a>
+                </li>
+
+                <!--  BOTON SIGUIENTE -->
+                <li class="page-item disabled" th:if="${currentPage eq maxNumberOfPages }">
+                  <span class="page-link">Anterior</span>
+                </li>
+                <li class="page-item" th:unless="${currentPage eq maxNumberOfPages}">
+                  <a class="page-link" th:href="@{/adminrest/reporte(page=${currentPage + 1},page2=${currentPage2})}">Siguiente</a>
+                </li>
+              </ul>
+            </nav>
+          </div>
         </div>
       </div>
+      <br>
       <div class="container">
         <h1>Ingresos mensuales</h1>
         <div class="row table-users">
@@ -95,8 +146,40 @@
               </table>
             </div>
           </div>
+          <div class="row">
+            <nav aria-label="Page navigation example" class = "mx-auto">
+              <ul class="pagination justify-content-center">
+
+                <!--  BOTON ANTERIOR -->
+                <li class="page-item disabled" th:if="${currentPage2 eq 1 }">
+                  <span class="page-link">Anterior</span>
+                </li>
+                <li class="page-item" th:unless="${currentPage2 eq 1}">
+                  <a class="page-link"
+                     th:href="@{/adminrest/reporte(page=${currentPage},page2=${currentPage2 - 1})}">Anterior</a>
+                </li>
+
+                <!-- BOTONES NUMEROS -->
+                <li th:each="i2 : ${#numbers.sequence( 1, maxNumberOfPages2 )}"
+                    th:class="${ i2 == currentPage2 ? 'page-item active .bg-secondary' : 'page-item' }">
+                  <a class="page-link"  th:href="@{/adminrest/reporte(page=${currentPage},page2=${i2})}"
+                     th:text="${i2}"
+                  ></a>
+                </li>
+
+                <!--  BOTON SIGUIENTE -->
+                <li class="page-item disabled" th:if="${currentPage2 eq maxNumberOfPages2 }">
+                  <span class="page-link">Anterior</span>
+                </li>
+                <li class="page-item" th:unless="${currentPage2 eq maxNumberOfPages2}">
+                  <a class="page-link" th:href="@{/adminrest/reporte(page=${currentPage},page2=${currentPage2 + 1})}">Siguiente</a>
+                </li>
+              </ul>
+            </nav>
+          </div>
         </div>
       </div>
+      <br>
       <div class="container">
         <h1>Top 5 platos mas vendidos</h1>
         <div class="row table-users">
@@ -123,6 +206,7 @@
           </div>
         </div>
       </div>
+      <br>
       <div class="container">
         <h1>Top 5 platos menos vendidos</h1>
         <div class="row table-users">
