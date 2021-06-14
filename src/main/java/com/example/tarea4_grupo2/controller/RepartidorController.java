@@ -120,6 +120,11 @@ public class RepartidorController {
             Usuario repartidor = repopt.get();
             pedido.setRepartidor(repartidor);
 
+            Optional<Repartidor> repopt2 = repartidorRepository.findById(sessionUser.getIdusuarios());
+            Repartidor repartidor2 = repopt2.get();
+            repartidor2.setDisponibilidad(false);
+            repartidorRepository.save(repartidor2);
+
             pedido.setEstadorepartidor("aceptado"); //Estado de esperando recojo del restaurante
             model.addAttribute("pedido", pedido);
 
@@ -135,7 +140,6 @@ public class RepartidorController {
             session.setAttribute("disponibilidad", repartidorRepository.findRepartidorByIdusuariosEquals(sessionUser.getIdusuarios()).isDisponibilidad());
 
             pedidosRepository.save(pedido);
-
             return "repartidor/repartidor_recojo_de_producto";
         } else {
             attr.addFlashAttribute("msg", "Este pedido ya no está disponible :(");
