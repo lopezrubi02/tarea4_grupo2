@@ -89,17 +89,23 @@ public class RepartidorController {
     public String pedidosDisponibles(RedirectAttributes attr, Model model,HttpSession session) {
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         Optional<Repartidor> repartidor = repartidorRepository.findById(sessionUser.getIdusuarios());
-
+        Repartidor rep = repartidor.get();
         if (repartidor.isPresent()) {
-            List<PedidosDisponiblesDTO> listaPedidos = repartidorRepository.findListaPedidosDisponibles();
+            if(rep.isDisponibilidad()) {
+                List<PedidosDisponiblesDTO> listaPedidos = repartidorRepository.findListaPedidosDisponibles();
 
-            if (listaPedidos.isEmpty()) {
-                attr.addFlashAttribute("msg", "No hay pedidos disponibles para mostrar.");
+                if (listaPedidos.isEmpty()) {
+                    attr.addFlashAttribute("msg", "No hay pedidos disponibles para mostrar.");
+                    return "redirect:/repartidor";
+                } else {
+                    model.addAttribute("listaPedidosDisponibles", listaPedidos);
+                    return "repartidor/repartidor_pedidos_disponibles";
+                }
+            }else{
+                attr.addFlashAttribute("msg", "Tienes un pedido en curso.");
                 return "redirect:/repartidor";
-            } else {
-                model.addAttribute("listaPedidosDisponibles", listaPedidos);
-                return "repartidor/repartidor_pedidos_disponibles";
             }
+
         } else {
             return "redirect:/repartidor";
         }
