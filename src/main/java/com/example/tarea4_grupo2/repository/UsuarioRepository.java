@@ -48,7 +48,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     Usuario findByDniAndRolEquals(String dni, String rol);
     //Repartidor findByIdusuarios(int usuarios_idusuarios);
     Usuario findByEmail(String email);
-    @Query(value="select nombre,apellidos,dni,fechanacimiento from usuarios where idusuarios=?1",nativeQuery = true)
+    @Query(value="select nombre,apellidos,email,dni,fechanacimiento from usuarios where idusuarios=?1",nativeQuery = true)
     DatosDTO obtenerDatos(int id);
     Usuario findByEmailAndAndRol(String email, String rol);
 
