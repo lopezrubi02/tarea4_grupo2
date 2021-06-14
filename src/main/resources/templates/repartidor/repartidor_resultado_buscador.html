@@ -47,8 +47,9 @@
                 <h1>Resultados de búsqueda</h1>
                 <form method="post" th:action="@{/reportes/Buscador}">
                     <input name="valorBuscado" class="form-control mb-3" type="text" placeholder="Ingrese el nombre del restaurante o distrito del restaurante"/>
+                    <button class="btn btn-dark" type="submit">Buscar</button>
                 </form>
-                    <a class="btn btn-primary" th:href="@{'/repartidor/Reportes'}">Limpiar</a>
+                <button class="btn btn-warning"><a class="button active" th:href="@{'/repartidor/Reportes'}">Limpiar</a></button>
 
             <table class="table">
                 <thead>
@@ -68,8 +69,8 @@
                     <td th:text="${registro.getNombre()}"></td>
                     <td th:text="${registro.getRestaurantedistrito()}"></td>
                     <td th:text="${registro.getClienteubicacion()}"></td>
-                    <td th:text="${registro.getComisionrepartidor()}+'.0'"></td>
-                    <td th:text="${registro.montototal}"></td>
+                    <td th:text="${registro.getComisionrepartidor()}+'.00'"></td>
+                    <td th:text="${registro.montototal}+'.00'"></td>
                     <td th:text="${registro.getCalificacionrepartidor()}"></td>
                 </tr>
                 </tbody>
@@ -91,7 +92,7 @@
         <div class="container-fluid">
             <div class="copyright">
                 <div class="container">
-                    <p>© 2050 All Rights Reserved</p>
+                    <p>© 2021 Todos los derechos reservados.</p>
                 </div>
             </div>
         </div>
