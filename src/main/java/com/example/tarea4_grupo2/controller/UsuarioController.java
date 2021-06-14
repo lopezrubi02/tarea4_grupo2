@@ -331,6 +331,14 @@ public class UsuarioController {
         LocalDate dateactual = LocalDate.now();
         String fechaactual1 = String.valueOf(dateactual);
 
+
+        List<Pedidos> listapedidosusuario = pedidosRepository.findAllByIdclienteEquals(idusuarios);
+        boolean ultimopedido1 = true; //true -> hay al menos un pedido registrado
+        if(listapedidosusuario.isEmpty()){
+            ultimopedido1 = false; //false -> no hay pedidos registrados
+        }
+        model.addAttribute("haypedidos",ultimopedido1);
+
         try {
             String a = fecha[0];
             String m = fecha[1];
