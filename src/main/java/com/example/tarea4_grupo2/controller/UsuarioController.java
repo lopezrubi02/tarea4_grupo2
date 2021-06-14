@@ -689,67 +689,69 @@ public class UsuarioController {
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idcliente=sessionUser.getIdusuarios();
-try {
+
     Optional<Restaurante> restauranteopt = restauranteRepository.findById(Integer.valueOf(idrestaurante));
     Optional<Plato> platoopt = platoRepository.findById(Integer.valueOf(idplato));
     Optional<Direcciones> diropt = direccionesRepository.findById(Integer.valueOf(direccionxenviar));
 
-    if (platoopt.isPresent() && restauranteopt.isPresent() && diropt.isPresent()) {
-        Plato platoelegido = platoopt.get();
+    try {
+        if (platoopt.isPresent() && restauranteopt.isPresent() && diropt.isPresent()) {
+            Plato platoelegido = platoopt.get();
 
-        Pedidos pedidoencurso = pedidosRepository.pedidoencursoxrestaurante(idcliente, Integer.parseInt(idrestaurante));
+            Pedidos pedidoencurso = pedidosRepository.pedidoencursoxrestaurante(idcliente, Integer.parseInt(idrestaurante));
 
-        if (pedidoencurso == null) {
-            Pedidos pedidos = new Pedidos();
-            pedidos.setIdcliente(idcliente);
+            if (pedidoencurso == null) {
+                Pedidos pedidos = new Pedidos();
+                pedidos.setIdcliente(idcliente);
 
-            Restaurante restelegido = restauranteopt.get();
+                Restaurante restelegido = restauranteopt.get();
 
-            pedidos.setRestaurantepedido(restelegido);
+                pedidos.setRestaurantepedido(restelegido);
 
-            Direcciones direccionentrega = diropt.get();
+                Direcciones direccionentrega = diropt.get();
 
-            pedidos.setDireccionentrega(direccionentrega);
-            List<Pedidos> listapedidoscliente = pedidosRepository.findAll();
-            int tam = listapedidoscliente.size();
-            Pedidos ultimopedido = listapedidoscliente.get(tam - 1);
-            int idultimopedido = ultimopedido.getIdpedidos();
+                pedidos.setDireccionentrega(direccionentrega);
+                List<Pedidos> listapedidoscliente = pedidosRepository.findAll();
+                int tam = listapedidoscliente.size();
+                Pedidos ultimopedido = listapedidoscliente.get(tam - 1);
+                int idultimopedido = ultimopedido.getIdpedidos();
 
-            PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido, Integer.valueOf(idplato));
-            PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey, pedidos, platoelegido, descripcion, Integer.valueOf(cantidad), cubiertos);
-            pedidos.addpedido(pedidoHasPlato);
-            pedidos.setMontototal("0");
-            pedidosRepository.save(pedidos);
-            listapedidoscliente = pedidosRepository.findAll();
-            tam = listapedidoscliente.size();
-            ultimopedido = listapedidoscliente.get(tam - 1);
-            idultimopedido = ultimopedido.getIdpedidos();
-            pedidoHasPlatoKey.setPedidosidpedidos(idultimopedido);
-            //PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido,idplato);
-            pedidoHasPlato.setId(pedidoHasPlatoKey);
-            //PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey,pedidos,platoelegido,descripcion,cantidad,cubiertos);
-            pedidoHasPlatoRepository.save(pedidoHasPlato);
+                PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido, Integer.valueOf(idplato));
+                PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey, pedidos, platoelegido, descripcion, Integer.valueOf(cantidad), cubiertos);
+                pedidos.addpedido(pedidoHasPlato);
+                pedidos.setMontototal("0");
+                pedidosRepository.save(pedidos);
+                listapedidoscliente = pedidosRepository.findAll();
+                tam = listapedidoscliente.size();
+                ultimopedido = listapedidoscliente.get(tam - 1);
+                idultimopedido = ultimopedido.getIdpedidos();
+                pedidoHasPlatoKey.setPedidosidpedidos(idultimopedido);
+                //PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido,idplato);
+                pedidoHasPlato.setId(pedidoHasPlatoKey);
+                //PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey,pedidos,platoelegido,descripcion,cantidad,cubiertos);
+                pedidoHasPlatoRepository.save(pedidoHasPlato);
+            } else {
+                System.out.println("+1 plato al pedido");
+                System.out.println(platoelegido.getNombre());
+                Pedidos pedidos = pedidoencurso;
+                int idultimopedido = pedidoencurso.getIdpedidos();
+                PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido, Integer.valueOf(idplato));
+                PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey, pedidos, platoelegido, descripcion, Integer.valueOf(cantidad), cubiertos);
+                pedidoHasPlatoKey.setPedidosidpedidos(idultimopedido);
+                //PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido,idplato);
+                pedidoHasPlato.setId(pedidoHasPlatoKey);
+                pedidoHasPlatoRepository.save(pedidoHasPlato);
+                redirectAttributes.addFlashAttribute("platoagregado", "Plato agregado al carrito");
+
+            }
+            return "redirect:/cliente/restaurantexordenar?idrestaurante=" + idrestaurante + "&direccion=" + direccionxenviar;
         } else {
-            System.out.println("+1 plato al pedido");
-            System.out.println(platoelegido.getNombre());
-            Pedidos pedidos = pedidoencurso;
-            int idultimopedido = pedidoencurso.getIdpedidos();
-            PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido, Integer.valueOf(idplato));
-            PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey, pedidos, platoelegido, descripcion, Integer.valueOf(cantidad), cubiertos);
-            pedidoHasPlatoKey.setPedidosidpedidos(idultimopedido);
-            //PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido,idplato);
-            pedidoHasPlato.setId(pedidoHasPlatoKey);
-            pedidoHasPlatoRepository.save(pedidoHasPlato);
-            redirectAttributes.addFlashAttribute("platoagregado", "Plato agregado al carrito");
-
+            return "redirect:/cliente/realizarpedido";
         }
-        return "redirect:/cliente/restaurantexordenar?idrestaurante=" + idrestaurante + "&direccion=" + direccionxenviar;
-    } else {
-        return "redirect:/cliente/realizarpedido";
+    }catch(NumberFormatException e) {
+        return "redirect:/cliente/carritoproductos";
     }
-}catch(NumberFormatException e){
-    return "redirect:/cliente/realizarpedido";
-}
+
     }
 
     @GetMapping("/cliente/carritoproductos")
@@ -987,6 +989,7 @@ try {
                                 }
                             }else{
                                 //TODO agregar flash attribute de tarjeta no valida
+                                redirectAttributes.addFlashAttribute("tarjetanovalida", "El número de tarjeta no es válido");
                                 return "redirect:/cliente/checkout";
                             }
 
@@ -1118,7 +1121,7 @@ try {
                                  BindingResult bindingResult,
                                  @RequestParam("pass2") String password2,
                                  HttpSession session,
-                                 Model model) {
+                                 Model model, RedirectAttributes redirectAttributes) {
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
 
@@ -1150,6 +1153,7 @@ try {
                         sessionUser.setContraseniaHash(contraseniahashbcrypt);
                         System.out.println("deberia guardaaar");
                         //TODO agregar flash attribute de cuenta actualiza exitosamente
+                        redirectAttributes.addFlashAttribute("perfilact", "Cuenta actualizada exitósamente");
                         usuarioRepository.save(sessionUser);
                         return "redirect:/cliente/miperfil";
                     }else{
