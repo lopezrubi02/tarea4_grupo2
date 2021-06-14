@@ -49,7 +49,11 @@
                 <div th:if="${msg != null}" th:text="${msg}" class="alert alert-success" role="alert"></div>
                 <form method="post" th:action="@{/repartidor/Buscador}">
                     <input name="valorBuscado" class="form-control mb-3" type="text" placeholder="Ingrese el nombre del restaurante o distrito del restaurante"/>
+                    <button class="btn btn-dark" type="submit">Buscar</button>
+                    <button class="btn btn-warning"><a class="button active" th:href="@{'/repartidor/Reportes'}">Limpiar</a></button>
+                    <!--
                     <a class="btn btn-primary" th:href="@{'/repartidor/Reportes'}">Limpiar</a>
+                    -->
                 </form>
 
 
@@ -71,14 +75,24 @@
                         <td th:text="${pedidoDisponible.getNombre()}"></td>
                         <td th:text="${pedidoDisponible.getRestaurantedistrito()}"></td>
                         <td th:text="${pedidoDisponible.getClienteubicacion()}"></td>
-                        <td th:text="${pedidoDisponible.getComisionrepartidor()} + '.0'"></td>
-                        <td th:text="${pedidoDisponible.getMontototal()}"></td>
+                        <td th:text="${pedidoDisponible.getComisionrepartidor()} + '.00'"></td>
+                        <td th:text="${pedidoDisponible.getMontototal()}+ '.00'"></td>
                         <td th:text="${pedidoDisponible.getCalificacionrepartidor()}"></td>
                     </tr>
                     </tbody>
                 </table>
 
+                <div class="row">
+                    <div class="col-8">
+                        <h1>Reporte de Ganancia Mensual</h1>
+                    </div>
+                    <div class="col-4">
+                        <div class="d-flex justify-content-end">
+                            <a th:href="@{'/repartidor/excelgananciamensual'+ '?id=' + ${id}}"  class="btn btn-outline-success">Exportar a Excel</a>
+                        </div>
+                    </div>
 
+                </div>
                 <table class="table">
                     <thead>
                     <tr>
@@ -112,7 +126,7 @@
             <div class="container-fluid">
                 <div class="copyright">
                     <div class="container">
-                        <p>© 2050 All Rights Reserved</p>
+                        <p>© 2021 Todos los derechos reservados.</p>
                     </div>
                 </div>
             </div>

@@ -27,6 +27,15 @@
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
+    <style>
+        .form-control {
+            border: #fff solid 2px;
+            border-radius: inherit;
+            margin-bottom: 0px;
+            padding: 15px 20px;
+            font-family: poppins;
+        }
+    </style>
 </head>
 <!-- body -->
 
@@ -58,7 +67,7 @@
                 </div>
 				<div class="col-4">
 					<div class="d-flex justify-content-end">
-                    <button type="button" class="btn btn-success">Exportar a Excel</button>
+                    <button type="button" class="btn btn-outline-success">Exportar a Excel</button>
 					</div>
                 </div>
 
@@ -70,19 +79,15 @@
             <br>
             <div class="row">
                 <div class="col-3">
+                    <div class="form-floating">
                     <!-- search bar -->
-                    <select class="custom-select" id="filtro" onChange="window.location=this.options[this.selectedIndex].value">
-                        <option selected="true" disabled="disabled" th:text="${nombreFiltro}">Filtrar Fechas</option>
-                        <option value="DeliveryReportes?filtro=Todos">Todas las Fechas</option>
-						<option value="DeliveryReportes?filtro=Habiles">Fechas con pedidos</option>
+                    <select class="form-select" id="filtro" onChange="window.location=this.options[this.selectedIndex].value">
+                        <!--option selected="true" disabled="disabled" th:text="${nombreFiltro}">Filtrar Fechas</option-->
+                        <option th:selected="(${filtro} == 'Todos')" value="DeliveryReportes?filtro=Todos">Todas las Fechas</option>
+						<option th:selected="(${filtro} == 'Habiles')" value="DeliveryReportes?filtro=Habiles">Fechas con pedidos</option>
                     </select>
-                    <!--select class="custom-select" id="rolSelected" onChange="window.location=this.options[this.selectedIndex].value">
-                        <option selected="true" disabled="disabled">Filtrar por Rol</option>
-                        <option value="usuarioFiltro?rolSelected=Todos">Todos</option>
-                        <option value="usuarioFiltro?rolSelected=Cliente">Clientes</option>
-                        <option value="usuarioFiltro?rolSelected=Repartidor">Repartidores</option>
-                        <option value="usuarioFiltro?rolSelected=AdminRestaurante">Restaurantes</option>
-                    </select-->
+                    <label for="filtro">Fechas a mostrar</label>
+                    </div>
                 </div>
                 <div class="row justify-content-center col-md-9">
                     <div class="center-block"><div class="col-sm-2"><form class="form-group mb-3" method="post" th:action="@{buscadorDeli}">
@@ -91,10 +96,12 @@
                                    th:value="${fechaseleccionada}">
                             <!--th:selected="${generos.idgenero == juego.genero.idgenero}"></option-->
                             <div class="input-group-append">
-                                <li class="button_user" ><a class="button active"  ><button  class="btn btn-link" type="submit" >Buscar</button></a></li>
+                                <button class="btn btn-dark" type="submit" >Buscar</button>
+                                <!--li class="button_user" ><a class="button active"  ><button  class="btn btn-link" type="submit" >Buscar</button></a></li-->
                                 <!--button class="btn btn-warning" type="submit">Buscar</button-->
                                 <!--button class="btn btn-dark" th:href="@{deliveryReportes}">Limpiar</button-->
-                                <li class="button_user"><a class="button active" th:href="@{DeliveryReportes}" > Limpiar </a></li>
+                                <!--li class="button_user"><a class="button active" th:href="@{DeliveryReportes}" > Limpiar </a></li-->
+                                <button class="btn btn-warning"><a class="button active" th:href="@{DeliveryReportes}">Limpiar</a></button>
                             </div>
                         </div>
                     </form></div></div>

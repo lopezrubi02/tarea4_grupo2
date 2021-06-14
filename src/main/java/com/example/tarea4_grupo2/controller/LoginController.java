@@ -107,6 +107,7 @@ public class LoginController {
     @GetMapping("/redirectByRol")
     public String redirectByRol(Authentication auth, HttpSession session){
         String rol="";
+        //setear la última fecha y hora de ingreso
         for(GrantedAuthority role:auth.getAuthorities()){
             rol= role.getAuthority();
             break;
@@ -166,10 +167,10 @@ public class LoginController {
                 String token = bytes.toString();
                 subject = "Recuperacion de contraseña - Spicy";
                 //TODO modificar direcion url despues de despliegue aws.
-                //String direccion = "http://localhost:8090/cambiar1/";
+                String direccion = "http://localhost:8090/cambiar1/";
                 //Pegar aquí los datos del AWS;
-                String aws = "ec2-user@ec2-3-84-20-210.compute-1.amazonaws.com";
-                String direccion = "http://" + aws + ":8081/cambiar1/";
+                //String aws = "ec2-user@ec2-3-84-20-210.compute-1.amazonaws.com";
+                //String direccion = "http://" + aws + ":8081/cambiar1/";
                 URL url = new URL(direccion + token);
                 mensaje = "¡Hola!<br><br>Para reestablecer su contraseña haga click: <a href='" + direccion + token + "'>AQUÍ</a> <br><br>Atte. Equipo de Spicy :D</b>";
                 attr.addFlashAttribute("msg", "¡Revisa tu correo para continuar el proceso! :D");
