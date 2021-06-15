@@ -720,7 +720,7 @@ public class AdminRestauranteController {
                 return "AdminRestaurantes/pedidos";
             }
             else{
-                return "redirect:/adminrest/login";
+                return "AdminRestaurantes/sinpedidos.html";
             }
         }
         else{
