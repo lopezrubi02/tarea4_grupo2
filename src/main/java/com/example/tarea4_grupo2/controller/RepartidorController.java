@@ -104,14 +104,12 @@ public class RepartidorController {
                     model.addAttribute("listaPedidosDisponibles", listaPedidos);
                     return "repartidor/repartidor_pedidos_disponibles";
                 }
+            }else {
+                return "redirect:/repartidor";
             }
-
         } else {
             return "redirect:/repartidor";
         }
-
-        return "redirect:/repartidor";
-
     }
 
     //El repartidor acepta el pedido del restaurante y se cambia el estado a "esperando recojo del restaurante"
@@ -122,16 +120,17 @@ public class RepartidorController {
 
         if (pedidoElegido.isPresent()) {
             Pedidos pedido = pedidoElegido.get();
-            //pedido.setIdrepartidor(sessionUser.getIdusuarios());
 
             Optional<Usuario> repopt = usuarioRepository.findById(sessionUser.getIdusuarios());
             Usuario repartidor = repopt.get();
             pedido.setRepartidor(repartidor);
 
+            /*
             Optional<Repartidor> repopt2 = repartidorRepository.findById(sessionUser.getIdusuarios());
             Repartidor repartidor2 = repopt2.get();
             repartidor2.setDisponibilidad(false);
             repartidorRepository.save(repartidor2);
+            */
 
             pedido.setEstadorepartidor("aceptado"); //Estado de esperando recojo del restaurante
             model.addAttribute("pedido", pedido);
