@@ -49,7 +49,7 @@
                                 </thead>
                                 <tbody>
                                 <tr th:each="aceptado:${listaAceptado}">
-                                    <td th:text="${aceptado.getidpedidos()}"></td>
+                                    <td><a th:href="@{'/adminrest/detallepedidos'+'?id='+${aceptado.getidpedidos()}}" th:text="${aceptado.getidpedidos()}"></a></td>
                                     <td th:text="${aceptado.getcliente()}"></td>
                                     <td th:text="${aceptado.getdireccion()}"></td>
                                     <td th:text="${aceptado.getnombredistrito()}"></td>
@@ -84,7 +84,7 @@
                                 </thead>
                                 <tbody>
                                 <tr th:each="preparado:${listaPreparado}">
-                                    <td th:text="${preparado.getidpedidos()}"></td>
+                                    <td><a th:href="@{'/adminrest/detallepedidos'+'?id='+${preparado.getidpedidos()}}" th:text="${preparado.getidpedidos()}"></a></td>
                                     <td th:text="${preparado.getcliente()}"></td>
                                     <td th:text="${preparado.getdireccion()}"></td>
                                     <td th:text="${preparado.getnombredistrito()}"></td>
