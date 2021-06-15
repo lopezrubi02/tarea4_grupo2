@@ -87,12 +87,12 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
     /******ADMINISTRADOR RESTAURANTE**********/
 
     @Query(value = "select p.idpedidos,p.montototal,concat(u.nombre,' ',u.apellidos)cliente,fechahorapedido,d.direccion,dr.nombredistrito \n" +
-            "from Pedidos p\n" +
+            "from pedidos p\n" +
             "inner join usuarios u on p.idcliente = u.idusuarios\n" +
             "inner join restaurante r on p.restauranteidrestaurante = r.idrestaurante\n" +
             "inner join direcciones d on p.direccionentrega = d.iddirecciones\n" +
             "inner join distritos dr on dr.iddistritos = d.iddistrito\n" +
-            "where r.idrestaurante=?1 and p.estadorestaurante='pendiente'",nativeQuery = true)
+            "where r.idrestaurante=?1 and p.estadorestaurante='pendiente' order by p.fechahorapedido desc",nativeQuery = true)
     List<PedidosAdminRestDto> listaPedidos(Integer id);
 
     @Query(value = "select p.idpedidos as numeropedido, p.fechahorapedido as fechahorapedido, \n" +

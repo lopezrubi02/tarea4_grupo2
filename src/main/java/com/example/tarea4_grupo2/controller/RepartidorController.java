@@ -91,13 +91,10 @@ public class RepartidorController {
     @GetMapping("/repartidor/PedidosDisponibles")
     public String pedidosDisponibles(RedirectAttributes attr, Model model,HttpSession session) {
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-        Optional<Repartidor> repartidor = repartidorRepository.findById(sessionUser.getIdusuarios());
-        //Repartidor rep = repartidor.get();
-
-        //Optional <Pedidos> pedido = pedidosRepository.findB()
-
-        if (repartidor.isPresent()) {
-           // if(rep.isDisponibilidad()) {
+        Repartidor rep = repartidorRepository.findRepartidorByIdusuariosEquals(sessionUser.getIdusuarios());
+        Optional<Usuario> usuarioopt = usuarioRepository.findById(sessionUser.getIdusuarios());
+        if (usuarioopt.isPresent()) {
+            if(rep.isDisponibilidad()) {
                 List<PedidosDisponiblesDTO> listaPedidos = repartidorRepository.findListaPedidosDisponibles();
 
                 if (listaPedidos.isEmpty()) {
@@ -107,14 +104,13 @@ public class RepartidorController {
                     model.addAttribute("listaPedidosDisponibles", listaPedidos);
                     return "repartidor/repartidor_pedidos_disponibles";
                 }
-            //}else{
-
-             //   return "redirect:/repartidor";
-            //}
+            }
 
         } else {
             return "redirect:/repartidor";
         }
+
+        return "redirect:/repartidor";
 
     }
 
@@ -220,7 +216,7 @@ public class RepartidorController {
                            Model model, RedirectAttributes attr,HttpSession session) {
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-        int id = sessionUser.getIdusuarios();
+        int id=sessionUser.getIdusuarios();
 
         //List <PedidosReporteDTOs> listaFindReporte = repartidorRepository.findReporte(searchField, id);
 
@@ -238,7 +234,6 @@ public class RepartidorController {
             return "repartidor/repartidor_reportes";
         }
     }
-
 
     @GetMapping("/repartidor/Reportes")
     public String reportes(Model model, RedirectAttributes attr,HttpSession session){
