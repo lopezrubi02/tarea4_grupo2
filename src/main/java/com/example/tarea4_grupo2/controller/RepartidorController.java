@@ -25,8 +25,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import sun.plugin.dom.core.Element;
-import sun.security.util.math.intpoly.IntegerPolynomialP521;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -89,8 +87,9 @@ public class RepartidorController {
     public String pedidosDisponibles(RedirectAttributes attr, Model model,HttpSession session) {
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         Optional<Repartidor> repartidor = repartidorRepository.findById(sessionUser.getIdusuarios());
-        Repartidor rep = repartidor.get();
+        //Repartidor rep = repartidor.get();
         if (repartidor.isPresent()) {
+            Repartidor rep = repartidor.get();
             if(rep.isDisponibilidad()) {
                 List<PedidosDisponiblesDTO> listaPedidos = repartidorRepository.findListaPedidosDisponibles();
 
