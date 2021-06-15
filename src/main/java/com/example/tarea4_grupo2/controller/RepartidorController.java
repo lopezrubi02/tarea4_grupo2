@@ -90,6 +90,9 @@ public class RepartidorController {
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         Optional<Repartidor> repartidor = repartidorRepository.findById(sessionUser.getIdusuarios());
         Repartidor rep = repartidor.get();
+
+        //Optional <Pedidos> pedido = pedidosRepository.findB()
+
         if (repartidor.isPresent()) {
             if(rep.isDisponibilidad()) {
                 List<PedidosDisponiblesDTO> listaPedidos = repartidorRepository.findListaPedidosDisponibles();
@@ -102,7 +105,6 @@ public class RepartidorController {
                     return "repartidor/repartidor_pedidos_disponibles";
                 }
             }else{
-                attr.addFlashAttribute("msg", "Tienes un pedido en curso.");
                 return "redirect:/repartidor";
             }
 
