@@ -606,6 +606,14 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
             Usuario usuario = optional.get();
             if(usuario.getRol().equals("Repartidor")){
                 try {
+                    List<Direcciones> direccionLista = direccionesRepository.findAllByUsuario_Idusuarios(id);
+                    Repartidor repartidor = repartidorRepository.findRepartidorByIdusuariosEquals(id);
+
+                    for(Direcciones direccion: direccionLista){
+                        direccionesRepository.deleteById(direccion.getIddirecciones());
+                    }
+                    repartidorRepository.deleteById(repartidor.getIdrepartidor());
+
                     usuarioRepository.deleteById(id);
                     //Envio de correo a usuario
                     String correoDestino = usuario.getEmail();
@@ -619,7 +627,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
                             "<br>Atte. Equipo de Spicyo</br>";
                     sendMailService.sendMail(correoDestino, "saritaatanacioarenas@gmail.com", subject, texto);
 
-                    attr.addFlashAttribute("msg1", "Cuenta denegada exitosamente");
+                    attr.addFlashAttribute("msg", "Cuenta denegada exitosamente");
                     return "redirect:/admin/nuevosUsuarios";
                 }catch (Exception e){
                     System.out.println(e.getMessage());
