@@ -224,6 +224,9 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
 
     List<Pedidos> findAllByIdclienteEquals(int idcliente);
 
+    //@Query(value = "select * from pedidos where idrepartidor=?1",nativeQuery = true)
+    //Pedidos pedido findPedidoByIdRepartidor(int idRepartidor);
+
     @Query(value = "select p.montototal, r.nombre, p.fechahorapedido, d.direccion, mp.metodo from pedidos p\n" +
             "inner join restaurante r\n" +
             "on p.restauranteidrestaurante = r.idrestaurante\n" +
