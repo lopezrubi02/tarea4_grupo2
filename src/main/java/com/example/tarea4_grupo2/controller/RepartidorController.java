@@ -33,7 +33,10 @@ import javax.validation.Valid;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -89,12 +92,12 @@ public class RepartidorController {
     public String pedidosDisponibles(RedirectAttributes attr, Model model,HttpSession session) {
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         Optional<Repartidor> repartidor = repartidorRepository.findById(sessionUser.getIdusuarios());
-        Repartidor rep = repartidor.get();
+        //Repartidor rep = repartidor.get();
 
         //Optional <Pedidos> pedido = pedidosRepository.findB()
 
         if (repartidor.isPresent()) {
-            if(rep.isDisponibilidad()) {
+           // if(rep.isDisponibilidad()) {
                 List<PedidosDisponiblesDTO> listaPedidos = repartidorRepository.findListaPedidosDisponibles();
 
                 if (listaPedidos.isEmpty()) {
@@ -104,9 +107,10 @@ public class RepartidorController {
                     model.addAttribute("listaPedidosDisponibles", listaPedidos);
                     return "repartidor/repartidor_pedidos_disponibles";
                 }
-            }else{
-                return "redirect:/repartidor";
-            }
+            //}else{
+
+             //   return "redirect:/repartidor";
+            //}
 
         } else {
             return "redirect:/repartidor";
@@ -198,6 +202,10 @@ public class RepartidorController {
             Pedidos pedido = pedidoElegido.get();
             pedido.setEstadorepartidor("entregado"); //Estado de entregado al cliente
             model.addAttribute("pedido", pedido);
+
+            Date ahora = Date.valueOf(LocalDate.now());
+            pedido.setFechahoraentregado(ahora);
+
             pedidosRepository.save(pedido);
             attr.addFlashAttribute("msgVerde", "Se registró la entrega del pedido. ¡Gracias!");
         } else {
@@ -212,21 +220,25 @@ public class RepartidorController {
                            Model model, RedirectAttributes attr,HttpSession session) {
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-        int id=sessionUser.getIdusuarios();
+        int id = sessionUser.getIdusuarios();
 
-        //List<PedidosReporteDTO> listaPedidosxRestaurante = repartidorRepository.findPedidosByRestaurante(searchField);
-        //List<PedidosReporteDTO> listaPedidosxDistrito = repartidorRepository.findPedidosByDistrito(searchField);
-        List <PedidosReporteDTOs> listaFindReporte = repartidorRepository.findReporte(searchField, id);
-        if (listaFindReporte.isEmpty()) {
+        //List <PedidosReporteDTOs> listaFindReporte = repartidorRepository.findReporte(searchField, id);
+
+        try {
+            List<PedidosReporteDTOs> listaFindReporte = repartidorRepository.findReporte(searchField, id);
+            if(listaFindReporte.size()>0){
+                model.addAttribute("listaFindReporte", listaFindReporte);
+                return "repartidor/repartidor_resultado_buscador";
+            }else{
+                attr.addFlashAttribute("msg", "No hay resultados asociados a la búsqueda.");
+                return "repartidor/repartidor_reportes";
+            }
+        } catch (NullPointerException e) {
             attr.addFlashAttribute("msg", "No hay resultados asociados a la búsqueda.");
-            return "redirect:/repartidor";
-        }else{
-            //model.addAttribute("listaPedidosxRestaurante", listaPedidosxRestaurante);
-            //model.addAttribute("listaPedidosxDistrito", listaPedidosxDistrito);
-            model.addAttribute("listaFindReporte", listaFindReporte);
-            return "repartidor/repartidor_resultado_buscador";
+            return "repartidor/repartidor_reportes";
         }
     }
+
 
     @GetMapping("/repartidor/Reportes")
     public String reportes(Model model, RedirectAttributes attr,HttpSession session){
