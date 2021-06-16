@@ -864,12 +864,17 @@ public class UsuarioController {
 
                     for (Pedidos pedidoencurso : listapedidospendientes){
                         List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
+                        int cantplatosrest = platosxpedido.size();
+
                         for(PedidoHasPlato plato1 : platosxpedido){
                             int idplatoobtenido = plato1.getPlato().getIdplato();
                             if(idplatoobtenido == idplatoint){
                                 PedidoHasPlatoKey pedidoHasPlatoKey = plato1.getId();
                                 pedidoHasPlatoRepository.deleteById(pedidoHasPlatoKey);
                             }
+                        }
+                        if(cantplatosrest == 1) {
+                            pedidosRepository.deleteById(pedidoencurso.getIdpedidos());
                         }
                     }
                 }
