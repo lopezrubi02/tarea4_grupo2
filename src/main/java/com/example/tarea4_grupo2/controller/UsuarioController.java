@@ -176,7 +176,9 @@ public class UsuarioController {
                             //direccionactual.setUsuariosIdusuarios(idusuarionuevo);
                             direccionactual.setUsuario(usuarionuevo);
                             direccionactual.setActivo(1);
+                            System.out.println("debería guardar direccion");
                             direccionesRepository.save(direccionactual);
+                            System.out.println("ya guardó direccion");
 
                             /* Envio de correo de confirmacion */
                             String subject = "Cuenta creada en Spicyo";
