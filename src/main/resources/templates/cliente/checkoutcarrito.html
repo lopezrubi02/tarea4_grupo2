@@ -136,6 +136,9 @@
 											</div>
 										</div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:if="${metodoelegido == 1}">
+                                            <div>
+                                                <h6>Las tarjetas validas son Visa, MasterCard, DinersClub, Discover, JCB</h6>
+                                            </div>
                                             <div class="form-floating">
                                                 <input type="hidden" th:value="${metodoelegido}" name="tarjeta" id="tarjeta">
                                                 <input pattern="\d*" maxlength="19" name="numerotarjeta" class="form-control" id="card-number" type="text" placeholder="Ingrese el número de su tarjeta"/>

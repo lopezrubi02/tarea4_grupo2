@@ -765,48 +765,65 @@ public class UsuarioController {
             Pedidos pedidoencurso = pedidosRepository.pedidoencursoxrestaurante(idcliente, Integer.parseInt(idrestaurante));
 
             if (pedidoencurso == null) {
-                Pedidos pedidos = new Pedidos();
-                pedidos.setIdcliente(idcliente);
+                try {
+                    if (Integer.valueOf(cantidad) > 0 || (cubiertos == true || !cubiertos)) {
+                        Pedidos pedidos = new Pedidos();
+                        pedidos.setIdcliente(idcliente);
 
-                Restaurante restelegido = restauranteopt.get();
+                        Restaurante restelegido = restauranteopt.get();
 
-                pedidos.setRestaurantepedido(restelegido);
+                        pedidos.setRestaurantepedido(restelegido);
 
-                Direcciones direccionentrega = diropt.get();
+                        Direcciones direccionentrega = diropt.get();
 
-                pedidos.setDireccionentrega(direccionentrega);
-                List<Pedidos> listapedidoscliente = pedidosRepository.findAll();
-                int tam = listapedidoscliente.size();
-                Pedidos ultimopedido = listapedidoscliente.get(tam - 1);
-                int idultimopedido = ultimopedido.getIdpedidos();
-
-                PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido, Integer.valueOf(idplato));
-                PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey, pedidos, platoelegido, descripcion, Integer.valueOf(cantidad), cubiertos);
-                pedidos.addpedido(pedidoHasPlato);
-                pedidos.setMontototal("0");
-                pedidosRepository.save(pedidos);
-                listapedidoscliente = pedidosRepository.findAll();
-                tam = listapedidoscliente.size();
-                ultimopedido = listapedidoscliente.get(tam - 1);
-                idultimopedido = ultimopedido.getIdpedidos();
-                pedidoHasPlatoKey.setPedidosidpedidos(idultimopedido);
-                //PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido,idplato);
-                pedidoHasPlato.setId(pedidoHasPlatoKey);
-                //PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey,pedidos,platoelegido,descripcion,cantidad,cubiertos);
-                pedidoHasPlatoRepository.save(pedidoHasPlato);
+                        pedidos.setDireccionentrega(direccionentrega);
+                        List<Pedidos> listapedidoscliente = pedidosRepository.findAll();
+                        int tam = listapedidoscliente.size();
+                        Pedidos ultimopedido = listapedidoscliente.get(tam - 1);
+                        int idultimopedido = ultimopedido.getIdpedidos();
+                        PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido, Integer.valueOf(idplato));
+                        PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey, pedidos, platoelegido, descripcion, Integer.valueOf(cantidad), cubiertos);
+                        pedidos.addpedido(pedidoHasPlato);
+                        pedidos.setMontototal("0");
+                        pedidosRepository.save(pedidos);
+                        listapedidoscliente = pedidosRepository.findAll();
+                        tam = listapedidoscliente.size();
+                        ultimopedido = listapedidoscliente.get(tam - 1);
+                        idultimopedido = ultimopedido.getIdpedidos();
+                        pedidoHasPlatoKey.setPedidosidpedidos(idultimopedido);
+                        //PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido,idplato);
+                        pedidoHasPlato.setId(pedidoHasPlatoKey);
+                        //PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey,pedidos,platoelegido,descripcion,cantidad,cubiertos);
+                        pedidoHasPlatoRepository.save(pedidoHasPlato);
+                    } else {
+                        redirectAttributes.addFlashAttribute("cantidad1", "No ha ingresado una cantidad");
+                        return "redirect:/cliente/platoxpedir?idrestaurante="+ idrestaurante + "&idplato=" + idplato + "&direccion=" + direccionxenviar;
+                    }
+                }catch(NumberFormatException e) {
+                    return "redirect:/cliente/platoxpedir?idrestaurante="+ idrestaurante + "&idplato=" + idplato + "&direccion=" + direccionxenviar;
+                }
             } else {
-                System.out.println("+1 plato al pedido");
-                System.out.println(platoelegido.getNombre());
-                Pedidos pedidos = pedidoencurso;
-                int idultimopedido = pedidoencurso.getIdpedidos();
-                PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido, Integer.valueOf(idplato));
-                PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey, pedidos, platoelegido, descripcion, Integer.valueOf(cantidad), cubiertos);
-                pedidoHasPlatoKey.setPedidosidpedidos(idultimopedido);
-                //PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido,idplato);
-                pedidoHasPlato.setId(pedidoHasPlatoKey);
-                pedidoHasPlatoRepository.save(pedidoHasPlato);
-                redirectAttributes.addFlashAttribute("platoagregado", "Plato agregado al carrito");
-
+                try {
+                    if(Integer.valueOf(cantidad) > 0 || (cubiertos == true || !cubiertos)) {
+                        System.out.println("+1 plato al pedido");
+                        System.out.println(platoelegido.getNombre());
+                        Pedidos pedidos = pedidoencurso;
+                        int idultimopedido = pedidoencurso.getIdpedidos();
+                        PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido, Integer.valueOf(idplato));
+                        PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey, pedidos, platoelegido, descripcion, Integer.valueOf(cantidad), cubiertos);
+                        pedidoHasPlatoKey.setPedidosidpedidos(idultimopedido);
+                        //PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido,idplato);
+                        pedidoHasPlato.setId(pedidoHasPlatoKey);
+                        pedidoHasPlatoRepository.save(pedidoHasPlato);
+                        redirectAttributes.addFlashAttribute("platoagregado", "Plato agregado al carrito");
+                    }
+                    else{
+                        redirectAttributes.addFlashAttribute("cantidad2", "No ha ingresado una cantidad");
+                        return "redirect:/cliente/platoxpedir?idrestaurante="+ idrestaurante + "&idplato=" + idplato + "&direccion=" + direccionxenviar;
+                    }
+                }catch(NumberFormatException e) {
+                    return "redirect:/cliente/platoxpedir?idrestaurante="+ idrestaurante + "&idplato=" + idplato + "&direccion=" + direccionxenviar;
+                }
             }
             return "redirect:/cliente/restaurantexordenar?idrestaurante=" + idrestaurante + "&direccion=" + direccionxenviar;
         } else {
@@ -1057,7 +1074,7 @@ public class UsuarioController {
                                     tarjetasOnlineRepository.save(tarjetaxguardar);
                                 }
                             }else{
-                                redirectAttributes.addFlashAttribute("tarjetanovalida", "El número de tarjeta no es válido");
+                                redirectAttributes.addFlashAttribute("tarjetanovalida", "El número de tarjeta no es válido. Las tarjetas validas son Visa, MasterCard, DinersClub, Discover, JCB");
                                 return "redirect:/cliente/checkout";
                             }
 
