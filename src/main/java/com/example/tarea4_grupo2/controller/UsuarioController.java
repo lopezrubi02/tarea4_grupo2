@@ -176,7 +176,9 @@ public class UsuarioController {
                             //direccionactual.setUsuariosIdusuarios(idusuarionuevo);
                             direccionactual.setUsuario(usuarionuevo);
                             direccionactual.setActivo(1);
+                            System.out.println("debería guardar direccion");
                             direccionesRepository.save(direccionactual);
+                            System.out.println("ya guardó direccion");
 
                             /* Envio de correo de confirmacion */
                             String subject = "Cuenta creada en Spicyo";
@@ -703,7 +705,6 @@ public class UsuarioController {
          Optional<Plato> platoopt = platoRepository.findById(idplatopedir);
          Optional<Restaurante> restopt = restauranteRepository.findById(idrestaurante);
          Optional<Direcciones> diropt = direccionesRepository.findById(direccionxenviar);
-        //TODO no está redireccionando al restaurante seleccionado cuando se da a cancelar
 
          if(platoopt.isPresent() && restopt.isPresent() && diropt.isPresent()){
              Plato platoseleccionado = platoopt.get();
@@ -749,7 +750,7 @@ public class UsuarioController {
                               HttpSession session,
                               Model model, RedirectAttributes redirectAttributes,
                               @RequestParam("direccion") String direccionxenviar){
-
+//TODO validar cantidad > 0, validar cubiertos ser solo 0 y 1
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idcliente=sessionUser.getIdusuarios();
 
@@ -865,12 +866,17 @@ public class UsuarioController {
 
                     for (Pedidos pedidoencurso : listapedidospendientes){
                         List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
+                        int cantplatosrest = platosxpedido.size();
+
                         for(PedidoHasPlato plato1 : platosxpedido){
                             int idplatoobtenido = plato1.getPlato().getIdplato();
                             if(idplatoobtenido == idplatoint){
                                 PedidoHasPlatoKey pedidoHasPlatoKey = plato1.getId();
                                 pedidoHasPlatoRepository.deleteById(pedidoHasPlatoKey);
                             }
+                        }
+                        if(cantplatosrest == 1) {
+                            pedidosRepository.deleteById(pedidoencurso.getIdpedidos());
                         }
                     }
                 }
@@ -926,7 +932,7 @@ public class UsuarioController {
         model.addAttribute("listametodospago",listametodos);
 
         List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idusuario);
-
+        //TODO poner mensaje de cuales son las tarjetas validas. Las tarjetas validas son visa, mastercard, dinersclub, discover, jcb
         if(listapedidospendientes.isEmpty()){
             return "redirect:/cliente/realizarpedido";
         }else{
@@ -1051,7 +1057,6 @@ public class UsuarioController {
                                     tarjetasOnlineRepository.save(tarjetaxguardar);
                                 }
                             }else{
-                                //TODO agregar flash attribute de tarjeta no valida
                                 redirectAttributes.addFlashAttribute("tarjetanovalida", "El número de tarjeta no es válido");
                                 return "redirect:/cliente/checkout";
                             }
@@ -1215,7 +1220,6 @@ public class UsuarioController {
                         sessionUser.setTelefono(usuario.getTelefono());
                         sessionUser.setContraseniaHash(contraseniahashbcrypt);
                         System.out.println("deberia guardaaar");
-                        //TODO agregar flash attribute de cuenta actualiza exitosamente
                         redirectAttributes.addFlashAttribute("perfilact", "Cuenta actualizada exitósamente");
                         usuarioRepository.save(sessionUser);
                         return "redirect:/cliente/miperfil";

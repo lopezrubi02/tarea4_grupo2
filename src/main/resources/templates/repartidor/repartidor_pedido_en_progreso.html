@@ -71,8 +71,8 @@
                     <tbody>
                     <tr th:each="detallesPlatosPorPedidoDTO, info : ${listaPlatosPorPedidoDTO}">
                         <td th:text="${info.index + 1}"></td>
-                        <td th:text="${detallesPlatosPorPedidoDTO.getCantidadplatos()}"></td>
-                        <td th:text="${detallesPlatosPorPedidoDTO.getNombre()}"></td>
+                        <td th:text="${detallesPlatosPorPedidoDTO.getcantidadplatos()}"></td>
+                        <td th:text="${detallesPlatosPorPedidoDTO.getnombre()}"></td>
                     </tr>
                     </tbody>
                 </table>

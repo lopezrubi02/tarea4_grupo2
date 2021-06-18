@@ -54,8 +54,9 @@
                     <!--
                     <a class="btn btn-primary" th:href="@{'/repartidor/Reportes'}">Limpiar</a>
                     -->
-                </form>
 
+                </form>
+                <br> </br>
 
                 <table class="table">
                     <thead>
@@ -76,7 +77,7 @@
                         <td th:text="${pedidoDisponible.getRestaurantedistrito()}"></td>
                         <td th:text="${pedidoDisponible.getClienteubicacion()}"></td>
                         <td th:text="${pedidoDisponible.getComisionrepartidor()} + '.00'"></td>
-                        <td th:text="${pedidoDisponible.getMontototal()}+ '.00'"></td>
+                        <td th:text="${pedidoDisponible.getMontototal()}+ '0'"></td>
                         <td th:text="${pedidoDisponible.getCalificacionrepartidor()}"></td>
                     </tr>
                     </tbody>

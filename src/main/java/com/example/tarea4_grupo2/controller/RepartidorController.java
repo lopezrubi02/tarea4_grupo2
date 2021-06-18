@@ -25,15 +25,16 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import sun.plugin.dom.core.Element;
-import sun.security.util.math.intpoly.IntegerPolynomialP521;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -88,22 +89,25 @@ public class RepartidorController {
     @GetMapping("/repartidor/PedidosDisponibles")
     public String pedidosDisponibles(RedirectAttributes attr, Model model,HttpSession session) {
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-        Optional<Repartidor> repartidor = repartidorRepository.findById(sessionUser.getIdusuarios());
+        Repartidor rep = repartidorRepository.findRepartidorByIdusuariosEquals(sessionUser.getIdusuarios());
+        Optional<Usuario> usuarioopt = usuarioRepository.findById(sessionUser.getIdusuarios());
+        if (usuarioopt.isPresent()) {
+            if(rep.isDisponibilidad()) {
+                List<PedidosDisponiblesDTO> listaPedidos = repartidorRepository.findListaPedidosDisponibles();
 
-        if (repartidor.isPresent()) {
-            List<PedidosDisponiblesDTO> listaPedidos = repartidorRepository.findListaPedidosDisponibles();
-
-            if (listaPedidos.isEmpty()) {
-                attr.addFlashAttribute("msg", "No hay pedidos disponibles para mostrar.");
+                if (listaPedidos.isEmpty()) {
+                    attr.addFlashAttribute("msg", "No hay pedidos disponibles para mostrar.");
+                    return "redirect:/repartidor";
+                } else {
+                    model.addAttribute("listaPedidosDisponibles", listaPedidos);
+                    return "repartidor/repartidor_pedidos_disponibles";
+                }
+            }else {
                 return "redirect:/repartidor";
-            } else {
-                model.addAttribute("listaPedidosDisponibles", listaPedidos);
-                return "repartidor/repartidor_pedidos_disponibles";
             }
         } else {
             return "redirect:/repartidor";
         }
-
     }
 
     //El repartidor acepta el pedido del restaurante y se cambia el estado a "esperando recojo del restaurante"
@@ -114,11 +118,17 @@ public class RepartidorController {
 
         if (pedidoElegido.isPresent()) {
             Pedidos pedido = pedidoElegido.get();
-            //pedido.setIdrepartidor(sessionUser.getIdusuarios());
 
             Optional<Usuario> repopt = usuarioRepository.findById(sessionUser.getIdusuarios());
             Usuario repartidor = repopt.get();
             pedido.setRepartidor(repartidor);
+
+            /*
+            Optional<Repartidor> repopt2 = repartidorRepository.findById(sessionUser.getIdusuarios());
+            Repartidor repartidor2 = repopt2.get();
+            repartidor2.setDisponibilidad(false);
+            repartidorRepository.save(repartidor2);
+            */
 
             pedido.setEstadorepartidor("aceptado"); //Estado de esperando recojo del restaurante
             model.addAttribute("pedido", pedido);
@@ -135,7 +145,6 @@ public class RepartidorController {
             session.setAttribute("disponibilidad", repartidorRepository.findRepartidorByIdusuariosEquals(sessionUser.getIdusuarios()).isDisponibilidad());
 
             pedidosRepository.save(pedido);
-
             return "repartidor/repartidor_recojo_de_producto";
         } else {
             attr.addFlashAttribute("msg", "Este pedido ya no está disponible :(");
@@ -186,6 +195,10 @@ public class RepartidorController {
             Pedidos pedido = pedidoElegido.get();
             pedido.setEstadorepartidor("entregado"); //Estado de entregado al cliente
             model.addAttribute("pedido", pedido);
+
+            Date ahora = Date.valueOf(LocalDate.now());
+            pedido.setFechahoraentregado(ahora);
+
             pedidosRepository.save(pedido);
             attr.addFlashAttribute("msgVerde", "Se registró la entrega del pedido. ¡Gracias!");
         } else {
@@ -202,17 +215,20 @@ public class RepartidorController {
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int id=sessionUser.getIdusuarios();
 
-        //List<PedidosReporteDTO> listaPedidosxRestaurante = repartidorRepository.findPedidosByRestaurante(searchField);
-        //List<PedidosReporteDTO> listaPedidosxDistrito = repartidorRepository.findPedidosByDistrito(searchField);
-        List <PedidosReporteDTOs> listaFindReporte = repartidorRepository.findReporte(searchField, id);
-        if (listaFindReporte.isEmpty()) {
+        //List <PedidosReporteDTOs> listaFindReporte = repartidorRepository.findReporte(searchField, id);
+
+        try {
+            List<PedidosReporteDTOs> listaFindReporte = repartidorRepository.findReporte(searchField, id);
+            if(listaFindReporte.size()>0){
+                model.addAttribute("listaFindReporte", listaFindReporte);
+                return "repartidor/repartidor_resultado_buscador";
+            }else{
+                attr.addFlashAttribute("msg", "No hay resultados asociados a la búsqueda.");
+                return "repartidor/repartidor_reportes";
+            }
+        } catch (NullPointerException e) {
             attr.addFlashAttribute("msg", "No hay resultados asociados a la búsqueda.");
-            return "redirect:/repartidor";
-        }else{
-            //model.addAttribute("listaPedidosxRestaurante", listaPedidosxRestaurante);
-            //model.addAttribute("listaPedidosxDistrito", listaPedidosxDistrito);
-            model.addAttribute("listaFindReporte", listaFindReporte);
-            return "repartidor/repartidor_resultado_buscador";
+            return "repartidor/repartidor_reportes";
         }
     }
 

@@ -166,7 +166,7 @@ public class LoginController {
                 random.nextBytes(bytes);
                 String token = bytes.toString();
                 subject = "Recuperacion de contraseña - Spicy";
-                //TODO modificar direcion url despues de despliegue aws.
+                // no cambien esto
                 //String direccion = "http://localhost:8090/cambiar1/";
                 //Pegar aquí los datos del AWS;
                 String aws = "ec2-user@ec2-3-84-20-210.compute-1.amazonaws.com";
