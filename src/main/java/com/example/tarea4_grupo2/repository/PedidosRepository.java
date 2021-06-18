@@ -87,7 +87,7 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
     /******ADMINISTRADOR RESTAURANTE**********/
 
     @Query(value = "select p.idpedidos,p.montototal,concat(u.nombre,' ',u.apellidos)cliente,fechahorapedido,d.direccion,dr.nombredistrito \n" +
-            "from Pedidos p\n" +
+            "from pedidos p\n" +
             "inner join usuarios u on p.idcliente = u.idusuarios\n" +
             "inner join restaurante r on p.restauranteidrestaurante = r.idrestaurante\n" +
             "inner join direcciones d on p.direccionentrega = d.iddirecciones\n" +

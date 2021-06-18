@@ -579,97 +579,100 @@ public class AdminRestauranteController {
     }
     @GetMapping("/excelexportar")
     public ResponseEntity<InputStreamResource> exportAllData(HttpSession session) throws Exception {
+
         Usuario user = (Usuario) session.getAttribute("usuarioLogueado");
         int id=restauranteRepository.buscarRestaurantePorIdAdmin(user.getIdusuarios()).get().getIdrestaurante();
+        System.out.println("aqui");
+        System.out.println(id);
         ByteArrayInputStream stream2 = exportReporte(id);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=reportes.xls");
-
         return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream2));
     }
     public ByteArrayInputStream exportReporte(int id) throws IOException {
+            Workbook workbook = new HSSFWorkbook();
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            if(!pedidosRepository.listaPedidos(id).isEmpty()) {
+                String[] columnsPedido = {"#PEDIDO", "FECHA DEL PEDIDO", "NOMBRE DEL CLIENTE", "MONTO DEL PEDIDO", "NOMBRE DEL PLATO", "METODO DE PAGO", "DISTRITO DEL PEDIDO"};
+                Sheet sheet1 = workbook.createSheet("Pedidos");
+                Row row1 = sheet1.createRow(0);
+                for (int i = 0; i < columnsPedido.length; i++) {
+                    Cell cell = row1.createCell(i);
+                    cell.setCellValue(columnsPedido[i]);
+                }
+                List<PedidosReporteDto> listaPedidos = pedidosRepository.listaPedidosReporteporFechamasantigua(id);
+                int initRow = 1;
+                for (PedidosReporteDto pedido : listaPedidos) {
+                    row1 = sheet1.createRow(initRow);
+                    row1.createCell(0).setCellValue(pedido.getnumeropedido());
+                    row1.createCell(1).setCellValue(pedido.getfechahorapedido());
+                    row1.createCell(2).setCellValue(pedido.getnombre());
+                    row1.createCell(3).setCellValue(pedido.getmontototal());
+                    row1.createCell(4).setCellValue(pedido.getnombreplato());
+                    row1.createCell(5).setCellValue(pedido.getmetodo());
+                    row1.createCell(6).setCellValue(pedido.getdistrito());
+                    initRow++;
+                }
+            }
+            if(!pedidosRepository.gananciaPorMes(id).isEmpty()) {
+                String[] columnsMes = {"MES", "AÑO", "GANANCIAS"};
+                Sheet sheet2 = workbook.createSheet("IngresoMensual");
+                Row row2 = sheet2.createRow(0);
+                for (int i = 0; i < columnsMes.length; i++) {
+                    Cell cell = row2.createCell(i);
+                    cell.setCellValue(columnsMes[i]);
+                }
 
-        Workbook workbook = new HSSFWorkbook();
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                List<PedidosGananciaMesDto> listaGanancia = pedidosRepository.gananciaPorMes(id);
+                int initRow2 = 1;
+                for (PedidosGananciaMesDto mes : listaGanancia) {
+                    row2 = sheet2.createRow(initRow2);
+                    row2.createCell(0).setCellValue(mes.getmes());
+                    row2.createCell(1).setCellValue(mes.getanio());
+                    row2.createCell(2).setCellValue(mes.getganancia());
+                    initRow2++;
+                }
+            }
+            if(!pedidosRepository.platosMasVendidos(id).isEmpty()) {
+                String[] columnsPlatosMas = {"NOMBRE", "CANTIDAD", "GANANCIAS"};
+                Sheet sheet3 = workbook.createSheet("PlatosMasVendidos");
+                Row row3 = sheet3.createRow(0);
+                for (int i = 0; i < columnsPlatosMas.length; i++) {
+                    Cell cell = row3.createCell(i);
+                    cell.setCellValue(columnsPlatosMas[i]);
+                }
 
-        String[] columnsPedido = { "#PEDIDO", "FECHA DEL PEDIDO", "NOMBRE DEL CLIENTE","MONTO DEL PEDIDO","NOMBRE DEL PLATO","METODO DE PAGO","DISTRITO DEL PEDIDO" };
-        Sheet sheet1 = workbook.createSheet("Pedidos");
-        Row row1 = sheet1.createRow(0);
-        for (int i = 0; i < columnsPedido.length; i++) {
-            Cell cell = row1.createCell(i);
-            cell.setCellValue(columnsPedido[i]);
-        }
-        List<PedidosReporteDto> listaPedidos = pedidosRepository.listaPedidosReporteporFechamasantigua(id);
-        int initRow = 1;
-        for (PedidosReporteDto pedido : listaPedidos) {
-            row1 = sheet1.createRow(initRow);
-            row1.createCell(0).setCellValue(pedido.getnumeropedido());
-            row1.createCell(1).setCellValue(pedido.getfechahorapedido());
-            row1.createCell(2).setCellValue(pedido.getnombre());
-            row1.createCell(3).setCellValue(pedido.getmontototal());
-            row1.createCell(4).setCellValue(pedido.getnombreplato());
-            row1.createCell(5).setCellValue(pedido.getmetodo());
-            row1.createCell(6).setCellValue(pedido.getdistrito());
-            initRow++;
-        }
-
-        String[] columnsMes = { "MES", "AÑO", "GANANCIAS"};
-        Sheet sheet2 = workbook.createSheet("IngresoMensual");
-        Row row2 = sheet2.createRow(0);
-        for (int i = 0; i < columnsMes.length; i++) {
-            Cell cell = row2.createCell(i);
-            cell.setCellValue(columnsMes[i]);
-        }
-
-        List<PedidosGananciaMesDto> listaGanancia = pedidosRepository.gananciaPorMes(id);
-        int initRow2=1;
-        for (PedidosGananciaMesDto mes : listaGanancia) {
-            row2 = sheet2.createRow(initRow2);
-            row2.createCell(0).setCellValue(mes.getmes());
-            row2.createCell(1).setCellValue(mes.getanio());
-            row2.createCell(2).setCellValue(mes.getganancia());
-            initRow2++;
-        }
-
-        String[] columnsPlatosMas = { "NOMBRE", "CANTIDAD", "GANANCIAS"};
-        Sheet sheet3 = workbook.createSheet("PlatosMasVendidos");
-        Row row3 = sheet3.createRow(0);
-        for (int i = 0; i < columnsPlatosMas.length; i++) {
-            Cell cell = row3.createCell(i);
-            cell.setCellValue(columnsPlatosMas[i]);
-        }
-
-        List<PedidosTop5Dto> listaPlatosMas = pedidosRepository.platosMasVendidos(id);
-        int initRow3=1;
-        for (PedidosTop5Dto plato : listaPlatosMas) {
-            row3 = sheet3.createRow(initRow3);
-            row3.createCell(0).setCellValue(plato.getnombreplato());
-            row3.createCell(1).setCellValue(plato.getcantidad());
-            row3.createCell(2).setCellValue(plato.getganancia());
-            initRow3++;
-        }
-
-        String[] columnsPlatosMenos = { "NOMBRE", "CANTIDAD", "GANANCIAS"};
-        Sheet sheet4 = workbook.createSheet("PlatosMenosVendidos");
-        Row row4 = sheet4.createRow(0);
-        for (int i = 0; i < columnsPlatosMenos.length; i++) {
-            Cell cell = row4.createCell(i);
-            cell.setCellValue(columnsPlatosMenos[i]);
-        }
-
-        List<PedidosTop5Dto> listaPlatosMenos = pedidosRepository.platosMenosVendidos(id);
-        int initRow4=1;
-        for (PedidosTop5Dto plato : listaPlatosMenos) {
-            row4 = sheet4.createRow(initRow4);
-            row4.createCell(0).setCellValue(plato.getnombreplato());
-            row4.createCell(1).setCellValue(plato.getcantidad());
-            row4.createCell(2).setCellValue(plato.getganancia());
-            initRow4++;
-        }
-
-        workbook.write(stream);
-        workbook.close();
-        return new ByteArrayInputStream(stream.toByteArray());
+                List<PedidosTop5Dto> listaPlatosMas = pedidosRepository.platosMasVendidos(id);
+                int initRow3 = 1;
+                for (PedidosTop5Dto plato : listaPlatosMas) {
+                    row3 = sheet3.createRow(initRow3);
+                    row3.createCell(0).setCellValue(plato.getnombreplato());
+                    row3.createCell(1).setCellValue(plato.getcantidad());
+                    row3.createCell(2).setCellValue(plato.getganancia());
+                    initRow3++;
+                }
+            }
+            if(!pedidosRepository.platosMenosVendidos(id).isEmpty()) {
+                String[] columnsPlatosMenos = {"NOMBRE", "CANTIDAD", "GANANCIAS"};
+                Sheet sheet4 = workbook.createSheet("PlatosMenosVendidos");
+                Row row4 = sheet4.createRow(0);
+                for (int i = 0; i < columnsPlatosMenos.length; i++) {
+                    Cell cell = row4.createCell(i);
+                    cell.setCellValue(columnsPlatosMenos[i]);
+                }
+                List<PedidosTop5Dto> listaPlatosMenos = pedidosRepository.platosMenosVendidos(id);
+                int initRow4 = 1;
+                for (PedidosTop5Dto plato : listaPlatosMenos) {
+                    row4 = sheet4.createRow(initRow4);
+                    row4.createCell(0).setCellValue(plato.getnombreplato());
+                    row4.createCell(1).setCellValue(plato.getcantidad());
+                    row4.createCell(2).setCellValue(plato.getganancia());
+                    initRow4++;
+                }
+            }
+            workbook.write(stream);
+            workbook.close();
+            return new ByteArrayInputStream(stream.toByteArray());
     }
 
     @PostMapping("/buscarReporte")
