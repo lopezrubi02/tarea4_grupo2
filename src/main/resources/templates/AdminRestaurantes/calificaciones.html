@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/adminRestaurante.html :: header( title = 'Calificaciones')"></head>
+<head th:replace="fragments/adminRestaurante.html :: header( title = 'Calificaciones')">
+
+</head>
 
 <!-- body -->
 <body class="main-layout Recipes_page">
@@ -30,45 +32,44 @@
     <!-- blog -->
     <div class="blog">
       <div class="container">
-        <div class="row">
-        <div class="col-md-8"></div>
-          <div class="col-md-2"></div>
-        <div class="col-md-2">
-          <div class="d-flex justify-content-end" >
-            <a type="button" th:href="@{/adminrest/perfil}" class="send" style="text-align: center;background: #d8b00f">Regresar</a>
-        </div>
-        </div>
-        </div>
         <h1>Calificaciones otorgadas por los usuarios</h1>
-        <form class="form-group mb-3" method="post" th:action="@{/adminrest/buscarCalificaciones}">
-          <div class="input-group-text">
-            <input style="margin: 5px" class="form-control" placeholder="Busque por # estrellas" name="searchfield">
-            <button class="btn btn-primary" style="margin: 5px" type="submit">Buscar</button>
+        <div class="col-md-12">
+        <form class="input-group" method="post" th:action="@{/adminrest/buscarCalificaciones}">
+          <div class="col-md-10" style="border-style: groove">
+            <input name="searchfield" class="form-control" style="height: 50px;margin-bottom: 0px" type="text" placeholder="Buscar por # estrellas"/>
+          </div>
+          <div class="col-md-1">
+          <button style="height: 50px" class="btn btn-dark" type="submit">Buscar</button>
+          </div>
+          <div class="col-md-1">
+          <button style="height: 50px" class="btn btn-warning"><a class="button" th:href="@{/adminrest/calificaciones}">Limpiar</a></button>
           </div>
         </form>
+          <br>
+        </div>
         <div class="row table-users">
           <!-- table -->
           <div class="col-md-12">
             <div class="table-responsive">
-              <table class="table table-striped">
+              <table class="table table-striped" style="width: 1000px" align="center">
                 <thead >
                 <tr>
-                  <th scope="col">Calificacion</th>
-                  <th scope="col">Comentario del usuario</th>
+                  <th scope="col" style="text-align: center;width: 50px">Calificacion</th>
+                  <th scope="col" style="text-align: center;width: 200px">Comentario del usuario</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="c: ${listaComentarios}">
-                  <td th:text="${c.getcalificacion()} + ' ' + 'estrellas'"></td>
-                  <td th:text="${c.getcomentario()}"></td>
+                  <td style="width: 20px;text-align: center" th:text="${c.getcalificacion()} + ' ' + 'estrellas'"></td>
+                  <td style="width: 200px;text-align: center" th:text="${c.getcomentario()}"></td>
                 </tr>
                 </tbody>
               </table>
             </div>
           </div>
           <!-- end of table -->
-          <h1 th:text="${maxNumberOfPages}"></h1>
           <!-- paginacion -->
+          <div class="col-md-12">
           <div class="row">
             <nav aria-label="Page navigation example" class = "mx-auto">
               <ul class="pagination justify-content-center">
@@ -100,6 +101,16 @@
               </ul>
             </nav>
           </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2">
+            <div class="d-flex justify-content-start" >
+              <a type="button" th:href="@{/adminrest/perfil}" class="send" style="text-align: center;background: #d8b00f">Regresar</a>
+            </div>
+          </div>
+          <div class="col-md-8"></div>
+          <div class="col-md-2"></div>
         </div>
       </div>
     </div>

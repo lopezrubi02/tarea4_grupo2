@@ -38,13 +38,13 @@
                                 <thead >
                                 <tr>
                                     <th scope="col">PEDIDO</th>
-                                    <th scope="col">CLIENTE</th>
-                                    <th scope="col">DIRECCION</th>
-                                    <th scope="col">DISTRITO</th>
-                                    <th scope="col">MONTO TOTAL</th>
-                                    <th scope="col">FECHA PEDIDO</th>
-                                    <th scope="col">HORA PEDIDO</th>
-                                    <th></th>
+                                    <th scope="col" width="200px" align="center">CLIENTE</th>
+                                    <th scope="col" width="200px" align="center">DIRECCION</th>
+                                    <th scope="col" width="200px" align="center">DISTRITO</th>
+                                    <th scope="col" width="100px" align="center">MONTO</th>
+                                    <th scope="col" width="200px" align="center">FECHA PEDIDO</th>
+                                    <th scope="col" width="200px" align="center">HORA PEDIDO</th>
+                                    <th ></th>
                                     <th></th>
                                 </tr>
                                 </thead>
@@ -54,17 +54,18 @@
                                     <td th:text="${pedidos.getcliente()}"></td>
                                     <td th:text="${pedidos.getdireccion()}"></td>
                                     <td th:text="${pedidos.getnombredistrito()}"></td>
-                                    <td th:text="${pedidos.getmontototal()}"></td>
+                                    <td align="center" th:text="${pedidos.getmontototal()}"></td>
                                     <td th:text="${#dates.format(pedidos.getfechahorapedido(), 'dd-MM-yyyy')}"></td>
                                     <td th:text="${#dates.format(pedidos.getfechahorapedido(), 'HH:MM')}"></td>
-                                    <td style="width: 120px"><a class="send" th:href="@{'/adminrest/aceptarpedido'+'?id='+${pedidos.getidpedidos()}}" style="text-align: center;background: #d8b00f">Aceptar</a></td>
-                                    <td style="width: 120px"><button class="send" th:href="@{'/adminrest/rechazarpedido'+'?id='+${pedidos.getidpedidos()}}" style="text-align: center;background: #d8b00f">Rechazar</button></td>
+                                    <td style="width: 120px"><a class="send" th:href="@{'/adminrest/aceptarpedido'+'?id='+${pedidos.getidpedidos()}}" style="text-align: center;background: #d8b00f;width: 100px">Aceptar</a></td>
+                                    <td style="width: 120px"><button class="send" th:href="@{'/adminrest/rechazarpedido'+'?id='+${pedidos.getidpedidos()}}" style="text-align: center;background: #d8b00f;width: 100px">Rechazar</button></td>
                                 </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                     <!-- end of table -->
+                    <div class="col-md-12">
                     <div class="row">
                         <nav aria-label="Page navigation example" class = "mx-auto">
                             <ul class="pagination justify-content-center">
@@ -95,6 +96,7 @@
                                 </li>
                             </ul>
                         </nav>
+                    </div>
                     </div>
                 </div>
                 <br><br>
