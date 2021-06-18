@@ -72,7 +72,9 @@
                                     <input type="hidden" th:value="${iddireccionxenviar}" name="direccion">
 									<input type="hidden" th:value="${idrestaurante}" name="idrestaurante">
 									<input type="hidden" th:value="${platoseleccionado.idplato}" name="idplato">
-                                    <div class="row">
+									<div th:if="${cantidad1 != null}" th:text="${cantidad1}" class="alert alert-warning" role="alert"></div>
+									<div th:if="${cantidad2 != null}" th:text="${cantidad2}" class="alert alert-warning" role="alert"></div>
+									<div class="row">
 										<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
 											<div class="form-floating">
 											  <select class="form-select" id="floatingSelectGrid" aria-label="Floating label select example" name="cubierto">
