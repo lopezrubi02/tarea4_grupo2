@@ -1057,7 +1057,7 @@ public class UsuarioController {
                                     tarjetasOnlineRepository.save(tarjetaxguardar);
                                 }
                             }else{
-                                redirectAttributes.addFlashAttribute("tarjetanovalida", "El número de tarjeta no es válido");
+                                redirectAttributes.addFlashAttribute("tarjetanovalida", "El número de tarjeta no es válido. Las tarjetas validas son Visa, MasterCard, DinersClub, Discover, JCB");
                                 return "redirect:/cliente/checkout";
                             }
 
