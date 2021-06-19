@@ -461,6 +461,7 @@ public class RepartidorController {
                                           @RequestParam("distrito") String distrito,
                                           @RequestParam("archivo") MultipartFile file,
                                           HttpSession session,
+                                          RedirectAttributes attributes,
                                           Model model) {
         Usuario user=(Usuario) session.getAttribute("usuarioLogueado");
         int id=usuario.getIdusuarios();
@@ -518,6 +519,8 @@ public class RepartidorController {
                     dnueva.setDistrito(distritos);
                     direccionesRepository.save(dnueva);
                     usuarioRepository.save(user);
+                    String msgR="El registro fue exitoso";
+                    attributes.addFlashAttribute("msgR",msgR);
                     return "redirect:/repartidor/miperfil";
                 }
                 String fileName = file.getOriginalFilename();
@@ -545,6 +548,8 @@ public class RepartidorController {
                 dnueva.setDistrito(distritos);
                 direccionesRepository.save(dnueva);
                 usuarioRepository.save(user);
+                String msgR="El registro fue exitoso";
+                attributes.addFlashAttribute("msgR",msgR);
                 return "redirect:/repartidor/miperfil";
             }
             else{
@@ -559,6 +564,8 @@ public class RepartidorController {
                         dnueva.setDistrito(distritos);
                         direccionesRepository.save(dnueva);
                         usuarioRepository.save(user);
+                        String msgR="El registro fue exitoso";
+                        attributes.addFlashAttribute("msgR",msgR);
                         return "redirect:/repartidor/miperfil";
                     }
                     String fileName = file.getOriginalFilename();
@@ -586,6 +593,8 @@ public class RepartidorController {
                     dnueva.setDistrito(distritos);
                     direccionesRepository.save(dnueva);
                     usuarioRepository.save(user);
+                    String msgR="El registro fue exitoso";
+                    attributes.addFlashAttribute("msgR",msgR);
                     return "redirect:/repartidor/miperfil";
                 }else{
                     model.addAttribute("msg","Contraseñas no son iguales");
