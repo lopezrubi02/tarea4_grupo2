@@ -92,7 +92,7 @@ public class RepartidorController {
         Repartidor rep = repartidorRepository.findRepartidorByIdusuariosEquals(sessionUser.getIdusuarios());
         Optional<Usuario> usuarioopt = usuarioRepository.findById(sessionUser.getIdusuarios());
         if (usuarioopt.isPresent()) {
-            if(rep.isDisponibilidad()) {
+            if (rep.isDisponibilidad()) {
                 List<PedidosDisponiblesDTO> listaPedidos = repartidorRepository.findListaPedidosDisponibles();
 
                 if (listaPedidos.isEmpty()) {
@@ -102,13 +102,59 @@ public class RepartidorController {
                     model.addAttribute("listaPedidosDisponibles", listaPedidos);
                     return "repartidor/repartidor_pedidos_disponibles";
                 }
-            }else {
-                return "redirect:/repartidor";
+            }else{
+               if (existePedidoEnCurso(sessionUser, "aceptado")) {
+                   Pedidos pedido = pedidosRepository.listapedidosxidrepartidoryestadopedido(usuarioopt.get().getIdusuarios(), "aceptado");
+                   model.addAttribute("pedido", pedido);
+
+                   Restaurante restaurante = restauranteRepository.findRestauranteById(pedido.getRestaurantepedido().getIdrestaurante());
+                   model.addAttribute("restaurante", restaurante);
+
+                   Direcciones direccion = direccionesRepository.findDireccionById(pedido.getDireccionentrega().getIddirecciones());
+                   model.addAttribute("direccion", direccion);
+
+                   List<PlatosPorPedidoDTO> listaPlatosPorPedidoDTO = repartidorRepository.findListaPlatosPorPedido(pedido.getIdpedidos());
+                   model.addAttribute("listaPlatosPorPedidoDTO", listaPlatosPorPedidoDTO);
+
+                   return "repartidor/repartidor_recojo_de_producto";
+               }else if (existePedidoEnCurso(sessionUser, "recogido")) {
+                   Pedidos pedido = pedidosRepository.listapedidosxidrepartidoryestadopedido(usuarioopt.get().getIdusuarios(), "recogido");
+                   Usuario usuario = usuarioRepository.findUsuarioById(pedido.getIdcliente());
+                   model.addAttribute("pedido", pedido);
+                   model.addAttribute("usuario", usuario);
+
+                   Restaurante restaurante = restauranteRepository.findRestauranteById(pedido.getRestaurantepedido().getIdrestaurante());
+                   model.addAttribute("restaurante", restaurante);
+
+                   Direcciones direccion = direccionesRepository.findDireccionById(pedido.getDireccionentrega().getIddirecciones());
+                   model.addAttribute("direccion", direccion);
+
+                   List<PlatosPorPedidoDTO> listaPlatosPorPedidoDTO = repartidorRepository.findListaPlatosPorPedido(pedido.getIdpedidos());
+                   model.addAttribute("listaPlatosPorPedidoDTO", listaPlatosPorPedidoDTO);
+                   return "repartidor/repartidor_pedido_en_progreso";
+               }else {
+                    attr.addFlashAttribute("msg", "No estás disponible, cambia tu disponibilidad.");
+                    return "redirect:/repartidor";
+               }
             }
-        } else {
-            return "redirect:/repartidor";
+
+        }
+        return "redirect:/repartidor";
+    }
+
+
+    public boolean existePedidoEnCurso(Usuario usuario, String estadoPedido){
+        Optional<Usuario> repartidor = usuarioRepository.findById(usuario.getIdusuarios());
+
+        try{
+            Pedidos pedido = pedidosRepository.listapedidosxidrepartidoryestadopedido(repartidor.get().getIdusuarios(), estadoPedido);
+            int id = pedido.getIdcliente();
+            return true;
+        }catch (NullPointerException e){
+            return false;
         }
     }
+
 
     //El repartidor acepta el pedido del restaurante y se cambia el estado a "esperando recojo del restaurante"
     @GetMapping("/repartidor/AceptaPedido")
@@ -118,18 +164,19 @@ public class RepartidorController {
 
         if (pedidoElegido.isPresent()) {
             Pedidos pedido = pedidoElegido.get();
+            //pedido.setIdrepartidor(sessionUser.getIdusuarios());
 
             Optional<Usuario> repopt = usuarioRepository.findById(sessionUser.getIdusuarios());
             Usuario repartidor = repopt.get();
             pedido.setRepartidor(repartidor);
 
-            /*
-            Optional<Repartidor> repopt2 = repartidorRepository.findById(sessionUser.getIdusuarios());
-            Repartidor repartidor2 = repopt2.get();
-            repartidor2.setDisponibilidad(false);
-            repartidorRepository.save(repartidor2);
-            */
+            //Pone en ocupado la disponibilidad al aceptar un pedido.
+            Optional<Repartidor> repopt2 = Optional.ofNullable(repartidorRepository.findRepartidorByIdusuariosEquals(sessionUser.getIdusuarios()));
+            Repartidor repartidor1 = repopt2.get();
+            repartidor1.setDisponibilidad(false);
+            repartidorRepository.save(repartidor1);
 
+            //Pone en estado aceptado el repartidorEstado
             pedido.setEstadorepartidor("aceptado"); //Estado de esperando recojo del restaurante
             model.addAttribute("pedido", pedido);
 
@@ -188,8 +235,9 @@ public class RepartidorController {
 
     //El repartidor entrega el pedido al cliente
     @GetMapping("/repartidor/ConfirmaEntrega")
-    public String confirmaEntrega(RedirectAttributes attr, @RequestParam("idpedido") int idPedidoElegido, Model model) {
+    public String confirmaEntrega(HttpSession session,RedirectAttributes attr, @RequestParam("idpedido") int idPedidoElegido, Model model) {
         Optional<Pedidos> pedidoElegido = pedidosRepository.findById(idPedidoElegido);
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
 
         if (pedidoElegido.isPresent()) {
             Pedidos pedido = pedidoElegido.get();
@@ -198,6 +246,11 @@ public class RepartidorController {
 
             Date ahora = Date.valueOf(LocalDate.now());
             pedido.setFechahoraentregado(ahora);
+
+            Optional<Repartidor> repopt2 = Optional.ofNullable(repartidorRepository.findRepartidorByIdusuariosEquals(sessionUser.getIdusuarios()));
+            Repartidor repartidor1 = repopt2.get();
+            repartidor1.setDisponibilidad(true);
+            repartidorRepository.save(repartidor1);
 
             pedidosRepository.save(pedido);
             attr.addFlashAttribute("msgVerde", "Se registró la entrega del pedido. ¡Gracias!");
