@@ -249,7 +249,8 @@ public class UsuarioController {
             row.createCell(1).setCellValue(pedidoexcel.getNombre());
             row.createCell(2).setCellValue(pedidoexcel.getFechahorapedido());
             row.createCell(3).setCellValue(pedidoexcel.getDireccion());
-            row.createCell(3).setCellValue(pedidoexcel.getMetodo());
+            System.out.println(pedidoexcel.getDireccion());
+            row.createCell(4).setCellValue(pedidoexcel.getMetodo());
             initRow++;
         }
 
