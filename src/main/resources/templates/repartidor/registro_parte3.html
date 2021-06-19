@@ -136,11 +136,13 @@
                                                     <option th:selected="${movilidad2 == 'bicicleta'}" value="new3?movilidad2=bicicleta" text="Bicicleta">Bicicleta</option>
                                                 </select>
                                             </div>
-                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:if="${movilidad2 == 'moto' || movilidad2 == 'bicimoto' || placa != null}">
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12"
+                                                 th:if="${movilidad2 == 'moto' || movilidad2 == 'bicimoto' || placa != null}">
                                                 <label>Placa</label>
                                                 <input class="form-control" placeholder="Placa" th:value="${placa}" name="placa" id="placa">
                                             </div>
-                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:if="${movilidad2 == 'moto' || movilidad2 == 'bicimoto' || licencia != null }">
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12"
+                                                 th:if="${movilidad2 == 'moto' || movilidad2 == 'bicimoto' || licencia != null }">
                                                 <label>Licencia</label>
                                                 <input class="form-control" placeholder="Licencia de conducir" th:value="${licencia}" name="licencia" id="licencia">
                                             </div>
