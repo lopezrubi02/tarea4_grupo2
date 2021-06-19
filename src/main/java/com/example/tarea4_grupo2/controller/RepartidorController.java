@@ -461,6 +461,7 @@ public class RepartidorController {
                                           @RequestParam("distrito") String distrito,
                                           @RequestParam("archivo") MultipartFile file,
                                           HttpSession session,
+                                          RedirectAttributes attributes,
                                           Model model) {
         Usuario user=(Usuario) session.getAttribute("usuarioLogueado");
         int id=usuario.getIdusuarios();
@@ -484,12 +485,15 @@ public class RepartidorController {
 
             model.addAttribute("msgc1",msgc1);
             model.addAttribute("msgc2",msgc2);
+
+            String msgT=null;
             if(bindingResult.hasFieldErrors("telefono")){
-                String msgT="El teléfono no es válido";
+                 msgT="El teléfono no es válido";
             }
             Usuario usuario2 = optional.get();
             model.addAttribute("usuario", usuario2);
 
+            model.addAttribute("msgT",msgT);
             Repartidor repartidor2 = repartidorRepository.findRepartidorByIdusuariosEquals(id);
             model.addAttribute("repartidor", repartidor2);
 
@@ -515,6 +519,8 @@ public class RepartidorController {
                     dnueva.setDistrito(distritos);
                     direccionesRepository.save(dnueva);
                     usuarioRepository.save(user);
+                    String msgR="El registro fue exitoso";
+                    attributes.addFlashAttribute("msgR",msgR);
                     return "redirect:/repartidor/miperfil";
                 }
                 String fileName = file.getOriginalFilename();
@@ -542,6 +548,8 @@ public class RepartidorController {
                 dnueva.setDistrito(distritos);
                 direccionesRepository.save(dnueva);
                 usuarioRepository.save(user);
+                String msgR="El registro fue exitoso";
+                attributes.addFlashAttribute("msgR",msgR);
                 return "redirect:/repartidor/miperfil";
             }
             else{
@@ -556,6 +564,8 @@ public class RepartidorController {
                         dnueva.setDistrito(distritos);
                         direccionesRepository.save(dnueva);
                         usuarioRepository.save(user);
+                        String msgR="El registro fue exitoso";
+                        attributes.addFlashAttribute("msgR",msgR);
                         return "redirect:/repartidor/miperfil";
                     }
                     String fileName = file.getOriginalFilename();
@@ -583,6 +593,8 @@ public class RepartidorController {
                     dnueva.setDistrito(distritos);
                     direccionesRepository.save(dnueva);
                     usuarioRepository.save(user);
+                    String msgR="El registro fue exitoso";
+                    attributes.addFlashAttribute("msgR",msgR);
                     return "redirect:/repartidor/miperfil";
                 }else{
                     model.addAttribute("msg","Contraseñas no son iguales");
@@ -625,8 +637,8 @@ public class RepartidorController {
                                      @RequestParam("direccion") String direccion,
                                      @RequestParam("distrito") Distritos distrito,
                                      @RequestParam("password2") String pass2,
-                                     @RequestParam("placa") String placa,
-                                     @RequestParam("licencia") String licencia,
+                                     @RequestParam(value = "placa",defaultValue = "0") String placa,
+                                     @RequestParam(value = "licencia",defaultValue = "0") String licencia,
                                      @RequestParam("archivo") MultipartFile file,
                                      @RequestParam(value = "movilidad2",defaultValue = "0") String movilidad2,
                                      Model model, RedirectAttributes attributes) {
@@ -734,8 +746,12 @@ public class RepartidorController {
                 repartidor.setDistritos(distrito);
                 repartidor.setDisponibilidad(false);
                 repartidor.setMovilidad(movilidad2);
-                repartidor.setPlaca(placa);
-                repartidor.setLicencia(licencia);
+                if(!movilidad2.equalsIgnoreCase("bicicleta")){
+                    repartidor.setPlaca(placa);
+                }
+                if(!movilidad2.equalsIgnoreCase("bicicleta")){
+                    repartidor.setLicencia(licencia);
+                }
                 repartidorRepository.save(repartidor);
 
 
