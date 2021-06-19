@@ -29,18 +29,19 @@
 
         <div class="blog">
             <div class="container">
+                <h1>Cupones</h1>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="table-responsive">
                             <table class="table table-striped">
                                 <thead>
                                 <tr>
-                                    <th scope="col">Nombre del cupon</th>
-                                    <th scope="col">Descripcion</th>
-                                    <th scope="col">Descuento (S/.)</th>
-                                    <th scope="col">Fecha de inicio</th>
-                                    <th scope="col">Fecha de fin</th>
-                                    <th scope="col">Plato asociado</th>
+                                    <th scope="col">Nombre</th>
+                                    <th scope="col" width="200px" align="center">Descripcion</th>
+                                    <th scope="col" width="200px" align="center">Descuento (S/.)</th>
+                                    <th scope="col" width="200px" align="center">Inicio</th>
+                                    <th scope="col" width="200px" align="center">Fin</th>
+                                    <th scope="col" width="200px" align="center">Plato</th>
                                     <th scope="col">¿Activo?</th>
                                     <th></th>
                                     <th></th>
@@ -52,11 +53,11 @@
                                     <td th:text="${cupon.descripcion}"></td>
                                     <td th:text="${cupon.valordescuento}"></td>
                                     <td th:text="${#dates.format(cupon.fechainicio,'dd-MM-yyyy')}"></td>
-                                    <td th:text="${cupon.fechafin}"></td>
+                                    <td th:text="${#dates.format(cupon.fechafin,'dd-MM-yyyy')}"></td>
                                     <td th:text="${cupon.plato.nombre}"></td>
                                     <td th:text="${listaDisponibilidad[__${iterStat.index}__]}">nada</td>
-                                    <td><a class="btn btn-primary" th:href="@{'/adminrest/editarCupon' + '?idcupon=' + ${cupon.idcupones}}" style="text-align: center;background: #d8b00f">Editar cupon</a></td>
-                                    <td><a class="btn btn-danger"  th:href="@{'/adminrest/borrarCupon' + '?idcupon=' + ${cupon.idcupones}}" style="text-align: center;background: #d8b00f">Borrar cupon</a></td>
+                                    <td><a class="send" th:href="@{'/adminrest/editarCupon' + '?idcupon=' + ${cupon.idcupones}}" style="text-align: center;background: #d8b00f;width: 100px">Editar</a></td>
+                                    <td><a class="send"  th:href="@{'/adminrest/borrarCupon' + '?idcupon=' + ${cupon.idcupones}}" style="text-align: center;background: #d8b00f;width: 100px">Borrar</a></td>
                                 </tr>
                                 </tbody>
                             </table>

@@ -62,16 +62,16 @@
                     <tbody>
                     <tr th:each="pedidoDisponible, info : ${listaPedidosDisponibles}">
                         <td th:text="${info.index + 1}"></td>
-                        <td th:text="${pedidoDisponible.getRestaurante()}"></td>
-                        <td th:text="${pedidoDisponible.getDistritorestaurante()}"></td>
-                        <td th:text="${pedidoDisponible.getDireccioncliente()}"></td>
-                        <td th:text="${pedidoDisponible.getComision()} + '.0'"></td>
-                        <td th:text="${pedidoDisponible.getMonto()}"></td>
+                        <td th:text="${pedidoDisponible.getrestaurante()}"></td>
+                        <td th:text="${pedidoDisponible.getdistritorestaurante()}"></td>
+                        <td th:text="${pedidoDisponible.getdireccioncliente()}"></td>
+                        <td th:text="${pedidoDisponible.getcomision()} + '.00'"></td>
+                        <td th:text="${pedidoDisponible.getmonto()} + '0'"></td>
                         <td><a class="btn btn-dark"
-                               th:href="@{'/repartidor/VerDetalles' + '?id=' + ${pedidoDisponible.getIdpedidos()}}">Ver
+                               th:href="@{'/repartidor/VerDetalles' + '?id=' + ${pedidoDisponible.getidpedidos()}}">Ver
                             detalles</a></td>
                         <td><a class="btn btn-warning"
-                               th:href="@{'/repartidor/AceptaPedido' + '?idpedido=' + ${pedidoDisponible.getIdpedidos()}}">Aceptar
+                               th:href="@{'/repartidor/AceptaPedido' + '?idpedido=' + ${pedidoDisponible.getidpedidos()}}">Aceptar
                             pedido</a></td>
                     </tr>
                     </tbody>
