@@ -181,7 +181,7 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
             "php.cubiertos as cubiertos,\n" +
             "d.direccion as direccion,\n" +
             "dr.nombredistrito as nombredistrito,\n" +
-            "pl.precio as precio from Pedidos p\n" +
+            "pl.precio as precio from pedidos p\n" +
             "inner join pedidoshasplato php on p.idpedidos = php.pedidosidpedidos\n" +
             "inner join plato pl on php.platoidplato = pl.idplato\n" +
             "inner join direcciones d on p.direccionentrega = d.iddirecciones\n" +
