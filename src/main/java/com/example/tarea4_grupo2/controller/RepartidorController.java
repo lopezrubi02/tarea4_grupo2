@@ -306,30 +306,52 @@ public class RepartidorController {
 
     }
 
-
     public ByteArrayInputStream exportAllData1(int id) throws IOException {
-        String[] columns = { "MES", "AÑO", "COMISIÓN MENSUAL" };
+        String[] columns1 = { "# PEDIDO", "RESTAURANTE", "DISTRITO DEL RESTAURANTE", "LUGAR DE DESTINO", "S/. COMISIÓN", "S/. TOTAL", "CALIFICACION"};
+        String[] columns2 = { "MES", "AÑO", "COMISIÓN MENSUAL" };
 
         Workbook workbook = new HSSFWorkbook();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
-        Sheet sheet = workbook.createSheet("Personas");
-        Row row = sheet.createRow(0);
+        Sheet sheet1 = workbook.createSheet("Reporte");
+        Sheet sheet2 = workbook.createSheet("Personas");
 
-        for (int i = 0; i < columns.length; i++) {
-            Cell cell = row.createCell(i);
-            cell.setCellValue(columns[i]);
+        //Pagina 1
+        Row row1 = sheet1.createRow(0);
+        for (int i = 0; i < columns1.length; i++) {
+            Cell cell = row1.createCell(i);
+            cell.setCellValue(columns1[i]);
+        }
+        List<PedidosReporteDTOs> listaReporte1 = repartidorRepository.findPedidosPorRepartidor(id);
+        int initRow1 = 1;
+        for (PedidosReporteDTOs pedidoDisponible : listaReporte1) {
+            row1 = sheet1.createRow(initRow1);
+            row1.createCell(0).setCellValue(pedidoDisponible.getNombre());
+            row1.createCell(1).setCellValue(pedidoDisponible.getRestaurantedistrito());
+            row1.createCell(2).setCellValue(pedidoDisponible.getClienteubicacion());
+            row1.createCell(3).setCellValue(pedidoDisponible.getComisionrepartidor()+ ".00");
+            row1.createCell(4).setCellValue(pedidoDisponible.getMontototal()+ "0");
+            row1.createCell(5).setCellValue(pedidoDisponible.getCalificacionrepartidor());
+            initRow1++;
+        }
+
+        //Pagina 2
+        Row row2 = sheet2.createRow(0);
+
+        for (int i = 0; i < columns2.length; i++) {
+            Cell cell = row2.createCell(i);
+            cell.setCellValue(columns2[i]);
         }
 
         List<RepartidorComisionMensualDTO> listaComisionMensual = repartidorRepository.obtenerComisionPorMes(id);
 
-        int initRow = 1;
+        int initRow2 = 1;
         for (RepartidorComisionMensualDTO comisionMensualDTO : listaComisionMensual) {
-            row = sheet.createRow(initRow);
-            row.createCell(0).setCellValue(comisionMensualDTO.getMes());
-            row.createCell(1).setCellValue(comisionMensualDTO.getYear());
-            row.createCell(2).setCellValue(comisionMensualDTO.getComision_mensual());
-            initRow++;
+            row2 = sheet2.createRow(initRow2);
+            row2.createCell(0).setCellValue(comisionMensualDTO.getMes());
+            row2.createCell(1).setCellValue(comisionMensualDTO.getYear());
+            row2.createCell(2).setCellValue(comisionMensualDTO.getComision_mensual());
+            initRow2++;
         }
 
         workbook.write(stream);
@@ -340,12 +362,12 @@ public class RepartidorController {
     @GetMapping("/repartidor/excelgananciamensual")
     public ResponseEntity<InputStreamResource> exportAllData(@RequestParam("id") int id) throws Exception {
 
-        ByteArrayInputStream stream2 = exportAllData1(id);
+        ByteArrayInputStream stream1 = exportAllData1(id);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=ganancia_mensual.xls");
 
-        return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream2));
+        return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream1));
     }
 
 
