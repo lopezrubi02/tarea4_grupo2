@@ -69,6 +69,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="row">
+                                    <div th:if="${msgR != null}" th:text="${msgR}" class="alert alert-danger" role="alert"></div>
                                     <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 about_img_boxpdnt">
                                         <figure><img th:src="@{/repartidor/imagen}" alt="#/"></figure>                                    </div>
 
