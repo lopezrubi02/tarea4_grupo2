@@ -38,25 +38,25 @@
                                 <thead >
                                 <tr>
                                     <th scope="col">PEDIDO</th>
-                                    <th scope="col">CLIENTE</th>
-                                    <th scope="col">DIRECCION</th>
-                                    <th scope="col">DISTRITO</th>
-                                    <th scope="col">MONTO TOTAL</th>
-                                    <th scope="col">FECHA PEDIDO</th>
-                                    <th scope="col">HORA PEDIDO</th>
+                                    <th scope="col" width="200px" align="center">CLIENTE</th>
+                                    <th scope="col" width="200px" align="center">DIRECCION</th>
+                                    <th scope="col" width="200px" align="center">DISTRITO</th>
+                                    <th scope="col" width="200px" align="center">MONTO TOTAL</th>
+                                    <th scope="col" width="200px" align="center">FECHA PEDIDO</th>
+                                    <th scope="col" width="200px" align="center">HORA PEDIDO</th>
                                     <th></th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr th:each="aceptado:${listaAceptado}">
-                                    <td th:text="${aceptado.getidpedidos()}"></td>
+                                    <td><a th:href="@{'/adminrest/detallepedidos'+'?id='+${aceptado.getidpedidos()}}" th:text="${aceptado.getidpedidos()}"></a></td>
                                     <td th:text="${aceptado.getcliente()}"></td>
                                     <td th:text="${aceptado.getdireccion()}"></td>
                                     <td th:text="${aceptado.getnombredistrito()}"></td>
                                     <td th:text="${aceptado.getmontototal()}"></td>
                                     <td th:text="${#dates.format(aceptado.getfechahorapedido(), 'dd-MM-yyyy')}"></td>
                                     <td th:text="${#dates.format(aceptado.getfechahorapedido(), 'HH:MM')}"></td>
-                                    <td><a class="send" th:href="@{'/adminrest/preparadopedido'+'?id='+${aceptado.getidpedidos()}}" style="text-align: center;background: #d8b00f">Preparado</a></td>
+                                    <td><a class="send" th:href="@{'/adminrest/preparadopedido'+'?id='+${aceptado.getidpedidos()}}" style="text-align: center;background: #d8b00f;width: 150px">Preparado</a></td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -73,25 +73,25 @@
                                 <thead >
                                 <tr>
                                     <th scope="col">PEDIDO</th>
-                                    <th scope="col">CLIENTE</th>
-                                    <th scope="col">DIRECCION</th>
-                                    <th scope="col">DISTRITO</th>
-                                    <th scope="col">MONTO TOTAL</th>
-                                    <th scope="col">FECHA PEDIDO</th>
-                                    <th scope="col">HORA PEDIDO</th>
+                                    <th scope="col" width="200px" align="center">CLIENTE</th>
+                                    <th scope="col" width="200px" align="center">DIRECCION</th>
+                                    <th scope="col" width="200px" align="center">DISTRITO</th>
+                                    <th scope="col" width="200px" align="center">MONTO TOTAL</th>
+                                    <th scope="col" width="200px" align="center">FECHA PEDIDO</th>
+                                    <th scope="col" width="200px" align="center">HORA PEDIDO</th>
                                     <th></th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr th:each="preparado:${listaPreparado}">
-                                    <td th:text="${preparado.getidpedidos()}"></td>
+                                    <td><a th:href="@{'/adminrest/detallepedidos'+'?id='+${preparado.getidpedidos()}}" th:text="${preparado.getidpedidos()}"></a></td>
                                     <td th:text="${preparado.getcliente()}"></td>
                                     <td th:text="${preparado.getdireccion()}"></td>
                                     <td th:text="${preparado.getnombredistrito()}"></td>
                                     <td th:text="${preparado.getmontototal()}"></td>
                                     <td th:text="${#dates.format(preparado.getfechahorapedido(), 'dd-MM-yyyy')}"></td>
                                     <td th:text="${#dates.format(preparado.getfechahorapedido(), 'HH:MM')}"></td>
-                                    <td><a class="send" th:href="@{'/adminrest/entregadopedido'+'?id='+${preparado.getidpedidos()}}" style="text-align: center;background: #d8b00f">Entregado</a></td>
+                                    <td><a class="send" th:href="@{'/adminrest/entregadopedido'+'?id='+${preparado.getidpedidos()}}" style="text-align: center;background: #d8b00f;width: 150px">Entregado</a></td>
                                 </tr>
                                 </tbody>
                             </table>

@@ -53,8 +53,8 @@
                 <p th:text="'Direccion de destino: ' + ${direccion.getDireccion()}"></p>
                 <p th:text="'Distrito de destino: ' + ${direccion.getDistrito().getNombredistrito()}"></p>
                 <hr>
-                <p th:text="'Total: S/.' + ${ pedido.getMontototal()}"></p>
-                <p th:text="'Comisión: S/. ' + ${pedido.getComisionrepartidor()}+'.0'"></p>
+                <p th:text="'Total: S/.' + ${ pedido.getMontototal()} +'0'"></p>
+                <p th:text="'Comisión: S/. ' + ${pedido.getComisionrepartidor()}+'.00'"></p>
             </div>
             <div class="container">
             <table class="table">
@@ -68,13 +68,12 @@
                 <tbody>
                     <tr th:each="detallesPlatosPorPedidoDTO, info : ${listaPlatosPorPedidoDTO}">
                         <td th:text="${info.index + 1}"></td>
-                        <td th:text="${detallesPlatosPorPedidoDTO.getCantidadplatos()}"></td>
-                        <td th:text="${detallesPlatosPorPedidoDTO.getNombre()}"></td>
+                        <td th:text="${detallesPlatosPorPedidoDTO.getcantidadplatos()}"></td>
+                        <td th:text="${detallesPlatosPorPedidoDTO.getnombre()}"></td>
                     </tr>
                 </tbody>
             </table>
-                <td><a class="btn btn-primary" th:href="@{'/repartidor/ConfirmaRecojo' + '?idpedido=' + ${pedido.getIdpedidos()}}">Confirmar Recojo</a></td>
-
+                <td><a class="btn btn-warning" th:href="@{'/repartidor/ConfirmaRecojo' + '?idpedido=' + ${pedido.getIdpedidos()}}">Confirmar Recojo</a></td>
             </div>
 
         </div>

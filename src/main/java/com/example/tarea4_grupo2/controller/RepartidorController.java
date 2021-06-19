@@ -25,15 +25,16 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import sun.plugin.dom.core.Element;
-import sun.security.util.math.intpoly.IntegerPolynomialP521;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -88,23 +89,72 @@ public class RepartidorController {
     @GetMapping("/repartidor/PedidosDisponibles")
     public String pedidosDisponibles(RedirectAttributes attr, Model model,HttpSession session) {
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-        Optional<Repartidor> repartidor = repartidorRepository.findById(sessionUser.getIdusuarios());
+        Repartidor rep = repartidorRepository.findRepartidorByIdusuariosEquals(sessionUser.getIdusuarios());
+        Optional<Usuario> usuarioopt = usuarioRepository.findById(sessionUser.getIdusuarios());
+        if (usuarioopt.isPresent()) {
+            if (rep.isDisponibilidad()) {
+                List<PedidosDisponiblesDTO> listaPedidos = repartidorRepository.findListaPedidosDisponibles();
 
-        if (repartidor.isPresent()) {
-            List<PedidosDisponiblesDTO> listaPedidos = repartidorRepository.findListaPedidosDisponibles();
+                if (listaPedidos.isEmpty()) {
+                    attr.addFlashAttribute("msg", "No hay pedidos disponibles para mostrar.");
+                    return "redirect:/repartidor";
+                } else {
+                    model.addAttribute("listaPedidosDisponibles", listaPedidos);
+                    return "repartidor/repartidor_pedidos_disponibles";
+                }
+            }else{
+               if (existePedidoEnCurso(sessionUser, "aceptado")) {
+                   Pedidos pedido = pedidosRepository.listapedidosxidrepartidoryestadopedido(usuarioopt.get().getIdusuarios(), "aceptado");
+                   model.addAttribute("pedido", pedido);
 
-            if (listaPedidos.isEmpty()) {
-                attr.addFlashAttribute("msg", "No hay pedidos disponibles para mostrar.");
-                return "repartidor/repartidor_principal";
-            } else {
-                model.addAttribute("listaPedidosDisponibles", listaPedidos);
-                return "repartidor/repartidor_pedidos_disponibles";
+                   Restaurante restaurante = restauranteRepository.findRestauranteById(pedido.getRestaurantepedido().getIdrestaurante());
+                   model.addAttribute("restaurante", restaurante);
+
+                   Direcciones direccion = direccionesRepository.findDireccionById(pedido.getDireccionentrega().getIddirecciones());
+                   model.addAttribute("direccion", direccion);
+
+                   List<PlatosPorPedidoDTO> listaPlatosPorPedidoDTO = repartidorRepository.findListaPlatosPorPedido(pedido.getIdpedidos());
+                   model.addAttribute("listaPlatosPorPedidoDTO", listaPlatosPorPedidoDTO);
+
+                   return "repartidor/repartidor_recojo_de_producto";
+               }else if (existePedidoEnCurso(sessionUser, "recogido")) {
+                   Pedidos pedido = pedidosRepository.listapedidosxidrepartidoryestadopedido(usuarioopt.get().getIdusuarios(), "recogido");
+                   Usuario usuario = usuarioRepository.findUsuarioById(pedido.getIdcliente());
+                   model.addAttribute("pedido", pedido);
+                   model.addAttribute("usuario", usuario);
+
+                   Restaurante restaurante = restauranteRepository.findRestauranteById(pedido.getRestaurantepedido().getIdrestaurante());
+                   model.addAttribute("restaurante", restaurante);
+
+                   Direcciones direccion = direccionesRepository.findDireccionById(pedido.getDireccionentrega().getIddirecciones());
+                   model.addAttribute("direccion", direccion);
+
+                   List<PlatosPorPedidoDTO> listaPlatosPorPedidoDTO = repartidorRepository.findListaPlatosPorPedido(pedido.getIdpedidos());
+                   model.addAttribute("listaPlatosPorPedidoDTO", listaPlatosPorPedidoDTO);
+                   return "repartidor/repartidor_pedido_en_progreso";
+               }else {
+                    attr.addFlashAttribute("msg", "No estás disponible, cambia tu disponibilidad.");
+                    return "redirect:/repartidor";
+               }
             }
-        } else {
-            return "redirect:/repartidor";
-        }
 
+        }
+        return "redirect:/repartidor";
     }
+
+
+    public boolean existePedidoEnCurso(Usuario usuario, String estadoPedido){
+        Optional<Usuario> repartidor = usuarioRepository.findById(usuario.getIdusuarios());
+
+        try{
+            Pedidos pedido = pedidosRepository.listapedidosxidrepartidoryestadopedido(repartidor.get().getIdusuarios(), estadoPedido);
+            int id = pedido.getIdcliente();
+            return true;
+        }catch (NullPointerException e){
+            return false;
+        }
+    }
+
 
     //El repartidor acepta el pedido del restaurante y se cambia el estado a "esperando recojo del restaurante"
     @GetMapping("/repartidor/AceptaPedido")
@@ -120,6 +170,13 @@ public class RepartidorController {
             Usuario repartidor = repopt.get();
             pedido.setRepartidor(repartidor);
 
+            //Pone en ocupado la disponibilidad al aceptar un pedido.
+            Optional<Repartidor> repopt2 = Optional.ofNullable(repartidorRepository.findRepartidorByIdusuariosEquals(sessionUser.getIdusuarios()));
+            Repartidor repartidor1 = repopt2.get();
+            repartidor1.setDisponibilidad(false);
+            repartidorRepository.save(repartidor1);
+
+            //Pone en estado aceptado el repartidorEstado
             pedido.setEstadorepartidor("aceptado"); //Estado de esperando recojo del restaurante
             model.addAttribute("pedido", pedido);
 
@@ -135,7 +192,6 @@ public class RepartidorController {
             session.setAttribute("disponibilidad", repartidorRepository.findRepartidorByIdusuariosEquals(sessionUser.getIdusuarios()).isDisponibilidad());
 
             pedidosRepository.save(pedido);
-
             return "repartidor/repartidor_recojo_de_producto";
         } else {
             attr.addFlashAttribute("msg", "Este pedido ya no está disponible :(");
@@ -179,13 +235,23 @@ public class RepartidorController {
 
     //El repartidor entrega el pedido al cliente
     @GetMapping("/repartidor/ConfirmaEntrega")
-    public String confirmaEntrega(RedirectAttributes attr, @RequestParam("idpedido") int idPedidoElegido, Model model) {
+    public String confirmaEntrega(HttpSession session,RedirectAttributes attr, @RequestParam("idpedido") int idPedidoElegido, Model model) {
         Optional<Pedidos> pedidoElegido = pedidosRepository.findById(idPedidoElegido);
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
 
         if (pedidoElegido.isPresent()) {
             Pedidos pedido = pedidoElegido.get();
             pedido.setEstadorepartidor("entregado"); //Estado de entregado al cliente
             model.addAttribute("pedido", pedido);
+
+            Date ahora = Date.valueOf(LocalDate.now());
+            pedido.setFechahoraentregado(ahora);
+
+            Optional<Repartidor> repopt2 = Optional.ofNullable(repartidorRepository.findRepartidorByIdusuariosEquals(sessionUser.getIdusuarios()));
+            Repartidor repartidor1 = repopt2.get();
+            repartidor1.setDisponibilidad(true);
+            repartidorRepository.save(repartidor1);
+
             pedidosRepository.save(pedido);
             attr.addFlashAttribute("msgVerde", "Se registró la entrega del pedido. ¡Gracias!");
         } else {
@@ -202,17 +268,20 @@ public class RepartidorController {
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int id=sessionUser.getIdusuarios();
 
-        //List<PedidosReporteDTO> listaPedidosxRestaurante = repartidorRepository.findPedidosByRestaurante(searchField);
-        //List<PedidosReporteDTO> listaPedidosxDistrito = repartidorRepository.findPedidosByDistrito(searchField);
-        List <PedidosReporteDTOs> listaFindReporte = repartidorRepository.findReporte(searchField, id);
-        if (listaFindReporte.isEmpty()) {
+        //List <PedidosReporteDTOs> listaFindReporte = repartidorRepository.findReporte(searchField, id);
+
+        try {
+            List<PedidosReporteDTOs> listaFindReporte = repartidorRepository.findReporte(searchField, id);
+            if(listaFindReporte.size()>0){
+                model.addAttribute("listaFindReporte", listaFindReporte);
+                return "repartidor/repartidor_resultado_buscador";
+            }else{
+                attr.addFlashAttribute("msg", "No hay resultados asociados a la búsqueda.");
+                return "repartidor/repartidor_reportes";
+            }
+        } catch (NullPointerException e) {
             attr.addFlashAttribute("msg", "No hay resultados asociados a la búsqueda.");
-            return "redirect:/repartidor";
-        }else{
-            //model.addAttribute("listaPedidosxRestaurante", listaPedidosxRestaurante);
-            //model.addAttribute("listaPedidosxDistrito", listaPedidosxDistrito);
-            model.addAttribute("listaFindReporte", listaFindReporte);
-            return "repartidor/repartidor_resultado_buscador";
+            return "repartidor/repartidor_reportes";
         }
     }
 
@@ -237,30 +306,52 @@ public class RepartidorController {
 
     }
 
-
     public ByteArrayInputStream exportAllData1(int id) throws IOException {
-        String[] columns = { "MES", "AÑO", "COMISIÓN MENSUAL" };
+        String[] columns1 = { "# PEDIDO", "RESTAURANTE", "DISTRITO DEL RESTAURANTE", "LUGAR DE DESTINO", "S/. COMISIÓN", "S/. TOTAL", "CALIFICACION"};
+        String[] columns2 = { "MES", "AÑO", "COMISIÓN MENSUAL" };
 
         Workbook workbook = new HSSFWorkbook();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
-        Sheet sheet = workbook.createSheet("Personas");
-        Row row = sheet.createRow(0);
+        Sheet sheet1 = workbook.createSheet("Reporte");
+        Sheet sheet2 = workbook.createSheet("Personas");
 
-        for (int i = 0; i < columns.length; i++) {
-            Cell cell = row.createCell(i);
-            cell.setCellValue(columns[i]);
+        //Pagina 1
+        Row row1 = sheet1.createRow(0);
+        for (int i = 0; i < columns1.length; i++) {
+            Cell cell = row1.createCell(i);
+            cell.setCellValue(columns1[i]);
+        }
+        List<PedidosReporteDTOs> listaReporte1 = repartidorRepository.findPedidosPorRepartidor(id);
+        int initRow1 = 1;
+        for (PedidosReporteDTOs pedidoDisponible : listaReporte1) {
+            row1 = sheet1.createRow(initRow1);
+            row1.createCell(0).setCellValue(pedidoDisponible.getNombre());
+            row1.createCell(1).setCellValue(pedidoDisponible.getRestaurantedistrito());
+            row1.createCell(2).setCellValue(pedidoDisponible.getClienteubicacion());
+            row1.createCell(3).setCellValue(pedidoDisponible.getComisionrepartidor()+ ".00");
+            row1.createCell(4).setCellValue(pedidoDisponible.getMontototal()+ "0");
+            row1.createCell(5).setCellValue(pedidoDisponible.getCalificacionrepartidor());
+            initRow1++;
+        }
+
+        //Pagina 2
+        Row row2 = sheet2.createRow(0);
+
+        for (int i = 0; i < columns2.length; i++) {
+            Cell cell = row2.createCell(i);
+            cell.setCellValue(columns2[i]);
         }
 
         List<RepartidorComisionMensualDTO> listaComisionMensual = repartidorRepository.obtenerComisionPorMes(id);
 
-        int initRow = 1;
+        int initRow2 = 1;
         for (RepartidorComisionMensualDTO comisionMensualDTO : listaComisionMensual) {
-            row = sheet.createRow(initRow);
-            row.createCell(0).setCellValue(comisionMensualDTO.getMes());
-            row.createCell(1).setCellValue(comisionMensualDTO.getYear());
-            row.createCell(2).setCellValue(comisionMensualDTO.getComision_mensual());
-            initRow++;
+            row2 = sheet2.createRow(initRow2);
+            row2.createCell(0).setCellValue(comisionMensualDTO.getMes());
+            row2.createCell(1).setCellValue(comisionMensualDTO.getYear());
+            row2.createCell(2).setCellValue(comisionMensualDTO.getComision_mensual());
+            initRow2++;
         }
 
         workbook.write(stream);
@@ -271,12 +362,12 @@ public class RepartidorController {
     @GetMapping("/repartidor/excelgananciamensual")
     public ResponseEntity<InputStreamResource> exportAllData(@RequestParam("id") int id) throws Exception {
 
-        ByteArrayInputStream stream2 = exportAllData1(id);
+        ByteArrayInputStream stream1 = exportAllData1(id);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=ganancia_mensual.xls");
 
-        return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream2));
+        return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream1));
     }
 
 

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
 /* Obtencion del Top 3 de Restaurantes*/
@@ -87,12 +88,12 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
     /******ADMINISTRADOR RESTAURANTE**********/
 
     @Query(value = "select p.idpedidos,p.montototal,concat(u.nombre,' ',u.apellidos)cliente,fechahorapedido,d.direccion,dr.nombredistrito \n" +
-            "from Pedidos p\n" +
+            "from pedidos p\n" +
             "inner join usuarios u on p.idcliente = u.idusuarios\n" +
             "inner join restaurante r on p.restauranteidrestaurante = r.idrestaurante\n" +
             "inner join direcciones d on p.direccionentrega = d.iddirecciones\n" +
             "inner join distritos dr on dr.iddistritos = d.iddistrito\n" +
-            "where r.idrestaurante=?1 and p.estadorestaurante='pendiente'",nativeQuery = true)
+            "where r.idrestaurante=?1 and p.estadorestaurante='pendiente' order by p.fechahorapedido desc",nativeQuery = true)
     List<PedidosAdminRestDto> listaPedidos(Integer id);
 
     @Query(value = "select p.idpedidos as numeropedido, p.fechahorapedido as fechahorapedido, \n" +
@@ -181,7 +182,7 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
             "php.cubiertos as cubiertos,\n" +
             "d.direccion as direccion,\n" +
             "dr.nombredistrito as nombredistrito,\n" +
-            "pl.precio as precio from Pedidos p\n" +
+            "pl.precio as precio from pedidos p\n" +
             "inner join pedidoshasplato php on p.idpedidos = php.pedidosidpedidos\n" +
             "inner join plato pl on php.platoidplato = pl.idplato\n" +
             "inner join direcciones d on p.direccionentrega = d.iddirecciones\n" +
@@ -223,5 +224,24 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
     List<Pedidos> listapedidoscanceladosxrest(int idcliente);
 
     List<Pedidos> findAllByIdclienteEquals(int idcliente);
+
+    @Query (value = "select p.* \n" +
+            "from usuarios u\n" +
+            "inner join pedidos p on (u.idusuarios = p.idrepartidor)\n" +
+            "inner join datosrepartidor d on (d.usuariosidusuarios = u.idusuarios)\n" +
+            "where (p.idrepartidor=?1 and p.estadorepartidor like ?2%) limit 1", nativeQuery = true)
+    Pedidos listapedidosxidrepartidoryestadopedido (int idusuario, String estadopedido);
+
+
+
+    @Query(value = "select p.montototal, r.nombre, p.fechahorapedido, d.direccion, mp.metodo from pedidos p\n" +
+            "inner join restaurante r\n" +
+            "on p.restauranteidrestaurante = r.idrestaurante\n" +
+            "inner join direcciones d\n" +
+            "on p.direccionentrega = d.iddirecciones\n" +
+            "inner join metodospago mp\n" +
+            "on mp.idmetodospago = p.idmetodopago\n" +
+            "where p.idcliente = ?1",nativeQuery = true)
+    List<PedidosclienteaexcelDTO> listapedidosexcel(int idcliente);
 
 }
