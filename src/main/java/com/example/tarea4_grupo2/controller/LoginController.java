@@ -55,15 +55,22 @@ public class LoginController {
                                @RequestParam("iddistrito") int iddistrito,
                                @RequestParam("direccion") String direccion,
                                Model model){
+        System.out.println("TRACE 2");
         if(bindingResult.hasErrors()){
+            System.out.println("TRACE binding");
             model.addAttribute("listadistritos",distritosRepository.findAll());
             return "AdminRestaurantes/register";
         }
         else {
+            System.out.println("TRACE 3");
             if(Pattern.matches("^[a-z0-9]+@gmail.com",usuario.getEmail())){
+                System.out.println("TRACE 4");
                 if(usuario.getContraseniaHash().equals(password2)) {
-                    Usuario persona = usuarioRepository.findByEmailAndAndRol(usuario.getEmail(), "AdminRestaurante");
-                    if(persona.getIdusuarios()==0){
+                    System.out.println("TRACE 5");
+                    Optional<Usuario> persona = usuarioRepository.findByEmailAndAndRol(usuario.getEmail(), "AdminRestaurante");
+                    System.out.println("TRACE 6");
+                    if(!(persona.isPresent())){
+                        System.out.println("TRACE 7");
                         String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
                         usuario.setContraseniaHash(contraseniahashbcrypt);
                         usuarioRepository.save(usuario);
@@ -79,6 +86,7 @@ public class LoginController {
                         return"AdminRestaurantes/correo";
                     }
                     else{
+                        System.out.println("TRACE 8");
                         model.addAttribute("msg3","Correo ya existe");
                         model.addAttribute("listadistritos",distritosRepository.findAll());
                         return "AdminRestaurantes/register";
