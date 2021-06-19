@@ -484,12 +484,15 @@ public class RepartidorController {
 
             model.addAttribute("msgc1",msgc1);
             model.addAttribute("msgc2",msgc2);
+
+            String msgT=null;
             if(bindingResult.hasFieldErrors("telefono")){
-                String msgT="El teléfono no es válido";
+                 msgT="El teléfono no es válido";
             }
             Usuario usuario2 = optional.get();
             model.addAttribute("usuario", usuario2);
 
+            model.addAttribute("msgT",msgT);
             Repartidor repartidor2 = repartidorRepository.findRepartidorByIdusuariosEquals(id);
             model.addAttribute("repartidor", repartidor2);
 
