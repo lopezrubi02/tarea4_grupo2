@@ -625,8 +625,8 @@ public class RepartidorController {
                                      @RequestParam("direccion") String direccion,
                                      @RequestParam("distrito") Distritos distrito,
                                      @RequestParam("password2") String pass2,
-                                     @RequestParam("placa") String placa,
-                                     @RequestParam("licencia") String licencia,
+                                     @RequestParam(value = "placa",defaultValue = "0") String placa,
+                                     @RequestParam(value = "licencia",defaultValue = "0") String licencia,
                                      @RequestParam("archivo") MultipartFile file,
                                      @RequestParam(value = "movilidad2",defaultValue = "0") String movilidad2,
                                      Model model, RedirectAttributes attributes) {
@@ -734,8 +734,12 @@ public class RepartidorController {
                 repartidor.setDistritos(distrito);
                 repartidor.setDisponibilidad(false);
                 repartidor.setMovilidad(movilidad2);
-                repartidor.setPlaca(placa);
-                repartidor.setLicencia(licencia);
+                if(!movilidad2.equalsIgnoreCase("bicicleta")){
+                    repartidor.setPlaca(placa);
+                }
+                if(!movilidad2.equalsIgnoreCase("bicicleta")){
+                    repartidor.setLicencia(licencia);
+                }
                 repartidorRepository.save(repartidor);
 
 
