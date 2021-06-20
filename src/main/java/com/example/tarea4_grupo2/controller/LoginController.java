@@ -55,15 +55,22 @@ public class LoginController {
                                @RequestParam("iddistrito") int iddistrito,
                                @RequestParam("direccion") String direccion,
                                Model model){
+        System.out.println("TRACE 2");
         if(bindingResult.hasErrors()){
+            System.out.println("TRACE binding");
             model.addAttribute("listadistritos",distritosRepository.findAll());
             return "AdminRestaurantes/register";
         }
         else {
+            System.out.println("TRACE 3");
             if(Pattern.matches("^[a-z0-9]+@gmail.com",usuario.getEmail())){
+                System.out.println("TRACE 4");
                 if(usuario.getContraseniaHash().equals(password2)) {
-                    Usuario persona = usuarioRepository.findByEmailAndAndRol(usuario.getEmail(), "AdminRestaurante");
-                    if(persona.getIdusuarios()==0){
+                    System.out.println("TRACE 5");
+                    Optional<Usuario> persona = usuarioRepository.findByEmailAndAndRol(usuario.getEmail(), "AdminRestaurante");
+                    System.out.println("TRACE 6");
+                    if(!(persona.isPresent())){
+                        System.out.println("TRACE 7");
                         String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
                         usuario.setContraseniaHash(contraseniahashbcrypt);
                         usuarioRepository.save(usuario);
@@ -79,6 +86,7 @@ public class LoginController {
                         return"AdminRestaurantes/correo";
                     }
                     else{
+                        System.out.println("TRACE 8");
                         model.addAttribute("msg3","Correo ya existe");
                         model.addAttribute("listadistritos",distritosRepository.findAll());
                         return "AdminRestaurantes/register";
@@ -166,11 +174,11 @@ public class LoginController {
                 random.nextBytes(bytes);
                 String token = bytes.toString();
                 subject = "Recuperacion de contraseña - Spicy";
-                //TODO modificar direcion url despues de despliegue aws.
-                String direccion = "http://localhost:8090/cambiar1/";
+                // no cambien esto
+                //String direccion = "http://localhost:8090/cambiar1/";
                 //Pegar aquí los datos del AWS;
-                //String aws = "ec2-user@ec2-3-84-20-210.compute-1.amazonaws.com";
-                //String direccion = "http://" + aws + ":8081/cambiar1/";
+                String aws = "ec2-user@ec2-3-84-20-210.compute-1.amazonaws.com";
+                String direccion = "http://" + aws + ":8081/cambiar1/";
                 URL url = new URL(direccion + token);
                 mensaje = "¡Hola!<br><br>Para reestablecer su contraseña haga click: <a href='" + direccion + token + "'>AQUÍ</a> <br><br>Atte. Equipo de Spicy :D</b>";
                 attr.addFlashAttribute("msg", "¡Revisa tu correo para continuar el proceso! :D");

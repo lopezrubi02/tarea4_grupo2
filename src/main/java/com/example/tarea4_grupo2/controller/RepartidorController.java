@@ -92,7 +92,7 @@ public class RepartidorController {
         Repartidor rep = repartidorRepository.findRepartidorByIdusuariosEquals(sessionUser.getIdusuarios());
         Optional<Usuario> usuarioopt = usuarioRepository.findById(sessionUser.getIdusuarios());
         if (usuarioopt.isPresent()) {
-            if(rep.isDisponibilidad()) {
+            if (rep.isDisponibilidad()) {
                 List<PedidosDisponiblesDTO> listaPedidos = repartidorRepository.findListaPedidosDisponibles();
 
                 if (listaPedidos.isEmpty()) {
@@ -102,13 +102,59 @@ public class RepartidorController {
                     model.addAttribute("listaPedidosDisponibles", listaPedidos);
                     return "repartidor/repartidor_pedidos_disponibles";
                 }
-            }else {
-                return "redirect:/repartidor";
+            }else{
+               if (existePedidoEnCurso(sessionUser, "aceptado")) {
+                   Pedidos pedido = pedidosRepository.listapedidosxidrepartidoryestadopedido(usuarioopt.get().getIdusuarios(), "aceptado");
+                   model.addAttribute("pedido", pedido);
+
+                   Restaurante restaurante = restauranteRepository.findRestauranteById(pedido.getRestaurantepedido().getIdrestaurante());
+                   model.addAttribute("restaurante", restaurante);
+
+                   Direcciones direccion = direccionesRepository.findDireccionById(pedido.getDireccionentrega().getIddirecciones());
+                   model.addAttribute("direccion", direccion);
+
+                   List<PlatosPorPedidoDTO> listaPlatosPorPedidoDTO = repartidorRepository.findListaPlatosPorPedido(pedido.getIdpedidos());
+                   model.addAttribute("listaPlatosPorPedidoDTO", listaPlatosPorPedidoDTO);
+
+                   return "repartidor/repartidor_recojo_de_producto";
+               }else if (existePedidoEnCurso(sessionUser, "recogido")) {
+                   Pedidos pedido = pedidosRepository.listapedidosxidrepartidoryestadopedido(usuarioopt.get().getIdusuarios(), "recogido");
+                   Usuario usuario = usuarioRepository.findUsuarioById(pedido.getIdcliente());
+                   model.addAttribute("pedido", pedido);
+                   model.addAttribute("usuario", usuario);
+
+                   Restaurante restaurante = restauranteRepository.findRestauranteById(pedido.getRestaurantepedido().getIdrestaurante());
+                   model.addAttribute("restaurante", restaurante);
+
+                   Direcciones direccion = direccionesRepository.findDireccionById(pedido.getDireccionentrega().getIddirecciones());
+                   model.addAttribute("direccion", direccion);
+
+                   List<PlatosPorPedidoDTO> listaPlatosPorPedidoDTO = repartidorRepository.findListaPlatosPorPedido(pedido.getIdpedidos());
+                   model.addAttribute("listaPlatosPorPedidoDTO", listaPlatosPorPedidoDTO);
+                   return "repartidor/repartidor_pedido_en_progreso";
+               }else {
+                    attr.addFlashAttribute("msg", "No estás disponible, cambia tu disponibilidad.");
+                    return "redirect:/repartidor";
+               }
             }
-        } else {
-            return "redirect:/repartidor";
+
+        }
+        return "redirect:/repartidor";
+    }
+
+
+    public boolean existePedidoEnCurso(Usuario usuario, String estadoPedido){
+        Optional<Usuario> repartidor = usuarioRepository.findById(usuario.getIdusuarios());
+
+        try{
+            Pedidos pedido = pedidosRepository.listapedidosxidrepartidoryestadopedido(repartidor.get().getIdusuarios(), estadoPedido);
+            int id = pedido.getIdcliente();
+            return true;
+        }catch (NullPointerException e){
+            return false;
         }
     }
+
 
     //El repartidor acepta el pedido del restaurante y se cambia el estado a "esperando recojo del restaurante"
     @GetMapping("/repartidor/AceptaPedido")
@@ -118,18 +164,19 @@ public class RepartidorController {
 
         if (pedidoElegido.isPresent()) {
             Pedidos pedido = pedidoElegido.get();
+            //pedido.setIdrepartidor(sessionUser.getIdusuarios());
 
             Optional<Usuario> repopt = usuarioRepository.findById(sessionUser.getIdusuarios());
             Usuario repartidor = repopt.get();
             pedido.setRepartidor(repartidor);
 
-            /*
-            Optional<Repartidor> repopt2 = repartidorRepository.findById(sessionUser.getIdusuarios());
-            Repartidor repartidor2 = repopt2.get();
-            repartidor2.setDisponibilidad(false);
-            repartidorRepository.save(repartidor2);
-            */
+            //Pone en ocupado la disponibilidad al aceptar un pedido.
+            Optional<Repartidor> repopt2 = Optional.ofNullable(repartidorRepository.findRepartidorByIdusuariosEquals(sessionUser.getIdusuarios()));
+            Repartidor repartidor1 = repopt2.get();
+            repartidor1.setDisponibilidad(false);
+            repartidorRepository.save(repartidor1);
 
+            //Pone en estado aceptado el repartidorEstado
             pedido.setEstadorepartidor("aceptado"); //Estado de esperando recojo del restaurante
             model.addAttribute("pedido", pedido);
 
@@ -188,8 +235,9 @@ public class RepartidorController {
 
     //El repartidor entrega el pedido al cliente
     @GetMapping("/repartidor/ConfirmaEntrega")
-    public String confirmaEntrega(RedirectAttributes attr, @RequestParam("idpedido") int idPedidoElegido, Model model) {
+    public String confirmaEntrega(HttpSession session,RedirectAttributes attr, @RequestParam("idpedido") int idPedidoElegido, Model model) {
         Optional<Pedidos> pedidoElegido = pedidosRepository.findById(idPedidoElegido);
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
 
         if (pedidoElegido.isPresent()) {
             Pedidos pedido = pedidoElegido.get();
@@ -198,6 +246,11 @@ public class RepartidorController {
 
             Date ahora = Date.valueOf(LocalDate.now());
             pedido.setFechahoraentregado(ahora);
+
+            Optional<Repartidor> repopt2 = Optional.ofNullable(repartidorRepository.findRepartidorByIdusuariosEquals(sessionUser.getIdusuarios()));
+            Repartidor repartidor1 = repopt2.get();
+            repartidor1.setDisponibilidad(true);
+            repartidorRepository.save(repartidor1);
 
             pedidosRepository.save(pedido);
             attr.addFlashAttribute("msgVerde", "Se registró la entrega del pedido. ¡Gracias!");
@@ -253,30 +306,52 @@ public class RepartidorController {
 
     }
 
-
     public ByteArrayInputStream exportAllData1(int id) throws IOException {
-        String[] columns = { "MES", "AÑO", "COMISIÓN MENSUAL" };
+        String[] columns1 = { "# PEDIDO", "RESTAURANTE", "DISTRITO DEL RESTAURANTE", "LUGAR DE DESTINO", "S/. COMISIÓN", "S/. TOTAL", "CALIFICACION"};
+        String[] columns2 = { "MES", "AÑO", "COMISIÓN MENSUAL" };
 
         Workbook workbook = new HSSFWorkbook();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
-        Sheet sheet = workbook.createSheet("Personas");
-        Row row = sheet.createRow(0);
+        Sheet sheet1 = workbook.createSheet("Reporte");
+        Sheet sheet2 = workbook.createSheet("Personas");
 
-        for (int i = 0; i < columns.length; i++) {
-            Cell cell = row.createCell(i);
-            cell.setCellValue(columns[i]);
+        //Pagina 1
+        Row row1 = sheet1.createRow(0);
+        for (int i = 0; i < columns1.length; i++) {
+            Cell cell = row1.createCell(i);
+            cell.setCellValue(columns1[i]);
+        }
+        List<PedidosReporteDTOs> listaReporte1 = repartidorRepository.findPedidosPorRepartidor(id);
+        int initRow1 = 1;
+        for (PedidosReporteDTOs pedidoDisponible : listaReporte1) {
+            row1 = sheet1.createRow(initRow1);
+            row1.createCell(0).setCellValue(pedidoDisponible.getNombre());
+            row1.createCell(1).setCellValue(pedidoDisponible.getRestaurantedistrito());
+            row1.createCell(2).setCellValue(pedidoDisponible.getClienteubicacion());
+            row1.createCell(3).setCellValue(pedidoDisponible.getComisionrepartidor()+ ".00");
+            row1.createCell(4).setCellValue(pedidoDisponible.getMontototal()+ "0");
+            row1.createCell(5).setCellValue(pedidoDisponible.getCalificacionrepartidor());
+            initRow1++;
+        }
+
+        //Pagina 2
+        Row row2 = sheet2.createRow(0);
+
+        for (int i = 0; i < columns2.length; i++) {
+            Cell cell = row2.createCell(i);
+            cell.setCellValue(columns2[i]);
         }
 
         List<RepartidorComisionMensualDTO> listaComisionMensual = repartidorRepository.obtenerComisionPorMes(id);
 
-        int initRow = 1;
+        int initRow2 = 1;
         for (RepartidorComisionMensualDTO comisionMensualDTO : listaComisionMensual) {
-            row = sheet.createRow(initRow);
-            row.createCell(0).setCellValue(comisionMensualDTO.getMes());
-            row.createCell(1).setCellValue(comisionMensualDTO.getYear());
-            row.createCell(2).setCellValue(comisionMensualDTO.getComision_mensual());
-            initRow++;
+            row2 = sheet2.createRow(initRow2);
+            row2.createCell(0).setCellValue(comisionMensualDTO.getMes());
+            row2.createCell(1).setCellValue(comisionMensualDTO.getYear());
+            row2.createCell(2).setCellValue(comisionMensualDTO.getComision_mensual());
+            initRow2++;
         }
 
         workbook.write(stream);
@@ -287,12 +362,12 @@ public class RepartidorController {
     @GetMapping("/repartidor/excelgananciamensual")
     public ResponseEntity<InputStreamResource> exportAllData(@RequestParam("id") int id) throws Exception {
 
-        ByteArrayInputStream stream2 = exportAllData1(id);
+        ByteArrayInputStream stream1 = exportAllData1(id);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=ganancia_mensual.xls");
 
-        return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream2));
+        return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream1));
     }
 
 
@@ -386,6 +461,7 @@ public class RepartidorController {
                                           @RequestParam("distrito") String distrito,
                                           @RequestParam("archivo") MultipartFile file,
                                           HttpSession session,
+                                          RedirectAttributes attributes,
                                           Model model) {
         Usuario user=(Usuario) session.getAttribute("usuarioLogueado");
         int id=usuario.getIdusuarios();
@@ -409,12 +485,15 @@ public class RepartidorController {
 
             model.addAttribute("msgc1",msgc1);
             model.addAttribute("msgc2",msgc2);
+
+            String msgT=null;
             if(bindingResult.hasFieldErrors("telefono")){
-                String msgT="El teléfono no es válido";
+                 msgT="El teléfono no es válido";
             }
             Usuario usuario2 = optional.get();
             model.addAttribute("usuario", usuario2);
 
+            model.addAttribute("msgT",msgT);
             Repartidor repartidor2 = repartidorRepository.findRepartidorByIdusuariosEquals(id);
             model.addAttribute("repartidor", repartidor2);
 
@@ -440,6 +519,8 @@ public class RepartidorController {
                     dnueva.setDistrito(distritos);
                     direccionesRepository.save(dnueva);
                     usuarioRepository.save(user);
+                    String msgR="El registro fue exitoso";
+                    attributes.addFlashAttribute("msgR",msgR);
                     return "redirect:/repartidor/miperfil";
                 }
                 String fileName = file.getOriginalFilename();
@@ -467,6 +548,8 @@ public class RepartidorController {
                 dnueva.setDistrito(distritos);
                 direccionesRepository.save(dnueva);
                 usuarioRepository.save(user);
+                String msgR="El registro fue exitoso";
+                attributes.addFlashAttribute("msgR",msgR);
                 return "redirect:/repartidor/miperfil";
             }
             else{
@@ -481,6 +564,8 @@ public class RepartidorController {
                         dnueva.setDistrito(distritos);
                         direccionesRepository.save(dnueva);
                         usuarioRepository.save(user);
+                        String msgR="El registro fue exitoso";
+                        attributes.addFlashAttribute("msgR",msgR);
                         return "redirect:/repartidor/miperfil";
                     }
                     String fileName = file.getOriginalFilename();
@@ -508,6 +593,8 @@ public class RepartidorController {
                     dnueva.setDistrito(distritos);
                     direccionesRepository.save(dnueva);
                     usuarioRepository.save(user);
+                    String msgR="El registro fue exitoso";
+                    attributes.addFlashAttribute("msgR",msgR);
                     return "redirect:/repartidor/miperfil";
                 }else{
                     model.addAttribute("msg","Contraseñas no son iguales");
@@ -550,8 +637,8 @@ public class RepartidorController {
                                      @RequestParam("direccion") String direccion,
                                      @RequestParam("distrito") Distritos distrito,
                                      @RequestParam("password2") String pass2,
-                                     @RequestParam("placa") String placa,
-                                     @RequestParam("licencia") String licencia,
+                                     @RequestParam(value = "placa",defaultValue = "0") String placa,
+                                     @RequestParam(value = "licencia",defaultValue = "0") String licencia,
                                      @RequestParam("archivo") MultipartFile file,
                                      @RequestParam(value = "movilidad2",defaultValue = "0") String movilidad2,
                                      Model model, RedirectAttributes attributes) {
@@ -659,8 +746,12 @@ public class RepartidorController {
                 repartidor.setDistritos(distrito);
                 repartidor.setDisponibilidad(false);
                 repartidor.setMovilidad(movilidad2);
-                repartidor.setPlaca(placa);
-                repartidor.setLicencia(licencia);
+                if(!movilidad2.equalsIgnoreCase("bicicleta")){
+                    repartidor.setPlaca(placa);
+                }
+                if(!movilidad2.equalsIgnoreCase("bicicleta")){
+                    repartidor.setLicencia(licencia);
+                }
                 repartidorRepository.save(repartidor);
 
 

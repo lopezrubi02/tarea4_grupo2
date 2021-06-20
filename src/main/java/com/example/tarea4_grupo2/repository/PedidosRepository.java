@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
 /* Obtencion del Top 3 de Restaurantes*/
@@ -181,7 +182,7 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
             "php.cubiertos as cubiertos,\n" +
             "d.direccion as direccion,\n" +
             "dr.nombredistrito as nombredistrito,\n" +
-            "pl.precio as precio from Pedidos p\n" +
+            "pl.precio as precio from pedidos p\n" +
             "inner join pedidoshasplato php on p.idpedidos = php.pedidosidpedidos\n" +
             "inner join plato pl on php.platoidplato = pl.idplato\n" +
             "inner join direcciones d on p.direccionentrega = d.iddirecciones\n" +
@@ -224,8 +225,14 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
 
     List<Pedidos> findAllByIdclienteEquals(int idcliente);
 
-    //@Query(value = "select * from pedidos where idrepartidor=?1",nativeQuery = true)
-    //Pedidos pedido findPedidoByIdRepartidor(int idRepartidor);
+    @Query (value = "select p.* \n" +
+            "from usuarios u\n" +
+            "inner join pedidos p on (u.idusuarios = p.idrepartidor)\n" +
+            "inner join datosrepartidor d on (d.usuariosidusuarios = u.idusuarios)\n" +
+            "where (p.idrepartidor=?1 and p.estadorepartidor like ?2%) limit 1", nativeQuery = true)
+    Pedidos listapedidosxidrepartidoryestadopedido (int idusuario, String estadopedido);
+
+
 
     @Query(value = "select p.montototal, r.nombre, p.fechahorapedido, d.direccion, mp.metodo from pedidos p\n" +
             "inner join restaurante r\n" +

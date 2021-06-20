@@ -99,7 +99,8 @@
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <label>RUC</label>
                                             <div class="text-danger" th:if="${#fields.hasErrors('ruc')}" th:errors="*{ruc}"></div>
-                                            <input class="form-control" placeholder="RUC" type="text" th:field="*{ruc}">
+                                            <input class="form-control" placeholder="RUC" id="idRUCvalidar" type="text" th:field="*{ruc}">
+
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <label>Direccion</label>
@@ -114,7 +115,7 @@
                                                         th:value="${lista.iddistritos}"></option>
                                             </select>
                                         </div>
-                                        <div style="padding-top: 10px" class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                        <div style="margin-top:5px; margin-bottom: 15px; padding-top: 10px" class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <div style="background: white;position: relative;padding-top: 25px;border: #fff solid 2px;box-shadow: 0 0 0 .2rem rgba(255, 255, 255, .25);"><input class="form-control-file" type="file" id="imagen" name="imagen" style="opacity: 0%;position: absolute">Adjuntar Imagen</div>
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
@@ -208,6 +209,24 @@
                 }
             })
         })
+    </script>
+    <script>
+        var urlRUC = "http://api.ateneaperu.com/api/Sunat/Ruc?sNroDocumento=";
+        $(document).ready(function () {
+            var idRUC = $("#idRUCvalidar").val();
+            console.log(idRUC);
+            $.ajax({
+                method: "GET",
+                datatype: "json",
+                url: urlRUC + idRUC
+            }).done(function (data) {
+                console.log(data);
+
+            }).fail(function (err) {
+                console.log(err);
+                alert("ocurrió un error al cargar la página");
+            });
+        });
     </script>
 </div>
 </body>
