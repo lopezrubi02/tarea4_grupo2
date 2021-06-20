@@ -155,6 +155,7 @@
                         <div class="form-group">
                             <label>Correo</label>
                             <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                            <p class="text-danger" th:if="${emailUnico != null}" th:text="${emailUnico}"></p>
                             <input class="form-control" placeholder="Correo" type="text" th:field="*{email}">
                         </div>
 
