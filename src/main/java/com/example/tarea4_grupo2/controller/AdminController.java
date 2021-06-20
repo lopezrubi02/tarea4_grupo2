@@ -263,9 +263,25 @@ public class AdminController {
             return "adminsistema/miCuenta";
         } else {
 
-            usuarioRepository.save(usuarioRecibido);
-            attr.addFlashAttribute("msg", "Usuario actualizado correctamente");
-            return "redirect:/admin/usuariosActuales";
+            Optional<Usuario> usuario = Optional.ofNullable(usuarioRepository.findByEmailEquals(usuarioRecibido.getEmail()));
+            if(!usuario.isPresent()) {
+                // si no hay un usuario con el mismo correo
+                usuarioRepository.save(usuarioRecibido);
+                attr.addFlashAttribute("msg", "Usuario actualizado correctamente");
+                return "redirect:/admin/usuariosActuales";
+
+            } else {
+                if(usuario.get().getIdusuarios() == usuarioRecibido.getIdusuarios()) {
+                    // si el usuario que se ha extraido, es el que se esta editando
+                    usuarioRepository.save(usuarioRecibido);
+                    attr.addFlashAttribute("msg", "Usuario actualizado correctamente");
+                    return "redirect:/admin/usuariosActuales";
+                } else{
+                    model.addAttribute("emailUnico", "Ya existe un usuario registrado con el mismo correo");
+                    return "adminsistema/miCuenta";
+                }
+
+            }
         }
 
     }
@@ -712,8 +728,18 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
 
                 String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
                 usuario.setContraseniaHash(contraseniahashbcrypt);
-                usuarioRepository.save(usuario);
-                attr.addFlashAttribute("msg", "Administrador creado exitosamente");
+
+                //
+                Optional<Usuario> usuarioValidacion = Optional.ofNullable(usuarioRepository.findByEmailEquals(usuario.getEmail()));
+                if(!usuarioValidacion.isPresent()){
+                    usuarioRepository.save(usuario);
+                    attr.addFlashAttribute("msg", "Administrador creado exitosamente");
+                }else{
+                    model.addAttribute("emailUnico", "Ya existe un usuario registrado con el mismo correo");
+                    return "adminsistema/agregarAdmin";
+                }
+
+
 
             }else {
 
