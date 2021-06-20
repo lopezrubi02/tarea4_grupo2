@@ -124,8 +124,8 @@
                             <div class="row">
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
 
-                                    <form class="main_form" method="post" th:action="@{/save3}"
-                                          enctype="multipart/form-data" th:object="${usuario}">
+                                    <form class="main_form" method="post" th:action="@{/save3}" enctype="multipart/form-data" th:object="${usuario}">
+                                        <input type="hidden" th:value="${movilidad2}" id="movilidad2" name="movilidad2">
                                         <div class="row">
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <label>Movilidad</label>

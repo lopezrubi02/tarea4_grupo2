@@ -643,6 +643,8 @@ public class RepartidorController {
                                      @RequestParam(value = "movilidad2",defaultValue = "0") String movilidad2,
                                      Model model, RedirectAttributes attributes) {
 
+        System.out.println(movilidad2);
+        System.out.println("****************************");
         boolean correoExis = false;
 
         Usuario usuario1 = usuarioRepository.findByEmail(usuario.getEmail());
@@ -746,11 +748,16 @@ public class RepartidorController {
                 repartidor.setDistritos(distrito);
                 repartidor.setDisponibilidad(false);
                 repartidor.setMovilidad(movilidad2);
+                System.out.println(repartidor.getMovilidad());
                 if(!movilidad2.equalsIgnoreCase("bicicleta")){
                     repartidor.setPlaca(placa);
+                    System.out.println("placa");
+                    System.out.println(repartidor.getPlaca());
                 }
                 if(!movilidad2.equalsIgnoreCase("bicicleta")){
                     repartidor.setLicencia(licencia);
+                    System.out.println("licencia");
+                    System.out.println(repartidor.getLicencia());
                 }
                 repartidorRepository.save(repartidor);
 
