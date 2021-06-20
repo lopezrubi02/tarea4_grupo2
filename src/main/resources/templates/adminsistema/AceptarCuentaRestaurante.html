@@ -161,7 +161,7 @@
                               <div class="col-sm-3">
                                 <h6 class="mb-0">Fecha de nacimiento</h6>
                               </div>
-                              <div class="col-sm-9 text-secondary" th:text="${usuario.fechaNacimiento}">
+                              <div class="col-sm-9 text-secondary" th:text="${usuario.fechaNacimiento.toLocaleString().substring(0,10)}">
                               </div>
                             </div>
                             <hr>
