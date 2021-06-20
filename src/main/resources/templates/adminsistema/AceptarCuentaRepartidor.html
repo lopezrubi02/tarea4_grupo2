@@ -159,7 +159,7 @@
                               <div class="col-sm-3">
                                 <h6 class="mb-0">Fecha de nacimiento</h6>
                               </div>
-                              <div class="col-sm-9 text-secondary" th:text="${usuario.fechaNacimiento}">
+                              <div class="col-sm-9 text-secondary" th:text="${usuario.fechaNacimiento.toLocaleString().substring(0,10)}" >
                               </div>
                             </div>
                             <hr>
@@ -178,27 +178,39 @@
                               <div class="col-sm-9 text-secondary" th:text="${repartidor.movilidad}">
                               </div>
                             </div>
-							<div class="row">
+							<div class="row" th:if="${repartidor.getMovilidad()!= 'bicicleta'}">
                               <div class="col-sm-3">
                                 <h6 class="mb-0">Placa</h6>
                               </div>
-                              <div class="col-sm-9 text-secondary" th:text="${repartidor.placa}">
+                              <div class="col-sm-9 text-secondary"  th:text="${repartidor.placa}">
                               </div>
                             </div>
-							<div class="row">
+							<div class="row" th:if="${repartidor.getMovilidad()!= 'bicicleta'}">
                               <div class="col-sm-3">
                                 <h6 class="mb-0">Licencia</h6>
                               </div>
                               <div class="col-sm-9 text-secondary" th:text="${repartidor.licencia}">
                               </div>
                             </div>
+                              <hr>
+                                  <div class="row">
+                                      <div class="col-sm-3">
+                                      <h6 class="mb-0">Dirección</h6>
+                                      </div>
+                                      <div class="col-sm-9 text-secondary">
+                                          <tr th:each="direccion,info : ${lista}">
+                                              <!--th scope="row" th:text="${info.index + 1}">1</th-->
+                                              <th th:text="${direccion.direccion+' - '+distritos.get(direccion.distrito).getNombredistrito()}"></th>
+                                          </tr>
+                                      </div>
+                                  </div>
                           </div>
                         </div>
                     </div>
                 </div>
             </div>
             <br>
-            <div class="row" style="margin-top: 5vh;">
+            <!--div class="row" style="margin-top: 5vh;">
                 <table class="table">
                     <thead>
                       <tr>
@@ -213,7 +225,7 @@
                       </tr>
                     </tbody>
                   </table>
-            </div>
+            </div-->
             <hr>
             <div class="container">
                 <li class="button_user"><a class="button active" th:href="@{nuevosUsuarios}" > Regresar </a></li>
