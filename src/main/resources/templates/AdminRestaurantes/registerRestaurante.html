@@ -125,6 +125,7 @@
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <label>RUC</label>
+                                            <div th:if="${msgrucerror != null}" th:text="${msgrucerror}" class="text-danger"></div>
                                             <div class="text-danger" th:if="${#fields.hasErrors('ruc')}" th:errors="*{ruc}"></div>
                                             <input class="form-control" placeholder="RUC" type="text" th:field="*{ruc}">
                                         </div>

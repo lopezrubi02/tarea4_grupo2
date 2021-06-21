@@ -106,22 +106,31 @@ public class AdminRestauranteController {
             return "AdminRestaurantes/registerRestaurante";
         }
         else {
-            try {
-                restaurante.setFoto(file.getBytes());
-                restaurante.setFotocontenttype(file.getContentType());
-                restaurante.setFotonombre(file.getOriginalFilename());
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (restaurante.getRuc().startsWith("20") || restaurante.getRuc().startsWith("10")) {
+                try {
+                    restaurante.setFoto(file.getBytes());
+                    restaurante.setFotocontenttype(file.getContentType());
+                    restaurante.setFotonombre(file.getOriginalFilename());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                restaurante.setDireccion(direccion);
+                Distritos distrito = distritosRepository.findById(iddistrito).get();
+                restaurante.setDistrito(distrito);
+                restauranteRepository.save(restaurante);
+                sessionUser.setCuentaActiva(2);
+                usuarioRepository.save(sessionUser);
+                model.addAttribute("id", restaurante.getIdrestaurante());
+                model.addAttribute("listacategorias", categoriasRepository.findAll());
+                return "AdminRestaurantes/categorias";
             }
-            restaurante.setDireccion(direccion);
-            Distritos distrito = distritosRepository.findById(iddistrito).get();
-            restaurante.setDistrito(distrito);
-            restauranteRepository.save(restaurante);
-            sessionUser.setCuentaActiva(2);
-            usuarioRepository.save(sessionUser);
-            model.addAttribute("id", restaurante.getIdrestaurante());
-            model.addAttribute("listacategorias", categoriasRepository.findAll());
-            return "AdminRestaurantes/categorias";
+            else{
+                restaurante.setUsuario(sessionUser);
+                model.addAttribute("msgrucerror","No es un RUC valido");
+                model.addAttribute("listadistritos",distritosRepository.findAll());
+                model.addAttribute("restaurante",restaurante);
+                return "AdminRestaurantes/registerRestaurante";
+            }
         }
     }
 
@@ -814,6 +823,9 @@ public class AdminRestauranteController {
         Usuario user= (Usuario) session.getAttribute("usuarioLogueado");
         int id=restauranteRepository.buscarRestaurantePorIdAdmin(user.getIdusuarios()).get().getIdrestaurante();
         restauranteRepository.deleteById(id);
+        user.setCuentaActiva(3);
+        usuarioRepository.save(user);
+
         return "redirect:/adminrest/sinrestaurante";
     }
     @PostMapping("/llenarcategoria")

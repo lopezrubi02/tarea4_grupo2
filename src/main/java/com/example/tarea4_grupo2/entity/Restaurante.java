@@ -3,6 +3,7 @@ package com.example.tarea4_grupo2.entity;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.Set;
 
@@ -18,6 +19,8 @@ public class Restaurante {
     @Column(nullable = false)
     @NotBlank(message = "No puede estar en blanco")
     @Pattern(regexp = "^[0-9]*$",message = "Solo pueden ser numeros")
+    @Size(max=11,message = "No puede tenr más de 11 dígitos")
+    @Size(min=11,message = "No puede tenr menos de 11 dígitos")
     private String ruc;
     @Column(nullable = false)
     @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚ ]*$",message = "Solo pueden ser letras")
