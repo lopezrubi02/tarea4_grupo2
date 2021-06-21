@@ -100,9 +100,9 @@
                      <input class="form-control" type="text" th:field="*{dni}" disabled>
                 </div>
 				<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-				<label>Número de celular</label>
+				    <label>Número de celular</label>
                      <input class="form-control" type="text" th:field="*{telefono}">
-                    <div class="text-danger" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}"></div>
+                    <div th:if="${msgT != null}" th:text="${msgT}" class="alert alert-danger" role="alert"></div>
                 </div>
 				<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
 				<label>Fecha de nacimiento</label>

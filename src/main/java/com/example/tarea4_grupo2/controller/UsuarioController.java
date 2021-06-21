@@ -497,11 +497,7 @@ public class UsuarioController {
             int idcategoriarest = Integer.parseInt(categoriarest);
             Optional<Categorias> catopt = categoriasRepository.findById(idcategoriarest);
             if(catopt.isPresent()){
-                System.out.println("************************************");
-                System.out.println("no existe tabla pedido has categorias??????????????");
                 List<Restaurante> listarestauranteseleccionado = restauranteRepository.listarestxcategoria(idcategoriarest);
-                System.out.println("******************************************");
-                System.out.println("*****************************************");
 
                 if(idcategoriarest!=0){
                     model.addAttribute("listarestaurantes",listarestauranteseleccionado);
@@ -1215,6 +1211,10 @@ public class UsuarioController {
         Usuario usuarioperfil = usuarioopt.get();
 
         if(bindingResult.hasFieldErrors("telefono") || bindingResult.hasFieldErrors("contraseniaHash")){
+            if(bindingResult.hasFieldErrors("telefono")){
+               String  msgT="El teléfono no es válido";
+                model.addAttribute("msgT",msgT);
+            }
             List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuarioAndActivoEquals(usuario,1);
             model.addAttribute("listadirecciones", listadireccionescliente);
             model.addAttribute("usuario",usuarioperfil);
