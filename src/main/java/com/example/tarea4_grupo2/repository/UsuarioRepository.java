@@ -56,6 +56,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     @Query(value="select nombre,apellidos,email,dni,fechanacimiento from usuarios where idusuarios=?1",nativeQuery = true)
     DatosDTO obtenerDatos(int id);
     Optional<Usuario> findByEmailAndAndRol(String email, String rol);
+    Optional<Usuario> findByDniAndRol(String dni,String rol);
 
     @Query(value="select count(idusuarios) from usuarios where email=?1 and rol=?2",nativeQuery = true)
     Integer verificarEmail(String email,String rol);

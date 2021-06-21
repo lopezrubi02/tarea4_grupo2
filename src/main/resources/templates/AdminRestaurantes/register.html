@@ -102,6 +102,7 @@
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <label>DNI</label>
+                                            <div th:if="${msgdni != null}" th:text="${msgdni}" class="text-danger"></div>
                                             <div class="text-danger" th:if="${#fields.hasErrors('dni')}" th:errors="*{dni}"></div>
                                             <input class="form-control" placeholder="DNI" type="text" th:field="*{dni}">
 
