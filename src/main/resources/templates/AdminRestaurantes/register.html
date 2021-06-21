@@ -240,7 +240,6 @@
                         }
                     })
                         .then(function(response){
-                            var direccion_mostrar=response.data.results[0].formatted_address;
                             var addressComponents=response.data.results[0].address_components;
                             for(var i=0;i < addressComponents.length;i++){
                                 if(addressComponents[i].types[0]=="locality"){
@@ -248,8 +247,14 @@
                                     document.getElementById("distrito").value=distrito;
                                     validarDistrito(distrito);
                                 }
+                                if(addressComponents[i].types[0]=="street_number"){
+                                    var numero=addressComponents[i].long_name;
+                                }
+                                if(addressComponents[i].types[0]=="route"){
+                                    var calle=addressComponents[i].long_name;
+                                }
                             }
-                            document.getElementById("direccion").value=direccion_mostrar;
+                            document.getElementById("direccion").value=calle +" "+numero;
                         })
                     google.maps.event.addListener(marker, "dragend", function (evt) {
                         var latOutput = evt.latLng.lat();
@@ -262,7 +267,7 @@
                             }
                         })
                             .then(function(response){
-                                var direccion=response.data.results[0].formatted_address;
+                                console.log(response);
                                 var addressComponents=response.data.results[0].address_components;
                                 for(var i=0;i < addressComponents.length;i++){
                                     if(addressComponents[i].types[0]=="locality"){
@@ -270,8 +275,14 @@
                                         document.getElementById("distrito").value=distrito;
                                         validarDistrito(distrito);
                                     }
+                                    if(addressComponents[i].types[0]=="street_number"){
+                                        var numero=addressComponents[i].long_name;
+                                    }
+                                    if(addressComponents[i].types[0]=="route"){
+                                        var calle=addressComponents[i].long_name;
+                                    }
                                 }
-                                document.getElementById("direccion").value=direccion;
+                                document.getElementById("direccion").value=calle+" "+numero;
                             })
                     });
 
