@@ -48,7 +48,7 @@ public class WebSecurityConfigAdapter extends org.springframework.security.confi
                 .dataSource(dataSource)
                 .passwordEncoder(new BCryptPasswordEncoder())
                 .usersByUsernameQuery("select email, contraseniahash, cuentaactiva from usuarios WHERE email =?")
-                .authoritiesByUsernameQuery("select u.email, u.rol from usuarios u where u.email=? and u.cuentaactiva=1");
+                .authoritiesByUsernameQuery("select u.email, u.rol from usuarios u where u.email=? and u.cuentaactiva!=-1");
     }
                 //valores cuenta activa:
     /*
