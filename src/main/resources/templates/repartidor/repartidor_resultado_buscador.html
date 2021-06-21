@@ -45,14 +45,15 @@
         <div class="blog">
             <div class="container">
                 <h1>Resultados de búsqueda</h1>
-                <form method="post" th:action="@{/reportes/Buscador}">
-                    <input name="valorBuscado" class="form-control" type="text" placeholder="Ingrese el nombre del restaurante o distrito del restaurante"/>
+                <form method="post" th:action="@{/repartidor/Buscador}">
+                    <input name="valorBuscado" class="form-floating" style="padding: 5px; width: 82%;"
+                           type="text" th:placeholder="${valorBuscado}"/>
                     <button class="btn btn-dark" type="submit">Buscar</button>
                     <button class="btn btn-warning"><a class="button active" th:href="@{'/repartidor/Reportes'}">Limpiar</a></button>
                 </form>
                 <br> </br>
 
-            <table class="table">
+            <table class="table table-striped">
                 <thead>
                 <tr>
                     <th scope="col"># PEDIDO</th>

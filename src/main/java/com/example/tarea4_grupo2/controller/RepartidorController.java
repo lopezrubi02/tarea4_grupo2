@@ -164,7 +164,6 @@ public class RepartidorController {
 
         if (pedidoElegido.isPresent()) {
             Pedidos pedido = pedidoElegido.get();
-            //pedido.setIdrepartidor(sessionUser.getIdusuarios());
 
             Optional<Usuario> repopt = usuarioRepository.findById(sessionUser.getIdusuarios());
             Usuario repartidor = repopt.get();
@@ -274,6 +273,7 @@ public class RepartidorController {
             List<PedidosReporteDTOs> listaFindReporte = repartidorRepository.findReporte(searchField, id);
             if(listaFindReporte.size()>0){
                 model.addAttribute("listaFindReporte", listaFindReporte);
+                model.addAttribute("valorBuscado", searchField);
                 return "repartidor/repartidor_resultado_buscador";
             }else{
                 attr.addFlashAttribute("msg", "No hay resultados asociados a la búsqueda.");
@@ -314,7 +314,7 @@ public class RepartidorController {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
         Sheet sheet1 = workbook.createSheet("Reporte");
-        Sheet sheet2 = workbook.createSheet("Personas");
+        Sheet sheet2 = workbook.createSheet("Reporte de Ganancia Mensual");
 
         //Pagina 1
         Row row1 = sheet1.createRow(0);
@@ -326,14 +326,18 @@ public class RepartidorController {
         int initRow1 = 1;
         for (PedidosReporteDTOs pedidoDisponible : listaReporte1) {
             row1 = sheet1.createRow(initRow1);
-            row1.createCell(0).setCellValue(pedidoDisponible.getNombre());
-            row1.createCell(1).setCellValue(pedidoDisponible.getRestaurantedistrito());
-            row1.createCell(2).setCellValue(pedidoDisponible.getClienteubicacion());
-            row1.createCell(3).setCellValue(pedidoDisponible.getComisionrepartidor()+ ".00");
-            row1.createCell(4).setCellValue(pedidoDisponible.getMontototal()+ "0");
-            row1.createCell(5).setCellValue(pedidoDisponible.getCalificacionrepartidor());
+            row1.createCell(0).setCellValue(initRow1);
+            row1.createCell(1).setCellValue(pedidoDisponible.getNombre());
+            row1.createCell(2).setCellValue(pedidoDisponible.getRestaurantedistrito());
+            row1.createCell(3).setCellValue(pedidoDisponible.getClienteubicacion());
+            row1.createCell(4).setCellValue(pedidoDisponible.getComisionrepartidor()+ ".00");
+            row1.createCell(5).setCellValue(pedidoDisponible.getMontototal()+ "0");
+            row1.createCell(6).setCellValue(pedidoDisponible.getCalificacionrepartidor());
             initRow1++;
         }
+
+        for(int colNum = 0; colNum<row1.getLastCellNum()-1;colNum++)
+            workbook.getSheetAt(0).autoSizeColumn(colNum);
 
         //Pagina 2
         Row row2 = sheet2.createRow(0);
@@ -461,6 +465,7 @@ public class RepartidorController {
                                           @RequestParam("distrito") String distrito,
                                           @RequestParam("archivo") MultipartFile file,
                                           HttpSession session,
+                                          RedirectAttributes attributes,
                                           Model model) {
         Usuario user=(Usuario) session.getAttribute("usuarioLogueado");
         int id=usuario.getIdusuarios();
@@ -484,12 +489,15 @@ public class RepartidorController {
 
             model.addAttribute("msgc1",msgc1);
             model.addAttribute("msgc2",msgc2);
+
+            String msgT=null;
             if(bindingResult.hasFieldErrors("telefono")){
-                String msgT="El teléfono no es válido";
+                 msgT="El teléfono no es válido";
             }
             Usuario usuario2 = optional.get();
             model.addAttribute("usuario", usuario2);
 
+            model.addAttribute("msgT",msgT);
             Repartidor repartidor2 = repartidorRepository.findRepartidorByIdusuariosEquals(id);
             model.addAttribute("repartidor", repartidor2);
 
@@ -515,6 +523,8 @@ public class RepartidorController {
                     dnueva.setDistrito(distritos);
                     direccionesRepository.save(dnueva);
                     usuarioRepository.save(user);
+                    String msgR="El registro fue exitoso";
+                    attributes.addFlashAttribute("msgR",msgR);
                     return "redirect:/repartidor/miperfil";
                 }
                 String fileName = file.getOriginalFilename();
@@ -542,6 +552,8 @@ public class RepartidorController {
                 dnueva.setDistrito(distritos);
                 direccionesRepository.save(dnueva);
                 usuarioRepository.save(user);
+                String msgR="El registro fue exitoso";
+                attributes.addFlashAttribute("msgR",msgR);
                 return "redirect:/repartidor/miperfil";
             }
             else{
@@ -556,6 +568,8 @@ public class RepartidorController {
                         dnueva.setDistrito(distritos);
                         direccionesRepository.save(dnueva);
                         usuarioRepository.save(user);
+                        String msgR="El registro fue exitoso";
+                        attributes.addFlashAttribute("msgR",msgR);
                         return "redirect:/repartidor/miperfil";
                     }
                     String fileName = file.getOriginalFilename();
@@ -583,6 +597,8 @@ public class RepartidorController {
                     dnueva.setDistrito(distritos);
                     direccionesRepository.save(dnueva);
                     usuarioRepository.save(user);
+                    String msgR="El registro fue exitoso";
+                    attributes.addFlashAttribute("msgR",msgR);
                     return "redirect:/repartidor/miperfil";
                 }else{
                     model.addAttribute("msg","Contraseñas no son iguales");
@@ -625,12 +641,14 @@ public class RepartidorController {
                                      @RequestParam("direccion") String direccion,
                                      @RequestParam("distrito") Distritos distrito,
                                      @RequestParam("password2") String pass2,
-                                     @RequestParam("placa") String placa,
-                                     @RequestParam("licencia") String licencia,
+                                     @RequestParam(value = "placa",defaultValue = "0") String placa,
+                                     @RequestParam(value = "licencia",defaultValue = "0") String licencia,
                                      @RequestParam("archivo") MultipartFile file,
                                      @RequestParam(value = "movilidad2",defaultValue = "0") String movilidad2,
                                      Model model, RedirectAttributes attributes) {
 
+        System.out.println(movilidad2);
+        System.out.println("****************************");
         boolean correoExis = false;
 
         Usuario usuario1 = usuarioRepository.findByEmail(usuario.getEmail());
@@ -734,8 +752,17 @@ public class RepartidorController {
                 repartidor.setDistritos(distrito);
                 repartidor.setDisponibilidad(false);
                 repartidor.setMovilidad(movilidad2);
-                repartidor.setPlaca(placa);
-                repartidor.setLicencia(licencia);
+                System.out.println(repartidor.getMovilidad());
+                if(!movilidad2.equalsIgnoreCase("bicicleta")){
+                    repartidor.setPlaca(placa);
+                    System.out.println("placa");
+                    System.out.println(repartidor.getPlaca());
+                }
+                if(!movilidad2.equalsIgnoreCase("bicicleta")){
+                    repartidor.setLicencia(licencia);
+                    System.out.println("licencia");
+                    System.out.println(repartidor.getLicencia());
+                }
                 repartidorRepository.save(repartidor);
 
 

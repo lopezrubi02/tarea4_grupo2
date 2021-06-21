@@ -751,7 +751,7 @@ public class UsuarioController {
                               HttpSession session,
                               Model model, RedirectAttributes redirectAttributes,
                               @RequestParam("direccion") String direccionxenviar){
-//TODO validar cantidad > 0, validar cubiertos ser solo 0 y 1
+//TODO validar cubiertos ser solo 0 y 1, recomenacion cubiertos que lo reciba como int
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idcliente=sessionUser.getIdusuarios();
 
@@ -950,7 +950,6 @@ public class UsuarioController {
         model.addAttribute("listametodospago",listametodos);
 
         List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idusuario);
-        //TODO poner mensaje de cuales son las tarjetas validas. Las tarjetas validas son visa, mastercard, dinersclub, discover, jcb
         if(listapedidospendientes.isEmpty()){
             return "redirect:/cliente/realizarpedido";
         }else{

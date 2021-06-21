@@ -48,13 +48,18 @@
                 <h1>Reportes</h1>
                 <div th:if="${msg != null}" th:text="${msg}" class="alert alert-success" role="alert"></div>
                 <form method="post" th:action="@{/repartidor/Buscador}">
-                    <input name="valorBuscado" class="form-control mb-3" type="text" placeholder="Ingrese el nombre del restaurante o distrito del restaurante"/>
+                    <input name="valorBuscado" class="form-floating" style="padding: 5px; width: 82%;"
+                           type="text" placeholder="Nombre del restaurante o distrito del restaurante"/>
                     <button class="btn btn-dark" type="submit">Buscar</button>
                     <button class="btn btn-warning"><a class="button active" th:href="@{'/repartidor/Reportes'}">Limpiar</a></button>
                 </form>
-                <br> </br>
+                <br>
+                <div class="d-flex justify-content-end">
+                    <a th:href="@{'/repartidor/excelgananciamensual'+ '?id=' + ${id}}" class="btn btn-outline-success">Exportar a Excel</a>
+                </div>
 
-                <table class="table">
+
+                <table class="table table-striped">
                     <thead>
                     <tr>
                         <th scope="col"># PEDIDO</th>
@@ -78,19 +83,13 @@
                     </tr>
                     </tbody>
                 </table>
-
+                <br> </br>
                 <div class="row">
                     <div class="col-8">
                         <h1>Reporte de Ganancia Mensual</h1>
                     </div>
-                    <div class="col-4">
-                        <div class="d-flex justify-content-end">
-                            <a th:href="@{'/repartidor/excelgananciamensual'+ '?id=' + ${id}}"  class="btn btn-outline-success">Exportar a Excel</a>
-                        </div>
-                    </div>
-
                 </div>
-                <table class="table">
+                <table class="table table-striped">
                     <thead>
                     <tr>
                         <th scope="col">MES</th>
