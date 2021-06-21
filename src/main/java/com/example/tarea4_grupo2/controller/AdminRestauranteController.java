@@ -67,7 +67,7 @@ public class AdminRestauranteController {
         int id = sessionUser.getIdusuarios();
         System.out.println(id);
 
-        if(sessionUser.getCuentaActiva() == 2){
+        if(sessionUser.getCuentaActiva() == 3){
             Optional<Restaurante> restauranteOpt = restauranteRepository.buscarRestaurantePorIdAdmin(id);
 
             if(restauranteOpt.isPresent()){

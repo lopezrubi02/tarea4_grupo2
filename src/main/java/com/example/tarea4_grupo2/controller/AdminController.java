@@ -407,7 +407,9 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
             if(!buscar.equals("")){
                 String buscar2 = "%"+buscar+"%";
                 usuarioList = usuarioRepository.buscarGestionCuentasNuevas(buscar2);
-            } else if(rol.equals("Repartidor") || rol.equals("AdminRestaurante") ){
+            } else if(rol.equals("Repartidor")){
+                usuarioList = usuarioRepository.findAllByRolAndCuentaActiva(rol,-1);
+            } else if(rol.equals("AdminRestaurante")){
                 usuarioList = usuarioRepository.findAllByRolAndCuentaActiva(rol,2);
             }else{
                 usuarioList = usuarioRepository.cuentasNuevas();
@@ -489,7 +491,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
             List<Distritos> distritos = distritosRepository.findAll();
             if(optional.isPresent()){
                 Usuario usuario = optional.get();
-                if(usuario.getCuentaActiva()==2){
+                if( (usuario.getCuentaActiva() == 2) || (usuario.getCuentaActiva() == -1) ){
 
                     switch (usuario.getRol()){
                         case "AdminRestaurante":
