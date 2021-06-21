@@ -88,7 +88,7 @@
                                         <input class="form-control" type="hidden" name="distrito" id="distrito">
                                         <input class="form-control" type="hidden" name="iddistrito" id="iddistrito">
                                         <input class="form-control" type="hidden" id="rol" name="rol" value="AdminRestaurante">
-                                        <input class="form-control" type="hidden" id="cuentaActiva" name="cuentaActiva" value="2">
+                                        <input class="form-control" type="hidden" id="cuentaActiva" name="cuentaActiva" value="3">
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <label>Nombre</label>
                                             <div class="text-danger" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
@@ -102,6 +102,7 @@
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <label>DNI</label>
+                                            <div th:if="${msgdni != null}" th:text="${msgdni}" class="text-danger"></div>
                                             <div class="text-danger" th:if="${#fields.hasErrors('dni')}" th:errors="*{dni}"></div>
                                             <input class="form-control" placeholder="DNI" type="text" th:field="*{dni}">
 
@@ -240,7 +241,6 @@
                         }
                     })
                         .then(function(response){
-                            var direccion_mostrar=response.data.results[0].formatted_address;
                             var addressComponents=response.data.results[0].address_components;
                             for(var i=0;i < addressComponents.length;i++){
                                 if(addressComponents[i].types[0]=="locality"){
@@ -248,8 +248,14 @@
                                     document.getElementById("distrito").value=distrito;
                                     validarDistrito(distrito);
                                 }
+                                if(addressComponents[i].types[0]=="street_number"){
+                                    var numero=addressComponents[i].long_name;
+                                }
+                                if(addressComponents[i].types[0]=="route"){
+                                    var calle=addressComponents[i].long_name;
+                                }
                             }
-                            document.getElementById("direccion").value=direccion_mostrar;
+                            document.getElementById("direccion").value=calle +" "+numero;
                         })
                     google.maps.event.addListener(marker, "dragend", function (evt) {
                         var latOutput = evt.latLng.lat();
@@ -262,7 +268,7 @@
                             }
                         })
                             .then(function(response){
-                                var direccion=response.data.results[0].formatted_address;
+                                console.log(response);
                                 var addressComponents=response.data.results[0].address_components;
                                 for(var i=0;i < addressComponents.length;i++){
                                     if(addressComponents[i].types[0]=="locality"){
@@ -270,8 +276,14 @@
                                         document.getElementById("distrito").value=distrito;
                                         validarDistrito(distrito);
                                     }
+                                    if(addressComponents[i].types[0]=="street_number"){
+                                        var numero=addressComponents[i].long_name;
+                                    }
+                                    if(addressComponents[i].types[0]=="route"){
+                                        var calle=addressComponents[i].long_name;
+                                    }
                                 }
-                                document.getElementById("direccion").value=direccion;
+                                document.getElementById("direccion").value=calle+" "+numero;
                             })
                     });
 

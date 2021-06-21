@@ -55,38 +55,38 @@ public class LoginController {
                                @RequestParam("iddistrito") int iddistrito,
                                @RequestParam("direccion") String direccion,
                                Model model){
-        System.out.println("TRACE 2");
         if(bindingResult.hasErrors()){
-            System.out.println("TRACE binding");
             model.addAttribute("listadistritos",distritosRepository.findAll());
             return "AdminRestaurantes/register";
         }
         else {
-            System.out.println("TRACE 3");
             if(Pattern.matches("^[a-z0-9]+@gmail.com",usuario.getEmail())){
-                System.out.println("TRACE 4");
                 if(usuario.getContraseniaHash().equals(password2)) {
-                    System.out.println("TRACE 5");
                     Optional<Usuario> persona = usuarioRepository.findByEmailAndAndRol(usuario.getEmail(), "AdminRestaurante");
-                    System.out.println("TRACE 6");
+                    Optional<Usuario> validardni = usuarioRepository.findByDniAndRol(usuario.getDni(), "AdminRestaurante");
                     if(!(persona.isPresent())){
-                        System.out.println("TRACE 7");
-                        String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
-                        usuario.setContraseniaHash(contraseniahashbcrypt);
-                        usuarioRepository.save(usuario);
-                        Usuario usuarionuevo = usuarioRepository.findByDni(usuario.getDni());
-                        Direcciones direccionactual = new Direcciones();
-                        direccionactual.setDireccion(direccion);
-                        Distritos distritosactual= distritosRepository.findById(iddistrito).get();
-                        direccionactual.setDistrito(distritosactual);
-                        //direccionactual.setUsuariosIdusuarios(usuarionuevo.getIdusuarios());
-                        direccionactual.setUsuario(usuarionuevo);
-                        direccionactual.setActivo(1);
-                        direccionesRepository.save(direccionactual);
-                        return"AdminRestaurantes/correo";
+                        if(!(validardni.isPresent())) {
+                            String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
+                            usuario.setContraseniaHash(contraseniahashbcrypt);
+                            usuarioRepository.save(usuario);
+                            Usuario usuarionuevo = usuarioRepository.findByDni(usuario.getDni());
+                            Direcciones direccionactual = new Direcciones();
+                            direccionactual.setDireccion(direccion);
+                            Distritos distritosactual = distritosRepository.findById(iddistrito).get();
+                            direccionactual.setDistrito(distritosactual);
+                            //direccionactual.setUsuariosIdusuarios(usuarionuevo.getIdusuarios());
+                            direccionactual.setUsuario(usuarionuevo);
+                            direccionactual.setActivo(1);
+                            direccionesRepository.save(direccionactual);
+                            return "AdminRestaurantes/correo";
+                        }
+                        else{
+                            model.addAttribute("msgdni","Dni ya existe");
+                            model.addAttribute("listadistritos",distritosRepository.findAll());
+                            return "AdminRestaurantes/register";
+                        }
                     }
                     else{
-                        System.out.println("TRACE 8");
                         model.addAttribute("msg3","Correo ya existe");
                         model.addAttribute("listadistritos",distritosRepository.findAll());
                         return "AdminRestaurantes/register";
@@ -99,7 +99,6 @@ public class LoginController {
                 }
             }
             else{
-                System.out.println("hola");
                 model.addAttribute("msg2","Ingrese un correo valido");
                 model.addAttribute("listadistritos",distritosRepository.findAll());
                 return "AdminRestaurantes/register";
