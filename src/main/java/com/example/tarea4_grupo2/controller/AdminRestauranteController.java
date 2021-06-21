@@ -94,17 +94,18 @@ public class AdminRestauranteController {
     @PostMapping("/categorias")
     public String esperaConfirmacion(@ModelAttribute("restaurante") @Valid Restaurante restaurante,BindingResult bindingResult,
                                      @RequestParam("imagen") MultipartFile file,
+                                     @RequestParam("direccion") String direccion,
+                                     @RequestParam("iddistrito") Integer iddistrito,
                                      Model model,
                                      HttpSession session) throws IOException {
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-        if(bindingResult.hasErrors()){
+        if(bindingResult.hasFieldErrors("nombre")||bindingResult.hasFieldErrors("ruc")){
             restaurante.setUsuario(sessionUser);
             model.addAttribute("listadistritos",distritosRepository.findAll());
             model.addAttribute("restaurante",restaurante);
             return "AdminRestaurantes/registerRestaurante";
         }
         else {
-
             try {
                 restaurante.setFoto(file.getBytes());
                 restaurante.setFotocontenttype(file.getContentType());
@@ -112,6 +113,9 @@ public class AdminRestauranteController {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            restaurante.setDireccion(direccion);
+            Distritos distrito = distritosRepository.findById(iddistrito).get();
+            restaurante.setDistrito(distrito);
             restauranteRepository.save(restaurante);
             sessionUser.setCuentaActiva(2);
             usuarioRepository.save(sessionUser);
