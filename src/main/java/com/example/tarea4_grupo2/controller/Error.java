@@ -20,6 +20,7 @@ public class Error implements ErrorController {
             if(statusCode == HttpStatus.NOT_FOUND.value()) {
                 return "login/error404";
             }
+
             else if(statusCode == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
                 return "login/error500";
             }

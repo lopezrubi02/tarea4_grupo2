@@ -10,3 +10,4 @@ public class ControllerError {
         return "login/error500";
     }
 }
+
