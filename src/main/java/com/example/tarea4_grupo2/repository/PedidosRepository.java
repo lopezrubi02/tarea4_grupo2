@@ -208,9 +208,6 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
             "where r.idrestaurante=?1 and p.estadorestaurante='preparado'",nativeQuery = true)
     List<PedidosPreparadosDto>preparadopedidos(Integer id);
 
-    //@Query(value = "select * from Pedidos where idcliente=?1 and restauranteIdrestaurante=?2",nativeQuery = true)
-    //List<Pedidos> listapedidoxcliente (int idcliente,int idrestaurante);
-
     @Query(value = "select * from pedidos where idcliente=?1 and restauranteidrestaurante= ?2 and montototal='0'",nativeQuery = true)
     Pedidos pedidoencursoxrestaurante(int idcliente, int restauranteIdrestaurante);
 
