@@ -98,7 +98,63 @@ public class AdminController {
         return lista;
     }
 
+    ////////////////////////////////////////// API - Validacion DNI ///////////////////////
+    public boolean validarDNI(String dni){
+        Boolean dniValido = false;
 
+        BufferedReader reader;
+        String line;
+        StringBuffer responseContent = new StringBuffer();
+        try{
+
+            // reemplazar DNI
+            String urlString = "https://api.ateneaperu.com/api/reniec/dni?sNroDocumento="+dni;
+
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            connection.setRequestMethod("GET");
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
+
+            int status = connection.getResponseCode();
+
+            if(status > 299){
+                System.out.println("EROR PAPU");
+                reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+                while ((line = reader.readLine()) != null){
+                    responseContent.append(line);
+                }
+                System.out.println(connection.getResponseMessage());
+                System.out.println(connection.getResponseCode());
+                System.out.println(connection.getErrorStream());
+                reader.close();
+            } else {
+                System.out.println("/GET");
+                reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                while ((line = reader.readLine()) != null){
+                    responseContent.append(line);
+                }
+                reader.close();
+            }
+            System.out.println(responseContent.toString());
+            JSONObject jsonObj = new JSONObject(responseContent.toString());
+            //System.out.println(jsonObj.get("nombres"));
+
+            // Validar si existe documento
+            if(!jsonObj.get("nombres").equals("")){
+                System.out.println("DNI valido");
+                dniValido = true;
+            }
+
+        }catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return dniValido;
+    }
 
     @GetMapping(value ={"/","/*"})
     public String redireccion(){
@@ -255,65 +311,6 @@ public class AdminController {
         }catch (NumberFormatException e){
             return "redirect:/admin/usuariosActuales";
         }
-    }
-
-    ////////////////////////////////////////// GET ///////////////////////
-
-    public boolean validarDNI(String dni){
-        Boolean dniValido = false;
-
-        BufferedReader reader;
-        String line;
-        StringBuffer responseContent = new StringBuffer();
-        try{
-
-            // reemplazar DNI
-            String urlString = "https://api.ateneaperu.com/api/reniec/dni?sNroDocumento="+dni;
-
-            URL url = new URL(urlString);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-            connection.setRequestMethod("GET");
-            connection.setConnectTimeout(5000);
-            connection.setReadTimeout(5000);
-
-            int status = connection.getResponseCode();
-
-            if(status > 299){
-                System.out.println("EROR PAPU");
-                reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
-                while ((line = reader.readLine()) != null){
-                    responseContent.append(line);
-                }
-                System.out.println(connection.getResponseMessage());
-                System.out.println(connection.getResponseCode());
-                System.out.println(connection.getErrorStream());
-                reader.close();
-            } else {
-                System.out.println("/GET");
-                reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                while ((line = reader.readLine()) != null){
-                    responseContent.append(line);
-                }
-                reader.close();
-            }
-            System.out.println(responseContent.toString());
-            JSONObject jsonObj = new JSONObject(responseContent.toString());
-            //System.out.println(jsonObj.get("nombres"));
-
-            // Validar si existe documento
-            if(!jsonObj.get("nombres").equals("")){
-                System.out.println("DNI valido");
-                dniValido = true;
-            }
-
-        }catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return dniValido;
     }
 
     @PostMapping("/miCuenta")
