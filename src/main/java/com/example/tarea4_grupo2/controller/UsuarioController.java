@@ -1303,13 +1303,16 @@ public class UsuarioController {
         direccioncrear.setDireccion(direccion);
 
         Optional<Distritos> distritoopt = distritosRepository.findById(iddistrito);
-        if(distritoopt.isPresent() && direccion != null){ //validando que direccion no vacía
+        System.out.println("entra if??");
+        if(distritoopt.isPresent()){ //validando que direccion no vacía
             Distritos distritonuevo = distritoopt.get();
             direccioncrear.setDistrito(distritonuevo);
             //direccioncrear.setUsuariosIdusuarios(idusuario);
             direccioncrear.setUsuario(usuario);
             direccioncrear.setActivo(1);
+            System.out.println("deberia guardar direccion");
             direccionesRepository.save(direccioncrear);
+            System.out.println("guardó direccion");
         }
         return "redirect:/cliente/miperfil";
     }
