@@ -316,6 +316,62 @@ public class AdminController {
         return dniValido;
     }
 
+    @PostMapping("/miCuenta")
+    public String updateMiCuenta(
+            @ModelAttribute("usuario") @Valid Usuario usuarioRecibido,
+            BindingResult bindingResult,
+            RedirectAttributes attr,
+            Model model
+    ) throws IOException {
+
+        if(bindingResult.hasErrors()) {
+            return "adminsistema/miCuenta";
+        } else {
+
+            Optional<Usuario> usuario = Optional.ofNullable(usuarioRepository.findByEmailEquals(usuarioRecibido.getEmail()));
+            if(!usuario.isPresent()) {
+                // CREAR NUEVO: si no hay un usuario con el mismo correo
+
+                // validacion de dni
+                System.out.println("***************************");
+                boolean dniValido = validarDNI(usuarioRecibido.getDni());
+                if(dniValido == true){
+                    usuarioRepository.save(usuarioRecibido);
+                    attr.addFlashAttribute("msg", "Usuario actualizado correctamente");
+                    return "redirect:/admin/usuariosActuales";
+                } else{
+                    model.addAttribute("dniValido", "Ingrese un DNI valido");
+
+                    return "adminsistema/miCuenta";
+                }
+
+            } else {
+                if(usuario.get().getIdusuarios() == usuarioRecibido.getIdusuarios()) {
+                    // EDICION: si el usuario que se ha extraido, es el que se esta editando
+
+                    // validacion de dni
+                    System.out.println("***************************");
+                    boolean dniValido = validarDNI(usuarioRecibido.getDni());
+                    if(dniValido == true){
+                        usuarioRepository.save(usuarioRecibido);
+                        attr.addFlashAttribute("msg", "Usuario actualizado correctamente");
+                        return "redirect:/admin/usuariosActuales";
+                    } else{
+                        model.addAttribute("dniValido", "Ingrese un DNI valido");
+                        return "adminsistema/miCuenta";
+                    }
+
+
+                } else{
+                    model.addAttribute("emailUnico", "Ya existe un usuario registrado con el mismo correo");
+                    return "adminsistema/miCuenta";
+                }
+
+            }
+        }
+
+    }
+
     @PostMapping("/editarAdmin")
     public String updateAdminUser(
             @ModelAttribute("usuario") @Valid Usuario usuarioRecibido,
@@ -341,7 +397,8 @@ public class AdminController {
                     return "redirect:/admin/usuariosActuales";
                 } else{
                     model.addAttribute("dniValido", "Ingrese un DNI valido");
-                    return "adminsistema/miCuenta";
+
+                    return "adminsistema/editaradmin";
                 }
 
             } else {
@@ -357,7 +414,7 @@ public class AdminController {
                         return "redirect:/admin/usuariosActuales";
                     } else{
                         model.addAttribute("dniValido", "Ingrese un DNI valido");
-                        return "adminsistema/miCuenta";
+                        return "adminsistema/editaradmin";
                     }
 
 
