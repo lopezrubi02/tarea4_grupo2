@@ -229,8 +229,6 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
             "where (p.idrepartidor=?1 and p.estadorepartidor like ?2%) limit 1", nativeQuery = true)
     Pedidos listapedidosxidrepartidoryestadopedido (int idusuario, String estadopedido);
 
-
-
     @Query(value = "select p.montototal, r.nombre, p.fechahorapedido, d.direccion, mp.metodo from pedidos p\n" +
             "inner join restaurante r\n" +
             "on p.restauranteidrestaurante = r.idrestaurante\n" +
@@ -240,5 +238,8 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
             "on mp.idmetodospago = p.idmetodopago\n" +
             "where p.idcliente = ?1",nativeQuery = true)
     List<PedidosclienteaexcelDTO> listapedidosexcel(int idcliente);
+
+    @Query(value = "select * from pedidos where idcliente=?1 and montototal!='0' and estadorestaurante!=\"entregado\" and estadorepartidor != \"entregado\"",nativeQuery = true)
+    Pedidos pedidoencurso(int idusuario);
 
 }

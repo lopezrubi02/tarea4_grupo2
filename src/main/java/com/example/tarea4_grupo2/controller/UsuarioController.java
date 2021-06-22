@@ -451,12 +451,17 @@ public class UsuarioController {
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuarioactual=sessionUser.getIdusuarios();
         List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idusuarioactual);
-        if(listapedidospendientes.size() >= 1){
+        Pedidos pedidopendiente = pedidosRepository.pedidoencurso(idusuarioactual);
+        if(listapedidospendientes.size() >= 1 || pedidopendiente != null){
             String mensajependidopendiente = "No puede realizar otro pedido a otro restaurante que sea diferente al que ya ha seleccionado.";
+            if(pedidopendiente != null){
+                mensajependidopendiente = "No puede realizar otro pedido mientras tenga un pedido en curso";
+                attr.addFlashAttribute("hayunpedidoencurso",mensajependidopendiente);
+                return "redirect:/cliente/progresopedido";
+            }
             attr.addFlashAttribute("hayunpedidoencurso",mensajependidopendiente);
             return "redirect:/cliente/carritoproductos";
         }else{
-
             List<String> listaidprecio = new ArrayList<>();
             listaidprecio.add("Menor a 15");
             listaidprecio.add("Entre 15 y 25");
@@ -680,17 +685,23 @@ public class UsuarioController {
          Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
          int idusuarioactual=sessionUser.getIdusuarios();
          List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idusuarioactual);
+         Pedidos pedidopendiente = pedidosRepository.pedidoencurso(idusuarioactual);
 
          if(diropt.isPresent() && restopt.isPresent()){
             Restaurante rest = restopt.get();
             if (restopt.isPresent()){
 
                 int idrestsel = idrestaurante;
-                if(listapedidospendientes.size() >= 0){
+                if(listapedidospendientes.size() >= 0 || pedidopendiente != null){
+                    if(pedidopendiente != null){
+                        String mensajependidopendiente = "No puede realizar otro pedido mientras tenga un pedido en curso";
+                        attr.addFlashAttribute("hayunpedidoencurso",mensajependidopendiente);
+                        return "redirect:/cliente/progresopedido";
+                    }
                     for (Pedidos pedidoencurso : listapedidospendientes){
                         idrestsel = pedidoencurso.getRestaurantepedido().getIdrestaurante();
                     }
-                    if(idrestsel == idrestaurante){
+                    if(idrestsel == idrestaurante || pedidopendiente == null){
                         int cantreviews = restauranteRepository.cantreviews(idrestaurante);
 
                         List<Plato> platosxrest = platoRepository.buscarPlatosPorIdRestauranteDisponilidadActivo(idrestaurante);
@@ -736,6 +747,7 @@ public class UsuarioController {
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuarioactual=sessionUser.getIdusuarios();
         List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idusuarioactual);
+        Pedidos pedidopendiente = pedidosRepository.pedidoencurso(idusuarioactual);
 
          Optional<Plato> platoopt = platoRepository.findById(idplatopedir);
          Optional<Restaurante> restopt = restauranteRepository.findById(idrestaurante);
@@ -744,11 +756,16 @@ public class UsuarioController {
          if(platoopt.isPresent() && restopt.isPresent() && diropt.isPresent()){
 
              int idrestsel = idrestaurante;
-             if(listapedidospendientes.size() >= 0){
+             if(listapedidospendientes.size() >= 0 || pedidopendiente != null){
+                 if(pedidopendiente != null){
+                     String mensajependidopendiente = "No puede realizar otro pedido mientras tenga un pedido en curso";
+                     attr.addFlashAttribute("hayunpedidoencurso",mensajependidopendiente);
+                     return "redirect:/cliente/progresopedido";
+                 }
                  for (Pedidos pedidoencurso : listapedidospendientes){
                      idrestsel = pedidoencurso.getRestaurantepedido().getIdrestaurante();
                  }
-                 if(idrestsel == idrestaurante){
+                 if(idrestsel == idrestaurante || pedidopendiente == null){
                      Plato platoseleccionado = platoopt.get();
                      model.addAttribute("platoseleccionado",platoseleccionado);
                      model.addAttribute("idrestaurante",idrestaurante);
@@ -1137,6 +1154,7 @@ public class UsuarioController {
                     //TODO guardar comision repartidor y comision sistema dependiendo del distrito
                     pedidoencurso.setMontototal(String.valueOf(montoPagar_pedidoHasPlatoDTO.getpreciopagar()));
                     pedidoencurso.setEstadorestaurante("pendiente");
+                    pedidoencurso.setEstadorepartidor("indefinido");
                     System.out.println(LocalTime.now());
                     //TODO guarda la fecha pero no la hora
                     //SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
