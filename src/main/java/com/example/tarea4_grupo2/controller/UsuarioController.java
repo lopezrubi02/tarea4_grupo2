@@ -647,7 +647,7 @@ public class UsuarioController {
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuarioactual=sessionUser.getIdusuarios();
-        if(buscar.isEmpty()){
+        if(buscar == ""){
             return "redirect:/cliente/realizarpedido";
         }else{
             List<Plato> listaplatos = platoRepository.buscarPlatoxNombre(buscar);
