@@ -182,9 +182,6 @@ public class UsuarioController {
 
                             /* Envio de correo de confirmacion */
                             String subject = "Cuenta creada en Spicyo";
-                            //TODO modificar direcion url despues de despliegue aws.
-                            //String direccionurl = "http://localhost:8090/login";
-                            //Pegar aquí los datos del AWS;
                             String aws = "ec2-user@ec2-3-84-20-210.compute-1.amazonaws.com";
                             String direccionurl = "http://" + aws + ":8081/login";
                             String mensaje = "¡Hola!<br><br>" +
