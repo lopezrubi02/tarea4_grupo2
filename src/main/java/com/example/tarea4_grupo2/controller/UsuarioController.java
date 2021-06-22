@@ -1221,6 +1221,17 @@ public class UsuarioController {
             return "cliente/miPerfil";
         } else {
             if(password2.isEmpty()){
+                int cantcontra = sessionUser.getContraseniaHash().length();
+                if(usuario.getContraseniaHash().length() < cantcontra){
+                    model.addAttribute("errorpatroncontra", "Debe completar el campo confirmar contraseña");
+                    System.out.println("mensaje confirmar contra");
+                    List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuarioAndActivoEquals(usuario,1);
+                    model.addAttribute("listadirecciones", listadireccionescliente);
+                    model.addAttribute("usuario",usuarioperfil);
+                    List<TarjetasOnline> listatarjetas = tarjetasOnlineRepository.findAllByClienteEquals(usuario);
+                    model.addAttribute("listatarjetas",listatarjetas);
+                    return "cliente/miPerfil";
+                }
                 sessionUser.setTelefono(usuario.getTelefono());
                 System.out.println("deberia guardaaar solo telefono");
                 usuarioRepository.save(sessionUser);
@@ -1249,6 +1260,7 @@ public class UsuarioController {
                         return "cliente/miPerfil";
                     }
                 }else{
+                    model.addAttribute("errorpatroncontra", "Las contraseñas no son iguales");
                     List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuarioAndActivoEquals(usuario,1);
                     model.addAttribute("listadirecciones", listadireccionescliente);
                     model.addAttribute("usuario",usuarioperfil);
