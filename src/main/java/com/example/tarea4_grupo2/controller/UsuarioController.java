@@ -9,6 +9,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -24,10 +25,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -110,6 +111,64 @@ public class UsuarioController {
         return errorstring;
     }
 
+    /** Para validación de DNI con la api **/
+    public boolean validarDNI(String dni){
+        Boolean dniValido = false;
+
+        BufferedReader reader;
+        String line;
+        StringBuffer responseContent = new StringBuffer();
+        try{
+
+            // reemplazar DNI
+            String urlString = "https://api.ateneaperu.com/api/reniec/dni?sNroDocumento="+dni;
+
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            connection.setRequestMethod("GET");
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
+
+            int status = connection.getResponseCode();
+
+            if(status > 299){
+                System.out.println("EROR PAPU");
+                reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+                while ((line = reader.readLine()) != null){
+                    responseContent.append(line);
+                }
+                System.out.println(connection.getResponseMessage());
+                System.out.println(connection.getResponseCode());
+                System.out.println(connection.getErrorStream());
+                reader.close();
+            } else {
+                System.out.println("/GET");
+                reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                while ((line = reader.readLine()) != null){
+                    responseContent.append(line);
+                }
+                reader.close();
+            }
+            System.out.println(responseContent.toString());
+            JSONObject jsonObj = new JSONObject(responseContent.toString());
+            //System.out.println(jsonObj.get("nombres"));
+
+            // Validar si existe documento
+            if(!jsonObj.get("nombres").equals("")){
+                System.out.println("DNI valido");
+                dniValido = true;
+            }
+
+        }catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return dniValido;
+    }
+
     /**                     Registro cliente                **/
     @GetMapping("/nuevocliente")
     public String nuevoCliente(Model model,@ModelAttribute("usuario") Usuario usuario)
@@ -135,13 +194,14 @@ public class UsuarioController {
             boolean errorcorreo = validarcorreounico(usuario.getEmail(), usuario);
             boolean errordnixrol = validardnixrolunico(usuario.getDni(), "Cliente", usuario);
             boolean errorstringsexo = validarstringsexo(usuario.getSexo());
+            boolean dniexiste = validarDNI(usuario.getDni());
 
-            if (errorcorreo == true || errordnixrol == true || errorstringsexo == true || direccion == null) {
+            if (errorcorreo == true || errordnixrol == true || errorstringsexo == true || direccion == null || dniexiste == false) {
                 if(errorcorreo==true){
                     model.addAttribute("errorcorreo", "Ya hay una cuenta registrada con el correo ingresado.");
                 }
-                if(errordnixrol==true){
-                    model.addAttribute("errordni", "Ya hay una cuenta registrada con este dni en este rol");
+                if(dniexiste == false){
+                    model.addAttribute("errordni","Ingrese un DNI válido");
                 }
                 List<Distritos> listadistritos = distritosRepository.findAll();
                 model.addAttribute("listadistritos", listadistritos);
