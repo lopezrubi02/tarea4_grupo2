@@ -7,11 +7,15 @@ import com.example.tarea4_grupo2.dto.RepartidoresReportes_DTO;
 import com.example.tarea4_grupo2.dto.RestauranteReportes_DTO;
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.InputStreamResource;
@@ -41,6 +45,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 @Controller
 @RequestMapping("/admin")
@@ -87,6 +97,8 @@ public class AdminController {
         //InetAddress.getLoopbackAddress().getHostName();
         return lista;
     }
+
+
 
     @GetMapping(value ={"/","/*"})
     public String redireccion(){
@@ -245,6 +257,64 @@ public class AdminController {
         }
     }
 
+    ////////////////////////////////////////// GET ///////////////////////
+
+    public boolean validarDNI(String dni){
+        Boolean dniValido = false;
+
+        BufferedReader reader;
+        String line;
+        StringBuffer responseContent = new StringBuffer();
+        try{
+
+            // reemplazar DNI
+            String urlString = "https://api.ateneaperu.com/api/reniec/dni?sNroDocumento="+dni;
+
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            connection.setRequestMethod("GET");
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
+
+            int status = connection.getResponseCode();
+
+            if(status > 299){
+                System.out.println("EROR PAPU");
+                reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+                while ((line = reader.readLine()) != null){
+                    responseContent.append(line);
+                }
+                System.out.println(connection.getResponseMessage());
+                System.out.println(connection.getResponseCode());
+                System.out.println(connection.getErrorStream());
+                reader.close();
+            } else {
+                System.out.println("/GET");
+                reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                while ((line = reader.readLine()) != null){
+                    responseContent.append(line);
+                }
+                reader.close();
+            }
+            System.out.println(responseContent.toString());
+            JSONObject jsonObj = new JSONObject(responseContent.toString());
+            //System.out.println(jsonObj.get("nombres"));
+
+            // Validar si existe documento
+            if(!jsonObj.get("nombres").equals("")){
+                System.out.println("DNI valido");
+                dniValido = true;
+            }
+
+        }catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return dniValido;
+    }
 
     @PostMapping("/editarAdmin")
     public String updateAdminUser(
@@ -252,30 +322,45 @@ public class AdminController {
             BindingResult bindingResult,
             RedirectAttributes attr,
             Model model
-    ){
+    ) throws IOException {
 
         if(bindingResult.hasErrors()) {
-            System.out.println("error papu");
-            for( ObjectError err : bindingResult.getAllErrors()){
-                System.out.println(err.toString());
-            }
-
             return "adminsistema/miCuenta";
         } else {
 
             Optional<Usuario> usuario = Optional.ofNullable(usuarioRepository.findByEmailEquals(usuarioRecibido.getEmail()));
             if(!usuario.isPresent()) {
-                // si no hay un usuario con el mismo correo
-                usuarioRepository.save(usuarioRecibido);
-                attr.addFlashAttribute("msg", "Usuario actualizado correctamente");
-                return "redirect:/admin/usuariosActuales";
+                // CREAR NUEVO: si no hay un usuario con el mismo correo
 
-            } else {
-                if(usuario.get().getIdusuarios() == usuarioRecibido.getIdusuarios()) {
-                    // si el usuario que se ha extraido, es el que se esta editando
+                // validacion de dni
+                System.out.println("***************************");
+                boolean dniValido = validarDNI(usuarioRecibido.getDni());
+                if(dniValido == true){
                     usuarioRepository.save(usuarioRecibido);
                     attr.addFlashAttribute("msg", "Usuario actualizado correctamente");
                     return "redirect:/admin/usuariosActuales";
+                } else{
+                    model.addAttribute("dniValido", "Ingrese un DNI valido");
+                    return "adminsistema/miCuenta";
+                }
+
+            } else {
+                if(usuario.get().getIdusuarios() == usuarioRecibido.getIdusuarios()) {
+                    // EDICION: si el usuario que se ha extraido, es el que se esta editando
+
+                    // validacion de dni
+                    System.out.println("***************************");
+                    boolean dniValido = validarDNI(usuarioRecibido.getDni());
+                    if(dniValido == true){
+                        usuarioRepository.save(usuarioRecibido);
+                        attr.addFlashAttribute("msg", "Usuario actualizado correctamente");
+                        return "redirect:/admin/usuariosActuales";
+                    } else{
+                        model.addAttribute("dniValido", "Ingrese un DNI valido");
+                        return "adminsistema/miCuenta";
+                    }
+
+
                 } else{
                     model.addAttribute("emailUnico", "Ya existe un usuario registrado con el mismo correo");
                     return "adminsistema/miCuenta";
@@ -734,8 +819,19 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
                 //
                 Optional<Usuario> usuarioValidacion = Optional.ofNullable(usuarioRepository.findByEmailEquals(usuario.getEmail()));
                 if(!usuarioValidacion.isPresent()){
-                    usuarioRepository.save(usuario);
-                    attr.addFlashAttribute("msg", "Administrador creado exitosamente");
+
+                    // validacion de dni
+                    System.out.println("***************************");
+                    boolean dniValido = validarDNI(usuario.getDni());
+                    if(dniValido == true){
+                        usuarioRepository.save(usuario);
+                        attr.addFlashAttribute("msg", "Administrador creado exitosamente");
+                    } else{
+                        model.addAttribute("dniValido", "Ingrese un DNI valido");
+                        return "adminsistema/agregarAdmin";
+                    }
+
+
                 }else{
                     model.addAttribute("emailUnico", "Ya existe un usuario registrado con el mismo correo");
                     return "adminsistema/agregarAdmin";
