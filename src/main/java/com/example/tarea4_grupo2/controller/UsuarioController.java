@@ -4,11 +4,13 @@ import com.example.tarea4_grupo2.dto.*;
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
 import com.example.tarea4_grupo2.service.SendMailService;
+import com.google.gson.JsonArray;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -497,6 +499,155 @@ public class UsuarioController {
             return null;
         }
     }
+
+    /** Para hallar las coordenadas de los bounds **/
+    public ArrayList<String> coordenadasdistrito(String distrito){
+        List<String> listascoordenadas = new ArrayList<>();
+
+        BufferedReader reader;
+        String line;
+        StringBuffer responseContent = new StringBuffer();
+        try{
+
+            // reemplazar DNI
+            String urlString = "https://maps.googleapis.com/maps/api/geocode/json?&address=" + distrito +",lima&key=AIzaSyBLdwYvQItwrhBKLPqbEumrEURYFFlks-Y";
+
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            connection.setRequestMethod("GET");
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
+
+            int status = connection.getResponseCode();
+
+            if(status > 299){
+                System.out.println("EROR PAPU");
+                reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+                while ((line = reader.readLine()) != null){
+                    responseContent.append(line);
+                }
+                System.out.println(connection.getResponseMessage());
+                System.out.println(connection.getResponseCode());
+                System.out.println(connection.getErrorStream());
+                reader.close();
+            } else {
+                System.out.println("/GET");
+                reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                while ((line = reader.readLine()) != null){
+                    responseContent.append(line);
+                }
+                reader.close();
+            }
+
+            JSONObject jsonObj = new JSONObject(responseContent.toString());
+            JSONArray results = jsonObj.getJSONArray("results");
+            JSONObject jsonObj2 = new JSONObject(results.get(0).toString());
+            JSONObject jsonObj3 = new JSONObject(jsonObj2.get("geometry").toString());
+            JSONObject jsonObj41 = new JSONObject(jsonObj3.get("bounds").toString());
+            JSONObject jsonObj42 = new JSONObject(jsonObj3.get("bounds").toString());
+            JSONObject jsonObj410 = new JSONObject(jsonObj41.get("northeast").toString());
+            JSONObject jsonObj420 = new JSONObject(jsonObj42.get("southwest").toString());
+
+            Double latx = (Double) jsonObj410.get("lat");
+            Double lngx = (Double) jsonObj410.get("lng");
+            Double laty = (Double) jsonObj420.get("lat");
+            Double lngy = (Double) jsonObj420.get("lng");
+
+            String latlng1 = latx + "," + lngx;
+            String latlng2 = laty + "," + lngy;
+            String latlng3 = latx + "," + lngy;
+    		String latlng4 = laty + "," + lngx;
+            listascoordenadas.add(latlng1);
+            listascoordenadas.add(latlng2);
+            listascoordenadas.add(latlng3);
+            listascoordenadas.add(latlng4);
+
+        }catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return (ArrayList<String>) listascoordenadas;
+    }
+    /** Para hallar los distritos cercanos **/
+    public String hallardistritocercano(String coordenadas){
+        String distritohallado = "";
+        BufferedReader reader;
+        String line;
+        StringBuffer responseContent = new StringBuffer();
+        try{
+
+            // reemplazar DNI
+            String urlString = "https://maps.googleapis.com/maps/api/geocode/json?&latlng=" + coordenadas +"&key=AIzaSyBLdwYvQItwrhBKLPqbEumrEURYFFlks-Y";
+
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            connection.setRequestMethod("GET");
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
+
+            int status = connection.getResponseCode();
+
+            if(status > 299){
+                System.out.println("EROR PAPU");
+                reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+                while ((line = reader.readLine()) != null){
+                    responseContent.append(line);
+                }
+                System.out.println(connection.getResponseMessage());
+                System.out.println(connection.getResponseCode());
+                System.out.println(connection.getErrorStream());
+                reader.close();
+            } else {
+                System.out.println("/GET");
+                reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                while ((line = reader.readLine()) != null){
+                    responseContent.append(line);
+                }
+                reader.close();
+            }
+
+            JSONObject jsonObj = new JSONObject(responseContent.toString());
+            JSONArray results = jsonObj.getJSONArray("results");
+            JSONObject jsonObj2 = new JSONObject(results.get(0).toString());
+            JSONArray address = jsonObj2.getJSONArray("address_components");
+            JSONObject jsonObj3 = new JSONObject(address.get(3).toString());
+            distritohallado = (String) jsonObj3.get("long_name");
+            System.out.println(distritohallado);
+        }catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return distritohallado;
+    }
+
+    @GetMapping("/cliente/prueba")
+    public String prueba(){
+        ArrayList<String> prueba = coordenadasdistrito("rimac");
+        System.out.println("encontró coordenadas");
+        System.out.println(prueba);
+        String coordenada1 = prueba.get(0);
+        String coordenada2 = prueba.get(1);
+        String coordenada3 = prueba.get(2);
+        String coordenada4 = prueba.get(3);
+        System.out.println(coordenada1);
+        String distrito1 = hallardistritocercano(coordenada1);
+        String distrito2 = hallardistritocercano(coordenada2);
+        String distrito3 = hallardistritocercano(coordenada3);
+        String distrito4 = hallardistritocercano(coordenada4);
+        System.out.println("distritos hallados");
+        System.out.println(distrito1);
+        System.out.println(distrito2);
+        System.out.println(distrito3);
+        System.out.println(distrito4);
+        return "cliente/prueba";
+    }
+
 
     /** Realizar pedido **/
 
