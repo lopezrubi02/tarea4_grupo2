@@ -1,11 +1,16 @@
 package com.example.tarea4_grupo2.controller;
-
+import org.json.JSONObject;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import com.example.tarea4_grupo2.dto.*;
 import com.example.tarea4_grupo2.dto.PedidosDisponiblesDTO;
 import com.example.tarea4_grupo2.dto.PedidosReporteDTOs;
 import com.example.tarea4_grupo2.dto.PlatosPorPedidoDTO;
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
+import com.example.tarea4_grupo2.service.SendMailService;
 import org.apache.commons.math3.stat.descriptive.summary.Product;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -42,6 +47,8 @@ import java.util.regex.Pattern;
 
 @Controller
 public class RepartidorController {
+    @Autowired
+    SendMailService sendMailService;
 
     @Autowired
     UsuarioRepository usuarioRepository;
@@ -622,6 +629,64 @@ public class RepartidorController {
 
     }
 
+    /** Para validación de DNI con la api **/
+    public boolean validarDNI(String dni){
+        Boolean dniValido = false;
+
+        BufferedReader reader;
+        String line;
+        StringBuffer responseContent = new StringBuffer();
+        try{
+
+            // reemplazar DNI
+            String urlString = "https://api.ateneaperu.com/api/reniec/dni?sNroDocumento="+dni;
+
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            connection.setRequestMethod("GET");
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
+
+            int status = connection.getResponseCode();
+
+            if(status > 299){
+                System.out.println("EROR PAPU");
+                reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+                while ((line = reader.readLine()) != null){
+                    responseContent.append(line);
+                }
+                System.out.println(connection.getResponseMessage());
+                System.out.println(connection.getResponseCode());
+                System.out.println(connection.getErrorStream());
+                reader.close();
+            } else {
+                System.out.println("/GET");
+                reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                while ((line = reader.readLine()) != null){
+                    responseContent.append(line);
+                }
+                reader.close();
+            }
+            System.out.println(responseContent.toString());
+            JSONObject jsonObj = new JSONObject(responseContent.toString());
+            //System.out.println(jsonObj.get("nombres"));
+
+            // Validar si existe documento
+            if(!jsonObj.get("nombres").equals("")){
+                System.out.println("DNI valido");
+                dniValido = true;
+            }
+
+        }catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return dniValido;
+    }
+
     @GetMapping("/new3")
     public String nuevoRepartidor3(@ModelAttribute("usuario") Usuario usuario,
                                    @RequestParam(value = "movilidad2",defaultValue = "0") String movilidad2,
@@ -653,17 +718,12 @@ public class RepartidorController {
         Usuario usuario1 = usuarioRepository.findByEmail(usuario.getEmail());
 
 
+        String msgC=null;
         if (usuario1 != null) {
             if (usuario.getEmail().equalsIgnoreCase(usuario1.getEmail())) {
                 correoExis = true;
-                String msgC = "El correo ya se encuentra registrado";
+                 msgC = "El correo ya se encuentra registrado";
             }
-        }
-
-        boolean dniExis = false;
-        Usuario usuario3 = usuarioRepository.findByDniAndRolEquals(usuario.getDni(),"Repartidor");
-        if (usuario3 != null ) {
-            dniExis = true;
         }
 
         boolean cont1val=false;
@@ -687,10 +747,13 @@ public class RepartidorController {
             direccionVal=true;
         }
 
-        if (bindingResult.hasErrors()) {
+        boolean dniexiste = validarDNI(usuario.getDni());
+
+        if (bindingResult.hasErrors() || correoExis || !dniexiste) {
             model.addAttribute("listadistritos", distritosRepository.findAll());
-            model.addAttribute("dniExis", dniExis);
+            model.addAttribute("errordni","Ingrese un DNI válido");
             model.addAttribute("correoExis", correoExis);
+            model.addAttribute("msgC",msgC);
             model.addAttribute("msgc1",msgc1);
             model.addAttribute("msgc2",msgc2);
             model.addAttribute("direccionVal",direccionVal);
@@ -776,6 +839,15 @@ public class RepartidorController {
         }
         String msgR="El registro fue exitoso";
         attributes.addFlashAttribute("msgR",msgR);
+
+        /* Envio de correo de confirmacion */
+        String subject = "Cuenta creada en Spicyo";
+        String aws = "ec2-user@ec2-3-84-20-210.compute-1.amazonaws.com";
+        String direccionurl = "http://" + aws + ":8081/login";
+        String mensaje = "¡Hola!<br><br>" +
+                "Ahora es parte de Spicyo. Para ingresar a su cuenta haga click: <a href='" + direccionurl + "'>AQUÍ</a> <br><br>Atte. Equipo de Spicy :D</b>";
+        String correoDestino = usuario.getEmail();
+        sendMailService.sendMail(correoDestino, "saritaatanacioarenas@gmail.com", subject, mensaje);
         return "redirect:/login";
 
     }

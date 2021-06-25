@@ -151,7 +151,7 @@
                                                 <label>Correo</label>
                                                 <input class="form-control" placeholder="Correo" type="text" th:field="*{email}">
                                                 <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
-                                                <div th:if="${msgC != null}" th:text="${msgC}" class="alert alert-danger" role="alert"></div>
+                                                <div th:if="${msgC != null}" th:text="${msgC}" class="text-danger"></div>
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <label>Nombre</label>
@@ -166,8 +166,7 @@
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <label>Dni</label>
                                                 <input class="form-control" placeholder="DNI" type="text" th:field="*{dni}">
-                                                <div class="text-danger" th:if="${#fields.hasErrors('dni')}" th:errors="*{dni}"></div>
-                                                <div class="text-danger" th:if="${dniExis}" >El dni ya se encuentra registrado</div>
+                                                <div th:if="${errordni != null}" th:text="${errordni}" class="text-danger"></div>
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <label>Celular</label>
