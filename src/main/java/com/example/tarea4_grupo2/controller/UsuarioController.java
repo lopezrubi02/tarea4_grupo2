@@ -4,11 +4,14 @@ import com.example.tarea4_grupo2.dto.*;
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
 import com.example.tarea4_grupo2.service.SendMailService;
+import com.google.gson.JsonArray;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -24,10 +27,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -110,6 +113,64 @@ public class UsuarioController {
         return errorstring;
     }
 
+    /** Para validación de DNI con la api **/
+    public boolean validarDNI(String dni){
+        Boolean dniValido = false;
+
+        BufferedReader reader;
+        String line;
+        StringBuffer responseContent = new StringBuffer();
+        try{
+
+            // reemplazar DNI
+            String urlString = "https://api.ateneaperu.com/api/reniec/dni?sNroDocumento="+dni;
+
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            connection.setRequestMethod("GET");
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
+
+            int status = connection.getResponseCode();
+
+            if(status > 299){
+                System.out.println("EROR PAPU");
+                reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+                while ((line = reader.readLine()) != null){
+                    responseContent.append(line);
+                }
+                System.out.println(connection.getResponseMessage());
+                System.out.println(connection.getResponseCode());
+                System.out.println(connection.getErrorStream());
+                reader.close();
+            } else {
+                System.out.println("/GET");
+                reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                while ((line = reader.readLine()) != null){
+                    responseContent.append(line);
+                }
+                reader.close();
+            }
+            System.out.println(responseContent.toString());
+            JSONObject jsonObj = new JSONObject(responseContent.toString());
+            //System.out.println(jsonObj.get("nombres"));
+
+            // Validar si existe documento
+            if(!jsonObj.get("nombres").equals("")){
+                System.out.println("DNI valido");
+                dniValido = true;
+            }
+
+        }catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return dniValido;
+    }
+
     /**                     Registro cliente                **/
     @GetMapping("/nuevocliente")
     public String nuevoCliente(Model model,@ModelAttribute("usuario") Usuario usuario)
@@ -135,13 +196,14 @@ public class UsuarioController {
             boolean errorcorreo = validarcorreounico(usuario.getEmail(), usuario);
             boolean errordnixrol = validardnixrolunico(usuario.getDni(), "Cliente", usuario);
             boolean errorstringsexo = validarstringsexo(usuario.getSexo());
+            boolean dniexiste = validarDNI(usuario.getDni());
 
-            if (errorcorreo == true || errordnixrol == true || errorstringsexo == true || direccion == null) {
+            if (errorcorreo == true || errordnixrol == true || errorstringsexo == true || direccion == null || dniexiste == false) {
                 if(errorcorreo==true){
                     model.addAttribute("errorcorreo", "Ya hay una cuenta registrada con el correo ingresado.");
                 }
-                if(errordnixrol==true){
-                    model.addAttribute("errordni", "Ya hay una cuenta registrada con este dni en este rol");
+                if(dniexiste == false){
+                    model.addAttribute("errordni","Ingrese un DNI válido");
                 }
                 List<Distritos> listadistritos = distritosRepository.findAll();
                 model.addAttribute("listadistritos", listadistritos);
@@ -182,9 +244,6 @@ public class UsuarioController {
 
                             /* Envio de correo de confirmacion */
                             String subject = "Cuenta creada en Spicyo";
-                            //TODO modificar direcion url despues de despliegue aws.
-                            //String direccionurl = "http://localhost:8090/login";
-                            //Pegar aquí los datos del AWS;
                             String aws = "ec2-user@ec2-3-84-20-210.compute-1.amazonaws.com";
                             String direccionurl = "http://" + aws + ":8081/login";
                             String mensaje = "¡Hola!<br><br>" +
@@ -441,6 +500,155 @@ public class UsuarioController {
         }
     }
 
+    /** Para hallar las coordenadas de los bounds **/
+    public ArrayList<String> coordenadasdistrito(String distrito){
+        List<String> listascoordenadas = new ArrayList<>();
+
+        BufferedReader reader;
+        String line;
+        StringBuffer responseContent = new StringBuffer();
+        try{
+
+            // reemplazar DNI
+            String urlString = "https://maps.googleapis.com/maps/api/geocode/json?&address=" + distrito +",lima&key=AIzaSyBLdwYvQItwrhBKLPqbEumrEURYFFlks-Y";
+
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            connection.setRequestMethod("GET");
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
+
+            int status = connection.getResponseCode();
+
+            if(status > 299){
+                System.out.println("EROR PAPU");
+                reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+                while ((line = reader.readLine()) != null){
+                    responseContent.append(line);
+                }
+                System.out.println(connection.getResponseMessage());
+                System.out.println(connection.getResponseCode());
+                System.out.println(connection.getErrorStream());
+                reader.close();
+            } else {
+                System.out.println("/GET");
+                reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                while ((line = reader.readLine()) != null){
+                    responseContent.append(line);
+                }
+                reader.close();
+            }
+
+            JSONObject jsonObj = new JSONObject(responseContent.toString());
+            JSONArray results = jsonObj.getJSONArray("results");
+            JSONObject jsonObj2 = new JSONObject(results.get(0).toString());
+            JSONObject jsonObj3 = new JSONObject(jsonObj2.get("geometry").toString());
+            JSONObject jsonObj41 = new JSONObject(jsonObj3.get("bounds").toString());
+            JSONObject jsonObj42 = new JSONObject(jsonObj3.get("bounds").toString());
+            JSONObject jsonObj410 = new JSONObject(jsonObj41.get("northeast").toString());
+            JSONObject jsonObj420 = new JSONObject(jsonObj42.get("southwest").toString());
+
+            Double latx = (Double) jsonObj410.get("lat");
+            Double lngx = (Double) jsonObj410.get("lng");
+            Double laty = (Double) jsonObj420.get("lat");
+            Double lngy = (Double) jsonObj420.get("lng");
+
+            String latlng1 = latx + "," + lngx;
+            String latlng2 = laty + "," + lngy;
+            String latlng3 = latx + "," + lngy;
+    		String latlng4 = laty + "," + lngx;
+            listascoordenadas.add(latlng1);
+            listascoordenadas.add(latlng2);
+            listascoordenadas.add(latlng3);
+            listascoordenadas.add(latlng4);
+
+        }catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return (ArrayList<String>) listascoordenadas;
+    }
+    /** Para hallar los distritos cercanos **/
+    public String hallardistritocercano(String coordenadas){
+        String distritohallado = "";
+        BufferedReader reader;
+        String line;
+        StringBuffer responseContent = new StringBuffer();
+        try{
+
+            // reemplazar DNI
+            String urlString = "https://maps.googleapis.com/maps/api/geocode/json?&latlng=" + coordenadas +"&key=AIzaSyBLdwYvQItwrhBKLPqbEumrEURYFFlks-Y";
+
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            connection.setRequestMethod("GET");
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
+
+            int status = connection.getResponseCode();
+
+            if(status > 299){
+                System.out.println("EROR PAPU");
+                reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+                while ((line = reader.readLine()) != null){
+                    responseContent.append(line);
+                }
+                System.out.println(connection.getResponseMessage());
+                System.out.println(connection.getResponseCode());
+                System.out.println(connection.getErrorStream());
+                reader.close();
+            } else {
+                System.out.println("/GET");
+                reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                while ((line = reader.readLine()) != null){
+                    responseContent.append(line);
+                }
+                reader.close();
+            }
+
+            JSONObject jsonObj = new JSONObject(responseContent.toString());
+            JSONArray results = jsonObj.getJSONArray("results");
+            JSONObject jsonObj2 = new JSONObject(results.get(0).toString());
+            JSONArray address = jsonObj2.getJSONArray("address_components");
+            JSONObject jsonObj3 = new JSONObject(address.get(3).toString());
+            distritohallado = (String) jsonObj3.get("long_name");
+            System.out.println(distritohallado);
+        }catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return distritohallado;
+    }
+
+    @GetMapping("/cliente/prueba")
+    public String prueba(){
+        ArrayList<String> prueba = coordenadasdistrito("rimac");
+        System.out.println("encontró coordenadas");
+        System.out.println(prueba);
+        String coordenada1 = prueba.get(0);
+        String coordenada2 = prueba.get(1);
+        String coordenada3 = prueba.get(2);
+        String coordenada4 = prueba.get(3);
+        System.out.println(coordenada1);
+        String distrito1 = hallardistritocercano(coordenada1);
+        String distrito2 = hallardistritocercano(coordenada2);
+        String distrito3 = hallardistritocercano(coordenada3);
+        String distrito4 = hallardistritocercano(coordenada4);
+        System.out.println("distritos hallados");
+        System.out.println(distrito1);
+        System.out.println(distrito2);
+        System.out.println(distrito3);
+        System.out.println(distrito4);
+        return "cliente/prueba";
+    }
+
+
     /** Realizar pedido **/
 
     @GetMapping("/cliente/realizarpedido")
@@ -453,27 +661,38 @@ public class UsuarioController {
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuarioactual=sessionUser.getIdusuarios();
+        List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idusuarioactual);
+        Pedidos pedidopendiente = pedidosRepository.pedidoencurso(idusuarioactual);
+        if(listapedidospendientes.size() >= 1 || pedidopendiente != null){
+            String mensajependidopendiente = "No puede realizar otro pedido a otro restaurante que sea diferente al que ya ha seleccionado.";
+            if(pedidopendiente != null){
+                mensajependidopendiente = "No puede realizar otro pedido mientras tenga un pedido en curso";
+                attr.addFlashAttribute("hayunpedidoencurso",mensajependidopendiente);
+                return "redirect:/cliente/progresopedido";
+            }
+            attr.addFlashAttribute("hayunpedidoencurso",mensajependidopendiente);
+            return "redirect:/cliente/carritoproductos";
+        }else{
+            List<String> listaidprecio = new ArrayList<>();
+            listaidprecio.add("Menor a 15");
+            listaidprecio.add("Entre 15 y 25");
+            listaidprecio.add("Entre 25 y 40");
+            listaidprecio.add("Mayor a 40");
+            model.addAttribute("listaidprecio",listaidprecio);
+            List<String> listaidcalificacion = new ArrayList<>();
+            listaidcalificacion.add("1 estrella");
+            listaidcalificacion.add("2 estrellas");
+            listaidcalificacion.add("3 estrellas");
+            listaidcalificacion.add("4 estrellas");
+            listaidcalificacion.add("5 estrellas");
+            model.addAttribute("listaidcalificacion",listaidcalificacion);
 
-        List<String> listaidprecio = new ArrayList<>();
-        listaidprecio.add("Menor a 15");
-        listaidprecio.add("Entre 15 y 25");
-        listaidprecio.add("Entre 25 y 40");
-        listaidprecio.add("Mayor a 40");
-        model.addAttribute("listaidprecio",listaidprecio);
-        List<String> listaidcalificacion = new ArrayList<>();
-        listaidcalificacion.add("1 estrella");
-        listaidcalificacion.add("2 estrellas");
-        listaidcalificacion.add("3 estrellas");
-        listaidcalificacion.add("4 estrellas");
-        listaidcalificacion.add("5 estrellas");
-        model.addAttribute("listaidcalificacion",listaidcalificacion);
-
-        List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuario_Idusuarios(idusuarioactual);
-        List<Categorias> listacategorias = categoriasRepository.findAll();
-        List<Restaurante> listarestaurantes = restauranteRepository.findAll();
-        model.addAttribute("listacategorias", listacategorias);
-        model.addAttribute("listadirecciones", listadireccionescliente);
-        model.addAttribute("listarestaurantes",listarestaurantes);
+            List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuario_Idusuarios(idusuarioactual);
+            List<Categorias> listacategorias = categoriasRepository.findAll();
+            List<Restaurante> listarestaurantes = restauranteRepository.findAll();
+            model.addAttribute("listacategorias", listacategorias);
+            model.addAttribute("listadirecciones", listadireccionescliente);
+            model.addAttribute("listarestaurantes",listarestaurantes);
 
             try{
                 int direccionxenviar = Integer.parseInt(direccion);
@@ -483,107 +702,105 @@ public class UsuarioController {
                 } else {
 
                     Optional<Direcciones> direccionopt = Optional.ofNullable(direccionesRepository.findDireccionesByIddireccionesAndUsuario_Idusuarios(direccionxenviar, idusuarioactual));
-                        if (direccionopt.isPresent()) {
-                            Direcciones direccionseleccionada = direccionopt.get();
-                            model.addAttribute("iddireccionxenviar", direccionxenviar);
-                            model.addAttribute("direccionseleccionada", direccionseleccionada.getDireccion());
-                        }
+                    if (direccionopt.isPresent()) {
+                        Direcciones direccionseleccionada = direccionopt.get();
+                        model.addAttribute("iddireccionxenviar", direccionxenviar);
+                        model.addAttribute("direccionseleccionada", direccionseleccionada.getDireccion());
+                    }
                 }
             }catch(NumberFormatException exception){
                 System.out.println(exception.getMessage());
                 return "redirect:/cliente/realizarpedido";
             }
-        try{
-            int idcategoriarest = Integer.parseInt(categoriarest);
-            Optional<Categorias> catopt = categoriasRepository.findById(idcategoriarest);
-            if(catopt.isPresent()){
-                System.out.println("************************************");
-                System.out.println("no existe tabla pedido has categorias??????????????");
-                List<Restaurante> listarestauranteseleccionado = restauranteRepository.listarestxcategoria(idcategoriarest);
-                System.out.println("******************************************");
-                System.out.println("*****************************************");
+            try{
+                int idcategoriarest = Integer.parseInt(categoriarest);
+                Optional<Categorias> catopt = categoriasRepository.findById(idcategoriarest);
+                if(catopt.isPresent()){
+                    List<Restaurante> listarestauranteseleccionado = restauranteRepository.listarestxcategoria(idcategoriarest);
 
-                if(idcategoriarest!=0){
-                    model.addAttribute("listarestaurantes",listarestauranteseleccionado);
-                }else{
-                    model.addAttribute("listarestaurantes",listarestaurantes);
+                    if(idcategoriarest!=0){
+                        model.addAttribute("listarestaurantes",listarestauranteseleccionado);
+                    }else{
+                        model.addAttribute("listarestaurantes",listarestaurantes);
+                    }
+                    model.addAttribute("catelegida",idcategoriarest);
                 }
-                model.addAttribute("catelegida",idcategoriarest);
-            }
-        }catch(NumberFormatException exception){
-            System.out.println(exception.getMessage());
-            return "redirect:/cliente/realizarpedido";
-        }
-
-        try {
-            int precio = Integer.parseInt(preciopromedio);
-            if(precio!=0) {
-                switch (precio) {
-                    case 1:
-                    List<Restaurante> listaRestFiltroPrecio = restauranteRepository.listarestprecio1();
-                    if (listaRestFiltroPrecio.isEmpty()) {
-                        attr.addFlashAttribute("alertaprecio", "No se encontraron restaurantes para el filtro aplicado");
-                        return "redirect:/cliente/realizarpedido";
-                    } else {
-                        model.addAttribute("listarestaurantes", listaRestFiltroPrecio);
-                        model.addAttribute("precioselec", precio);
-                    }
-                    break;
-                    case 2:
-                    listaRestFiltroPrecio = restauranteRepository.listarestprecio2();
-                    if (listaRestFiltroPrecio.isEmpty()) {
-                        attr.addFlashAttribute("alertaprecio", "No se encontraron restaurantes para el filtro aplicado");
-                        return "redirect:/cliente/realizarpedido";
-                    } else {
-                        model.addAttribute("listarestaurantes", listaRestFiltroPrecio);
-                        model.addAttribute("precioselec", precio);
-                    }
-                    break;
-                    case 3:
-                    listaRestFiltroPrecio = restauranteRepository.listarestprecio3();
-                    if (listaRestFiltroPrecio.isEmpty()) {
-                        attr.addFlashAttribute("alertaprecio", "No se encontraron restaurantes para el filtro aplicado");
-                        return "redirect:/cliente/realizarpedido";
-                    } else {
-                        model.addAttribute("listarestaurantes", listaRestFiltroPrecio);
-                        model.addAttribute("precioselec", precio);
-                    }
-                    break;
-                    case 4:
-                    listaRestFiltroPrecio = restauranteRepository.listarestprecio4();
-                    if (listaRestFiltroPrecio.isEmpty()) {
-                        attr.addFlashAttribute("alertaprecio", "No se encontraron restaurantes para el filtro aplicado");
-                        return "redirect:/cliente/realizarpedido";
-                    } else {
-                        model.addAttribute("listarestaurantes", listaRestFiltroPrecio);
-                        model.addAttribute("precioselec", precio);
-                    }
-                    break;
-            }
-        }
-        }catch (NumberFormatException e){
-            return "cliente/realizar_pedido_cliente";
-        }
-
-        try {
-            int calificacion = Integer.parseInt(calificacionpromedio);
-        if(calificacion!=0) {
-            if (calificacion > 4) {
+            }catch(NumberFormatException exception){
+                System.out.println(exception.getMessage());
                 return "redirect:/cliente/realizarpedido";
-            } else {
-                List<Restaurante> listarestcal = restauranteRepository.listarestcalificacion(calificacion);
-                model.addAttribute("listarestaurantes", listarestcal);
-                model.addAttribute("calsel", calificacion);
-                if (listarestcal.isEmpty()) {
-                    attr.addFlashAttribute("alertaprecio", "No se encontraron restaurantes para el filtro aplicado");
-                    return "redirect:/cliente/realizarpedido";
+            }
+
+            try {
+                int precio = Integer.parseInt(preciopromedio);
+                if(precio!=0) {
+                    switch (precio) {
+                        case 1:
+                            List<Restaurante> listaRestFiltroPrecio = restauranteRepository.listarestprecio1();
+                            if (listaRestFiltroPrecio.isEmpty()) {
+                                attr.addFlashAttribute("alertaprecio", "No se encontraron restaurantes para el filtro aplicado");
+                                return "redirect:/cliente/realizarpedido";
+                            } else {
+                                model.addAttribute("listarestaurantes", listaRestFiltroPrecio);
+                                model.addAttribute("precioselec", precio);
+                            }
+                            break;
+                        case 2:
+                            listaRestFiltroPrecio = restauranteRepository.listarestprecio2();
+                            if (listaRestFiltroPrecio.isEmpty()) {
+                                attr.addFlashAttribute("alertaprecio", "No se encontraron restaurantes para el filtro aplicado");
+                                return "redirect:/cliente/realizarpedido";
+                            } else {
+                                model.addAttribute("listarestaurantes", listaRestFiltroPrecio);
+                                model.addAttribute("precioselec", precio);
+                            }
+                            break;
+                        case 3:
+                            listaRestFiltroPrecio = restauranteRepository.listarestprecio3();
+                            if (listaRestFiltroPrecio.isEmpty()) {
+                                attr.addFlashAttribute("alertaprecio", "No se encontraron restaurantes para el filtro aplicado");
+                                return "redirect:/cliente/realizarpedido";
+                            } else {
+                                model.addAttribute("listarestaurantes", listaRestFiltroPrecio);
+                                model.addAttribute("precioselec", precio);
+                            }
+                            break;
+                        case 4:
+                            listaRestFiltroPrecio = restauranteRepository.listarestprecio4();
+                            if (listaRestFiltroPrecio.isEmpty()) {
+                                attr.addFlashAttribute("alertaprecio", "No se encontraron restaurantes para el filtro aplicado");
+                                return "redirect:/cliente/realizarpedido";
+                            } else {
+                                model.addAttribute("listarestaurantes", listaRestFiltroPrecio);
+                                model.addAttribute("precioselec", precio);
+                            }
+                            break;
+                    }
                 }
+            }catch (NumberFormatException e){
+                return "cliente/realizar_pedido_cliente";
+            }
+
+            try {
+                int calificacion = Integer.parseInt(calificacionpromedio);
+                if(calificacion!=0) {
+                    if (calificacion > 4) {
+                        return "redirect:/cliente/realizarpedido";
+                    } else {
+                        List<Restaurante> listarestcal = restauranteRepository.listarestcalificacion(calificacion);
+                        model.addAttribute("listarestaurantes", listarestcal);
+                        model.addAttribute("calsel", calificacion);
+                        if (listarestcal.isEmpty()) {
+                            attr.addFlashAttribute("alertaprecio", "No se encontraron restaurantes para el filtro aplicado");
+                            return "redirect:/cliente/realizarpedido";
+                        }
+                    }
+                }
+                return "cliente/realizar_pedido_cliente";
+            }catch (NumberFormatException e){
+                return "cliente/realizar_pedido_cliente";
             }
         }
-        return "cliente/realizar_pedido_cliente";
-    }catch (NumberFormatException e){
-        return "cliente/realizar_pedido_cliente";
-    }
+
     }
 
     @GetMapping("/cliente/direccionxenviar")
@@ -641,7 +858,7 @@ public class UsuarioController {
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuarioactual=sessionUser.getIdusuarios();
-        if(buscar.isEmpty()){
+        if(buscar == ""){
             return "redirect:/cliente/realizarpedido";
         }else{
             List<Plato> listaplatos = platoRepository.buscarPlatoxNombre(buscar);
@@ -672,21 +889,55 @@ public class UsuarioController {
 
      @GetMapping("/cliente/restaurantexordenar")
      public String restaurantexordenar(@RequestParam("idrestaurante") int idrestaurante, Model model,
-                                   @RequestParam("direccion") int direccionxenviar){
+                                   @RequestParam("direccion") int direccionxenviar, HttpSession session,
+                                       RedirectAttributes attr){
          Optional<Restaurante> restopt = restauranteRepository.findById(idrestaurante);
          Optional<Direcciones> diropt = direccionesRepository.findById(direccionxenviar);
-        if(diropt.isPresent() && restopt.isPresent()){
+         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+         int idusuarioactual=sessionUser.getIdusuarios();
+         List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idusuarioactual);
+         Pedidos pedidopendiente = pedidosRepository.pedidoencurso(idusuarioactual);
+
+         if(diropt.isPresent() && restopt.isPresent()){
             Restaurante rest = restopt.get();
             if (restopt.isPresent()){
-                int cantreviews = restauranteRepository.cantreviews(idrestaurante);
 
-                List<Plato> platosxrest = platoRepository.buscarPlatosPorIdRestauranteDisponilidadActivo(idrestaurante);
+                int idrestsel = idrestaurante;
+                if(listapedidospendientes.size() >= 0 || pedidopendiente != null){
+                    if(pedidopendiente != null){
+                        String mensajependidopendiente = "No puede realizar otro pedido mientras tenga un pedido en curso";
+                        attr.addFlashAttribute("hayunpedidoencurso",mensajependidopendiente);
+                        return "redirect:/cliente/progresopedido";
+                    }
+                    for (Pedidos pedidoencurso : listapedidospendientes){
+                        idrestsel = pedidoencurso.getRestaurantepedido().getIdrestaurante();
+                    }
+                    if(idrestsel == idrestaurante || pedidopendiente == null){
+                        int cantreviews = restauranteRepository.cantreviews(idrestaurante);
 
-                model.addAttribute("restaurantexordenar",rest);
-                model.addAttribute("cantreviews",cantreviews);
-                model.addAttribute("platosxrest",platosxrest);
-                model.addAttribute("direccionxenviar",direccionxenviar);
-                return "cliente/restaurante_orden_cliente";
+                        List<Plato> platosxrest = platoRepository.buscarPlatosPorIdRestauranteDisponilidadActivo(idrestaurante);
+
+                        model.addAttribute("restaurantexordenar",rest);
+                        model.addAttribute("cantreviews",cantreviews);
+                        model.addAttribute("platosxrest",platosxrest);
+                        model.addAttribute("direccionxenviar",direccionxenviar);
+                        return "cliente/restaurante_orden_cliente";
+                    }else{
+                        String mensajependidopendiente = "No puede realizar otro pedido a otro restaurante que sea diferente al que ya ha seleccionado.";
+                        attr.addFlashAttribute("hayunpedidoencurso",mensajependidopendiente);
+                        return "redirect:/cliente/carritoproductos";
+                    }
+                }else{
+                    int cantreviews = restauranteRepository.cantreviews(idrestaurante);
+
+                    List<Plato> platosxrest = platoRepository.buscarPlatosPorIdRestauranteDisponilidadActivo(idrestaurante);
+
+                    model.addAttribute("restaurantexordenar",rest);
+                    model.addAttribute("cantreviews",cantreviews);
+                    model.addAttribute("platosxrest",platosxrest);
+                    model.addAttribute("direccionxenviar",direccionxenviar);
+                    return "cliente/restaurante_orden_cliente";
+                }
 
             }else{
                 return "redirect:/cliente/realizarpedido";
@@ -701,18 +952,49 @@ public class UsuarioController {
     public String platoxpedir(Model model,
                               @RequestParam("idplato") int idplatopedir,
                               @RequestParam("idrestaurante") int idrestaurante,
-                              @RequestParam("direccion") int direccionxenviar){
+                              @RequestParam("direccion") int direccionxenviar, HttpSession session,
+                              RedirectAttributes attr){
+
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuarioactual=sessionUser.getIdusuarios();
+        List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idusuarioactual);
+        Pedidos pedidopendiente = pedidosRepository.pedidoencurso(idusuarioactual);
 
          Optional<Plato> platoopt = platoRepository.findById(idplatopedir);
          Optional<Restaurante> restopt = restauranteRepository.findById(idrestaurante);
          Optional<Direcciones> diropt = direccionesRepository.findById(direccionxenviar);
 
          if(platoopt.isPresent() && restopt.isPresent() && diropt.isPresent()){
-             Plato platoseleccionado = platoopt.get();
-             model.addAttribute("platoseleccionado",platoseleccionado);
-             model.addAttribute("idrestaurante",idrestaurante);
-             model.addAttribute("iddireccionxenviar",direccionxenviar);
-             return "cliente/detalles_plato";
+
+             int idrestsel = idrestaurante;
+             if(listapedidospendientes.size() >= 0 || pedidopendiente != null){
+                 if(pedidopendiente != null){
+                     String mensajependidopendiente = "No puede realizar otro pedido mientras tenga un pedido en curso";
+                     attr.addFlashAttribute("hayunpedidoencurso",mensajependidopendiente);
+                     return "redirect:/cliente/progresopedido";
+                 }
+                 for (Pedidos pedidoencurso : listapedidospendientes){
+                     idrestsel = pedidoencurso.getRestaurantepedido().getIdrestaurante();
+                 }
+                 if(idrestsel == idrestaurante || pedidopendiente == null){
+                     Plato platoseleccionado = platoopt.get();
+                     model.addAttribute("platoseleccionado",platoseleccionado);
+                     model.addAttribute("idrestaurante",idrestaurante);
+                     model.addAttribute("iddireccionxenviar",direccionxenviar);
+                     return "cliente/detalles_plato";
+                 }else{
+                     String mensajependidopendiente = "No puede realizar otro pedido a otro restaurante que sea diferente al que ya ha seleccionado.";
+                     attr.addFlashAttribute("hayunpedidoencurso",mensajependidopendiente);
+                     return "redirect:/cliente/carritoproductos";
+                 }
+             }else{
+                 Plato platoseleccionado = platoopt.get();
+                 model.addAttribute("platoseleccionado",platoseleccionado);
+                 model.addAttribute("idrestaurante",idrestaurante);
+                 model.addAttribute("iddireccionxenviar",direccionxenviar);
+                 return "cliente/detalles_plato";
+             }
+
          }else{
             return "redirect:/cliente/restaurantexordenar?idrestaurante=" + idrestaurante + "&direccion=" + direccionxenviar;
          }
@@ -751,7 +1033,7 @@ public class UsuarioController {
                               HttpSession session,
                               Model model, RedirectAttributes redirectAttributes,
                               @RequestParam("direccion") String direccionxenviar){
-//TODO validar cantidad > 0, validar cubiertos ser solo 0 y 1
+//TODO validar cubiertos ser solo 0 y 1, recomenacion cubiertos que lo reciba como int
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idcliente=sessionUser.getIdusuarios();
 
@@ -950,7 +1232,6 @@ public class UsuarioController {
         model.addAttribute("listametodospago",listametodos);
 
         List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idusuario);
-        //TODO poner mensaje de cuales son las tarjetas validas. Las tarjetas validas son visa, mastercard, dinersclub, discover, jcb
         if(listapedidospendientes.isEmpty()){
             return "redirect:/cliente/realizarpedido";
         }else{
@@ -1084,6 +1365,7 @@ public class UsuarioController {
                     //TODO guardar comision repartidor y comision sistema dependiendo del distrito
                     pedidoencurso.setMontototal(String.valueOf(montoPagar_pedidoHasPlatoDTO.getpreciopagar()));
                     pedidoencurso.setEstadorestaurante("pendiente");
+                    pedidoencurso.setEstadorepartidor("indefinido");
                     System.out.println(LocalTime.now());
                     //TODO guarda la fecha pero no la hora
                     //SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -1216,6 +1498,10 @@ public class UsuarioController {
         Usuario usuarioperfil = usuarioopt.get();
 
         if(bindingResult.hasFieldErrors("telefono") || bindingResult.hasFieldErrors("contraseniaHash")){
+            if(bindingResult.hasFieldErrors("telefono")){
+               String  msgT="El teléfono no es válido";
+                model.addAttribute("msgT",msgT);
+            }
             List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuarioAndActivoEquals(usuario,1);
             model.addAttribute("listadirecciones", listadireccionescliente);
             model.addAttribute("usuario",usuarioperfil);
@@ -1225,6 +1511,17 @@ public class UsuarioController {
             return "cliente/miPerfil";
         } else {
             if(password2.isEmpty()){
+                int cantcontra = sessionUser.getContraseniaHash().length();
+                if(usuario.getContraseniaHash().length() < cantcontra){
+                    model.addAttribute("errorpatroncontra", "Debe completar el campo confirmar contraseña");
+                    System.out.println("mensaje confirmar contra");
+                    List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuarioAndActivoEquals(usuario,1);
+                    model.addAttribute("listadirecciones", listadireccionescliente);
+                    model.addAttribute("usuario",usuarioperfil);
+                    List<TarjetasOnline> listatarjetas = tarjetasOnlineRepository.findAllByClienteEquals(usuario);
+                    model.addAttribute("listatarjetas",listatarjetas);
+                    return "cliente/miPerfil";
+                }
                 sessionUser.setTelefono(usuario.getTelefono());
                 System.out.println("deberia guardaaar solo telefono");
                 usuarioRepository.save(sessionUser);
@@ -1253,6 +1550,7 @@ public class UsuarioController {
                         return "cliente/miPerfil";
                     }
                 }else{
+                    model.addAttribute("errorpatroncontra", "Las contraseñas no son iguales");
                     List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuarioAndActivoEquals(usuario,1);
                     model.addAttribute("listadirecciones", listadireccionescliente);
                     model.addAttribute("usuario",usuarioperfil);
@@ -1307,13 +1605,16 @@ public class UsuarioController {
         direccioncrear.setDireccion(direccion);
 
         Optional<Distritos> distritoopt = distritosRepository.findById(iddistrito);
-        if(distritoopt.isPresent() && direccion != null){ //validando que direccion no vacía
+        System.out.println("entra if??");
+        if(distritoopt.isPresent()){ //validando que direccion no vacía
             Distritos distritonuevo = distritoopt.get();
             direccioncrear.setDistrito(distritonuevo);
             //direccioncrear.setUsuariosIdusuarios(idusuario);
             direccioncrear.setUsuario(usuario);
             direccioncrear.setActivo(1);
+            System.out.println("deberia guardar direccion");
             direccionesRepository.save(direccioncrear);
+            System.out.println("guardó direccion");
         }
         return "redirect:/cliente/miperfil";
     }

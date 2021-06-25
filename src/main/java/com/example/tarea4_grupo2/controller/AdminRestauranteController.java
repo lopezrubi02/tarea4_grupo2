@@ -67,15 +67,13 @@ public class AdminRestauranteController {
         int id = sessionUser.getIdusuarios();
         System.out.println(id);
 
-        if(sessionUser.getCuentaActiva() == 2){
-            Optional<Restaurante> restauranteOpt = restauranteRepository.buscarRestaurantePorIdAdmin(id);
+        if(sessionUser.getCuentaActiva() == 3){
 
-            if(restauranteOpt.isPresent()){
-                return "AdminRestaurantes/espera";
-            }else{
-                System.out.println("ALLA");
-                return "AdminRestaurantes/sinRestaurante";
-            }
+            return "AdminRestaurantes/sinRestaurante";
+
+        }else if(sessionUser.getCuentaActiva() == 2){
+
+            return "AdminRestaurantes/espera";
 
         }else if(sessionUser.getCuentaActiva() == 1){
 
@@ -89,7 +87,6 @@ public class AdminRestauranteController {
             }
 
         }else{
-            //TODO Retornar una vista de rechazado//
             return null;
         }
     }
@@ -97,28 +94,43 @@ public class AdminRestauranteController {
     @PostMapping("/categorias")
     public String esperaConfirmacion(@ModelAttribute("restaurante") @Valid Restaurante restaurante,BindingResult bindingResult,
                                      @RequestParam("imagen") MultipartFile file,
+                                     @RequestParam("direccion") String direccion,
+                                     @RequestParam("iddistrito") Integer iddistrito,
                                      Model model,
                                      HttpSession session) throws IOException {
-        if(bindingResult.hasErrors()){
-            Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        if(bindingResult.hasFieldErrors("nombre")||bindingResult.hasFieldErrors("ruc")){
             restaurante.setUsuario(sessionUser);
             model.addAttribute("listadistritos",distritosRepository.findAll());
             model.addAttribute("restaurante",restaurante);
             return "AdminRestaurantes/registerRestaurante";
         }
         else {
-
-            try {
-                restaurante.setFoto(file.getBytes());
-                restaurante.setFotocontenttype(file.getContentType());
-                restaurante.setFotonombre(file.getOriginalFilename());
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (restaurante.getRuc().startsWith("20") || restaurante.getRuc().startsWith("10")) {
+                try {
+                    restaurante.setFoto(file.getBytes());
+                    restaurante.setFotocontenttype(file.getContentType());
+                    restaurante.setFotonombre(file.getOriginalFilename());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                restaurante.setDireccion(direccion);
+                Distritos distrito = distritosRepository.findById(iddistrito).get();
+                restaurante.setDistrito(distrito);
+                restauranteRepository.save(restaurante);
+                sessionUser.setCuentaActiva(2);
+                usuarioRepository.save(sessionUser);
+                model.addAttribute("id", restaurante.getIdrestaurante());
+                model.addAttribute("listacategorias", categoriasRepository.findAll());
+                return "AdminRestaurantes/categorias";
             }
-            restauranteRepository.save(restaurante);
-            model.addAttribute("id", restaurante.getIdrestaurante());
-            model.addAttribute("listacategorias", categoriasRepository.findAll());
-            return "AdminRestaurantes/categorias";
+            else{
+                restaurante.setUsuario(sessionUser);
+                model.addAttribute("msgrucerror","No es un RUC valido");
+                model.addAttribute("listadistritos",distritosRepository.findAll());
+                model.addAttribute("restaurante",restaurante);
+                return "AdminRestaurantes/registerRestaurante";
+            }
         }
     }
 
@@ -188,17 +200,21 @@ public class AdminRestauranteController {
 
         /**Se obtiene Id de Restaurante**/
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
+        Restaurante restaurante = restauranteRepository.findById(idrestaurante).get();
         if(sessionUser.getCuentaActiva()==1){
-            Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
             /********************************/
             BigDecimal calificacion = pedidosRepository.calificacionPromedio(idrestaurante);
-            MathContext m = new MathContext(3);
-            calificacion = calificacion.round(m);
-            Restaurante restaurante = restauranteRepository.findById(idrestaurante).get();
-            restaurante.setCalificacionpromedio(calificacion.floatValue());
-            restauranteRepository.save(restaurante);
+            if(calificacion != null){
+                MathContext m = new MathContext(3);
+                calificacion = calificacion.round(m);
+                restaurante.setCalificacionpromedio(calificacion.floatValue());
+                restauranteRepository.save(restaurante);
+                model.addAttribute("calificacionpromedio",calificacion);
+            }else{
+                model.addAttribute("calificacionpromedio","No hay calificaciones");
+            }
             Integer cantidadcalificaciones = restauranteRepository.obtenerCantidadCalificaciones(idrestaurante);
-            model.addAttribute("calificacionpromedio",calificacion);
             model.addAttribute("cantidadcalificaciones",cantidadcalificaciones);
             model.addAttribute("nombrerestaurante", restaurante.getNombre());
             return "AdminRestaurantes/perfilrestaurante";
@@ -807,6 +823,9 @@ public class AdminRestauranteController {
         Usuario user= (Usuario) session.getAttribute("usuarioLogueado");
         int id=restauranteRepository.buscarRestaurantePorIdAdmin(user.getIdusuarios()).get().getIdrestaurante();
         restauranteRepository.deleteById(id);
+        user.setCuentaActiva(3);
+        usuarioRepository.save(user);
+
         return "redirect:/adminrest/sinrestaurante";
     }
     @PostMapping("/llenarcategoria")

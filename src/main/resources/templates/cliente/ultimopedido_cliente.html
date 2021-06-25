@@ -60,7 +60,8 @@
 				<div class="footer">
 					<div class="container-fluid">
 						<div class="row" th:if="${ultimopedido}" style="padding-right:190px;"> <!-- hay algun pedido -->
-							  <div class=" col-md-12">
+							<div th:if="${hayunpedidoencurso != null}" th:text="${hayunpedidoencurso}" class="alert alert-warning" role="alert" style="margin-left: 10%;padding-left:30%;"></div>
+							<div class=" col-md-12">
 								<h2 style="padding-left: 223px;">Tu pedido más reciente</h2>
 							  </div>
 								<div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">

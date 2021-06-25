@@ -98,5 +98,11 @@ public interface RestauranteRepository extends JpaRepository<Restaurante, Intege
             "where p.calificacionrestaurante is not null and p.estadorestaurante = 'entregado' and p.restauranteidrestaurante=?1", nativeQuery = true)
     Integer obtenerCantidadCalificaciones(int idrestaurante);
 
+    /*TODO en cliente: mandar lista de restaurantes de acuerdo a un distrito */
+    @Query(value = "select r.* from restaurante r\n" +
+            "inner join distritos d\n" +
+            "on d.iddistritos = r.iddistrito\n" +
+            "where r.iddistrito = ?1", nativeQuery = true)
+    List<Restaurante> listarestaurantesxdistrito (int iddistrito);
 
 }

@@ -48,13 +48,15 @@
                 <h1>Reportes</h1>
                 <div th:if="${msg != null}" th:text="${msg}" class="alert alert-success" role="alert"></div>
                 <form method="post" th:action="@{/repartidor/Buscador}">
-                    <input name="valorBuscado" class="form-floating" style=" border-style: groove;margin-bottom: 0px" type="text" placeholder="Nombre del restaurante o distrito del restaurante"/>
+                    <input name="valorBuscado" class="form-floating" style="padding: 5px; width: 82%;"
+                           type="text" placeholder="Nombre del restaurante o distrito del restaurante"/>
                     <button class="btn btn-dark" type="submit">Buscar</button>
                     <button class="btn btn-warning"><a class="button active" th:href="@{'/repartidor/Reportes'}">Limpiar</a></button>
-                    <div class="d-flex justify-content-end">
-                        <a th:href="@{'/repartidor/excelgananciamensual'+ '?id=' + ${id}}"  class="btn btn-outline-success">Exportar a Excel</a>
-                    </div>
                 </form>
+                <br>
+                <div class="d-flex justify-content-end">
+                    <a th:href="@{'/repartidor/excelgananciamensual'+ '?id=' + ${id}}" class="btn btn-outline-success">Exportar a Excel</a>
+                </div>
 
 
                 <table class="table table-striped">
