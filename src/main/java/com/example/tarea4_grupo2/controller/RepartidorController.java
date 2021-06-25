@@ -637,8 +637,8 @@ public class RepartidorController {
                                      @RequestParam("direccion") String direccion,
                                      @RequestParam("distrito") Distritos distrito,
                                      @RequestParam("password2") String pass2,
-                                     @RequestParam(value = "placa",defaultValue = "0") String placa,
-                                     @RequestParam(value = "licencia",defaultValue = "0") String licencia,
+                                     @RequestParam(value = "placa",defaultValue = "") String placa,
+                                     @RequestParam(value = "licencia",defaultValue = "") String licencia,
                                      @RequestParam("archivo") MultipartFile file,
                                      @RequestParam(value = "movilidad2",defaultValue = "0") String movilidad2,
                                      Model model, RedirectAttributes attributes) {
@@ -647,18 +647,23 @@ public class RepartidorController {
 
         Usuario usuario1 = usuarioRepository.findByEmail(usuario.getEmail());
 
+        System.out.println(movilidad2);
+        String movilidad=movilidad2;
 
+        String msgC=null;
         if (usuario1 != null) {
             if (usuario.getEmail().equalsIgnoreCase(usuario1.getEmail())) {
                 correoExis = true;
-                String msgC = "El correo ya se encuentra registrado";
+                msgC = "El correo ya se encuentra registrado";
             }
         }
 
         boolean dniExis = false;
+
         Usuario usuario3 = usuarioRepository.findByDniAndRolEquals(usuario.getDni(),"Repartidor");
         if (usuario3 != null ) {
             dniExis = true;
+
         }
 
         boolean cont1val=false;
@@ -682,12 +687,13 @@ public class RepartidorController {
             direccionVal=true;
         }
 
-        if (bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors() || correoExis || dniExis) {
             model.addAttribute("listadistritos", distritosRepository.findAll());
             model.addAttribute("dniExis", dniExis);
             model.addAttribute("correoExis", correoExis);
             model.addAttribute("msgc1",msgc1);
             model.addAttribute("msgc2",msgc2);
+            model.addAttribute("msgC",msgC);
             model.addAttribute("direccionVal",direccionVal);
             model.addAttribute("movilidad2",movilidad2);
             if(placa!=null){
@@ -745,8 +751,8 @@ public class RepartidorController {
                 repartidor.setFotocontenttype(file.getContentType());
                 repartidor.setDistritos(distrito);
                 repartidor.setDisponibilidad(false);
-                repartidor.setMovilidad(movilidad2);
-                if(!movilidad2.equalsIgnoreCase("bicicleta")){
+                repartidor.setMovilidad(movilidad);
+                if(!movilidad.equalsIgnoreCase("bicicleta")){
                     repartidor.setPlaca(placa);
                 }
                 if(!movilidad2.equalsIgnoreCase("bicicleta")){
