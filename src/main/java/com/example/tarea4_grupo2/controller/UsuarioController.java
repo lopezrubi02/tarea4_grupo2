@@ -888,116 +888,127 @@ public class UsuarioController {
     /** restaurante a ordenar **/
 
      @GetMapping("/cliente/restaurantexordenar")
-     public String restaurantexordenar(@RequestParam("idrestaurante") int idrestaurante, Model model,
-                                   @RequestParam("direccion") int direccionxenviar, HttpSession session,
+     public String restaurantexordenar(@RequestParam("idrestaurante") String idrest, Model model,
+                                   @RequestParam("direccion") String direccion, HttpSession session,
                                        RedirectAttributes attr){
-         Optional<Restaurante> restopt = restauranteRepository.findById(idrestaurante);
-         Optional<Direcciones> diropt = direccionesRepository.findById(direccionxenviar);
          Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
          int idusuarioactual=sessionUser.getIdusuarios();
          List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idusuarioactual);
          Pedidos pedidopendiente = pedidosRepository.pedidoencurso(idusuarioactual);
+         try {
+             int idrestaurante = Integer.parseInt(idrest);
+             int direccionxenviar = Integer.parseInt(direccion);
+             Optional<Restaurante> restopt = restauranteRepository.findById(idrestaurante);
+             Optional<Direcciones> diropt = direccionesRepository.findById(direccionxenviar);
+             if (diropt.isPresent() && restopt.isPresent()) {
+                 Restaurante rest = restopt.get();
+                 if (restopt.isPresent()) {
 
-         if(diropt.isPresent() && restopt.isPresent()){
-            Restaurante rest = restopt.get();
-            if (restopt.isPresent()){
+                     int idrestsel = idrestaurante;
+                     if (listapedidospendientes.size() >= 0 || pedidopendiente != null) {
+                         if (pedidopendiente != null) {
+                             String mensajependidopendiente = "No puede realizar otro pedido mientras tenga un pedido en curso";
+                             attr.addFlashAttribute("hayunpedidoencurso", mensajependidopendiente);
+                             return "redirect:/cliente/progresopedido";
+                         }
+                         for (Pedidos pedidoencurso : listapedidospendientes) {
+                             idrestsel = pedidoencurso.getRestaurantepedido().getIdrestaurante();
+                         }
+                         if (idrestsel == idrestaurante || pedidopendiente == null) {
+                             int cantreviews = restauranteRepository.cantreviews(idrestaurante);
 
-                int idrestsel = idrestaurante;
-                if(listapedidospendientes.size() >= 0 || pedidopendiente != null){
-                    if(pedidopendiente != null){
-                        String mensajependidopendiente = "No puede realizar otro pedido mientras tenga un pedido en curso";
-                        attr.addFlashAttribute("hayunpedidoencurso",mensajependidopendiente);
-                        return "redirect:/cliente/progresopedido";
-                    }
-                    for (Pedidos pedidoencurso : listapedidospendientes){
-                        idrestsel = pedidoencurso.getRestaurantepedido().getIdrestaurante();
-                    }
-                    if(idrestsel == idrestaurante || pedidopendiente == null){
-                        int cantreviews = restauranteRepository.cantreviews(idrestaurante);
+                             List<Plato> platosxrest = platoRepository.buscarPlatosPorIdRestauranteDisponilidadActivo(idrestaurante);
 
-                        List<Plato> platosxrest = platoRepository.buscarPlatosPorIdRestauranteDisponilidadActivo(idrestaurante);
+                             model.addAttribute("restaurantexordenar", rest);
+                             model.addAttribute("cantreviews", cantreviews);
+                             model.addAttribute("platosxrest", platosxrest);
+                             model.addAttribute("direccionxenviar", direccionxenviar);
+                             return "cliente/restaurante_orden_cliente";
+                         } else {
+                             String mensajependidopendiente = "No puede realizar otro pedido a otro restaurante que sea diferente al que ya ha seleccionado.";
+                             attr.addFlashAttribute("hayunpedidoencurso", mensajependidopendiente);
+                             return "redirect:/cliente/carritoproductos";
+                         }
+                     } else {
+                         int cantreviews = restauranteRepository.cantreviews(idrestaurante);
 
-                        model.addAttribute("restaurantexordenar",rest);
-                        model.addAttribute("cantreviews",cantreviews);
-                        model.addAttribute("platosxrest",platosxrest);
-                        model.addAttribute("direccionxenviar",direccionxenviar);
-                        return "cliente/restaurante_orden_cliente";
-                    }else{
-                        String mensajependidopendiente = "No puede realizar otro pedido a otro restaurante que sea diferente al que ya ha seleccionado.";
-                        attr.addFlashAttribute("hayunpedidoencurso",mensajependidopendiente);
-                        return "redirect:/cliente/carritoproductos";
-                    }
-                }else{
-                    int cantreviews = restauranteRepository.cantreviews(idrestaurante);
+                         List<Plato> platosxrest = platoRepository.buscarPlatosPorIdRestauranteDisponilidadActivo(idrestaurante);
 
-                    List<Plato> platosxrest = platoRepository.buscarPlatosPorIdRestauranteDisponilidadActivo(idrestaurante);
+                         model.addAttribute("restaurantexordenar", rest);
+                         model.addAttribute("cantreviews", cantreviews);
+                         model.addAttribute("platosxrest", platosxrest);
+                         model.addAttribute("direccionxenviar", direccionxenviar);
+                         return "cliente/restaurante_orden_cliente";
+                     }
 
-                    model.addAttribute("restaurantexordenar",rest);
-                    model.addAttribute("cantreviews",cantreviews);
-                    model.addAttribute("platosxrest",platosxrest);
-                    model.addAttribute("direccionxenviar",direccionxenviar);
-                    return "cliente/restaurante_orden_cliente";
-                }
-
-            }else{
-                return "redirect:/cliente/realizarpedido";
-            }
-        }else{
-            return "redirect:/cliente/realizarpedido";
-        }
-
+                 } else {
+                     return "redirect:/cliente/realizarpedido";
+                 }
+             } else {
+                 return "redirect:/cliente/realizarpedido";
+             }
+         }catch(NumberFormatException e){
+             return "redirect:/cliente/realizarpedido";
+         }
      }
 
     @GetMapping("/cliente/platoxpedir")
     public String platoxpedir(Model model,
-                              @RequestParam("idplato") int idplatopedir,
-                              @RequestParam("idrestaurante") int idrestaurante,
-                              @RequestParam("direccion") int direccionxenviar, HttpSession session,
-                              RedirectAttributes attr){
+                              @RequestParam("idplato") String idplato,
+                              @RequestParam("idrestaurante") String idrest,
+                              @RequestParam("direccion") String direccion, HttpSession session,
+                              RedirectAttributes attr) {
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-        int idusuarioactual=sessionUser.getIdusuarios();
+        int idusuarioactual = sessionUser.getIdusuarios();
         List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idusuarioactual);
         Pedidos pedidopendiente = pedidosRepository.pedidoencurso(idusuarioactual);
+        try {
+            int idplatopedir = Integer.parseInt(idplato);
+            int idrestaurante = Integer.parseInt(idrest);
+            int direccionxenviar = Integer.parseInt(direccion);
+            Optional<Plato> platoopt = platoRepository.findById(idplatopedir);
+            Optional<Restaurante> restopt = restauranteRepository.findById(idrestaurante);
+            Optional<Direcciones> diropt = direccionesRepository.findById(direccionxenviar);
 
-         Optional<Plato> platoopt = platoRepository.findById(idplatopedir);
-         Optional<Restaurante> restopt = restauranteRepository.findById(idrestaurante);
-         Optional<Direcciones> diropt = direccionesRepository.findById(direccionxenviar);
+            if (platoopt.isPresent() && restopt.isPresent() && diropt.isPresent()) {
 
-         if(platoopt.isPresent() && restopt.isPresent() && diropt.isPresent()){
+                int idrestsel = idrestaurante;
+                if (listapedidospendientes.size() >= 0 || pedidopendiente != null) {
+                    if (pedidopendiente != null) {
+                        String mensajependidopendiente = "No puede realizar otro pedido mientras tenga un pedido en curso";
+                        attr.addFlashAttribute("hayunpedidoencurso", mensajependidopendiente);
+                        return "redirect:/cliente/progresopedido";
+                    }
+                    for (Pedidos pedidoencurso : listapedidospendientes) {
+                        idrestsel = pedidoencurso.getRestaurantepedido().getIdrestaurante();
+                    }
+                    if (idrestsel == idrestaurante || pedidopendiente == null) {
+                        Plato platoseleccionado = platoopt.get();
+                        model.addAttribute("platoseleccionado", platoseleccionado);
+                        model.addAttribute("idrestaurante", idrestaurante);
+                        model.addAttribute("iddireccionxenviar", direccionxenviar);
+                        return "cliente/detalles_plato";
+                    } else {
+                        String mensajependidopendiente = "No puede realizar otro pedido a otro restaurante que sea diferente al que ya ha seleccionado.";
+                        attr.addFlashAttribute("hayunpedidoencurso", mensajependidopendiente);
+                        return "redirect:/cliente/carritoproductos";
+                    }
+                } else {
+                    Plato platoseleccionado = platoopt.get();
+                    model.addAttribute("platoseleccionado", platoseleccionado);
+                    model.addAttribute("idrestaurante", idrestaurante);
+                    model.addAttribute("iddireccionxenviar", direccionxenviar);
+                    return "cliente/detalles_plato";
+                }
 
-             int idrestsel = idrestaurante;
-             if(listapedidospendientes.size() >= 0 || pedidopendiente != null){
-                 if(pedidopendiente != null){
-                     String mensajependidopendiente = "No puede realizar otro pedido mientras tenga un pedido en curso";
-                     attr.addFlashAttribute("hayunpedidoencurso",mensajependidopendiente);
-                     return "redirect:/cliente/progresopedido";
-                 }
-                 for (Pedidos pedidoencurso : listapedidospendientes){
-                     idrestsel = pedidoencurso.getRestaurantepedido().getIdrestaurante();
-                 }
-                 if(idrestsel == idrestaurante || pedidopendiente == null){
-                     Plato platoseleccionado = platoopt.get();
-                     model.addAttribute("platoseleccionado",platoseleccionado);
-                     model.addAttribute("idrestaurante",idrestaurante);
-                     model.addAttribute("iddireccionxenviar",direccionxenviar);
-                     return "cliente/detalles_plato";
-                 }else{
-                     String mensajependidopendiente = "No puede realizar otro pedido a otro restaurante que sea diferente al que ya ha seleccionado.";
-                     attr.addFlashAttribute("hayunpedidoencurso",mensajependidopendiente);
-                     return "redirect:/cliente/carritoproductos";
-                 }
-             }else{
-                 Plato platoseleccionado = platoopt.get();
-                 model.addAttribute("platoseleccionado",platoseleccionado);
-                 model.addAttribute("idrestaurante",idrestaurante);
-                 model.addAttribute("iddireccionxenviar",direccionxenviar);
-                 return "cliente/detalles_plato";
-             }
+            } else {
+                return "redirect:/cliente/restaurantexordenar?idrestaurante=" + idrestaurante + "&direccion=" + direccionxenviar;
+            }
 
-         }else{
-            return "redirect:/cliente/restaurantexordenar?idrestaurante=" + idrestaurante + "&direccion=" + direccionxenviar;
-         }
+        }catch(NumberFormatException e){
+            return "redirect:/cliente/realizarpedido";
+        }
     }
 
     /*public String generarCodigoPedido(){
@@ -1025,7 +1036,7 @@ public class UsuarioController {
     }*/
 
     @PostMapping("/cliente/platopedido")
-    public String platopedido(@RequestParam("cubierto") boolean cubiertos,
+    public String platopedido(@RequestParam("cubierto") int cubiertosxpenviar,
                               @RequestParam("cantidad") String cantidad,
                               @RequestParam("descripcion") String descripcion,
                               @RequestParam(value = "idrestaurante") String idrestaurante,
@@ -1047,9 +1058,11 @@ public class UsuarioController {
 
             Pedidos pedidoencurso = pedidosRepository.pedidoencursoxrestaurante(idcliente, Integer.parseInt(idrestaurante));
 
+            boolean cubiertos = Boolean.parseBoolean(String.valueOf(cubiertosxpenviar));
+
             if (pedidoencurso == null) {
                 try {
-                    if (Integer.valueOf(cantidad) > 0 || (cubiertos == true || !cubiertos)) {
+                    if (Integer.valueOf(cantidad) > 0 || cubiertos == true || !cubiertos) {
                         Pedidos pedidos = new Pedidos();
                         pedidos.setIdcliente(idcliente);
 
@@ -1082,7 +1095,7 @@ public class UsuarioController {
                         redirectAttributes.addFlashAttribute("cantidad1", "No ha ingresado una cantidad");
                         return "redirect:/cliente/platoxpedir?idrestaurante="+ idrestaurante + "&idplato=" + idplato + "&direccion=" + direccionxenviar;
                     }
-                }catch(NumberFormatException e) {
+                }catch(NumberFormatException e ) {
                     return "redirect:/cliente/platoxpedir?idrestaurante="+ idrestaurante + "&idplato=" + idplato + "&direccion=" + direccionxenviar;
                 }
             } else {
