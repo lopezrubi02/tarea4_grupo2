@@ -1331,13 +1331,14 @@ public class UsuarioController {
                     MontoPagar_PedidoHasPlatoDTO montoPagar_pedidoHasPlatoDTO;
                     if(pedidoencurso.getRestaurantepedido().getDistrito() == pedidoencurso.getDireccionentrega().getDistrito()){
                         montoPagar_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montopagar2(pedidoencurso.getIdpedidos());
+                        model.addAttribute("montopagar", montoPagar_pedidoHasPlatoDTO);
                     }else {
                         montoPagar_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montopagar(pedidoencurso.getIdpedidos());
+                        model.addAttribute("montopagar", montoPagar_pedidoHasPlatoDTO);
                     }
                     model.addAttribute("platosxpedido",platosxpedido);
                     model.addAttribute("pedidoencurso",pedidoencurso);
                     model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
-                    model.addAttribute("montopagar", montoPagar_pedidoHasPlatoDTO);
                     System.out.println(montoPagar_pedidoHasPlatoDTO);
                     System.out.println(montoTotal_pedidoHasPlatoDTO);
                     pedidoencurso.setMetododepago(metodosel);
@@ -1393,6 +1394,7 @@ public class UsuarioController {
                     pedidoencurso.setEstadorestaurante("pendiente");
                     pedidoencurso.setEstadorepartidor("indefinido");
                     System.out.println(LocalDateTime.now());
+                    pedidoencurso.setFechahorapedido(LocalDateTime.now());
                     //TODO guarda la fecha pero no la hora
                     //SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     //Date now = new Date();
