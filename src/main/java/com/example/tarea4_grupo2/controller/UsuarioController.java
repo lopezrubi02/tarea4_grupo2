@@ -94,14 +94,6 @@ public class UsuarioController {
         return errorcorreo;
     }
 
-    public boolean validardnixrolunico(String dni, String rol, Usuario usuario){
-        boolean errordni = false;
-        Usuario usuarioxdni = usuarioRepository.findByDniAndRolEquals(usuario.getDni(),"Cliente");
-        if(usuarioxdni != null){
-            errordni = true;
-        }
-        return errordni;
-    }
     public boolean validarstringsexo(String stringsexo){
         boolean errorstring = true;
         if(stringsexo.equalsIgnoreCase("Femenino")){
@@ -195,11 +187,10 @@ public class UsuarioController {
             return "cliente/registroCliente";
         } else {
             boolean errorcorreo = validarcorreounico(usuario.getEmail(), usuario);
-            boolean errordnixrol = validardnixrolunico(usuario.getDni(), "Cliente", usuario);
             boolean errorstringsexo = validarstringsexo(usuario.getSexo());
             boolean dniexiste = validarDNI(usuario.getDni());
 
-            if (errorcorreo == true || errordnixrol == true || errorstringsexo == true || direccion == null || dniexiste == false) {
+            if (errorcorreo == true || errorstringsexo == true || direccion == null || dniexiste == false) {
                 if(errorcorreo==true){
                     model.addAttribute("errorcorreo", "Ya hay una cuenta registrada con el correo ingresado.");
                 }
@@ -222,7 +213,6 @@ public class UsuarioController {
                         usuario.setContraseniaHash(contraseniahashbcrypt);
                         usuario.setRol("Cliente");
                         usuario.setCuentaActiva(1);
-
                         usuarioRepository.save(usuario);
 
                         //Para guardar direccion
@@ -309,7 +299,6 @@ public class UsuarioController {
             row.createCell(1).setCellValue(pedidoexcel.getNombre());
             row.createCell(2).setCellValue(pedidoexcel.getFechahorapedido());
             row.createCell(3).setCellValue(pedidoexcel.getDireccion());
-            System.out.println(pedidoexcel.getDireccion());
             row.createCell(4).setCellValue(pedidoexcel.getMetodo());
             initRow++;
         }
@@ -318,7 +307,6 @@ public class UsuarioController {
         workbook.close();
         return new ByteArrayInputStream(stream.toByteArray());
     }
-
 
     @GetMapping("/cliente/reportes")
     public String reportesCliente(Model model,
