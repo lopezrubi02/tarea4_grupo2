@@ -33,6 +33,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -1327,7 +1328,12 @@ public class UsuarioController {
                     System.out.println(pedidoencurso.getIdpedidos());
                     System.out.println(pedidoencurso.getDireccionentrega().getIddirecciones());
                     MontoTotal_PedidoHasPlatoDTO montoTotal_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montototal(pedidoencurso.getIdpedidos());
-                    MontoPagar_PedidoHasPlatoDTO montoPagar_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montopagar(pedidoencurso.getIdpedidos());
+                    MontoPagar_PedidoHasPlatoDTO montoPagar_pedidoHasPlatoDTO;
+                    if(pedidoencurso.getRestaurantepedido().getDistrito() == pedidoencurso.getDireccionentrega().getDistrito()){
+                        montoPagar_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montopagar2(pedidoencurso.getIdpedidos());
+                    }else {
+                        montoPagar_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montopagar(pedidoencurso.getIdpedidos());
+                    }
                     model.addAttribute("platosxpedido",platosxpedido);
                     model.addAttribute("pedidoencurso",pedidoencurso);
                     model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
@@ -1376,10 +1382,17 @@ public class UsuarioController {
                         }
                     }
                     //TODO guardar comision repartidor y comision sistema dependiendo del distrito
+                    if(pedidoencurso.getRestaurantepedido().getDistrito() == pedidoencurso.getDireccionentrega().getDistrito()){
+                        pedidoencurso.setComisionrepartidor(4);
+                        pedidoencurso.setComisionsistema(1);
+                    }else{
+                        pedidoencurso.setComisionrepartidor(6);
+                        pedidoencurso.setComisionsistema(2);
+                    }
                     pedidoencurso.setMontototal(String.valueOf(montoPagar_pedidoHasPlatoDTO.getpreciopagar()));
                     pedidoencurso.setEstadorestaurante("pendiente");
                     pedidoencurso.setEstadorepartidor("indefinido");
-                    System.out.println(LocalTime.now());
+                    System.out.println(LocalDateTime.now());
                     //TODO guarda la fecha pero no la hora
                     //SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     //Date now = new Date();
