@@ -584,18 +584,6 @@ public class UsuarioController {
         return sinComillas;
     }
 
-    @GetMapping("/cliente/prueba2")
-    public String pruebaaa2() throws IOException, InterruptedException, ApiException {
-        List<String> listascoordenadas = coordenadasdistrito("San Miguel");
-        String latx = listascoordenadas.get(6);
-        String lngx = listascoordenadas.get(7);
-
-        String distritohallado1 = hallardistritocercano(latx,lngx);
-        System.out.println("distrito hallado");
-        System.out.println(distritohallado1);
-        return "cliente/prueba";
-    }
-
     /** Realizar pedido **/
     @GetMapping("/cliente/realizarpedido")
     public String realizarpedido(Model model, HttpSession session, RedirectAttributes attr,
@@ -691,6 +679,8 @@ public class UsuarioController {
                             restauranteshallados.add(resthallado);
                         }
                     }
+                    HashSet<Restaurante> set = new HashSet<Restaurante>(restauranteshallados);
+                    restauranteshallados = new ArrayList<Restaurante>(set);
                     model.addAttribute("listarestaurantes",restauranteshallados);
                 } else {
                     Optional<Direcciones> direccionopt = Optional.ofNullable(direccionesRepository.findDireccionesByIddireccionesAndUsuario_Idusuarios(direccionxenviar, idusuarioactual));
@@ -741,6 +731,8 @@ public class UsuarioController {
                                 restauranteshallados.add(resthallado);
                             }
                         }
+                        HashSet<Restaurante> set = new HashSet<Restaurante>(restauranteshallados);
+                        restauranteshallados = new ArrayList<Restaurante>(set);
                         model.addAttribute("listarestaurantes",restauranteshallados);
                     }else{
                         return "redirect:/cliente/realizarpedido";
@@ -939,6 +931,8 @@ public class UsuarioController {
                             restauranteshallados.add(resthallado);
                         }
                     }
+                    HashSet<Restaurante> set = new HashSet<Restaurante>(restauranteshallados);
+                    restauranteshallados = new ArrayList<Restaurante>(set);
                     model.addAttribute("listarestaurantes",restauranteshallados);
                 }
                 return "cliente/realizar_pedido_cliente";
