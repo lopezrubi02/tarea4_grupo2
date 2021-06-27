@@ -4,7 +4,14 @@ import com.example.tarea4_grupo2.dto.*;
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
 import com.example.tarea4_grupo2.service.SendMailService;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
+import com.google.maps.GeoApiContext;
+import com.google.maps.GeocodingApi;
+import com.google.maps.errors.ApiException;
+import com.google.maps.model.GeocodingResult;
+import com.google.maps.model.LatLng;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -490,156 +497,83 @@ public class UsuarioController {
     }
 
     /** Para hallar las coordenadas de los bounds **/
-    public ArrayList<String> coordenadasdistrito(String distrito){
-        List<String> listascoordenadas = new ArrayList<>();
-
-        BufferedReader reader;
-        String line;
-        StringBuffer responseContent = new StringBuffer();
-        try{
-
-            // reemplazar DNI
-            String urlString = "https://maps.googleapis.com/maps/api/geocode/json?&address=" + distrito +",lima&key=AIzaSyBLdwYvQItwrhBKLPqbEumrEURYFFlks-Y";
-
-            URL url = new URL(urlString);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-            connection.setRequestMethod("GET");
-            connection.setConnectTimeout(5000);
-            connection.setReadTimeout(5000);
-
-            int status = connection.getResponseCode();
-
-            if(status > 299){
-                System.out.println("EROR PAPU");
-                reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
-                while ((line = reader.readLine()) != null){
-                    responseContent.append(line);
-                }
-                System.out.println(connection.getResponseMessage());
-                System.out.println(connection.getResponseCode());
-                System.out.println(connection.getErrorStream());
-                reader.close();
-            } else {
-                System.out.println("/GET");
-                reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                while ((line = reader.readLine()) != null){
-                    responseContent.append(line);
-                }
-                reader.close();
-            }
-
-            JSONObject jsonObj = new JSONObject(responseContent.toString());
-            JSONArray results = jsonObj.getJSONArray("results");
-            JSONObject jsonObj2 = new JSONObject(results.get(0).toString());
-            JSONObject jsonObj3 = new JSONObject(jsonObj2.get("geometry").toString());
-            JSONObject jsonObj41 = new JSONObject(jsonObj3.get("bounds").toString());
-            JSONObject jsonObj42 = new JSONObject(jsonObj3.get("bounds").toString());
-            JSONObject jsonObj410 = new JSONObject(jsonObj41.get("northeast").toString());
-            JSONObject jsonObj420 = new JSONObject(jsonObj42.get("southwest").toString());
-
-            Double latx = (Double) jsonObj410.get("lat");
-            Double lngx = (Double) jsonObj410.get("lng");
-            Double laty = (Double) jsonObj420.get("lat");
-            Double lngy = (Double) jsonObj420.get("lng");
-
-            String latlng1 = latx + "," + lngx;
-            String latlng2 = laty + "," + lngy;
-            String latlng3 = latx + "," + lngy;
-    		String latlng4 = laty + "," + lngx;
-            listascoordenadas.add(latlng1);
-            listascoordenadas.add(latlng2);
-            listascoordenadas.add(latlng3);
-            listascoordenadas.add(latlng4);
-
-        }catch (MalformedURLException e) {
+    public List<String> coordenadasdistrito(String distrito){
+        String address = distrito + ",Lima";
+        GeoApiContext context = new GeoApiContext.Builder()
+                .apiKey("AIzaSyBLdwYvQItwrhBKLPqbEumrEURYFFlks-Y")
+                .build();
+        GeocodingResult[] results = new GeocodingResult[0];
+        try {
+            results = GeocodingApi.geocode(context,
+                    address).await();
+        } catch (ApiException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String latx = gson.toJson(results[0].geometry.bounds.northeast.lat);
+        String lngx = gson.toJson(results[0].geometry.bounds.northeast.lng);
+        String laty = gson.toJson(results[0].geometry.bounds.southwest.lat);
+        String lngy = gson.toJson(results[0].geometry.bounds.southwest.lng);
 
-        return (ArrayList<String>) listascoordenadas;
+        List<String> listascoordenadas = new ArrayList<>();
+        listascoordenadas.add(latx);
+        listascoordenadas.add(lngx);
+        listascoordenadas.add(laty);
+        listascoordenadas.add(lngy);
+        listascoordenadas.add(latx);
+        listascoordenadas.add(lngy);
+        listascoordenadas.add(laty);
+        listascoordenadas.add(lngx);
+        return listascoordenadas;
     }
     /** Para hallar los distritos cercanos **/
-    public String hallardistritocercano(String coordenadas){
-        String distritohallado = "";
-        BufferedReader reader;
-        String line;
-        StringBuffer responseContent = new StringBuffer();
-        try{
+    public String hallardistritocercano(String lat, String lng){
+        String distritohallado = "a";
+        GeoApiContext context = new GeoApiContext.Builder()
+                .apiKey("AIzaSyBLdwYvQItwrhBKLPqbEumrEURYFFlks-Y")
+                .build();
+        GeocodingResult[] results2 = new GeocodingResult[0];
+        LatLng latlnggen = new LatLng(Double.parseDouble(lat),Double.parseDouble(lng));
 
-            // reemplazar DNI
-            String urlString = "https://maps.googleapis.com/maps/api/geocode/json?&latlng=" + coordenadas +"&key=AIzaSyBLdwYvQItwrhBKLPqbEumrEURYFFlks-Y";
-
-            URL url = new URL(urlString);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-            connection.setRequestMethod("GET");
-            connection.setConnectTimeout(5000);
-            connection.setReadTimeout(5000);
-
-            int status = connection.getResponseCode();
-
-            if(status > 299){
-                System.out.println("EROR PAPU");
-                reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
-                while ((line = reader.readLine()) != null){
-                    responseContent.append(line);
-                }
-                System.out.println(connection.getResponseMessage());
-                System.out.println(connection.getResponseCode());
-                System.out.println(connection.getErrorStream());
-                reader.close();
-            } else {
-                System.out.println("/GET");
-                reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                while ((line = reader.readLine()) != null){
-                    responseContent.append(line);
-                }
-                reader.close();
-            }
-
-            JSONObject jsonObj = new JSONObject(responseContent.toString());
-            JSONArray results = jsonObj.getJSONArray("results");
-            JSONObject jsonObj2 = new JSONObject(results.get(0).toString());
-            JSONArray address = jsonObj2.getJSONArray("address_components");
-            JSONObject jsonObj3 = new JSONObject(address.get(3).toString());
-            distritohallado = (String) jsonObj3.get("long_name");
-            System.out.println(distritohallado);
-        }catch (MalformedURLException e) {
+        try {
+            results2 = GeocodingApi.reverseGeocode(context, latlnggen).await();
+        } catch (ApiException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        Gson gson2 = new GsonBuilder().setPrettyPrinting().create();
+        distritohallado = gson2.toJson(results2[0].addressComponents[3].longName);
+        int tam = Integer.parseInt(gson2.toJson(results2[0].addressComponents.length));
+        for(int i=0; i<=tam-1; i++){
+            if(gson2.toJson(results2[0].addressComponents[i].types[0]).equalsIgnoreCase("\"LOCALITY\"")){
+                distritohallado = gson2.toJson(results2[0].addressComponents[i].longName);
+            }
+        }
 
-        return distritohallado;
+        String sinComillas = distritohallado.replace("\"", "");
+        return sinComillas;
     }
 
-    @GetMapping("/cliente/prueba")
-    public String prueba(){
-        ArrayList<String> prueba = coordenadasdistrito("rimac");
-        System.out.println("encontró coordenadas");
-        System.out.println(prueba);
-        String coordenada1 = prueba.get(0);
-        String coordenada2 = prueba.get(1);
-        String coordenada3 = prueba.get(2);
-        String coordenada4 = prueba.get(3);
-        System.out.println(coordenada1);
-        String distrito1 = hallardistritocercano(coordenada1);
-        String distrito2 = hallardistritocercano(coordenada2);
-        String distrito3 = hallardistritocercano(coordenada3);
-        String distrito4 = hallardistritocercano(coordenada4);
-        System.out.println("distritos hallados");
-        System.out.println(distrito1);
-        System.out.println(distrito2);
-        System.out.println(distrito3);
-        System.out.println(distrito4);
+    @GetMapping("/cliente/prueba2")
+    public String pruebaaa2() throws IOException, InterruptedException, ApiException {
+        List<String> listascoordenadas = coordenadasdistrito("San Miguel");
+        String latx = listascoordenadas.get(6);
+        String lngx = listascoordenadas.get(7);
+
+        String distritohallado1 = hallardistritocercano(latx,lngx);
+        System.out.println("distrito hallado");
+        System.out.println(distritohallado1);
         return "cliente/prueba";
     }
 
-
     /** Realizar pedido **/
-
     @GetMapping("/cliente/realizarpedido")
     public String realizarpedido(Model model, HttpSession session, RedirectAttributes attr,
                                  @RequestParam(value = "idcategoriarest" ,defaultValue = "0") String categoriarest,
@@ -688,6 +622,62 @@ public class UsuarioController {
                 if (direccionxenviar == 0) {
                     model.addAttribute("direccionseleccionada", listadireccionescliente.get(0).getDireccion());
                     model.addAttribute("iddireccionxenviar", listadireccionescliente.get(0).getIddirecciones());
+                    //para mostrar restaurantes de acuerdo a direccion mostrada por default
+                    String distritobuscar = listadireccionescliente.get(0).getDistrito().getNombredistrito();
+                    System.out.println(distritobuscar);
+                    List<String> coordenadasboundsdistrito = coordenadasdistrito(distritobuscar);
+                    System.out.println(coordenadasboundsdistrito);
+                    System.out.println("encontró coordenadas");
+                    String coordenada1 = coordenadasboundsdistrito.get(0);
+                    String coordenada2 = coordenadasboundsdistrito.get(1);
+                    String coordenada3 = coordenadasboundsdistrito.get(2);
+                    String coordenada4 = coordenadasboundsdistrito.get(3);
+                    String coordenada5 = coordenadasboundsdistrito.get(4);
+                    String coordenada6 = coordenadasboundsdistrito.get(5);
+                    String coordenada7 = coordenadasboundsdistrito.get(6);
+                    String coordenada8 = coordenadasboundsdistrito.get(7);
+                    System.out.println(coordenada1);
+                    String distrito1 = hallardistritocercano(coordenada1,coordenada2);
+                    String distrito2 = hallardistritocercano(coordenada3,coordenada4);
+                    String distrito3 = hallardistritocercano(coordenada5, coordenada6);
+                    String distrito4 = hallardistritocercano(coordenada7,coordenada8);
+                    System.out.println("distritos hallados");
+                    System.out.println(distrito1);
+                    System.out.println(distrito2);
+                    System.out.println(distrito3);
+                    System.out.println(distrito4);
+                    List<Restaurante> restaurantesxdistritodefault = restauranteRepository.listarestaurantesxdistrito(distritobuscar);
+                    List<Restaurante> restaurantescercanosxdistrito1 = restauranteRepository.listarestaurantesxdistrito(distrito1);
+                    List<Restaurante> restaurantescercanosxdistrito2 = restauranteRepository.listarestaurantesxdistrito(distrito2);
+                    List<Restaurante> restaurantescercanosxdistrito3 = restauranteRepository.listarestaurantesxdistrito(distrito3);
+                    List<Restaurante> restaurantescercanosxdistrito4 = restauranteRepository.listarestaurantesxdistrito(distrito4);
+                    List<Restaurante> restauranteshallados = new ArrayList<>();
+                    System.out.println("restaurantes de db");
+                    for (Restaurante resthallado : restaurantesxdistritodefault) {
+                        resthallado.getNombre();
+                        resthallado.getDistrito().getNombredistrito();
+                        restauranteshallados.add(resthallado);
+                    }
+                    for (Restaurante resthallado : restaurantescercanosxdistrito1) {
+                        resthallado.getNombre();
+                        resthallado.getDistrito().getNombredistrito();
+                        restauranteshallados.add(resthallado);
+                    }
+                    for (Restaurante resthallado : restaurantescercanosxdistrito2) {
+                        resthallado.getNombre();
+                        resthallado.getDistrito().getNombredistrito();
+                        restauranteshallados.add(resthallado);
+                    }for (Restaurante resthallado : restaurantescercanosxdistrito3) {
+                        resthallado.getNombre();
+                        resthallado.getDistrito().getNombredistrito();
+                        restauranteshallados.add(resthallado);
+                    }for (Restaurante resthallado : restaurantescercanosxdistrito4) {
+                        resthallado.getNombre();
+                        resthallado.getDistrito().getNombredistrito();
+                        restauranteshallados.add(resthallado);
+                    }
+                    model.addAttribute("listarestaurantes",restauranteshallados);
+
                 } else {
 
                     Optional<Direcciones> direccionopt = Optional.ofNullable(direccionesRepository.findDireccionesByIddireccionesAndUsuario_Idusuarios(direccionxenviar, idusuarioactual));
@@ -695,6 +685,65 @@ public class UsuarioController {
                         Direcciones direccionseleccionada = direccionopt.get();
                         model.addAttribute("iddireccionxenviar", direccionxenviar);
                         model.addAttribute("direccionseleccionada", direccionseleccionada.getDireccion());
+                        //para mostrar restaurantes de acuerdo a direccion mostrada por default
+                        String distritobuscar = listadireccionescliente.get(0).getDistrito().getNombredistrito();
+                        System.out.println(distritobuscar);
+                        List<String> coordenadasboundsdistrito = coordenadasdistrito(distritobuscar);
+                        System.out.println(coordenadasboundsdistrito);
+                        System.out.println("encontró coordenadas");
+                        String coordenada1 = coordenadasboundsdistrito.get(0);
+                        String coordenada2 = coordenadasboundsdistrito.get(1);
+                        String coordenada3 = coordenadasboundsdistrito.get(2);
+                        String coordenada4 = coordenadasboundsdistrito.get(3);
+                        String coordenada5 = coordenadasboundsdistrito.get(4);
+                        String coordenada6 = coordenadasboundsdistrito.get(5);
+                        String coordenada7 = coordenadasboundsdistrito.get(6);
+                        String coordenada8 = coordenadasboundsdistrito.get(7);
+                        System.out.println(coordenada1);
+                        String distrito1 = hallardistritocercano(coordenada1,coordenada2);
+                        String distrito2 = hallardistritocercano(coordenada3,coordenada4);
+                        String distrito3 = hallardistritocercano(coordenada5, coordenada6);
+                        String distrito4 = hallardistritocercano(coordenada7,coordenada8);
+                        System.out.println("distritos hallados");
+                        System.out.println(distrito1);
+                        System.out.println(distrito2);
+                        System.out.println(distrito3);
+                        System.out.println(distrito4);
+                        List<Restaurante> restaurantesxdistritodefault = restauranteRepository.listarestaurantesxdistrito(distritobuscar);
+                        List<Restaurante> restaurantescercanosxdistrito1 = restauranteRepository.listarestaurantesxdistrito(distrito1);
+                        List<Restaurante> restaurantescercanosxdistrito2 = restauranteRepository.listarestaurantesxdistrito(distrito2);
+                        List<Restaurante> restaurantescercanosxdistrito3 = restauranteRepository.listarestaurantesxdistrito(distrito3);
+                        List<Restaurante> restaurantescercanosxdistrito4 = restauranteRepository.listarestaurantesxdistrito(distrito4);
+                        List<Restaurante> restauranteshallados = new ArrayList<>();
+                        System.out.println("restaurantes de db");
+                        for (Restaurante resthallado : restaurantesxdistritodefault) {
+                            System.out.println(resthallado.getNombre());
+                            System.out.println(resthallado.getDistrito().getNombredistrito());
+                            restauranteshallados.add(resthallado);
+                        }
+                        for (Restaurante resthallado : restaurantescercanosxdistrito1) {
+                            System.out.println(resthallado.getNombre());
+                            System.out.println(resthallado.getDistrito().getNombredistrito());
+                            restauranteshallados.add(resthallado);
+                        }
+                        for (Restaurante resthallado : restaurantescercanosxdistrito2) {
+                            System.out.println(resthallado.getNombre());
+                            System.out.println(resthallado.getDistrito().getNombredistrito());
+                            restauranteshallados.add(resthallado);
+                        }for (Restaurante resthallado : restaurantescercanosxdistrito3) {
+                            System.out.println(resthallado.getNombre());
+                            System.out.println(resthallado.getDistrito().getNombredistrito());
+                            restauranteshallados.add(resthallado);
+                        }for (Restaurante resthallado : restaurantescercanosxdistrito4) {
+                            System.out.println(resthallado.getNombre());
+                            System.out.println(resthallado.getDistrito().getNombredistrito());
+                            restauranteshallados.add(resthallado);
+                        }
+
+                        model.addAttribute("listarestaurantes",restauranteshallados);
+
+                    }else{
+                        return "redirect:/cliente/realizarpedido";
                     }
                 }
             }catch(NumberFormatException exception){
@@ -821,12 +870,72 @@ public class UsuarioController {
                 Direcciones direccionseleccionada = direccionopt.get();
                 List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuario_Idusuarios(idusuarioactual);
                 List<Categorias> listacategorias = categoriasRepository.findAll();
-                List<Restaurante> listarestaurantes = restauranteRepository.findAll();
+                //List<Restaurante> listarestaurantes = restauranteRepository.findAll();
                 model.addAttribute("listacategorias", listacategorias);
                 model.addAttribute("listadirecciones", listadireccionescliente);
-                model.addAttribute("listarestaurantes",listarestaurantes);
+                //model.addAttribute("listarestaurantes",listarestaurantes);
                 model.addAttribute("iddireccionxenviar",direccionxenviar);
                 model.addAttribute("direccionseleccionada",direccionseleccionada.getDireccion());
+
+                //para mostrar restaurantes de acuerdo a direccion seleccionada
+                String distritobuscar = direccionseleccionada.getDistrito().getNombredistrito();
+                System.out.println("distrito a mandar");
+                System.out.println(distritobuscar);
+                List<String> coordenadasboundsdistrito = coordenadasdistrito(distritobuscar);
+                System.out.println(coordenadasboundsdistrito);
+                System.out.println("encontró coordenadas");
+                if(coordenadasboundsdistrito != null){
+                    String coordenada1 = coordenadasboundsdistrito.get(0);
+                    String coordenada2 = coordenadasboundsdistrito.get(1);
+                    String coordenada3 = coordenadasboundsdistrito.get(2);
+                    String coordenada4 = coordenadasboundsdistrito.get(3);
+                    String coordenada5 = coordenadasboundsdistrito.get(4);
+                    String coordenada6 = coordenadasboundsdistrito.get(5);
+                    String coordenada7 = coordenadasboundsdistrito.get(6);
+                    String coordenada8 = coordenadasboundsdistrito.get(7);
+                    String distrito1 = hallardistritocercano(coordenada1,coordenada2);
+                    String distrito2 = hallardistritocercano(coordenada3,coordenada4);
+                    String distrito3 = hallardistritocercano(coordenada5, coordenada6);
+                    String distrito4 = hallardistritocercano(coordenada7,coordenada8);
+                    System.out.println("distritos hallados");
+                    System.out.println(distrito1);
+                    System.out.println(distrito2);
+                    System.out.println(distrito3);
+                    System.out.println(distrito4);
+                    List<Restaurante> restaurantesxdistritodefault = restauranteRepository.listarestaurantesxdistrito(distritobuscar);
+                    List<Restaurante> restaurantescercanosxdistrito1 = restauranteRepository.listarestaurantesxdistrito(distrito1);
+                    List<Restaurante> restaurantescercanosxdistrito2 = restauranteRepository.listarestaurantesxdistrito(distrito2);
+                    List<Restaurante> restaurantescercanosxdistrito3 = restauranteRepository.listarestaurantesxdistrito(distrito3);
+                    List<Restaurante> restaurantescercanosxdistrito4 = restauranteRepository.listarestaurantesxdistrito(distrito4);
+                    List<Restaurante> restauranteshallados = new ArrayList<>();
+                    System.out.println("restaurantes de db");
+                    for (Restaurante resthallado : restaurantesxdistritodefault) {
+                        System.out.println(resthallado.getNombre());
+                        System.out.println(resthallado.getDistrito().getNombredistrito());
+                        restauranteshallados.add(resthallado);
+                    }
+                    for (Restaurante resthallado : restaurantescercanosxdistrito1) {
+                        System.out.println(resthallado.getNombre());
+                        System.out.println(resthallado.getDistrito().getNombredistrito());
+                        restauranteshallados.add(resthallado);
+                    }
+                    for (Restaurante resthallado : restaurantescercanosxdistrito2) {
+                        System.out.println(resthallado.getNombre());
+                        System.out.println(resthallado.getDistrito().getNombredistrito());
+                        restauranteshallados.add(resthallado);
+                    }for (Restaurante resthallado : restaurantescercanosxdistrito3) {
+                        System.out.println(resthallado.getNombre());
+                        System.out.println(resthallado.getDistrito().getNombredistrito());
+                        restauranteshallados.add(resthallado);
+                    }for (Restaurante resthallado : restaurantescercanosxdistrito4) {
+                        System.out.println(resthallado.getNombre());
+                        System.out.println(resthallado.getDistrito().getNombredistrito());
+                        restauranteshallados.add(resthallado);
+                    }
+                    model.addAttribute("listarestaurantes",restauranteshallados);
+
+                }
+
                 return "cliente/realizar_pedido_cliente";
             }else{
                 return "redirect:/cliente/realizarpedido";

@@ -102,7 +102,8 @@ public interface RestauranteRepository extends JpaRepository<Restaurante, Intege
     @Query(value = "select r.* from restaurante r\n" +
             "inner join distritos d\n" +
             "on d.iddistritos = r.iddistrito\n" +
-            "where r.iddistrito = ?1", nativeQuery = true)
-    List<Restaurante> listarestaurantesxdistrito (int iddistrito);
+            "where lower(d.nombredistrito) = lower(?1);", nativeQuery = true)
+    List<Restaurante> listarestaurantesxdistrito (String distrito);
+
 
 }
