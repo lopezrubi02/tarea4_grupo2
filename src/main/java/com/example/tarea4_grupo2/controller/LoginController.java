@@ -60,7 +60,7 @@ public class LoginController {
             return "AdminRestaurantes/register";
         }
         else {
-            if(Pattern.matches("^[a-z0-9]+@gmail.com",usuario.getEmail())){
+            //if(Pattern.matches("^[a-z0-9]+@gmail.com",usuario.getEmail())){
                 if(usuario.getContraseniaHash().equals(password2)) {
                     Optional<Usuario> persona = usuarioRepository.findByEmailAndAndRol(usuario.getEmail(), "AdminRestaurante");
                     Optional<Usuario> validardni = usuarioRepository.findByDniAndRol(usuario.getDni(), "AdminRestaurante");
@@ -97,12 +97,12 @@ public class LoginController {
                     model.addAttribute("listadistritos",distritosRepository.findAll());
                     return "AdminRestaurantes/register";
                 }
-            }
-            else{
-                model.addAttribute("msg2","Ingrese un correo valido");
-                model.addAttribute("listadistritos",distritosRepository.findAll());
-                return "AdminRestaurantes/register";
-            }
+            //}
+            //else{
+                //model.addAttribute("msg2","Ingrese un correo valido");
+                //model.addAttribute("listadistritos",distritosRepository.findAll());
+                //return "AdminRestaurantes/register";
+            //}
         }
     }
 

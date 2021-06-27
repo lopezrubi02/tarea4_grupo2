@@ -3,6 +3,7 @@ package com.example.tarea4_grupo2.controller;
 import com.example.tarea4_grupo2.dto.*;
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
+import com.example.tarea4_grupo2.service.SendMailService;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -52,6 +53,8 @@ public class AdminRestauranteController {
     CuponesRepository cuponesRepository;
     @Autowired
     PedidosRepository pedidosRepository;
+    @Autowired
+    SendMailService sendMailService;
     @Autowired
     CategoriasRepository categoriasRepository;
     @Autowired
@@ -835,10 +838,22 @@ public class AdminRestauranteController {
     }
 
     @GetMapping("/rechazarpedido")
-    public String rechazarPedido(@RequestParam("id")int id){
+    public String rechazarPedido(@RequestParam("id")int id, HttpSession session){
         Optional<Pedidos> optional = pedidosRepository.findById(id);
         optional.get().setEstadorestaurante("rechazado");
         pedidosRepository.save(optional.get());
+        /**Se obtiene Id de Restaurante**/
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
+        /********************************/
+        /* Envio de correo de confirmacion */
+        String subject = "Pedido rechazado";
+        String aws = "ec2-user@ec2-3-84-20-210.compute-1.amazonaws.com";
+        String direccionurl = "http://" + aws + ":8081/login";
+        String mensaje = "¡Hola! Tu pedido ha sido rechazado por el administrador de restaurante. Por favor, intenta con un nuevo pedido.<br><br>" +
+                "Ahora es parte de Spicyo. Para ingresar a su cuenta haga click: <a href='" + direccionurl + "'>AQUÍ</a> <br><br>Atte. Equipo de Spicy :D</b>";
+        String correoDestino = sessionUser.getEmail();
+        sendMailService.sendMail(correoDestino, "saritaatanacioarenas@gmail.com", subject, mensaje);
         return"redirect:/adminrest/pedidos";
     }
 
