@@ -208,9 +208,6 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
             "where r.idrestaurante=?1 and p.estadorestaurante='preparado'",nativeQuery = true)
     List<PedidosPreparadosDto>preparadopedidos(Integer id);
 
-    //@Query(value = "select * from Pedidos where idcliente=?1 and restauranteIdrestaurante=?2",nativeQuery = true)
-    //List<Pedidos> listapedidoxcliente (int idcliente,int idrestaurante);
-
     @Query(value = "select * from pedidos where idcliente=?1 and restauranteidrestaurante= ?2 and montototal='0'",nativeQuery = true)
     Pedidos pedidoencursoxrestaurante(int idcliente, int restauranteIdrestaurante);
 
@@ -232,8 +229,6 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
             "where (p.idrepartidor=?1 and p.estadorepartidor like ?2%) limit 1", nativeQuery = true)
     Pedidos listapedidosxidrepartidoryestadopedido (int idusuario, String estadopedido);
 
-
-
     @Query(value = "select p.montototal, r.nombre, p.fechahorapedido, d.direccion, mp.metodo from pedidos p\n" +
             "inner join restaurante r\n" +
             "on p.restauranteidrestaurante = r.idrestaurante\n" +
@@ -243,5 +238,11 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
             "on mp.idmetodospago = p.idmetodopago\n" +
             "where p.idcliente = ?1",nativeQuery = true)
     List<PedidosclienteaexcelDTO> listapedidosexcel(int idcliente);
+
+    @Query(value = "select * from pedidos where idcliente=?1 and montototal!='0' and estadorestaurante!=\"entregado\" and estadorepartidor != \"entregado\"",nativeQuery = true)
+    Pedidos pedidoencurso(int idusuario);
+
+    @Query(value = "select * from pedidos where estadorestaurante = \"pendiente\" and idcliente = ?1",nativeQuery = true)
+    Pedidos pedidoxcancelar(int idusuario);
 
 }

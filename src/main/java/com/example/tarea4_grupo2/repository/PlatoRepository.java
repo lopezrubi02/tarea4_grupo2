@@ -20,8 +20,14 @@ public interface PlatoRepository extends JpaRepository<Plato,Integer> {
             nativeQuery = true)
     List<Plato> buscarPlatosPorIdRestauranteDisponilidadActivo(int idrestaurante);
 
-    @Query(value = "select * from plato p where lower(p.nombre) like concat('%',lower(:nombre),'%')",nativeQuery = true)
-    List<Plato> buscarPlatoxNombre(@Param("nombre") String nombre);
+    @Query(value = "select p.* from plato p " +
+            "inner join restaurante r\n" +
+            "on r.idrestaurante = p.restauranteidrestaurante\n" +
+            "inner join distritos d \n" +
+            "on d.iddistritos = r.iddistrito\n" +
+            " where d.nombredistrito = :distrito" +
+            " and lower(p.nombre) like concat('%',lower(:nombre),'%')",nativeQuery = true)
+    List<Plato> buscarPlatoxNombre(@Param("distrito") String distrito, @Param("nombre") String nombre);
 
     @Query(value = "select * from plato p where p.nombre = ?1 limit 1",nativeQuery = true)
     Optional<Plato> buscarPlato(String nombre);

@@ -161,7 +161,8 @@
 
                         <div class="form-group">
                             <label>DNI</label>
-<!--                            <div th:if="${dni != null}" th:text="${dni}" class="text-danger"></div>-->
+                            <p class="text-danger" th:if="${dniValido != null}" th:text="${dniValido}"></p>
+                            <!--                            <div th:if="${dni != null}" th:text="${dni}" class="text-danger"></div>-->
                             <div class="text-danger" th:if="${#fields.hasErrors('dni')}" th:errors="*{dni}"></div>
                             <input class="form-control" placeholder="DNI" type="text" th:field="*{dni}">
 

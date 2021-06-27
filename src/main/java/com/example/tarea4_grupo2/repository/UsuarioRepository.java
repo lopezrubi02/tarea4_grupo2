@@ -36,11 +36,11 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
     List<Usuario> findAllByRolAndNombreAndCuentaActiva(String rol, String nombre, Integer cuentaActiva);
 
-    @Query(value = "select * from usuarios u where (cuentaactiva = 2 or cuentaactiva = -1) and (u.rol ='Repartidor' or u.rol = 'AdminRestaurante')",nativeQuery = true)
+    @Query(value = "select * from usuarios u where (cuentaactiva = 2 and u.rol = 'AdminRestaurante') or (cuentaactiva = -1 and u.rol ='Repartidor')",nativeQuery = true)
     List<Usuario> cuentasNuevas();
 
-    @Query(value = "select * from usuarios u where cuentaactiva = 2 and (u.nombre like ?1 or u.apellidos like ?1 or u.dni like ?1) " +
-            " and (u.rol ='Repartidor' or u.rol = 'AdminRestaurante')",nativeQuery = true)
+    @Query(value = "select * from usuarios u where (cuentaactiva = 2 and u.rol = 'AdminRestaurante') or (cuentaactiva = -1 and u.rol ='Repartidor') " +
+            "and (u.nombre like ?1 or u.apellidos like ?1 or u.dni like ?1) ",nativeQuery = true)
     List<Usuario> buscarGestionCuentasNuevas(String buscar);
 
     @Query(value ="select * from usuarios \n" +
@@ -56,6 +56,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     @Query(value="select nombre,apellidos,email,dni,fechanacimiento from usuarios where idusuarios=?1",nativeQuery = true)
     DatosDTO obtenerDatos(int id);
     Optional<Usuario> findByEmailAndAndRol(String email, String rol);
+    Optional<Usuario> findByDniAndRol(String dni,String rol);
 
     @Query(value="select count(idusuarios) from usuarios where email=?1 and rol=?2",nativeQuery = true)
     Integer verificarEmail(String email,String rol);
