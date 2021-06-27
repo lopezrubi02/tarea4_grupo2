@@ -92,7 +92,7 @@ public class AdminRestauranteController {
             }
 
         }else{
-            return null;
+            return "login/login.html";
         }
     }
 
@@ -112,26 +112,34 @@ public class AdminRestauranteController {
         }
         else {
             if (restaurante.getRuc().startsWith("20") || restaurante.getRuc().startsWith("10")) {
-                try {
-                    restaurante.setFoto(file.getBytes());
-                    restaurante.setFotocontenttype(file.getContentType());
-                    restaurante.setFotonombre(file.getOriginalFilename());
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if(validarRUC(restaurante.getRuc())){
+                    try {
+                        restaurante.setFoto(file.getBytes());
+                        restaurante.setFotocontenttype(file.getContentType());
+                        restaurante.setFotonombre(file.getOriginalFilename());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    restaurante.setDireccion(direccion);
+                    Distritos distrito = distritosRepository.findById(iddistrito).get();
+                    restaurante.setDistrito(distrito);
+                    restauranteRepository.save(restaurante);
+                    sessionUser.setCuentaActiva(2);
+                    usuarioRepository.save(sessionUser);
+                    model.addAttribute("id", restaurante.getIdrestaurante());
+                    model.addAttribute("listacategorias", categoriasRepository.findAll());
+                    return "AdminRestaurantes/categorias";
+                }else{
+                    restaurante.setUsuario(sessionUser);
+                    model.addAttribute("msgrucerror","No es un RUC registrado.");
+                    model.addAttribute("listadistritos",distritosRepository.findAll());
+                    model.addAttribute("restaurante",restaurante);
+                    return "AdminRestaurantes/registerRestaurante";
                 }
-                restaurante.setDireccion(direccion);
-                Distritos distrito = distritosRepository.findById(iddistrito).get();
-                restaurante.setDistrito(distrito);
-                restauranteRepository.save(restaurante);
-                sessionUser.setCuentaActiva(2);
-                usuarioRepository.save(sessionUser);
-                model.addAttribute("id", restaurante.getIdrestaurante());
-                model.addAttribute("listacategorias", categoriasRepository.findAll());
-                return "AdminRestaurantes/categorias";
             }
             else{
                 restaurante.setUsuario(sessionUser);
-                model.addAttribute("msgrucerror","No es un RUC valido");
+                model.addAttribute("msgrucerror","No es un RUC valido.");
                 model.addAttribute("listadistritos",distritosRepository.findAll());
                 model.addAttribute("restaurante",restaurante);
                 return "AdminRestaurantes/registerRestaurante";
