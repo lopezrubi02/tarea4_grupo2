@@ -55,8 +55,12 @@ public interface RestauranteRepository extends JpaRepository<Restaurante, Intege
     Integer cantreviews(int restaurante_idrestaurante);
 
     // filtro restaurante por nombre
-    @Query(value = "select * from restaurante r where lower(r.nombre) like concat('%',lower(:nombre),'%')",nativeQuery = true)
-    List<Restaurante> buscarRestaurantexNombre(@Param("nombre") String nombre);
+    @Query(value = "select r.* from restaurante r " +
+            "inner join distritos d \n" +
+            "on d.iddistritos = r.iddistrito\n" +
+            "where d.nombredistrito = :distrito " +
+            "and lower(r.nombre) like concat('%',lower(:nombre),'%')",nativeQuery = true)
+    List<Restaurante> buscarRestaurantexNombre(@Param("distrito") String distrito, @Param("nombre") String nombre);
 
     @Query(value="select ruc from restaurante where idadminrest=?1",nativeQuery = true)
     String buscarRuc(int id);
@@ -66,29 +70,41 @@ public interface RestauranteRepository extends JpaRepository<Restaurante, Intege
             "from plato p \n" +
             "inner join restaurante r \n" +
             "on r.idrestaurante = p.restauranteidrestaurante\n" +
+            "inner join distritos d\n" +
+            "            on d.iddistritos = r.iddistrito\n" +
+            "            where d.nombredistrito = ?1 " +
             " group by p.restauranteidrestaurante having sum(p.precio)/count(p.precio) <15",nativeQuery = true)
-    List<Restaurante> listarestprecio1();
+    List<Restaurante> listarestprecio1(String nombredistrito);
 
     @Query(value = "select r.*\n" +
             "from plato p \n" +
             "inner join restaurante r \n" +
             "on r.idrestaurante = p.restauranteidrestaurante\n" +
+            "inner join distritos d\n" +
+            "            on d.iddistritos = r.iddistrito\n" +
+            "            where d.nombredistrito = ?1 " +
             " group by p.restauranteidrestaurante having sum(p.precio)/count(p.precio) <25 and sum(p.precio)/count(p.precio) > 15",nativeQuery = true)
-    List<Restaurante> listarestprecio2();
+    List<Restaurante> listarestprecio2(String nombredistrito);
 
     @Query(value = "select r.*\n" +
             "from plato p \n" +
             "inner join restaurante r \n" +
             "on r.idrestaurante = p.restauranteidrestaurante\n" +
+            "inner join distritos d\n" +
+            "            on d.iddistritos = r.iddistrito\n" +
+            "            where d.nombredistrito = ?1 " +
             " group by p.restauranteidrestaurante having sum(p.precio)/count(p.precio) <40 and sum(p.precio)/count(p.precio) > 25",nativeQuery = true)
-    List<Restaurante> listarestprecio3();
+    List<Restaurante> listarestprecio3(String nombredistrito);
 
     @Query(value = "select r.*\n" +
             "from plato p \n" +
             "inner join restaurante r \n" +
             "on r.idrestaurante = p.restauranteidrestaurante\n" +
+            "inner join distritos d\n" +
+            "            on d.iddistritos = r.iddistrito\n" +
+            "            where d.nombredistrito = ?1 " +
             "group by p.restauranteidrestaurante having sum(p.precio)/count(p.precio) > 40",nativeQuery = true)
-    List<Restaurante> listarestprecio4();
+    List<Restaurante> listarestprecio4(String nombredistrito);
 
     @Query(value = "select * from restaurante r \n" +
             "where round(calificacionpromedio) = ?1",nativeQuery = true)
