@@ -13,10 +13,7 @@ import com.google.maps.errors.ApiException;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -283,18 +280,44 @@ public class UsuarioController {
         return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream2));
     }
 
+    private static CellStyle createHeadStyle(final Workbook wb) {
+        CellStyle style = createVHCenterStyle(wb);
+        final Font font = wb.createFont();
+        font.setFontName ("Songti");
+        font.setFontHeight((short) 150);
+        font.setBold(true);
+        style.setFont(font);
+        style.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        return style;
+    }
+
+    private static CellStyle createVHCenterStyle(final Workbook wb) {
+        CellStyle style = wb.createCellStyle (); // objeto de estilo
+        style.setVerticalAlignment (VerticalAlignment.CENTER); // vertical
+        style.setAlignment (HorizontalAlignment.CENTER); // horizontal
+        style.setWrapText (true); // Especifica el salto de línea automático cuando no se puede mostrar el contenido de la celda
+        // agregar borde
+        style.setBorderBottom(BorderStyle.THIN);
+        style.setBorderLeft(BorderStyle.THIN);
+        style.setBorderRight(BorderStyle.THIN);
+        style.setBorderTop(BorderStyle.THIN);
+        return style;
+    }
     public ByteArrayInputStream exportAllData1(int id) throws IOException {
-        String[] columns = { "MONTO TOTAL", "RESTAURANTE", "FECHA PEDIDO", "DIRECCION ENTREGA", "METODO DE PAGO"};
+        String[] columns = { "MONTO TOTAL (S/)", "RESTAURANTE", "FECHA PEDIDO", "DIRECCION ENTREGA", "METODO DE PAGO"};
 
         Workbook workbook = new HSSFWorkbook();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
         Sheet sheet = workbook.createSheet("Personas");
-        Row row = sheet.createRow(0);
+        CellStyle headStyle = createHeadStyle(workbook);
 
+        Row row = sheet.createRow(0);
         for (int i = 0; i < columns.length; i++) {
             Cell cell = row.createCell(i);
             cell.setCellValue(columns[i]);
+            cell.setCellStyle(headStyle);
         }
 
         List<PedidosclienteaexcelDTO> listapedidos = pedidosRepository.listapedidosexcel(id);
