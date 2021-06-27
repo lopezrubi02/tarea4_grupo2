@@ -1,4 +1,7 @@
 package com.example.tarea4_grupo2.controller;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.*;
 import org.json.JSONObject;
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -13,10 +16,6 @@ import com.example.tarea4_grupo2.repository.*;
 import com.example.tarea4_grupo2.service.SendMailService;
 import org.apache.commons.math3.stat.descriptive.summary.Product;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -314,6 +313,33 @@ public class RepartidorController {
 
     }
 
+    private static CellStyle createVHCenterStyle(final Workbook wb) {
+        CellStyle style = wb.createCellStyle (); // objeto de estilo
+        style.setVerticalAlignment (VerticalAlignment.CENTER); // vertical
+        style.setAlignment (HorizontalAlignment.CENTER); // horizontal
+        style.setWrapText (true); // Especifica el salto de línea automático cuando no se puede mostrar el contenido de la celda
+        // agregar borde
+        style.setBorderBottom(BorderStyle.THIN);
+        style.setBorderLeft(BorderStyle.THIN);
+        style.setBorderRight(BorderStyle.THIN);
+        style.setBorderTop(BorderStyle.THIN);
+        return style;
+    }
+
+
+    private static CellStyle createHeadStyle(final Workbook wb) {
+        CellStyle style = createVHCenterStyle(wb);
+        final Font font = wb.createFont();
+        font.setFontName ("Songti");
+        font.setFontHeight((short) 150);
+        font.setBold(true);
+        style.setFont(font);
+        style.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        return style;
+    }
+
+
     public ByteArrayInputStream exportAllData1(int id) throws IOException {
         String[] columns1 = { "# PEDIDO", "RESTAURANTE", "DISTRITO DEL RESTAURANTE", "LUGAR DE DESTINO", "S/. COMISIÓN", "S/. TOTAL", "CALIFICACION"};
         String[] columns2 = { "MES", "AÑO", "COMISIÓN MENSUAL" };
@@ -322,13 +348,16 @@ public class RepartidorController {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
         Sheet sheet1 = workbook.createSheet("Reporte");
-        Sheet sheet2 = workbook.createSheet("Personas");
+        Sheet sheet2 = workbook.createSheet("Ganancia Mensual");
 
+        CellStyle headStyle = createHeadStyle(workbook);
         //Pagina 1
         Row row1 = sheet1.createRow(0);
         for (int i = 0; i < columns1.length; i++) {
             Cell cell = row1.createCell(i);
             cell.setCellValue(columns1[i]);
+            cell.setCellStyle(headStyle);
+            //cell.setAsActiveCell();
         }
         List<PedidosReporteDTOs> listaReporte1 = repartidorRepository.findPedidosPorRepartidor(id);
         int initRow1 = 1;
@@ -350,9 +379,13 @@ public class RepartidorController {
         //Pagina 2
         Row row2 = sheet2.createRow(0);
 
+        //CellStyle headStyle = createHeadStyle(workbook);
+
         for (int i = 0; i < columns2.length; i++) {
             Cell cell = row2.createCell(i);
             cell.setCellValue(columns2[i]);
+            cell.setCellStyle(headStyle);
+            //cell.setAsActiveCell();
         }
 
         List<RepartidorComisionMensualDTO> listaComisionMensual = repartidorRepository.obtenerComisionPorMes(id);
@@ -377,7 +410,7 @@ public class RepartidorController {
         ByteArrayInputStream stream1 = exportAllData1(id);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "attachment; filename=ganancia_mensual.xls");
+        headers.add("Content-Disposition", "attachment; filename=reportes_repartidor.xls");
 
         return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream1));
     }
