@@ -8,6 +8,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -24,11 +25,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -158,6 +160,62 @@ public class AdminRestauranteController {
     public String correoConfirmar(){
 
         return "AdminRestaurantes/correo";
+    }
+
+    public boolean validarRUC(String dni){
+        Boolean rucValido = false;
+
+        BufferedReader reader;
+        String line;
+        StringBuffer responseContent = new StringBuffer();
+        try{
+
+            String urlString = "https://api.ateneaperu.com/api/Sunat/Ruc?sNroDocumento="+dni;
+
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            connection.setRequestMethod("GET");
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
+
+            int status = connection.getResponseCode();
+
+            if(status > 299){
+                System.out.println("EROR PAPU");
+                reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+                while ((line = reader.readLine()) != null){
+                    responseContent.append(line);
+                }
+                System.out.println(connection.getResponseMessage());
+                System.out.println(connection.getResponseCode());
+                System.out.println(connection.getErrorStream());
+                reader.close();
+            } else {
+                System.out.println("/GET");
+                reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                while ((line = reader.readLine()) != null){
+                    responseContent.append(line);
+                }
+                reader.close();
+            }
+            System.out.println(responseContent.toString());
+            JSONObject jsonObj = new JSONObject(responseContent.toString());
+            //System.out.println(jsonObj.get("nombres"));
+
+            // Validar si existe documento
+            if(!jsonObj.get("nombre_o_razon_social").equals("")){
+                System.out.println("RUC valido");
+                rucValido = true;
+            }
+
+        }catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return rucValido;
     }
 
     /************************FOTOS************************/

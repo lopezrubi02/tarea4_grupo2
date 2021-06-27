@@ -65,7 +65,7 @@ public class LoginController {
                     Optional<Usuario> persona = usuarioRepository.findByEmailAndAndRol(usuario.getEmail(), "AdminRestaurante");
                     Optional<Usuario> validardni = usuarioRepository.findByDniAndRol(usuario.getDni(), "AdminRestaurante");
                     if(!(persona.isPresent())){
-                        if(!(validardni.isPresent())) {
+                        //if(!(validardni.isPresent())) {
                             String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
                             usuario.setContraseniaHash(contraseniahashbcrypt);
                             usuarioRepository.save(usuario);
@@ -79,12 +79,12 @@ public class LoginController {
                             direccionactual.setActivo(1);
                             direccionesRepository.save(direccionactual);
                             return "AdminRestaurantes/correo";
-                        }
-                        else{
-                            model.addAttribute("msgdni","Dni ya existe");
-                            model.addAttribute("listadistritos",distritosRepository.findAll());
-                            return "AdminRestaurantes/register";
-                        }
+                        //}
+                        //else{
+                            //model.addAttribute("msgdni","Dni ya existe");
+                            //model.addAttribute("listadistritos",distritosRepository.findAll());
+                            //return "AdminRestaurantes/register";
+                        //}
                     }
                     else{
                         model.addAttribute("msg3","Correo ya existe");
