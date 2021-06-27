@@ -69,7 +69,7 @@ public class LoginController {
                             String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
                             usuario.setContraseniaHash(contraseniahashbcrypt);
                             usuarioRepository.save(usuario);
-                            Usuario usuarionuevo = usuarioRepository.findByDni(usuario.getDni());
+                            Usuario usuarionuevo = usuarioRepository.findByEmail(usuario.getEmail());
                             Direcciones direccionactual = new Direcciones();
                             direccionactual.setDireccion(direccion);
                             Distritos distritosactual = distritosRepository.findById(iddistrito).get();
