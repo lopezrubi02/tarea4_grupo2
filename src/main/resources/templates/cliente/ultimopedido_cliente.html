@@ -91,9 +91,15 @@
 									</div>
 								</div>
 
-								<div class="col-xl-6 col-lg-6 col-md-6 col-sm-12" th:unless="${calificar}">
+								<div class="col-xl-6 col-lg-6 col-md-6 col-sm-12" th:if="${calificar}">
 									<div class="row" style="padding-left:240px;">
-									<a th:href="@{'/cliente/calificarpedido'}" style="width: 275px;"><button class="send">Calificar Pedido</button></a>
+									<a th:href="@{'/cliente/calificarpedido'}" style="width: 275px;"><button class="send">Calificar pedido</button></a>
+									</div>
+								</div>
+								<div class="col-xl-6 col-lg-6 col-md-6 col-sm-12" th:if="${cancelar}">
+									<div class="row" style="padding-left:240px;">
+										<!-- TODO preguntar reconfirmación de cancelar pedido-->
+										<a th:href="@{'/cliente/cancelarpedido'}" style="width: 275px;"><button class="send">Cancelar pedido</button></a>
 									</div>
 								</div>
 							</br>

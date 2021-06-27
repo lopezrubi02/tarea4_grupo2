@@ -1334,8 +1334,6 @@ public class UsuarioController {
         return "redirect:/cliente/carritoproductos";
     }
 
-
-
     @GetMapping("/cliente/checkout")
     public String checkout(Model model, HttpSession session,
                            @RequestParam(value = "idmetodo",defaultValue = "0") int idmetodo){
@@ -1487,7 +1485,6 @@ public class UsuarioController {
 
                         }
                     }
-                    //TODO guardar comision repartidor y comision sistema dependiendo del distrito
                     if(pedidoencurso.getRestaurantepedido().getDistrito() == pedidoencurso.getDireccionentrega().getDistrito()){
                         pedidoencurso.setComisionrepartidor(4);
                         pedidoencurso.setComisionsistema(1);
@@ -1500,13 +1497,6 @@ public class UsuarioController {
                     pedidoencurso.setEstadorepartidor("indefinido");
                     System.out.println(LocalDateTime.now());
                     pedidoencurso.setFechahorapedido(LocalDateTime.now());
-                    //TODO guarda la fecha pero no la hora
-                    //SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    //Date now = new Date();
-                    //String strDate = sdfDate.format(LocalDate.now());
-                    //manejar error con new
-                    //pedidoencurso.setFechahorapedido(strDate);
-
                     pedidosRepository.save(pedidoencurso);
                 }
                 redirectAttributes.addFlashAttribute("checkout", "Pedido listo");
@@ -1542,17 +1532,44 @@ public class UsuarioController {
             model.addAttribute("pedido",pedidoencurso);
             model.addAttribute("lista",pedidoHasPlatoencurso);
 
-            if((pedidoencurso.getCalificacionrepartidor() !=0 || pedidoencurso.getCalificacionrestaurante() != 0 || pedidoencurso.getComentario() != null) && pedidoencurso.getEstadorepartidor().equalsIgnoreCase("entregado")){
-                boolean calificar = true;
-                model.addAttribute("calificar",calificar);
-            }else{
-                boolean calificar = false;
+            boolean calificar = false;
+            if(pedidoencurso.getEstadorestaurante().equalsIgnoreCase("entregado") && pedidoencurso.getEstadorepartidor().equalsIgnoreCase("entregado")){
+                calificar = true;
                 model.addAttribute("calificar",calificar);
             }
-
+            boolean cancelar = false;
+            String estadorestaurante = pedidoencurso.getEstadorestaurante();
+            if(estadorestaurante.equalsIgnoreCase("pendiente")){
+                cancelar = true;
+            }
+            model.addAttribute("cancelar",cancelar);
         }
 
         return "cliente/ultimopedido_cliente";
+    }
+
+    /** Cancelar pedido **/
+    @GetMapping("/cliente/cancelarpedido")
+    public String cancelarpedido(Model model, HttpSession session,RedirectAttributes attr){
+
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuario=sessionUser.getIdusuarios();
+
+        Pedidos pedidoxcancelar = pedidosRepository.pedidoxcancelar(idusuario);
+        if(pedidoxcancelar!=null){
+            List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoxcancelar.getIdpedidos());
+            for(PedidoHasPlato plato1 : platosxpedido){
+                PedidoHasPlatoKey pedidoHasPlatoKey = plato1.getId();
+                pedidoHasPlatoRepository.deleteById(pedidoHasPlatoKey);
+                System.out.println("deberia borrar plato ****************************");
+            }
+            pedidosRepository.deleteById(pedidoxcancelar.getIdpedidos());
+            System.out.println("borra pedido");
+            attr.addFlashAttribute("pedidocancelado","Pedido cancelado exitosamente");
+            return "redirect:/cliente/paginaprincipal";
+        }else{
+            return "redirect:/cliente/progresopedido";
+        }
 
     }
 
