@@ -694,7 +694,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
                 usuario.setCuentaActiva(1);
                 usuarioRepository.save(usuario);
 
-                /*
+
                 String direccion;
                 try {
                     List<String> direccionIp = getIpAndProt();
@@ -703,20 +703,20 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
                     e.printStackTrace();
                     //Tmodificar direcion url despues de despliegue aws.
                     //Pegar aquí los datos del AWS;
-                    String aws = "";
-                    direccion = "http://" + aws + ":8090/login";
+                    String aws = "ec2-user@ec2-3-84-20-210.compute-1.amazonaws.com";
+                    direccion = "http://" + aws + ":8080/login";
                 }
-                 */
+
 
 
                 //String direccion = "http://localhost:8090/login";
                 //TODO modificar direcion url despues de despliegue aws.
                 //Pegar aquí los datos del AWS;
-                String aws = "ec2-user@ec2-3-84-20-210.compute-1.amazonaws.com";
+                //String aws = "ec2-user@ec2-3-84-20-210.compute-1.amazonaws.com";
 
                 if(usuario.getRol().equals("AdminRestaurante")){
 
-                        String direccion = "http://" + aws + ":8081/login";
+                        //String direccion = "http://" + aws + ":8081/login";
                         String correoDestino = usuario.getEmail();
                         String subject = "SPYCYO - Restaurante agregado";
                         String texto = "<p><strong>Bienvenido a SPYCYO - Restaurante agregado</strong></p>\n" +
@@ -728,7 +728,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
                         sendMailService.sendMail(correoDestino,"saritaatanacioarenas@gmail.com",subject,texto);
                     }
                     if(usuario.getRol().equals("Repartidor")){
-                        String direccion = "http://" + aws + ":8090/login";
+                        //String direccion = "http://" + aws + ":8090/login";
                         String correoDestino = usuario.getEmail();
                         String subject = "SPYCYO - Cuenta Repartidor Aceptada";
                         String texto = "<p><strong>Bienvenido a SPYCYO - Cuenta Repartidor Aceptada</strong></p>\n" +
@@ -739,11 +739,11 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
                         sendMailService.sendMail(correoDestino,"saritaatanacioarenas@gmail.com",subject,texto);
                     }
 
-                    attr.addFlashAttribute("msg1","Cuenta aceptada exitosamente");
+                    attr.addFlashAttribute("msg","Cuenta aceptada exitosamente");
                     return "redirect:/admin/nuevosUsuarios";
                 }
             }
-        attr.addFlashAttribute("msg1","Ha ocurrido un error,cuenta no aprobada");
+        attr.addFlashAttribute("msg","Ha ocurrido un error,cuenta no aprobada");
         return "redirect:/admin/nuevosUsuarios";
     }
 
