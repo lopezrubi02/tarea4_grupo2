@@ -27,10 +27,18 @@ public interface PedidoHasPlatoRepository extends JpaRepository<PedidoHasPlato, 
             "where pepla.pedidosidpedidos = ?1", nativeQuery = true)
     MontoTotal_PedidoHasPlatoDTO montototal(int idpedido);
 
+    /*Si es que están en distritos distintos*/
     @Query(value = "select (sum((pepla.cantidadplatos * p.precio)) + 8)  as preciopagar\n" +
             "from proyecto.pedidoshasplato pepla \n" +
             "inner join proyecto.plato p on (pepla.platoidplato = p.idplato)\n" +
             "where pepla.pedidosidpedidos = ?1", nativeQuery = true)
     MontoPagar_PedidoHasPlatoDTO montopagar(int idpedido);
+
+    /*Si es que están en distritos iguales*/
+    @Query(value = "select (sum((pepla.cantidadplatos * p.precio)) + 5)  as preciopagar\n" +
+            "from proyecto.pedidoshasplato pepla \n" +
+            "inner join proyecto.plato p on (pepla.platoidplato = p.idplato)\n" +
+            "where pepla.pedidosidpedidos = ?1", nativeQuery = true)
+    MontoPagar_PedidoHasPlatoDTO montopagar2(int idpedido);
 
 }

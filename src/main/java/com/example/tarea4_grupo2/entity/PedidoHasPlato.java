@@ -24,12 +24,12 @@ public class PedidoHasPlato{
 
     private int cantidadplatos;
 
-    private boolean cubiertos;
+    private int cubiertos;
 
     public PedidoHasPlato() {
     }
 
-    public PedidoHasPlato(PedidoHasPlatoKey id, Pedidos pedido, Plato plato, String descripcion, int cantidadplatos, boolean cubiertos) {
+    public PedidoHasPlato(PedidoHasPlatoKey id, Pedidos pedido, Plato plato, String descripcion, int cantidadplatos, int cubiertos) {
         this.id = id;
         this.pedido = pedido;
         this.plato = plato;
@@ -78,11 +78,11 @@ public class PedidoHasPlato{
         this.cantidadplatos = cantidadplatos;
     }
 
-    public boolean isCubiertos() {
+    public int isCubiertos() {
         return cubiertos;
     }
 
-    public void setCubiertos(boolean cubiertos) {
+    public void setCubiertos(int cubiertos) {
         this.cubiertos = cubiertos;
     }
 }

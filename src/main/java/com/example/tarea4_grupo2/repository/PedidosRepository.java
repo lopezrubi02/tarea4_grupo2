@@ -242,4 +242,7 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
     @Query(value = "select * from pedidos where idcliente=?1 and montototal!='0' and estadorestaurante!=\"entregado\" and estadorepartidor != \"entregado\"",nativeQuery = true)
     Pedidos pedidoencurso(int idusuario);
 
+    @Query(value = "select * from pedidos where estadorestaurante = \"pendiente\" and idcliente = ?1",nativeQuery = true)
+    Pedidos pedidoxcancelar(int idusuario);
+
 }

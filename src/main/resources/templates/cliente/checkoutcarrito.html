@@ -165,13 +165,15 @@
                                             <div>
                                                 <h6 class="my-0">Costo de envío</h6>
                                             </div>
-                                            <span class="text-muted">S/6.00</span>
+                                            <span class="text-muted" th:if="${pedidoencurso.getRestaurantepedido().getDistrito() == pedidoencurso.getDireccionentrega().getDistrito()}" th:text="|S/4.00|"></span>
+                                            <span class="text-muted" th:if="${pedidoencurso.getRestaurantepedido().getDistrito() != pedidoencurso.getDireccionentrega().getDistrito()}" th:text="|S/6.00|"></span>
                                         </li>
                                         <li class="list-group-item d-flex justify-content-between lh-sm">
                                             <div>
                                                 <h6 class="my-0">Tarifa de servicio</h6>
                                             </div>
-                                            <span class="text-muted">S/2.00</span>
+                                            <span class="text-muted" th:if="${pedidoencurso.getRestaurantepedido().getDistrito() == pedidoencurso.getDireccionentrega().getDistrito()}" th:text="|S/1.00|"></span>
+                                            <span class="text-muted" th:if="${pedidoencurso.getRestaurantepedido().getDistrito() != pedidoencurso.getDireccionentrega().getDistrito()}" th:text="|S/2.00|"></span>
                                         </li>
                                         <li class="list-group-item d-flex justify-content-between">
                                             <span>Total</span>
