@@ -635,10 +635,8 @@ public class UsuarioController {
 
             List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuario_Idusuarios(idusuarioactual);
             List<Categorias> listacategorias = categoriasRepository.findAll();
-            List<Restaurante> listarestaurantes = restauranteRepository.findAll();
             model.addAttribute("listacategorias", listacategorias);
             model.addAttribute("listadirecciones", listadireccionescliente);
-            model.addAttribute("listarestaurantes",listarestaurantes);
 
             try{
                 int direccionxenviar = Integer.parseInt(direccion);
@@ -671,27 +669,27 @@ public class UsuarioController {
                     List<Restaurante> restaurantescercanosxdistrito4 = restauranteRepository.listarestaurantesxdistrito(distrito4);
                     System.out.println("restaurantes de db");
                     for (Restaurante resthallado : restaurantesxdistritodefault) {
-                        resthallado.getNombre();
-                        resthallado.getDistrito().getNombredistrito();
-                        restauranteshallados.add(resthallado);
+                        if(resthallado.getUsuario().getCuentaActiva()==1){
+                            restauranteshallados.add(resthallado);
+                        }
                     }
                     for (Restaurante resthallado : restaurantescercanosxdistrito1) {
-                        resthallado.getNombre();
-                        resthallado.getDistrito().getNombredistrito();
-                        restauranteshallados.add(resthallado);
+                        if(resthallado.getUsuario().getCuentaActiva()==1){
+                            restauranteshallados.add(resthallado);
+                        }
                     }
                     for (Restaurante resthallado : restaurantescercanosxdistrito2) {
-                        resthallado.getNombre();
-                        resthallado.getDistrito().getNombredistrito();
-                        restauranteshallados.add(resthallado);
+                        if(resthallado.getUsuario().getCuentaActiva()==1){
+                            restauranteshallados.add(resthallado);
+                        }
                     }for (Restaurante resthallado : restaurantescercanosxdistrito3) {
-                        resthallado.getNombre();
-                        resthallado.getDistrito().getNombredistrito();
-                        restauranteshallados.add(resthallado);
+                        if(resthallado.getUsuario().getCuentaActiva()==1){
+                            restauranteshallados.add(resthallado);
+                        }
                     }for (Restaurante resthallado : restaurantescercanosxdistrito4) {
-                        resthallado.getNombre();
-                        resthallado.getDistrito().getNombredistrito();
-                        restauranteshallados.add(resthallado);
+                        if(resthallado.getUsuario().getCuentaActiva()==1) {
+                            restauranteshallados.add(resthallado);
+                        }
                     }
                     model.addAttribute("listarestaurantes",restauranteshallados);
                 } else {
@@ -721,27 +719,27 @@ public class UsuarioController {
                         List<Restaurante> restaurantescercanosxdistrito4 = restauranteRepository.listarestaurantesxdistrito(distrito4);
                         System.out.println("restaurantes de db");
                         for (Restaurante resthallado : restaurantesxdistritodefault) {
-                            System.out.println(resthallado.getNombre());
-                            System.out.println(resthallado.getDistrito().getNombredistrito());
-                            restauranteshallados.add(resthallado);
+                            if(resthallado.getUsuario().getCuentaActiva()==1){
+                                restauranteshallados.add(resthallado);
+                            }
                         }
                         for (Restaurante resthallado : restaurantescercanosxdistrito1) {
-                            System.out.println(resthallado.getNombre());
-                            System.out.println(resthallado.getDistrito().getNombredistrito());
-                            restauranteshallados.add(resthallado);
+                            if(resthallado.getUsuario().getCuentaActiva()==1){
+                                restauranteshallados.add(resthallado);
+                            }
                         }
                         for (Restaurante resthallado : restaurantescercanosxdistrito2) {
-                            System.out.println(resthallado.getNombre());
-                            System.out.println(resthallado.getDistrito().getNombredistrito());
-                            restauranteshallados.add(resthallado);
+                            if(resthallado.getUsuario().getCuentaActiva()==1){
+                                restauranteshallados.add(resthallado);
+                            }
                         }for (Restaurante resthallado : restaurantescercanosxdistrito3) {
-                            System.out.println(resthallado.getNombre());
-                            System.out.println(resthallado.getDistrito().getNombredistrito());
-                            restauranteshallados.add(resthallado);
+                            if(resthallado.getUsuario().getCuentaActiva()==1){
+                                restauranteshallados.add(resthallado);
+                            }
                         }for (Restaurante resthallado : restaurantescercanosxdistrito4) {
-                            System.out.println(resthallado.getNombre());
-                            System.out.println(resthallado.getDistrito().getNombredistrito());
-                            restauranteshallados.add(resthallado);
+                            if(resthallado.getUsuario().getCuentaActiva()==1){
+                                restauranteshallados.add(resthallado);
+                            }
                         }
                         model.addAttribute("listarestaurantes",restauranteshallados);
                     }else{
@@ -911,25 +909,35 @@ public class UsuarioController {
                     for (Restaurante resthallado : restaurantesxdistritodefault) {
                         System.out.println(resthallado.getNombre());
                         System.out.println(resthallado.getDistrito().getNombredistrito());
-                        restauranteshallados.add(resthallado);
+                        if(resthallado.getUsuario().getCuentaActiva()==1){
+                            restauranteshallados.add(resthallado);
+                        }
                     }
                     for (Restaurante resthallado : restaurantescercanosxdistrito1) {
                         System.out.println(resthallado.getNombre());
                         System.out.println(resthallado.getDistrito().getNombredistrito());
-                        restauranteshallados.add(resthallado);
+                        if(resthallado.getUsuario().getCuentaActiva()==1){
+                            restauranteshallados.add(resthallado);
+                        }
                     }
                     for (Restaurante resthallado : restaurantescercanosxdistrito2) {
                         System.out.println(resthallado.getNombre());
                         System.out.println(resthallado.getDistrito().getNombredistrito());
-                        restauranteshallados.add(resthallado);
+                        if(resthallado.getUsuario().getCuentaActiva()==1){
+                            restauranteshallados.add(resthallado);
+                        }
                     }for (Restaurante resthallado : restaurantescercanosxdistrito3) {
                         System.out.println(resthallado.getNombre());
                         System.out.println(resthallado.getDistrito().getNombredistrito());
-                        restauranteshallados.add(resthallado);
+                        if(resthallado.getUsuario().getCuentaActiva()==1){
+                            restauranteshallados.add(resthallado);
+                        }
                     }for (Restaurante resthallado : restaurantescercanosxdistrito4) {
                         System.out.println(resthallado.getNombre());
                         System.out.println(resthallado.getDistrito().getNombredistrito());
-                        restauranteshallados.add(resthallado);
+                        if(resthallado.getUsuario().getCuentaActiva()==1){
+                            restauranteshallados.add(resthallado);
+                        }
                     }
                     model.addAttribute("listarestaurantes",restauranteshallados);
                 }
