@@ -65,6 +65,7 @@
     <div class="row">
       <div class="col-md-12">
           <div th:if="${checkout != null}" th:text="${checkout}" class="alert alert-warning" role="alert"></div>
+          <div th:if="${pedidocancelado != null}" th:text="${pedidocancelado}" class="alert alert-warning" role="alert"></div>
         <div class="title">
           <i><img th:src="@{/images/title.png}" alt="#"/></i>
           

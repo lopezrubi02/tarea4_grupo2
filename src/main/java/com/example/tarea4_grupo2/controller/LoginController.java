@@ -7,6 +7,7 @@ import com.example.tarea4_grupo2.repository.DireccionesRepository;
 import com.example.tarea4_grupo2.repository.DistritosRepository;
 import com.example.tarea4_grupo2.repository.UsuarioRepository;
 import com.example.tarea4_grupo2.service.SendMailService;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -20,6 +21,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.SecureRandom;
@@ -60,28 +65,42 @@ public class LoginController {
             return "AdminRestaurantes/register";
         }
         else {
-            if(Pattern.matches("^[a-z0-9]+@gmail.com",usuario.getEmail())){
+            //if(Pattern.matches("^[a-z0-9]+@gmail.com",usuario.getEmail())){
                 if(usuario.getContraseniaHash().equals(password2)) {
                     Optional<Usuario> persona = usuarioRepository.findByEmailAndAndRol(usuario.getEmail(), "AdminRestaurante");
-                    Optional<Usuario> validardni = usuarioRepository.findByDniAndRol(usuario.getDni(), "AdminRestaurante");
+                    //Optional<Usuario> validardni = usuarioRepository.findByDniAndRol(usuario.getDni(), "AdminRestaurante");
                     if(!(persona.isPresent())){
-                        if(!(validardni.isPresent())) {
-                            String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
-                            usuario.setContraseniaHash(contraseniahashbcrypt);
-                            usuarioRepository.save(usuario);
-                            Usuario usuarionuevo = usuarioRepository.findByDni(usuario.getDni());
-                            Direcciones direccionactual = new Direcciones();
-                            direccionactual.setDireccion(direccion);
-                            Distritos distritosactual = distritosRepository.findById(iddistrito).get();
-                            direccionactual.setDistrito(distritosactual);
-                            //direccionactual.setUsuariosIdusuarios(usuarionuevo.getIdusuarios());
-                            direccionactual.setUsuario(usuarionuevo);
-                            direccionactual.setActivo(1);
-                            direccionesRepository.save(direccionactual);
-                            return "AdminRestaurantes/correo";
-                        }
-                        else{
-                            model.addAttribute("msgdni","Dni ya existe");
+                        if(validarDNI(usuario.getDni())){
+                            //if(!(validardni.isPresent())) {
+                                String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
+                                usuario.setContraseniaHash(contraseniahashbcrypt);
+                                usuarioRepository.save(usuario);
+                                Usuario usuarionuevo = usuarioRepository.findByEmail(usuario.getEmail());
+                                Direcciones direccionactual = new Direcciones();
+                                direccionactual.setDireccion(direccion);
+                                Distritos distritosactual = distritosRepository.findById(iddistrito).get();
+                                direccionactual.setDistrito(distritosactual);
+                                //direccionactual.setUsuariosIdusuarios(usuarionuevo.getIdusuarios());
+                                direccionactual.setUsuario(usuarionuevo);
+                                direccionactual.setActivo(1);
+                                direccionesRepository.save(direccionactual);
+                                /* Envio de correo de confirmacion */
+                                String subject = "Creacion de cuenta";
+                                String aws = "ec2-user@ec2-3-84-20-210.compute-1.amazonaws.com";
+                                String direccionurl = "http://" + aws + ":8081/login";
+                                String mensaje = "¡Hola! Tu cuenta de administrador de restaurante ha sido creada exitosamente. Registra tu restaurante!<br><br>" +
+                                        "Ahora es parte de Spicyo. Para ingresar a su cuenta haga click: <a href='" + direccionurl + "'>AQUÍ</a> <br><br>Atte. Equipo de Spicy :D</b>";
+                                String correoDestino = usuario.getEmail();
+                                sendMailService.sendMail(correoDestino, "saritaatanacioarenas@gmail.com", subject, mensaje);
+                                return "AdminRestaurantes/correo";
+                            //}
+                            //else{
+                                //model.addAttribute("msgdni","Dni ya existe");
+                                //model.addAttribute("listadistritos",distritosRepository.findAll());
+                                //return "AdminRestaurantes/register";
+                            //}
+                        }else{
+                            model.addAttribute("msg3","DNI no existe");
                             model.addAttribute("listadistritos",distritosRepository.findAll());
                             return "AdminRestaurantes/register";
                         }
@@ -97,12 +116,12 @@ public class LoginController {
                     model.addAttribute("listadistritos",distritosRepository.findAll());
                     return "AdminRestaurantes/register";
                 }
-            }
-            else{
-                model.addAttribute("msg2","Ingrese un correo valido");
-                model.addAttribute("listadistritos",distritosRepository.findAll());
-                return "AdminRestaurantes/register";
-            }
+            //}
+            //else{
+                //model.addAttribute("msg2","Ingrese un correo valido");
+                //model.addAttribute("listadistritos",distritosRepository.findAll());
+                //return "AdminRestaurantes/register";
+            //}
         }
     }
 
@@ -256,6 +275,66 @@ public class LoginController {
             attr.addFlashAttribute("msg2", "¡Error en el token o expirado! debes generar otro :(");
             return "login/olvidoContrasenia";
         }
+    }
+
+    ////////////////////////////////////////// API - Validacion DNI ///////////////////////
+    public boolean validarDNI(String dni){
+        Boolean dniValido = false;
+
+        BufferedReader reader;
+        String line;
+        StringBuffer responseContent = new StringBuffer();
+        try{
+
+            // reemplazar DNI
+            String urlString = "https://api.ateneaperu.com/api/reniec/dni?sNroDocumento="+dni;
+
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            connection.setRequestMethod("GET");
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
+
+            int status = connection.getResponseCode();
+
+            if(status > 299){
+                System.out.println("EROR PAPU");
+                reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+                while ((line = reader.readLine()) != null){
+                    responseContent.append(line);
+                }
+                System.out.println(connection.getResponseMessage());
+                System.out.println(connection.getResponseCode());
+                System.out.println(connection.getErrorStream());
+                reader.close();
+            } else {
+                System.out.println("/GET");
+                reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                while ((line = reader.readLine()) != null){
+                    responseContent.append(line);
+                }
+                reader.close();
+            }
+            System.out.println(responseContent.toString());
+            JSONObject jsonObj = new JSONObject(responseContent.toString());
+            //System.out.println(jsonObj.get("nombres"));
+
+            // Validar si existe documento
+            if(!jsonObj.get("nombres").equals("")){
+                System.out.println("DNI valido");
+                dniValido = true;
+            }else{
+                System.out.println("NO SE ENCONTRO POR LA API");
+            }
+
+        }catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return dniValido;
     }
 
 }
