@@ -23,7 +23,6 @@ public class Restaurante {
     @Size(min=11,message = "No puede tenr menos de 11 dígitos")
     private String ruc;
     @Column(nullable = false)
-    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚ ]*$",message = "Solo pueden ser letras")
     @NotBlank(message = "No puede estar en blanco")
     private String nombre;
     private Float calificacionpromedio;

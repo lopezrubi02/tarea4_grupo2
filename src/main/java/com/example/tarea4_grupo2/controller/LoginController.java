@@ -68,14 +68,14 @@ public class LoginController {
             //if(Pattern.matches("^[a-z0-9]+@gmail.com",usuario.getEmail())){
                 if(usuario.getContraseniaHash().equals(password2)) {
                     Optional<Usuario> persona = usuarioRepository.findByEmailAndAndRol(usuario.getEmail(), "AdminRestaurante");
-                    Optional<Usuario> validardni = usuarioRepository.findByDniAndRol(usuario.getDni(), "AdminRestaurante");
+                    //Optional<Usuario> validardni = usuarioRepository.findByDniAndRol(usuario.getDni(), "AdminRestaurante");
                     if(!(persona.isPresent())){
                         if(validarDNI(usuario.getDni())){
                             //if(!(validardni.isPresent())) {
                                 String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
                                 usuario.setContraseniaHash(contraseniahashbcrypt);
                                 usuarioRepository.save(usuario);
-                                Usuario usuarionuevo = usuarioRepository.findByDni(usuario.getDni());
+                                Usuario usuarionuevo = usuarioRepository.findByEmail(usuario.getEmail());
                                 Direcciones direccionactual = new Direcciones();
                                 direccionactual.setDireccion(direccion);
                                 Distritos distritosactual = distritosRepository.findById(iddistrito).get();

@@ -70,29 +70,37 @@ public class AdminRestauranteController {
         /*Se obtiene Id de Usuario*/
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int id = sessionUser.getIdusuarios();
-        System.out.println(id);
+        Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
 
-        if(sessionUser.getCuentaActiva() == 3){
+        if (usuarioOptional.isPresent()){
+            Usuario nuevoUsuario = usuarioOptional.get();
+            System.out.println(id);
 
-            return "AdminRestaurantes/sinRestaurante";
-
-        }else if(sessionUser.getCuentaActiva() == 2){
-
-            return "AdminRestaurantes/espera";
-
-        }else if(sessionUser.getCuentaActiva() == 1){
-
-            System.out.println("TRACE3");
-            Optional<Restaurante> restauranteOpt = restauranteRepository.buscarRestaurantePorIdAdmin(id);
-
-            if(restauranteOpt.isPresent()){
-                return "redirect:/adminrest/perfil";
-            }else{
+            if(nuevoUsuario.getCuentaActiva() == 3){
+                System.out.println("TRACE CUENTA EN 3");
                 return "AdminRestaurantes/sinRestaurante";
-            }
 
+            }else if(nuevoUsuario.getCuentaActiva() == 2){
+
+                return "AdminRestaurantes/espera";
+
+            }else if(nuevoUsuario.getCuentaActiva() == 1){
+
+                System.out.println("TRACE3");
+                Optional<Restaurante> restauranteOpt = restauranteRepository.buscarRestaurantePorIdAdmin(id);
+
+                if(restauranteOpt.isPresent()){
+                    return "redirect:/adminrest/perfil";
+                }else{
+                    return "AdminRestaurantes/sinRestaurante";
+                }
+
+            }else{
+                return "login/login.html";
+            }
         }else{
-            return "login/login.html";
+            System.out.println("Revisar, esto no deberia pasar");
+            return "redirect:/login";
         }
     }
 
@@ -271,25 +279,32 @@ public class AdminRestauranteController {
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
         Restaurante restaurante = restauranteRepository.findById(idrestaurante).get();
-        if(sessionUser.getCuentaActiva()==1){
-            /********************************/
-            BigDecimal calificacion = pedidosRepository.calificacionPromedio(idrestaurante);
-            if(calificacion != null){
-                MathContext m = new MathContext(3);
-                calificacion = calificacion.round(m);
-                restaurante.setCalificacionpromedio(calificacion.floatValue());
-                restauranteRepository.save(restaurante);
-                model.addAttribute("calificacionpromedio",calificacion);
-            }else{
-                model.addAttribute("calificacionpromedio","No hay calificaciones");
+        Optional<Usuario> usuarioOptional = usuarioRepository.findById(sessionUser.getIdusuarios());
+        if(usuarioOptional.isPresent()){
+            Usuario nuevoUsuario = usuarioOptional.get();
+            if(nuevoUsuario.getCuentaActiva()==1){
+                /********************************/
+                BigDecimal calificacion = pedidosRepository.calificacionPromedio(idrestaurante);
+                if(calificacion != null){
+                    MathContext m = new MathContext(3);
+                    calificacion = calificacion.round(m);
+                    restaurante.setCalificacionpromedio(calificacion.floatValue());
+                    restauranteRepository.save(restaurante);
+                    model.addAttribute("calificacionpromedio",calificacion);
+                }else{
+                    model.addAttribute("calificacionpromedio","No hay calificaciones");
+                }
+                Integer cantidadcalificaciones = restauranteRepository.obtenerCantidadCalificaciones(idrestaurante);
+                model.addAttribute("cantidadcalificaciones",cantidadcalificaciones);
+                model.addAttribute("nombrerestaurante", restaurante.getNombre());
+                return "AdminRestaurantes/perfilrestaurante";
             }
-            Integer cantidadcalificaciones = restauranteRepository.obtenerCantidadCalificaciones(idrestaurante);
-            model.addAttribute("cantidadcalificaciones",cantidadcalificaciones);
-            model.addAttribute("nombrerestaurante", restaurante.getNombre());
-            return "AdminRestaurantes/perfilrestaurante";
-        }
-        else{
-            return "redirect:/adminrest/login";
+            else{
+                return "redirect:/adminrest/login";
+            }
+        }else{
+            System.out.println("Revisar, esto no deberia pasar");
+            return "redirect:/login";
         }
     }
 
@@ -690,7 +705,7 @@ public class AdminRestauranteController {
                 for (PedidosReporteDto pedido : listaPedidos) {
                     row1 = sheet1.createRow(initRow);
                     row1.createCell(0).setCellValue(pedido.getnumeropedido());
-                    row1.createCell(1).setCellValue(pedido.getfechahorapedido());
+                    row1.createCell(1).setCellValue(String.valueOf(pedido.getfechahorapedido()));
                     row1.createCell(2).setCellValue(pedido.getnombre());
                     row1.createCell(3).setCellValue(pedido.getmontototal());
                     row1.createCell(4).setCellValue(pedido.getnombreplato());
