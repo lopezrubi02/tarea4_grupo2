@@ -321,8 +321,7 @@ public class LoginController {
             //System.out.println(jsonObj.get("nombres"));
 
             // Validar si existe documento
-            if((!(jsonObj.get("nombres").equals(""))) && (!(jsonObj.get("nombres").equals(null)))) {
-                System.out.println(jsonObj.get("nombres"));
+            if(!jsonObj.get("nombres").equals("")){
                 System.out.println("DNI valido");
                 dniValido = true;
             }else{
