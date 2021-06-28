@@ -94,7 +94,7 @@ public class RepartidorController {
     }
 
     @GetMapping("/repartidor/PedidosDisponibles")
-    public String pedidosDisponibles(RedirectAttributes attr, Model model,HttpSession session) {
+    public String pedidosDisponibles(RedirectAttributes attr, Model model,HttpSession session, @RequestParam(name = "page", defaultValue = "1") String requestedPage) {
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         Repartidor rep = repartidorRepository.findRepartidorByIdusuariosEquals(sessionUser.getIdusuarios());
         Optional<Usuario> usuarioopt = usuarioRepository.findById(sessionUser.getIdusuarios());
@@ -106,7 +106,27 @@ public class RepartidorController {
                     attr.addFlashAttribute("msg", "No hay pedidos disponibles para mostrar.");
                     return "redirect:/repartidor";
                 } else {
-                    model.addAttribute("listaPedidosDisponibles", listaPedidos);
+                    //Paginación:
+                    float numberOfPedidosPerPage = 10;
+                    int page;
+                    try{
+                        page = Integer.parseInt(requestedPage);
+                    }catch (Exception e){
+                        page = 1;
+                    }
+
+                    int numberOfPages = (int) Math.ceil(listaPedidos.size() / numberOfPedidosPerPage);
+                    if (page > numberOfPages) {
+                        page = numberOfPages;
+                    } // validation
+
+                    int start = (int) numberOfPedidosPerPage * (page - 1);
+                    int end = (int) (start + numberOfPedidosPerPage);
+                    List<PedidosDisponiblesDTO> listaPedidosPage = listaPedidos.subList(start, Math.min(end, listaPedidos.size()));
+
+                    model.addAttribute("listaPedidosDisponibles", listaPedidosPage);
+                    model.addAttribute("currentPage", page);
+                    model.addAttribute("maxNumberOfPages", numberOfPages);
                     return "repartidor/repartidor_pedidos_disponibles";
                 }
             }else{
