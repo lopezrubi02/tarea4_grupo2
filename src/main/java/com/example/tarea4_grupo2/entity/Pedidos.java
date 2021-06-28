@@ -5,7 +5,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -58,7 +57,8 @@ public class Pedidos {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime fechahorapedido;
 
-    private Date fechahoraentregado;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime fechahoraentregado;
 
     @ManyToOne
     @JoinColumn(name = "direccionentrega")
@@ -81,7 +81,7 @@ public class Pedidos {
     public Pedidos() {
     }
 
-    public Pedidos(int idpedidos, Set<PedidoHasPlato> pedidohasplato, String montototal, int comisionrepartidor, int comisionsistema, String montoexacto, MetodosDePago metododepago, int calificacionrestaurante, int calificacionrepartidor, String comentario, float tiempodelivery, String estadorestaurante, String estadorepartidor, int idcliente, Usuario repartidor, Restaurante restaurantepedido, LocalDateTime fechahorapedido, Date fechahoraentregado, Direcciones direccionentrega) {
+    public Pedidos(int idpedidos, Set<PedidoHasPlato> pedidohasplato, String montototal, int comisionrepartidor, int comisionsistema, String montoexacto, MetodosDePago metododepago, int calificacionrestaurante, int calificacionrepartidor, String comentario, float tiempodelivery, String estadorestaurante, String estadorepartidor, int idcliente, Usuario repartidor, Restaurante restaurantepedido, LocalDateTime fechahorapedido, LocalDateTime fechahoraentregado, Direcciones direccionentrega) {
         this.idpedidos = idpedidos;
         this.pedidohasplato = pedidohasplato;
         this.montototal = montototal;
@@ -231,11 +231,11 @@ public class Pedidos {
         this.fechahorapedido = fechahorapedido;
     }
 
-    public Date getFechahoraentregado() {
+    public LocalDateTime getFechahoraentregado() {
         return fechahoraentregado;
     }
 
-    public void setFechahoraentregado(Date fechahoraentregado) {
+    public void setFechahoraentregado(LocalDateTime fechahoraentregado) {
         this.fechahoraentregado = fechahoraentregado;
     }
 

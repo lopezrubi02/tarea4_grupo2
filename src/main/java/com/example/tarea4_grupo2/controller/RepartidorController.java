@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
@@ -251,8 +252,7 @@ public class RepartidorController {
             pedido.setEstadorepartidor("entregado"); //Estado de entregado al cliente
             model.addAttribute("pedido", pedido);
 
-            Date ahora = Date.valueOf(LocalDate.now());
-            pedido.setFechahoraentregado(ahora);
+            pedido.setFechahoraentregado(LocalDateTime.now());
 
             Optional<Repartidor> repopt2 = Optional.ofNullable(repartidorRepository.findRepartidorByIdusuariosEquals(sessionUser.getIdusuarios()));
             Repartidor repartidor1 = repopt2.get();
@@ -315,7 +315,7 @@ public class RepartidorController {
     }
 
     public ByteArrayInputStream exportAllData1(int id) throws IOException {
-        String[] columns1 = { "# PEDIDO", "RESTAURANTE", "DISTRITO DEL RESTAURANTE", "LUGAR DE DESTINO", "S/. COMISIÓN", "S/. TOTAL", "CALIFICACION"};
+        String[] columns1 = { "# PEDIDO", "RESTAURANTE", "DISTRITO DEL RESTAURANTE", "LUGAR DE DESTINO", "S/. COMISIÓN", "CALIFICACION"};
         String[] columns2 = { "MES", "AÑO", "COMISIÓN MENSUAL" };
 
         Workbook workbook = new HSSFWorkbook();
@@ -339,8 +339,7 @@ public class RepartidorController {
             row1.createCell(2).setCellValue(pedidoDisponible.getRestaurantedistrito());
             row1.createCell(3).setCellValue(pedidoDisponible.getClienteubicacion());
             row1.createCell(4).setCellValue(pedidoDisponible.getComisionrepartidor()+ ".00");
-            row1.createCell(5).setCellValue(pedidoDisponible.getMontototal()+ "0");
-            row1.createCell(6).setCellValue(pedidoDisponible.getCalificacionrepartidor());
+            row1.createCell(5).setCellValue(pedidoDisponible.getCalificacionrepartidor());
             initRow1++;
         }
 

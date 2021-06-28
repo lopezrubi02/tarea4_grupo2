@@ -10,7 +10,6 @@ public class Repartidor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idrepartidor;
 
-
     private String movilidad;
     
     private String placa;
@@ -24,7 +23,6 @@ public class Repartidor {
 
     private boolean disponibilidad;
     private Float calificacionpromedio;
-
 
     public Distritos getDistritos() {
         return distritos;
@@ -50,14 +48,10 @@ public class Repartidor {
         return foto;
     }
 
-
-
-
-    /*@OneToOne
+   /*@OneToOne
     @PrimaryKeyJoinColumn(name = "usuarios_idusuarios")
     Usuario usuarios;
 */
-
     public void setFotonombre(String fotonombre) {
         this.fotonombre = fotonombre;
     }
