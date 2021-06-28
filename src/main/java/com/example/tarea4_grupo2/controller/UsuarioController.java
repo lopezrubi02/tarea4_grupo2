@@ -861,11 +861,15 @@ public class UsuarioController {
                         System.out.println("FILTRO CALIFICACIONES");
                         List<Restaurante> listarestcal = new ArrayList<>();
                         for(Restaurante resthallados : restauranteshallados){
-                            if(resthallados.getCalificacionpromedio() == calificacion){
-                                listarestcal.add(resthallados);
-                                System.out.println("RESTAURANTES HALLADOS");
-                                System.out.println(resthallados.getCalificacionpromedio());
-                                System.out.println(resthallados.getNombre());
+                            System.out.println("CALIFICACIONES A COMPARAR");
+                            if(resthallados.getCalificacionpromedio() != null){
+                                System.out.println(Math.round(resthallados.getCalificacionpromedio()));
+                                if(Math.round(resthallados.getCalificacionpromedio()) == calificacion){
+                                    listarestcal.add(resthallados);
+                                    System.out.println("RESTAURANTES HALLADOS");
+                                    System.out.println(resthallados.getCalificacionpromedio());
+                                    System.out.println(resthallados.getNombre());
+                                }
                             }
                         }
                         model.addAttribute("listarestaurantes", listarestcal);
