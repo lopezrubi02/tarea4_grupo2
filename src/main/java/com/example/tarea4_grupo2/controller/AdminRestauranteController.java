@@ -690,7 +690,7 @@ public class AdminRestauranteController {
                 for (PedidosReporteDto pedido : listaPedidos) {
                     row1 = sheet1.createRow(initRow);
                     row1.createCell(0).setCellValue(pedido.getnumeropedido());
-                    row1.createCell(1).setCellValue(pedido.getfechahorapedido());
+                    row1.createCell(1).setCellValue(String.valueOf(pedido.getfechahorapedido()));
                     row1.createCell(2).setCellValue(pedido.getnombre());
                     row1.createCell(3).setCellValue(pedido.getmontototal());
                     row1.createCell(4).setCellValue(pedido.getnombreplato());
