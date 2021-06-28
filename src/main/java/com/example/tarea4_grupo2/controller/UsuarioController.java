@@ -1542,41 +1542,49 @@ public class UsuarioController {
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuario=sessionUser.getIdusuarios();
-
         //vista cliente nuevo
         List<Pedidos> listapedidosusuario = pedidosRepository.findAllByIdclienteEquals(idusuario);
         boolean ultimopedido1 = true; //true -> hay al menos un pedido registrado
         if(listapedidosusuario.isEmpty()){
             ultimopedido1 = false; //false -> no hay pedidos registrados
         }
-        model.addAttribute("ultimopedido",ultimopedido1);
 
         if(ultimopedido1 == true){
             //TODO mostrar más datos en la vista de progreso pedido
             List<Pedidos> listapedidoscliente = pedidosRepository.pedidosfinxcliente(idusuario);
-            int tam = listapedidoscliente.size();
-            Pedidos ultimopedido = listapedidoscliente.get(tam-1);
-            int idultimopedido = ultimopedido.getIdpedidos();
+            if(!listapedidoscliente.isEmpty()){
+                int tam = listapedidoscliente.size();
+                int idultimopedido;
+                if(tam == 0){
+                    Pedidos ultimopedido = listapedidoscliente.get(0);
+                    idultimopedido = ultimopedido.getIdpedidos();
+                }else{
+                    Pedidos ultimopedido = listapedidoscliente.get(tam-1);
+                    idultimopedido = ultimopedido.getIdpedidos();
+                }
 
-            List<PedidoHasPlato> pedidoHasPlatoencurso = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(idultimopedido);
-            Optional<Pedidos> pedidoencursoopt = pedidosRepository.findById(pedidoHasPlatoencurso.get(0).getPedido().getIdpedidos());
-            Pedidos pedidoencurso = pedidoencursoopt.get();
-            model.addAttribute("pedido",pedidoencurso);
-            model.addAttribute("lista",pedidoHasPlatoencurso);
+                List<PedidoHasPlato> pedidoHasPlatoencurso = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(idultimopedido);
+                Optional<Pedidos> pedidoencursoopt = pedidosRepository.findById(pedidoHasPlatoencurso.get(0).getPedido().getIdpedidos());
+                Pedidos pedidoencurso = pedidoencursoopt.get();
+                model.addAttribute("pedido",pedidoencurso);
+                model.addAttribute("lista",pedidoHasPlatoencurso);
 
-            boolean calificar = false;
-            if(pedidoencurso.getEstadorestaurante().equalsIgnoreCase("entregado") && pedidoencurso.getEstadorepartidor().equalsIgnoreCase("entregado")){
-                calificar = true;
+                boolean calificar = false;
+                if(pedidoencurso.getEstadorestaurante().equalsIgnoreCase("entregado") && pedidoencurso.getEstadorepartidor().equalsIgnoreCase("entregado")){
+                    calificar = true;
+                }
+                model.addAttribute("calificar",calificar);
+                boolean cancelar = false;
+                String estadorestaurante = pedidoencurso.getEstadorestaurante();
+                if(estadorestaurante.equalsIgnoreCase("pendiente")){
+                    cancelar = true;
+                }
+                model.addAttribute("cancelar",cancelar);
+            }else{
+                ultimopedido1 = false;
             }
-            model.addAttribute("calificar",calificar);
-            boolean cancelar = false;
-            String estadorestaurante = pedidoencurso.getEstadorestaurante();
-            if(estadorestaurante.equalsIgnoreCase("pendiente")){
-                cancelar = true;
-            }
-            model.addAttribute("cancelar",cancelar);
         }
-
+        model.addAttribute("ultimopedido",ultimopedido1);
         return "cliente/ultimopedido_cliente";
     }
 
