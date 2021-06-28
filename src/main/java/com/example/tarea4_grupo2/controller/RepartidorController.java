@@ -705,11 +705,15 @@ public class RepartidorController {
             JSONObject jsonObj = new JSONObject(responseContent.toString());
             //System.out.println(jsonObj.get("nombres"));
 
-            // Validar si existe documento
-            if(!jsonObj.get("nombres").equals("")){
+            System.out.println("******************");
+            if((!(jsonObj.get("nombres").equals(""))) && (!(jsonObj.get("nombres").equals(null)))) {
+                System.out.println(jsonObj.get("nombres"));
                 System.out.println("DNI valido");
                 dniValido = true;
+            }else{
+                System.out.println("NO SE ENCONTRO POR LA API");
             }
+            // Validar si existe documento
 
         }catch (MalformedURLException e) {
             e.printStackTrace();
