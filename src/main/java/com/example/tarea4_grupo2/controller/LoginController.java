@@ -321,9 +321,12 @@ public class LoginController {
             //System.out.println(jsonObj.get("nombres"));
 
             // Validar si existe documento
-            if(!jsonObj.get("nombres").equals("")){
+            if((!(jsonObj.get("nombres").equals(""))) && (!(jsonObj.get("nombres").equals(null)))) {
+                System.out.println(jsonObj.get("nombres"));
                 System.out.println("DNI valido");
                 dniValido = true;
+            }else{
+                System.out.println("NO SE ENCONTRO POR LA API");
             }
 
         }catch (MalformedURLException e) {

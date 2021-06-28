@@ -215,7 +215,7 @@ public class AdminRestauranteController {
             //System.out.println(jsonObj.get("nombres"));
 
             // Validar si existe documento
-            if(!jsonObj.get("nombre_o_razon_social").equals("")){
+            if((!jsonObj.get("nombre_o_razon_social").equals("")) && (!jsonObj.get("nombre_o_razon_social").equals(null))){
                 System.out.println("RUC valido");
                 rucValido = true;
             }
