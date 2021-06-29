@@ -301,6 +301,10 @@ public class RepartidorController {
             if(listaFindReporte.size()>0){
                 model.addAttribute("listaFindReporte", listaFindReporte);
                 model.addAttribute("valorBuscado", searchField);
+
+                List<RepartidorComisionMensualDTO> listaComisionMensual = repartidorRepository.obtenerComisionPorMes(id);
+                model.addAttribute("listaComisionMensual", listaComisionMensual);
+
                 return "repartidor/repartidor_resultado_buscador";
             }else{
                 attr.addFlashAttribute("msg", "No hay resultados asociados a la búsqueda.");
