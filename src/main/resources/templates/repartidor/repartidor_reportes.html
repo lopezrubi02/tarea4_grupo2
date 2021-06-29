@@ -67,7 +67,6 @@
                         <th scope="col">DISTRITO DEL RESTAURANTE</th>
                         <th scope="col">LUGAR DE DESTINO</th>
                         <th scope="col">COMISIÓN S/.</th>
-                        <th scope="col">S/. TOTAL</th>
                         <th scope="col">CALIFICACION</th>
                     </tr>
                     </thead>
@@ -78,7 +77,6 @@
                         <td th:text="${pedidoDisponible.getRestaurantedistrito()}"></td>
                         <td th:text="${pedidoDisponible.getClienteubicacion()}"></td>
                         <td th:text="${pedidoDisponible.getComisionrepartidor()} + '.00'"></td>
-                        <td th:text="${pedidoDisponible.getMontototal()}+ '0'"></td>
                         <td th:text="${pedidoDisponible.getCalificacionrepartidor()}"></td>
                     </tr>
                     </tbody>
