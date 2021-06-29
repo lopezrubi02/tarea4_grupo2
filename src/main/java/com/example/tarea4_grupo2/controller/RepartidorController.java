@@ -304,7 +304,7 @@ public class RepartidorController {
 
                 List<RepartidorComisionMensualDTO> listaComisionMensual = repartidorRepository.obtenerComisionPorMes(id);
                 model.addAttribute("listaComisionMensual", listaComisionMensual);
-
+                model.addAttribute("id",id);
                 return "repartidor/repartidor_resultado_buscador";
             }else{
                 attr.addFlashAttribute("msg", "No hay resultados asociados a la búsqueda.");
@@ -317,7 +317,7 @@ public class RepartidorController {
     }
 
     @GetMapping("/repartidor/Reportes")
-    public String reportes(Model model, RedirectAttributes attr,HttpSession session){
+    public String reportes(Model model, RedirectAttributes attr,HttpSession session, @RequestParam(name = "page", defaultValue = "1") String requestedPage){
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int id = sessionUser.getIdusuarios();
@@ -327,8 +327,28 @@ public class RepartidorController {
             attr.addFlashAttribute("msg", "No hay resultados para mostrar.");
             return "redirect:/repartidor";
         }else{
+            //Paginación:
+            float numberOfPedidosPerPage = 10;
+            int page;
+            try{
+                page = Integer.parseInt(requestedPage);
+            }catch (Exception e){
+                page = 1;
+            }
+
+            int numberOfPages = (int) Math.ceil(listaReporte1.size() / numberOfPedidosPerPage);
+            if (page > numberOfPages) {
+                page = numberOfPages;
+            } // validation
+
+            int start = (int) numberOfPedidosPerPage * (page - 1);
+            int end = (int) (start + numberOfPedidosPerPage);
+            List<PedidosReporteDTOs> listaPedidosPage = listaReporte1.subList(start, Math.min(end, listaReporte1.size()));
+            model.addAttribute("currentPage", page);
+            model.addAttribute("maxNumberOfPages", numberOfPages);
+
             //Lista1
-            model.addAttribute("listaReporte1", listaReporte1);
+            model.addAttribute("listaReporte1", listaPedidosPage);
             //Lista2
             model.addAttribute("listaComisionMensual", listaComisionMensual);
             model.addAttribute("id",id);

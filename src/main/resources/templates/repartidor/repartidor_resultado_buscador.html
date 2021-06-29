@@ -56,12 +56,11 @@
             <table class="table table-striped">
                 <thead>
                 <tr>
-                    <th scope="col"># PEDIDO</th>
+                    <th scope="col">#</th>
                     <th scope="col">RESTAURANTE</th>
                     <th scope="col">DISTRITO DEL RESTAURANTE</th>
                     <th scope="col">LUGAR DE DESTINO</th>
                     <th scope="col">COMISIÓN S/.</th>
-                    <th scope="col">S/. TOTAL</th>
                     <th scope="col">CALIFICACION</th>
                 </tr>
                 </thead>
@@ -72,7 +71,6 @@
                     <td th:text="${registro.getRestaurantedistrito()}"></td>
                     <td th:text="${registro.getClienteubicacion()}"></td>
                     <td th:text="${registro.getComisionrepartidor()}+'.00'"></td>
-                    <td th:text="${registro.montototal}+'0'"></td>
                     <td th:text="${registro.getCalificacionrepartidor()}"></td>
                 </tr>
                 </tbody>
