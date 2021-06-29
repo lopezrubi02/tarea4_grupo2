@@ -82,28 +82,6 @@
                     </tbody>
                 </table>
                 <br> </br>
-                <div class="row">
-                    <div class="col-8">
-                        <h1>Reporte de Ganancia Mensual</h1>
-                    </div>
-                </div>
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th scope="col">MES</th>
-                        <th scope="col">AÑO</th>
-                        <th scope="col">COMISIÓN MENSUAL</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="comision : ${listaComisionMensual}">
-                        <td th:text="${comision.getMes()}" style="width: 33%;"></td>
-                        <td th:text="${comision.getYear()}" style="width: 33%;"></td>
-                        <td th:text="${comision.getComision_mensual()}" style="width: 33%;"></td>
-                    </tr>
-                    </tbody>
-                </table>
-
 
                 <div th:if="${maxNumberOfPages} != 0" class="row">
                     <nav aria-label="Page navigation example" class = "mx-auto">
@@ -137,6 +115,30 @@
                         </ul>
                     </nav>
                 </div>
+
+                <br>
+                <div class="row">
+                    <div class="col-8">
+                        <h1>Reporte de Ganancia Mensual</h1>
+                    </div>
+                </div>
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">MES</th>
+                        <th scope="col">AÑO</th>
+                        <th scope="col">COMISIÓN MENSUAL</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="comision : ${listaComisionMensual}">
+                        <td th:text="${comision.getMes()}" style="width: 33%;"></td>
+                        <td th:text="${comision.getYear()}" style="width: 33%;"></td>
+                        <td th:text="${comision.getComision_mensual()}" style="width: 33%;"></td>
+                    </tr>
+                    </tbody>
+                </table>
+
 
 
             </div>
