@@ -1333,6 +1333,11 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
             initRow++;
 
         }
+        sheet.autoSizeColumn(0);
+        sheet.autoSizeColumn(1);
+        sheet.autoSizeColumn(2);
+        sheet.autoSizeColumn(3);
+        sheet.autoSizeColumn(4);
 
         workbook.write(stream);
         workbook.close();
@@ -1374,6 +1379,9 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
             initRow++;
 
         }
+        sheet.autoSizeColumn(0);
+        sheet.autoSizeColumn(1);
+        sheet.autoSizeColumn(2);
         workbook.write(stream);
         workbook.close();
         return new ByteArrayInputStream(stream.toByteArray());
@@ -1414,6 +1422,10 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
             initRow++;
 
         }
+        sheet.autoSizeColumn(0);
+        sheet.autoSizeColumn(1);
+        sheet.autoSizeColumn(2);
+        sheet.autoSizeColumn(3);
         workbook.write(stream);
         workbook.close();
         return new ByteArrayInputStream(stream.toByteArray());
@@ -1455,6 +1467,12 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
             initRow++;
 
         }
+        sheet.autoSizeColumn(0);
+        sheet.autoSizeColumn(1);
+        sheet.autoSizeColumn(2);
+        sheet.autoSizeColumn(3);
+        sheet.autoSizeColumn(4);
+
         workbook.write(stream);
         workbook.close();
         return new ByteArrayInputStream(stream.toByteArray());

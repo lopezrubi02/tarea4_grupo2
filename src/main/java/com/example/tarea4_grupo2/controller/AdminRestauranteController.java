@@ -738,6 +738,13 @@ public class AdminRestauranteController {
                     row1.createCell(6).setCellValue(pedido.getdistrito());
                     initRow++;
                 }
+                sheet1.autoSizeColumn(0);
+                sheet1.autoSizeColumn(1);
+                sheet1.autoSizeColumn(2);
+                sheet1.autoSizeColumn(3);
+                sheet1.autoSizeColumn(4);
+                sheet1.autoSizeColumn(5);
+                sheet1.autoSizeColumn(6);
             }
             if(!pedidosRepository.gananciaPorMes(id).isEmpty()) {
                 String[] columnsMes = {"MES", "AÑO", "GANANCIAS"};
@@ -757,6 +764,9 @@ public class AdminRestauranteController {
                     row2.createCell(2).setCellValue(mes.getganancia());
                     initRow2++;
                 }
+                sheet2.autoSizeColumn(0);
+                sheet2.autoSizeColumn(1);
+                sheet2.autoSizeColumn(2);
             }
             if(!pedidosRepository.platosMasVendidos(id).isEmpty()) {
                 String[] columnsPlatosMas = {"NOMBRE", "CANTIDAD", "GANANCIAS"};
@@ -776,6 +786,10 @@ public class AdminRestauranteController {
                     row3.createCell(2).setCellValue(plato.getganancia());
                     initRow3++;
                 }
+
+                sheet3.autoSizeColumn(0);
+                sheet3.autoSizeColumn(1);
+                sheet3.autoSizeColumn(2);
             }
             if(!pedidosRepository.platosMenosVendidos(id).isEmpty()) {
                 String[] columnsPlatosMenos = {"NOMBRE", "CANTIDAD", "GANANCIAS"};
@@ -794,6 +808,10 @@ public class AdminRestauranteController {
                     row4.createCell(2).setCellValue(plato.getganancia());
                     initRow4++;
                 }
+
+                sheet4.autoSizeColumn(0);
+                sheet4.autoSizeColumn(1);
+                sheet4.autoSizeColumn(2);
             }
             workbook.write(stream);
             workbook.close();

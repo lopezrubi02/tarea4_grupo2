@@ -337,6 +337,13 @@ public class UsuarioController {
             initRow++;
         }
 
+        sheet.autoSizeColumn(0);
+        sheet.autoSizeColumn(1);
+        sheet.autoSizeColumn(2);
+        sheet.autoSizeColumn(3);
+        sheet.autoSizeColumn(4);
+
+
         workbook.write(stream);
         workbook.close();
         return new ByteArrayInputStream(stream.toByteArray());

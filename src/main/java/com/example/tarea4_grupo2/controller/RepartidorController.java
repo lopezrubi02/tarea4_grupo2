@@ -392,6 +392,13 @@ public class RepartidorController {
             initRow1++;
         }
 
+        sheet1.autoSizeColumn(0);
+        sheet1.autoSizeColumn(1);
+        sheet1.autoSizeColumn(2);
+        sheet1.autoSizeColumn(3);
+        sheet1.autoSizeColumn(4);
+        sheet1.autoSizeColumn(5);
+
         for(int colNum = 0; colNum<row1.getLastCellNum()-1;colNum++)
             workbook.getSheetAt(0).autoSizeColumn(colNum);
 
@@ -417,6 +424,11 @@ public class RepartidorController {
             row2.createCell(2).setCellValue(comisionMensualDTO.getComision_mensual());
             initRow2++;
         }
+
+        sheet2.autoSizeColumn(0);
+        sheet2.autoSizeColumn(1);
+        sheet2.autoSizeColumn(2);
+
 
         workbook.write(stream);
         workbook.close();
