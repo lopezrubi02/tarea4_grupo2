@@ -153,6 +153,7 @@
                 </div>
                 <!-- lista restaurantes -->
                 <div class="row">
+                    <div th:if="${listavacia != null}" th:text="${listavacia}" class="alert alert-warning" role="alert"></div>
                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mar_bottom" th:each="restaurante : ${listarestaurantes}">
                         <div class="blog_box">
                             <div class="blog_img_box">
@@ -161,9 +162,9 @@
                             <a th:href=" '/cliente/restaurantexordenar?idrestaurante=' + ${restaurante.idrestaurante} + '&direccion=' + ${iddireccionxenviar}">
                                 <h3 th:text="${restaurante.nombre}">Chifa Imperial</h3></a>
                             <p>
-                  <span th:each="categoriarest : ${restaurante.categoriasrestList}"
-                        th:text="${categoriarest.nombrecategoria} + ', '">
-                  </span>
+                              <span th:each="categoriarest : ${restaurante.categoriasrestList}"
+                                    th:text="${categoriarest.nombrecategoria} + ', '">
+                              </span>
                             </p>
                         </div>
                         </br>
