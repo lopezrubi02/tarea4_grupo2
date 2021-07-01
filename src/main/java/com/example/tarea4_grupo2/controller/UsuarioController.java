@@ -1164,6 +1164,27 @@ public class UsuarioController {
                     }
                     if (idrestsel == idrestaurante && pedidopendiente == null) {
                         Plato platoseleccionado = platoopt.get();
+                        Pedidos pedidoencurso = pedidosRepository.pedidoencursoxrestaurante(idusuarioactual, idrestaurante);
+                        if(pedidoencurso != null){
+                            List<PedidoHasPlato> pedidoencurso2 = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
+                            if(!pedidoencurso2.isEmpty()){
+                                for(PedidoHasPlato pedidoencurso3 : pedidoencurso2){
+                                    if(pedidoencurso3.getPlato().getIdplato() == idplatopedir){
+                                        String comentariohecho = pedidoencurso3.getDescripcion();
+                                        int cantpedida = pedidoencurso3.getCantidadplatos();
+                                        int cubiertoelegido = pedidoencurso3.isCubiertos();
+                                        System.out.println("HAY PEDIDO EN CURSO, MANDA A EDITAR PLATO **************");
+                                        System.out.println(comentariohecho);
+                                        System.out.println(cantpedida);
+                                        System.out.println(cubiertoelegido);
+                                        model.addAttribute("comentariohecho",comentariohecho);
+                                        model.addAttribute("cantpedida",cantpedida);
+                                        model.addAttribute("cubiertoelegido",cubiertoelegido);
+                                    }
+                                }
+                            }
+                        }
+
                         model.addAttribute("platoseleccionado", platoseleccionado);
                         model.addAttribute("idrestaurante", idrestaurante);
                         model.addAttribute("iddireccionxenviar", direccionxenviar);
@@ -1241,9 +1262,7 @@ public class UsuarioController {
                             ultimopedido = listapedidoscliente.get(tam - 1);
                             idultimopedido = ultimopedido.getIdpedidos();
                             pedidoHasPlatoKey.setPedidosidpedidos(idultimopedido);
-                            //PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido,idplato);
                             pedidoHasPlato.setId(pedidoHasPlatoKey);
-                            //PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey,pedidos,platoelegido,descripcion,cantidad,cubiertos);
                             pedidoHasPlatoRepository.save(pedidoHasPlato);
                         }else{
                             return "redirect:/cliente/platoxpedir?idrestaurante="+ idrestaurante + "&idplato=" + idplato + "&direccion=" + direccionxenviar;
@@ -1259,61 +1278,16 @@ public class UsuarioController {
                 try {
                     if(Integer.valueOf(cantidad) > 0 ) {
                         if (cubiertos == 1 || cubiertos == 0){
-                            System.out.println("AGREGAR UN PLATO AL PEDIDO");
+                            System.out.println("+1 plato al pedido");
                             System.out.println(platoelegido.getNombre());
-                            System.out.println(platoelegido.getDescripcion());
-                            List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idcliente);
-                            //for (Pedidos pcurso : listapedidospendientes) {
-                            //}
-                            boolean repetido = false;
                             Pedidos pedidos = pedidoencurso;
-                            List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
-                            for(PedidoHasPlato platoxpedido : platosxpedido){
-                                for(PedidoHasPlato platoxpedido2 : platosxpedido){
-                                    int idplatoxpedir2 = platoxpedido2.getPlato().getIdplato();
-                                    if(idplatoxpedir2 == Integer.valueOf(idplato)){
-                                        PedidoHasPlatoKey llave = platoxpedido2.getId();
-                                        repetido = true;
-                                    }else{
-                                        repetido = false;
-                                    }
-                                }
-                            }
-                            if(!repetido){
-                                int idultimopedido = pedidoencurso.getIdpedidos();
-                                PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido, Integer.valueOf(idplato));
-                                PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey, pedidos, platoelegido, descripcion, Integer.valueOf(cantidad), cubiertos);
-                                //pedidoHasPlatoKey.setPedidosidpedidos(idultimopedido);
-                                //PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido,idplato);
-                                pedidoHasPlato.setId(pedidoHasPlatoKey);
-                                System.out.println("DETALLES DEL PLATO A PEDIR PRIMERA VEZ");
-                                System.out.println(pedidoHasPlato.getPlato().getNombre());
-                                System.out.println(pedidoHasPlato.getCantidadplatos());
-                                System.out.println(pedidoHasPlato.getDescripcion());
-                                pedidoHasPlatoRepository.save(pedidoHasPlato);
-                                redirectAttributes.addFlashAttribute("platoagregado", "Plato agregado al carrito");
-                            }else{
-                                System.out.println("GUARDA PLATO REPETIDO");
-                                PedidoHasPlato platorepetido = new PedidoHasPlato();
-                                Optional<Plato> platore = platoRepository.findById(Integer.valueOf(idplato));
-                                Plato platoreobj = platore.get();
-                                Optional<Pedidos> pedido2 = pedidosRepository.findById(pedidoencurso.getIdpedidos());
-                                Pedidos pedido2get = pedido2.get();
-                                System.out.println(platoreobj.getNombre());
-                                System.out.println(descripcion);
-                                System.out.println(cantidad);
-                                platorepetido.setPlato(platoreobj);
-                                platorepetido.setPedido(pedido2get);
-                                platorepetido.setDescripcion(descripcion);
-                                platorepetido.setCantidadplatos(Integer.valueOf(cantidad));
-                                platorepetido.setCubiertos(cubiertos);
-                                PedidoHasPlatoKey llavepedido = new PedidoHasPlatoKey();
-                                llavepedido.setPedidosidpedidos(pedido2get.getIdpedidos());
-                                llavepedido.setPlatoidplato(platoreobj.getIdplato());
-                                platorepetido.setId(llavepedido);
-                                pedidoHasPlatoRepository.save(platorepetido);
-                            }
-
+                            int idultimopedido = pedidoencurso.getIdpedidos();
+                            PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido, Integer.valueOf(idplato));
+                            PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey, pedidos, platoelegido, descripcion, Integer.valueOf(cantidad), cubiertos);
+                            pedidoHasPlatoKey.setPedidosidpedidos(idultimopedido);
+                            pedidoHasPlato.setId(pedidoHasPlatoKey);
+                            pedidoHasPlatoRepository.save(pedidoHasPlato);
+                            redirectAttributes.addFlashAttribute("platoagregado", "Plato agregado al carrito");
                         }else{
                             return "redirect:/cliente/platoxpedir?idrestaurante="+ idrestaurante + "&idplato=" + idplato + "&direccion=" + direccionxenviar;
                         }

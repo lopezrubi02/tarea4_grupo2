@@ -18,7 +18,7 @@ public interface PedidoHasPlatoRepository extends JpaRepository<PedidoHasPlato, 
 
     //List<PedidoHasPlato> findAllByPedidoIdpedidos(int idpedido);
 
-    List<PedidoHasPlato> findAllByPedido_Idpedidos(int idpedido); //TODO revisar si hay conflicto
+    List<PedidoHasPlato> findAllByPedido_Idpedidos(int idpedido);
 
 
     @Query(value = "select sum((pepla.cantidadplatos * p.precio)) as preciototal\n" +
