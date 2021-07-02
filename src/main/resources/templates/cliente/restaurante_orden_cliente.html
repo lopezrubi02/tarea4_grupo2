@@ -91,7 +91,7 @@
                   <h3 th:text="${plato.nombre}">Combowok de la Suerte</h3>
                   <p th:text="${plato.descripcion}">Encájate Chi Jau Kay, 2 wantanes, gaseosa personal y salsa tamarindo.
                   </p>
-                  <p th:text="'S/.' + ${plato.precio}">precio</p>
+                  <p th:text="'S/' + ${plato.precio}">precio</p>
                   <a th:href="@{'/cliente/platoxpedir?idrestaurante=' + ${restaurantexordenar.idrestaurante} + '&idplato=' + ${plato.idplato} + '&direccion=' + ${direccionxenviar}}"><h4 style="text-align: right; margin-right: 10px">Agregar</h4></a>
                   </br>
               </div>

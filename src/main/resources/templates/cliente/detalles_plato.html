@@ -66,7 +66,7 @@
 								<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" style="padding-left: 223px">
 									<a style="color: white;" th:text="${platoseleccionado.descripcion}">Encájate Chi Jau Kay, 2 wantanes.</a>
                                     </br>
-									<a style="color: white;" th:text="'S/. ' + ${platoseleccionado.precio}">Precio: 20 soles</a>
+									<a style="color: white;" th:text="'S/ ' + ${platoseleccionado.precio}">Precio: 20 soles</a>
 								</div>
 								<form class="main_form" method="post" th:action="@{'/cliente/platopedido'}">
                                     <input type="hidden" th:value="${iddireccionxenviar}" name="direccion">
@@ -79,7 +79,7 @@
 											<div class="form-floating">
 											  <select class="form-select" id="floatingSelectGrid" aria-label="Floating label select example" name="cubierto">
 												<option selected value="0">No</option>
-												<option value="1">sí</option>												
+												<option value="1" th:selected="${cubiertoelegido == 1}">sí</option>
 											  </select>
 											  <label for="floatingSelectGrid">¿Deseas cubiertos?</label>
 											  <br/>
@@ -87,10 +87,10 @@
 										</div>
 										
 										<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-											<input class="form-control" placeholder="Cantidad" type="number" id="cantidad" name="cantidad" min="1">
+											<input class="form-control" placeholder="Cantidad" type="number" th:value="${cantpedida}" id="cantidad" name="cantidad" min="1">
 										</div>
 										<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-											<textarea class="textarea" placeholder="Especifique si le quiere quitar algun ingrediente al plato" type="text" name="descripcion" style="margin-bottom: 5px;"></textarea>
+											<textarea class="textarea" placeholder="Especifique si le quiere quitar algun ingrediente al plato" type="text" th:text="${comentariohecho}" name="descripcion" style="margin-bottom: 5px;"></textarea>
 											<h5 style="color : red;">* El precio del plato no se verá alterado si decide quitarle algún ingrediente a este
 											</h5>
 										</div>
