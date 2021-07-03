@@ -104,7 +104,6 @@
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <label>DNI</label>
                                             <div th:if="${msgdni != null}" th:text="${msgdni}" class="text-danger"></div>
-                                            <div th:if="${msg3 != null}" th:text="${msg3}" class="text-danger"></div>
                                             <div class="text-danger" th:if="${#fields.hasErrors('dni')}" th:errors="*{dni}"></div>
                                             <input class="form-control" placeholder="DNI" type="text" th:field="*{dni}">
 
@@ -140,19 +139,20 @@
                                             <div id="error-distrito" class="text-danger"></div>
                                             <div id="error-direccion" class="text-danger"></div>
                                             <div class="input-group">
-                                                <input class="form-control" placeholder="Direccion" type="text" id="direccion" name="direccion"/>
+                                                <input class="form-control" placeholder="Direccion" type="text" id="direccion" name="direccion" th:if="${direction!=null}" th:value="${direction}"/>
                                                 <span class="input-group-append"><img onclick="geocode()" src="https://st4.depositphotos.com/18690434/21687/v/600/depositphotos_216872396-stock-illustration-location-icon-location-concept-symbol.jpg" alt="" width="30" height="10"></span>
                                             </div>
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <label>Correo</label>
-                                            <div th:if="${msg2 != null}" th:text="${msg2}" class="text-danger"></div>
+                                            <div th:if="${msgcorreo != null}" th:text="${msgcorreo}" class="text-danger"></div>
                                             <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
                                             <input class="form-control" placeholder="Correo" type="text" th:field="*{email}">
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <label>Contraseña</label>
-                                            <div th:if="${msg != null}" th:text="${msg}" class="text-danger"></div>
+                                            <div th:if="${msgcontra != null}" th:text="${msgcontra}" class="text-danger"></div>
+                                            <div th:if="${msgcontrapatron != null}" th:text="${msgcontrapatron}" class="text-danger"></div>
                                             <div class="text-danger" th:if="${#fields.hasErrors('contraseniaHash')}" th:errors="*{contraseniaHash}"></div>
                                             <input class="form-control" placeholder="Contraseña" type="password" th:field="*{contraseniaHash}">
                                         </div>
@@ -210,7 +210,7 @@
                 }
                 else{
                     document.getElementById("iddistrito").value=-1;
-                    document.getElementById("error-distrito").innerHTML="Distrito no válida";
+                    document.getElementById("error-distrito").innerHTML="Distrito no válido";
                 }
             }
         }
@@ -264,11 +264,13 @@
                             }
                             if(calle===undefined||numero===undefined){
                                 document.getElementById("direccion").value="";
+                                document.getElementById("error-direccion").className="text-danger";
                                 document.getElementById("error-direccion").innerHTML="Dirección no reconocida escriba la dirección";
                             }
                             else{
                                 document.getElementById("direccion").value=calle+" "+numero;
-                                document.getElementById("error-direccion").innerHTML=null;
+                                document.getElementById("error-direccion").className="text-success";
+                                document.getElementById("error-direccion").innerHTML="Si desea, puede editar la direccion";
                             }
                         })
                     google.maps.event.addListener(marker, "dragend", function (evt) {

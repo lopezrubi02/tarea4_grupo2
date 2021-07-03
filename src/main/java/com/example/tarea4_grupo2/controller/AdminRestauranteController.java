@@ -116,6 +116,7 @@ public class AdminRestauranteController {
             restaurante.setUsuario(sessionUser);
             model.addAttribute("listadistritos",distritosRepository.findAll());
             model.addAttribute("restaurante",restaurante);
+            model.addAttribute("direction",direccion);
             return "AdminRestaurantes/registerRestaurante";
         }
         else {
@@ -139,6 +140,7 @@ public class AdminRestauranteController {
                     return "AdminRestaurantes/categorias";
                 }else{
                     restaurante.setUsuario(sessionUser);
+                    model.addAttribute("direction",direccion);
                     model.addAttribute("msgrucerror","No es un RUC registrado.");
                     model.addAttribute("listadistritos",distritosRepository.findAll());
                     model.addAttribute("restaurante",restaurante);
@@ -147,6 +149,7 @@ public class AdminRestauranteController {
             }
             else{
                 restaurante.setUsuario(sessionUser);
+                model.addAttribute("direction",direccion);
                 model.addAttribute("msgrucerror","No es un RUC valido.");
                 model.addAttribute("listadistritos",distritosRepository.findAll());
                 model.addAttribute("restaurante",restaurante);

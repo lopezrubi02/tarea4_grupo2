@@ -45,6 +45,7 @@ public class LoginController {
     DistritosRepository distritosRepository;
     @Autowired
     DireccionesRepository direccionesRepository;
+
     @GetMapping("/eleccion")
     public String eleccionRegister(){
         return "adminsistema/eleccion";
@@ -60,18 +61,31 @@ public class LoginController {
                                @RequestParam("iddistrito") int iddistrito,
                                @RequestParam("direccion") String direccion,
                                Model model){
+
         if(bindingResult.hasErrors()){
+            Optional<Usuario> persona = usuarioRepository.findByEmailAndAndRol(usuario.getEmail(), "AdminRestaurante");
             model.addAttribute("listadistritos",distritosRepository.findAll());
+            if(!usuario.getContraseniaHash().equals(password2)){
+                model.addAttribute("msgcontra","Contraseñas no son iguales");
+            }
+            if(persona.isPresent()){
+                model.addAttribute("msgcorreo","Correo ya existe");
+            }
+            if(!validarDNI(usuario.getDni())){
+                model.addAttribute("msgdni","DNI no existe");
+            }
+            model.addAttribute("direction",direccion);
             return "AdminRestaurantes/register";
         }
         else {
             //if(Pattern.matches("^[a-z0-9]+@gmail.com",usuario.getEmail())){
                 if(usuario.getContraseniaHash().equals(password2)) {
-                    Optional<Usuario> persona = usuarioRepository.findByEmailAndAndRol(usuario.getEmail(), "AdminRestaurante");
-                    //Optional<Usuario> validardni = usuarioRepository.findByDniAndRol(usuario.getDni(), "AdminRestaurante");
-                    if(!(persona.isPresent())){
-                        if(validarDNI(usuario.getDni())){
-                            //if(!(validardni.isPresent())) {
+                    if (validarContrasenia(usuario.getContraseniaHash())) {
+                        Optional<Usuario> persona = usuarioRepository.findByEmailAndAndRol(usuario.getEmail(), "AdminRestaurante");
+                        //Optional<Usuario> validardni = usuarioRepository.findByDniAndRol(usuario.getDni(), "AdminRestaurante");
+                        if (!(persona.isPresent())) {
+                            if (validarDNI(usuario.getDni())) {
+                                //if(!(validardni.isPresent())) {
                                 String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
                                 usuario.setContraseniaHash(contraseniahashbcrypt);
                                 usuarioRepository.save(usuario);
@@ -93,26 +107,64 @@ public class LoginController {
                                 String correoDestino = usuario.getEmail();
                                 sendMailService.sendMail(correoDestino, "saritaatanacioarenas@gmail.com", subject, mensaje);
                                 return "AdminRestaurantes/correo";
-                            //}
-                            //else{
+                                //}
+                                //else{
                                 //model.addAttribute("msgdni","Dni ya existe");
                                 //model.addAttribute("listadistritos",distritosRepository.findAll());
                                 //return "AdminRestaurantes/register";
-                            //}
-                        }else{
-                            model.addAttribute("msg3","DNI no existe");
-                            model.addAttribute("listadistritos",distritosRepository.findAll());
+                                //}
+                            } else {
+                                if (!usuario.getContraseniaHash().equals(password2)) {
+                                    model.addAttribute("msgcontra", "Contraseñas no son iguales");
+                                }
+                                if (persona.isPresent()) {
+                                    model.addAttribute("msgcorreo", "Correo ya existe");
+                                }
+                                model.addAttribute("direction", direccion);
+                                model.addAttribute("msgdni", "DNI no existe");
+                                model.addAttribute("listadistritos", distritosRepository.findAll());
+                                return "AdminRestaurantes/register";
+                            }
+                        } else {
+                            if (!usuario.getContraseniaHash().equals(password2)) {
+                                model.addAttribute("msgcontra", "Contraseñas no son iguales");
+                            }
+                            if (!validarDNI(usuario.getDni())) {
+                                model.addAttribute("msgdni", "DNI no existe");
+                            }
+                            model.addAttribute("direction", direccion);
+                            model.addAttribute("msgcorreo", "Correo ya existe");
+                            model.addAttribute("listadistritos", distritosRepository.findAll());
                             return "AdminRestaurantes/register";
                         }
                     }
                     else{
-                        model.addAttribute("msg3","Correo ya existe");
+                        Optional<Usuario> persona = usuarioRepository.findByEmailAndAndRol(usuario.getEmail(), "AdminRestaurante");
+                        if(persona.isPresent()){
+                            model.addAttribute("msgcorreo","Correo ya existe");
+                        }
+                        if(!validarDNI(usuario.getDni())){
+                            model.addAttribute("msgdni","DNI no existe");
+                        }
+                        model.addAttribute("direction",direccion);
+                        model.addAttribute("msgcontra","La contraseña no cumple con los requisitos: mínimo 8 caracteres, un número y un caracter especial");
                         model.addAttribute("listadistritos",distritosRepository.findAll());
                         return "AdminRestaurantes/register";
                     }
                 }
                 else {
-                    model.addAttribute("msg","Contraseñas no son iguales");
+                    Optional<Usuario> persona = usuarioRepository.findByEmailAndAndRol(usuario.getEmail(), "AdminRestaurante");
+                    if(persona.isPresent()){
+                        model.addAttribute("msgcorreo","Correo ya existe");
+                    }
+                    if(!validarDNI(usuario.getDni())){
+                        model.addAttribute("msgdni","DNI no existe");
+                    }
+                    if(!validarContrasenia(usuario.getContraseniaHash())){
+                        model.addAttribute("msgcontrapatron","La contraseña no cumple con los requisitos: mínimo 8 caracteres, un número y un caracter especial");
+                    }
+                    model.addAttribute("direction",direccion);
+                    model.addAttribute("msgcontra","Contraseñas no son iguales");
                     model.addAttribute("listadistritos",distritosRepository.findAll());
                     return "AdminRestaurantes/register";
                 }

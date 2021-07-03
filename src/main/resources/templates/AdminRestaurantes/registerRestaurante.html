@@ -137,10 +137,11 @@
                                             <input class="form-control" placeholder="RUC" type="text" th:field="*{ruc}">
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" style="padding-top: 25px">
-                                            <label>Direccion</label>
+                                            <label id="direccion-texto">Direccion: Debe hacer click para validar</label>
+                                            <div id="error-distrito" class="text-danger"></div>
                                             <div id="error-direccion" class="text-danger"></div>
                                             <div class="input-group">
-                                                <input class="form-control" placeholder="Direccion" type="text" id="direccion" name="direccion"/>
+                                                <input class="form-control" placeholder="Direccion" type="text" id="direccion" name="direccion" th:if="${direction!=null}" th:value="${direction}"/>
                                                 <span class="input-group-append"><img onclick="geocode()" src="https://st4.depositphotos.com/18690434/21687/v/600/depositphotos_216872396-stock-illustration-location-icon-location-concept-symbol.jpg" alt="" width="30" height="10"></span>
                                             </div>
                                         </div>
@@ -158,7 +159,7 @@
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <div class="row">
                                                 <div class="col-md-4">
-                                                    <button class="send" type="submit" >Registrar</button>
+                                                    <button id="registrar" class="send" type="submit" style="display: none" >Registrar</button>
                                                 </div>
                                                 <div class="col-md-4">
                                                     <a class="send" th:href="@{/adminrest/sinrestaurante}" style="text-align: center">Regresar</a>
@@ -248,28 +249,31 @@
             })
         })
     </script>
+
     <script>
         function validarDistrito(distrito){
             var listaDistritos=document.getElementById("distrito-lista");
-            console.log(distrito);
+            var real=distrito.trim();
             for(var i=0;i<listaDistritos.length;i++){
                 console.log(listaDistritos.options[i].text);
-                if(distrito==listaDistritos.options[i].text){
+                if(real==listaDistritos.options[i].text){
                     console.log(listaDistritos.options[i].value);
                     document.getElementById("iddistrito").value=listaDistritos.options[i].value;
-                    document.getElementById("error-direccion").innerHTML=null;
+                    document.getElementById("error-distrito").innerHTML=null;
                     break;
                 }
                 else{
                     document.getElementById("iddistrito").value=-1;
-                    document.getElementById("error-direccion").innerHTML="Dirección no válida";
+                    document.getElementById("error-distrito").innerHTML="Distrito no válido";
                 }
             }
         }
     </script>
     <script>
         function geocode(){
+            document.getElementById("registrar").style.display="block";
             document.getElementById("text-map").style.display="block";
+            document.getElementById("direccion-texto").innerHTML="Direccion";
             var direccion = document.getElementById("direccion").value;
             var location = direccion+" lima peru";
             axios.get("https://maps.googleapis.com/maps/api/geocode/json",{
@@ -296,12 +300,15 @@
                     })
                         .then(function(response){
                             var addressComponents=response.data.results[0].address_components;
+                            var compoundCode=response.data.plus_code.compound_code;
+                            var identificador=compoundCode.split(",")[0].split(" ");
+                            var distrito="";
+                            for(var i=1;i<identificador.length;i++){
+                                distrito+=identificador[i]+" ";
+                            }
+                            console.log(distrito);
+                            validarDistrito(distrito);
                             for(var i=0;i < addressComponents.length;i++){
-                                if(addressComponents[i].types[0]=="locality"){
-                                    var distrito=addressComponents[i].long_name;
-                                    document.getElementById("distrito").value=distrito;
-                                    validarDistrito(distrito);
-                                }
                                 if(addressComponents[i].types[0]=="street_number"){
                                     var numero=addressComponents[i].long_name;
                                 }
@@ -309,11 +316,22 @@
                                     var calle=addressComponents[i].long_name;
                                 }
                             }
-                            document.getElementById("direccion").value=calle +" "+numero;
+                            if(calle===undefined||numero===undefined){
+                                document.getElementById("direccion").value="";
+                                document.getElementById("error-direccion").className="text-danger";
+                                document.getElementById("error-direccion").innerHTML="Dirección no reconocida escriba la dirección";
+                            }
+                            else{
+                                document.getElementById("direccion").value=calle+" "+numero;
+                                document.getElementById("error-direccion").className="text-success";
+                                document.getElementById("error-direccion").innerHTML="Si desea, puede editar la direccion";
+                            }
                         })
                     google.maps.event.addListener(marker, "dragend", function (evt) {
                         var latOutput = evt.latLng.lat();
+                        console.log(latOutput);
                         var lngOutput = evt.latLng.lng();
+                        console.log(lngOutput);
                         map.panTo(evt.latLng);
                         axios.get("https://maps.googleapis.com/maps/api/geocode/json",{
                             params:{
@@ -324,12 +342,15 @@
                             .then(function(response){
                                 console.log(response);
                                 var addressComponents=response.data.results[0].address_components;
+                                var compoundCode=response.data.plus_code.compound_code;
+                                var identificador=compoundCode.split(",")[0].split(" ");
+                                var distrito="";
+                                for(var i=1;i<identificador.length;i++){
+                                    distrito+=identificador[i]+" ";
+                                }
+                                console.log(distrito);
+                                validarDistrito(distrito);
                                 for(var i=0;i < addressComponents.length;i++){
-                                    if(addressComponents[i].types[0]=="locality"){
-                                        var distrito=addressComponents[i].long_name;
-                                        document.getElementById("distrito").value=distrito;
-                                        validarDistrito(distrito);
-                                    }
                                     if(addressComponents[i].types[0]=="street_number"){
                                         var numero=addressComponents[i].long_name;
                                     }
@@ -337,7 +358,17 @@
                                         var calle=addressComponents[i].long_name;
                                     }
                                 }
-                                document.getElementById("direccion").value=calle+" "+numero;
+                                if(calle===undefined||numero===undefined){
+                                    document.getElementById("direccion").value="";
+                                    document.getElementById("error-direccion").className="text-danger";
+                                    document.getElementById("error-direccion").innerHTML="Dirección no reconocida escriba la dirección";
+                                }
+                                else{
+                                    document.getElementById("direccion").value=calle+" "+numero;
+                                    document.getElementById("error-direccion").className="text-success";
+                                    document.getElementById("error-direccion").innerHTML="Si desea, puede editar la direccion";
+                                }
+
                             })
                     });
 
