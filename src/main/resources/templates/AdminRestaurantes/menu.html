@@ -41,7 +41,7 @@
             <section class="lqq-section">
                 <div class="container">
                     <div class="row">
-                        <a class="send" style="text-align: center; margin-left: 15px; margin-top: 15px; margin-bottom: 15px"
+                        <a class="send" style="text-align: center;background:#d8b00f; margin-left: 15px; margin-top: 15px; margin-bottom: 15px"
                            th:href="@{/adminrest/crearPlato}">Nuevo Plato
                         </a>
                         <div class="col-md-12">
@@ -52,13 +52,13 @@
                                             <figure><img th:src="@{'/adminrest/imagenplato' + '?idplato=' + ${plato.idplato}}" alt="#"></figure>
                                         </a>
                                     </div>
-                                    <div class="product_blog_cont" style="align-content: center">
+                                    <div class="product_blog_cont" style="align-content: center;height: 400px">
                                         <h3 style="color: #1f1f1f" th:text="${plato.nombre}"></h3>
                                         <span style="color: #002752">Descripción:</span><h4 style="color: #1f1f1f" th:text="${plato.descripcion}"></h4>
                                         <span style="color: #002752">Precio: S/.</span><h4 style="color: #1f1f1f" th:text="${plato.precio}"></h4>
                                         <span style="color: #002752">¿Tiene stock?</span><h4 style="color: #1f1f1f" th:text="${plato.disponibilidad == 1? 'Si':'No'}"></h4>
-                                        <div class="row" style="margin-bottom: 0px">
-                                            <a class="send" style="background:#d8b00f; margin-bottom: 0px; float: bottom"
+                                        <div class="row" style="padding-bottom: 0px">
+                                            <a class="send" style="background:#d8b00f"
                                                th:href="@{'/adminrest/borrarPlato' + '?idplato=' + ${plato.idplato}}">Borrar plato
                                             </a>
                                         </div>

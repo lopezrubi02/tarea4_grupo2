@@ -66,17 +66,13 @@
                                                 <option value="1">Disponible</option>
                                                 <option value="0">Agotado</option>
                                             </select>
-                                            <div style="padding-top: 10px" class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                                <div style="position: relative"><input class="form-control-file" type="file" id="imagen" name="imagen" style="opacity: 0%;position: absolute">Editar Imagen</div>
-                                            </div>
                                             <input type="hidden" name="restaurante" th:field="*{restaurante}">
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:unless="${plato.idplato}">
                                             <input type="hidden" name="disponibilidad" id="disponibilidad" th:value="1">
                                             <input type="hidden" name="restaurante" id="restaurante" th:value="${iddelrestaurante}">
-                                            <div style="padding-top: 10px" class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                                <div style="position: relative"><input class="form-control-file" type="file" id="imagen" name="imagen" style="opacity: 0%;position: absolute">Adjuntar Imagen</div>
-                                            </div>
+                                            <label>Imagen</label>
+                                            <input class="form-control" type="file" id="imagen" name="imagen">
                                         </div>
                                         </br>
                                         </br>
