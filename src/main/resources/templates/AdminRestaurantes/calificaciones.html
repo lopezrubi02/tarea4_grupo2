@@ -1,10 +1,40 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/adminRestaurante.html :: header( title = 'Calificaciones')">
-
 </head>
+<style>
+  #form p {
+    text-align: center;
+  }
 
+  #form label {
+    font-size: 20px;
+  }
+
+  input[type="radio"] {
+    display: none;
+  }
+
+  label {
+    color: grey
+  }
+
+  .clasificacion {
+    direction: rtl;
+    unicode-bidi: bidi-override;
+  }
+
+  label:hover,
+  label:hover ~ label {
+    color: orange;
+  }
+
+  input[type="radio"]:checked ~ label{
+    color: orange;
+  }
+</style>
 <!-- body -->
+<input id="valorbusqueda" th:value="${searchfield}" style="display: none">
 <body class="main-layout Recipes_page">
 <div class="wrapper">
   <div class="sidebar">
@@ -36,13 +66,25 @@
         <div class="col-md-12">
         <form class="input-group" method="post" th:action="@{/adminrest/buscarCalificaciones}">
           <div class="col-md-10" style="border-style: groove">
-            <input name="searchfield" class="form-control" style="height: 50px;margin-bottom: 0px" type="text" placeholder="Buscar por # estrellas"/>
+            <p>Elija su calificación: </p>
+            <p class="clasificacion" style="transform: translateY(4px)" align="left">
+              <input id="radio1" type="radio" name="searchfield" value="5"><!--
+              --><label style="font-size:40px" for="radio1" >★</label><!--
+              --><input id="radio2" type="radio" name="searchfield" value="4"><!--
+              --><label style="font-size:40px"  for="radio2">★</label><!--
+              --><input id="radio3" type="radio" name="searchfield" value="3"><!--
+              --><label style="font-size:40px"  for="radio3">★</label><!--
+              --><input id="radio4" type="radio" name="searchfield" value="2"><!--
+              --><label style="font-size:40px"  for="radio4">★</label><!--
+              --><input id="radio5" type="radio" name="searchfield" value="1"><!--
+              --><label style="font-size:40px"  for="radio5">★</label>
+            </p>
+          </div>
+          <div id="habbuscar"  class="col-md-1">
+          <button id="buscar" style="height: 50px" class="btn btn-dark">Buscar</button>
           </div>
           <div class="col-md-1">
-          <button style="height: 50px" class="btn btn-dark" type="submit">Buscar</button>
-          </div>
-          <div class="col-md-1">
-          <button style="height: 50px" class="btn btn-warning"><a class="button" th:href="@{/adminrest/calificaciones}">Limpiar</a></button>
+          <button style="height: 50px" class="btn btn-warning"><a class="button" th:href="@{'/adminrest/calificaciones'}">Limpiar</a></button>
           </div>
         </form>
           <br>
@@ -195,7 +237,37 @@
     })
   })
 </script>
-
+<script>
+  console.log("hola");
+  var valor=document.getElementById("valorbusqueda").value;
+  var radio1=document.getElementById("radio1").value;
+  var radio2=document.getElementById("radio2").value;
+  var radio3=document.getElementById("radio3").value;
+  var radio4=document.getElementById("radio4").value;
+  var radio5=document.getElementById("radio5").value;
+  switch (valor) {
+    case radio1:
+      console.log(radio1);
+      document.getElementById("radio1").checked=true;
+      break;
+    case radio2:
+      console.log(radio2);
+      document.getElementById("radio2").checked=true;
+      break;
+    case radio3:
+      console.log(radio3);
+      document.getElementById("radio3").checked=true;
+      break;
+    case radio4:
+      console.log(radio4);
+      document.getElementById("radio4").checked=true;
+      break;
+    case radio5:
+      console.log(radio5);
+      document.getElementById("radio5").checked=true;
+      break;
+  }
+</script>
 </body>
 
 </html>
