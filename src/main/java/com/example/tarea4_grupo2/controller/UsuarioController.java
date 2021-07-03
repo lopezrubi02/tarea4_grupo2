@@ -171,6 +171,15 @@ public class UsuarioController {
 
         return dniValido;
     }
+    /** Para validar correo **/
+    public boolean isValid(String email) {
+        String emailREGEX = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        Pattern pattern = Pattern.compile(emailREGEX );
+        if (email == null){
+            return false;
+        }
+        return pattern .matcher(email).matches();
+    }
 
     /**                     Registro cliente                **/
     @GetMapping("/nuevocliente")
@@ -192,18 +201,27 @@ public class UsuarioController {
         if (bindingResult.hasErrors()) {
             List<Distritos> listadistritos = distritosRepository.findAll();
             model.addAttribute("listadistritos", listadistritos);
+            boolean correovalido = isValid(usuario.getEmail());
+            System.out.println("***********************");
+            System.out.println(usuario.getEmail());
+            System.out.println(correovalido);
             return "cliente/registroCliente";
         } else {
             boolean errorcorreo = validarcorreounico(usuario.getEmail(), usuario);
             boolean errorstringsexo = validarstringsexo(usuario.getSexo());
             boolean dniexiste = validarDNI(usuario.getDni());
-
-            if (errorcorreo == true || errorstringsexo == true || direccion == null || dniexiste == false) {
+            boolean correovalido = isValid(usuario.getEmail());
+            System.out.println("***********************");
+            System.out.println(usuario.getEmail());
+            System.out.println(correovalido);
+            if (errorcorreo == true || errorstringsexo == true || direccion == null || dniexiste == false || correovalido == false) {
                 if(errorcorreo==true){
                     model.addAttribute("errorcorreo", "Ya hay una cuenta registrada con el correo ingresado.");
                 }
                 if(dniexiste == false){
                     model.addAttribute("errordni","Ingrese un DNI válido");
+                }if(correovalido == false){
+                    model.addAttribute("errorcorreo","Formato de correo no válido");
                 }
                 List<Distritos> listadistritos = distritosRepository.findAll();
                 model.addAttribute("listadistritos", listadistritos);

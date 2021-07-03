@@ -72,7 +72,7 @@
                         <div class="col-md-6 offset-md-3"> <!-- canasta vacia -->
                             <div class="Client_box" th:if="${lista == 0}">
                                 <h3>Tu canasta está vacía</h3>
-                                <p>Te invitamos a volver a nuestros restaurante y agregar productos a tu canasta.</p>
+                                <p>Te invitamos a volver a nuestros restaurantes y agregar platos a tu canasta.</p>
 
                             </div>
                             <div class="Client_box" th:unless="${lista == 0}">  <!-- canasta con algún plato -->
@@ -112,7 +112,7 @@
                                     </table>
                                 </div>
                                 <div>
-                                    <h4 style="color: white;" th:text="|Subtotal a pagar: S./ ${montototal.getpreciototal()}|"></h4>
+                                    <h4 style="color: white;" th:text="|Subtotal a pagar: S/ ${montototal.getpreciototal()}|"></h4>
                                 </div>
                                 <div class="row">
                                     <a th:href="@{/cliente/vaciarcarrrito}" style="width: 50%;">
