@@ -5,10 +5,7 @@ import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
 import com.example.tarea4_grupo2.service.SendMailService;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -705,28 +702,56 @@ public class AdminRestauranteController {
         }
     }
 
+    private static CellStyle createVHCenterStyle(final Workbook wb) {
+        CellStyle style = wb.createCellStyle (); // objeto de estilo
+        style.setVerticalAlignment (VerticalAlignment.CENTER); // vertical
+        style.setAlignment (HorizontalAlignment.CENTER); // horizontal
+        style.setWrapText (true); // Especifica el salto de línea automático cuando no se puede mostrar el contenido de la celda
+        // agregar borde
+        style.setBorderBottom(BorderStyle.THIN);
+        style.setBorderLeft(BorderStyle.THIN);
+        style.setBorderRight(BorderStyle.THIN);
+        style.setBorderTop(BorderStyle.THIN);
+        return style;
+    }
+
+
+    private static CellStyle createHeadStyle(final Workbook wb) {
+        CellStyle style = createVHCenterStyle(wb);
+        final Font font = wb.createFont();
+        font.setFontName ("Songti");
+        font.setFontHeight((short) 150);
+        font.setBold(true);
+        style.setFont(font);
+        style.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        return style;
+    }
+
     @GetMapping("/excelexportar")
     public ResponseEntity<InputStreamResource> exportAllData(HttpSession session) throws Exception {
 
         Usuario user = (Usuario) session.getAttribute("usuarioLogueado");
         int id=restauranteRepository.buscarRestaurantePorIdAdmin(user.getIdusuarios()).get().getIdrestaurante();
-        System.out.println("aqui");
-        System.out.println(id);
+
         ByteArrayInputStream stream2 = exportReporte(id);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=reportes.xls");
         return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream2));
     }
+
     public ByteArrayInputStream exportReporte(int id) throws IOException {
             Workbook workbook = new HSSFWorkbook();
+            CellStyle headStyle = createHeadStyle(workbook);
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             if(!pedidosRepository.listaPedidos(id).isEmpty()) {
-                String[] columnsPedido = {"#PEDIDO", "FECHA DEL PEDIDO", "NOMBRE DEL CLIENTE", "MONTO DEL PEDIDO", "NOMBRE DEL PLATO", "METODO DE PAGO", "DISTRITO DEL PEDIDO"};
+                String[] columnsPedido = {"N° PEDIDO", "FECHA DEL PEDIDO", "NOMBRE DEL CLIENTE", "MONTO DEL PEDIDO", "NOMBRE DEL PLATO", "METODO DE PAGO", "DISTRITO DEL PEDIDO"};
                 Sheet sheet1 = workbook.createSheet("Pedidos");
                 Row row1 = sheet1.createRow(0);
                 for (int i = 0; i < columnsPedido.length; i++) {
                     Cell cell = row1.createCell(i);
                     cell.setCellValue(columnsPedido[i]);
+                    cell.setCellStyle(headStyle);
                 }
                 List<PedidosReporteDto> listaPedidos = pedidosRepository.listaPedidosReporteporFechamasantigua(id);
                 int initRow = 1;
@@ -750,12 +775,13 @@ public class AdminRestauranteController {
                 sheet1.autoSizeColumn(6);
             }
             if(!pedidosRepository.gananciaPorMes(id).isEmpty()) {
-                String[] columnsMes = {"MES", "AÑO", "GANANCIAS"};
+                String[] columnsMes = {"MES", "AÑO", "  GANANCIAS  "};
                 Sheet sheet2 = workbook.createSheet("IngresoMensual");
                 Row row2 = sheet2.createRow(0);
                 for (int i = 0; i < columnsMes.length; i++) {
                     Cell cell = row2.createCell(i);
                     cell.setCellValue(columnsMes[i]);
+                    cell.setCellStyle(headStyle);
                 }
 
                 List<PedidosGananciaMesDto> listaGanancia = pedidosRepository.gananciaPorMes(id);
@@ -778,6 +804,7 @@ public class AdminRestauranteController {
                 for (int i = 0; i < columnsPlatosMas.length; i++) {
                     Cell cell = row3.createCell(i);
                     cell.setCellValue(columnsPlatosMas[i]);
+                    cell.setCellStyle(headStyle);
                 }
 
                 List<PedidosTop5Dto> listaPlatosMas = pedidosRepository.platosMasVendidos(id);
@@ -801,6 +828,7 @@ public class AdminRestauranteController {
                 for (int i = 0; i < columnsPlatosMenos.length; i++) {
                     Cell cell = row4.createCell(i);
                     cell.setCellValue(columnsPlatosMenos[i]);
+                    cell.setCellStyle(headStyle);
                 }
                 List<PedidosTop5Dto> listaPlatosMenos = pedidosRepository.platosMenosVendidos(id);
                 int initRow4 = 1;
