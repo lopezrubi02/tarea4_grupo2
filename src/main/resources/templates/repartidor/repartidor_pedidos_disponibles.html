@@ -61,7 +61,7 @@
                     </thead>
                     <tbody>
                     <tr th:each="pedidoDisponible, info : ${listaPedidosDisponibles}">
-                        <td th:text="${info.index + 1}"></td>
+                        <td th:text="${10*currentPage + info.index -9}"></td>
                         <td th:text="${pedidoDisponible.getrestaurante()}"></td>
                         <td th:text="${pedidoDisponible.getdistritorestaurante()}"></td>
                         <td th:text="${pedidoDisponible.getdireccioncliente()}"></td>
