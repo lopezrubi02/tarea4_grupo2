@@ -98,8 +98,7 @@
 								</div>
 								<div class="col-xl-6 col-lg-6 col-md-6 col-sm-12" th:if="${cancelar}">
 									<div class="row" style="padding-left:240px;">
-										<!-- TODO preguntar reconfirmación de cancelar pedido-->
-										<a th:href="@{'/cliente/cancelarpedido'}" style="width: 275px;"><button class="send">Cancelar pedido</button></a>
+										<a th:href="@{'/cliente/cancelarpedido'}" style="width: 275px;"><button onclick="return confirm('¿Esta seguro de cancelar este pedido?')" class="send">Cancelar pedido</button></a>
 									</div>
 								</div>
 							</br>
