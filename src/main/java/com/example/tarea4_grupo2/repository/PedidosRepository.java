@@ -14,13 +14,15 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
     @Query(value = "select re.nombre as restaurante, count(*) as vecesasistida from " +
             "proyecto.pedidos pe inner join proyecto.restaurante re " +
             "on (re.idrestaurante = pe.restauranteidrestaurante) where pe.idcliente = ?1 and " +
-            "year(pe.fechahorapedido) = ?2 and month(pe.fechahorapedido) = ?3 group by re.idrestaurante order by count(*) desc limit 0, 3", nativeQuery = true)
+            "year(pe.fechahorapedido) = ?2 and month(pe.fechahorapedido) = ?3 and pe.estadorepartidor = 'entregado'" +
+            "and pe.estadorestaurante = 'entregado' group by re.idrestaurante order by count(*) desc limit 0, 3", nativeQuery = true)
     List<Top3Restaurantes_ClienteDTO> obtenerTop3Restaurantes(int idcliente, int anio, int mes);
 /*Este es para hallar el dinero ahorrado*/
     @Query(value = "select sum((pepla.cantidadplatos * p.precio) - pe.montototal) as diferencia from proyecto.pedidos pe " +
             "inner join proyecto.pedidoshasplato pepla on (pepla.pedidosIdpedidos = pe.idpedidos) " +
             "inner join proyecto.plato p on (pepla.platoidplato = p.idplato) where " +
-            "pe.idcliente = ?1 and year(pe.fechahorapedido) = ?2 and month(pe.fechahorapedido) = ?3", nativeQuery = true)
+            "pe.idcliente = ?1 and year(pe.fechahorapedido) = ?2 and month(pe.fechahorapedido) = ?3 and pe.estadorepartidor = 'entregado'" +
+            "and pe.estadorestaurante = 'entregado'", nativeQuery = true)
     DineroAhorrado_ClienteDTO dineroAhorrado(int idcliente, int anio, int mes);
 /*Obtención del Top 3 de Platos*/
     @Query(value = "select p.nombre as nombreplato, count(*) as vecespedido \n" +
@@ -28,7 +30,8 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
             "inner join proyecto.pedidoshasplato pepla on (pepla.pedidosidpedidos = pe.idpedidos)\n" +
             "inner join proyecto.plato p on (pepla.platoidplato = p.idplato)\n" +
             "where pe.idcliente = ?1 and year(pe.fechahorapedido) = ?2\n" +
-            "and month(pe.fechahorapedido) = ?3 group by p.idplato order by count(*) desc limit 0, 3", nativeQuery = true)
+            "and month(pe.fechahorapedido) = ?3 and pe.estadorepartidor = 'entregado'" +
+            "and pe.estadorestaurante = 'entregado' group by p.idplato  order by count(*) desc limit 0, 3", nativeQuery = true)
     List<Top3Platos_ClientesDTO> obtenerTop3Platos(int idcliente, int anio, int mes);
 
     /*Halla el historial de consumo*/
@@ -36,14 +39,16 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
             "from proyecto.pedidos pe\n" +
             "inner join proyecto.restaurante re on (re.idrestaurante = pe.restauranteidrestaurante)\n" +
             "where pe.idcliente = ?1 and year(pe.fechahorapedido) = ?2\n" +
-            "and month(pe.fechahorapedido) = ?3 group by re.idrestaurante order by count(*) desc limit 0, 3 ", nativeQuery = true)
+            "and month(pe.fechahorapedido) = ?3 and pe.estadorepartidor = 'entregado'" +
+            "and pe.estadorestaurante = 'entregado' group by re.idrestaurante order by count(*) desc limit 0, 3 ", nativeQuery = true)
     List<HistorialConsumo_ClienteDTO> obtenerHistorialConsumo(int idcliente, int anio, int mes);
 
     /*Halla el tiempo promedio de delivery*/
     @Query(value = "SELECT re.nombre as nombrerestaurante, avg(pe.tiempodelivery) as tiempopromedio " +
             "FROM proyecto.pedidos pe inner join proyecto.restaurante re on " +
             "(re.idrestaurante = pe.restauranteidrestaurante) where pe.idcliente = ?1 and year(pe.fechahorapedido) = ?2 " +
-            "and month(pe.fechahorapedido) = ?3 group by re.idrestaurante order by count(*) desc", nativeQuery = true)
+            "and month(pe.fechahorapedido) = ?3 and pe.estadorepartidor = 'entregado'" +
+            "and pe.estadorestaurante = 'entregado' group by re.idrestaurante order by count(*) desc", nativeQuery = true)
     List<TiempoMedio_ClienteDTO> obtenerTiemposPromedio(int idcliente, int anio, int mes);
 
     /******ADMINISTRADOR SISTEMA**********/
