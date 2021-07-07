@@ -29,6 +29,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Optional;
@@ -193,9 +195,12 @@ public class LoginController {
         Usuario usuarioLogueado= usuarioRepository.findByEmail(auth.getName());
         session.setAttribute("usuarioLogueado",usuarioLogueado);
         DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime datetime1 = LocalDateTime.now();
-        //String formatDateTime = datetime1.format(format);
-        //System.out.println(formatDateTime);
+        ZoneId zoneId = ZoneId.of("America/Lima");
+        LocalDateTime datetime1 = LocalDateTime.now(zoneId);
+        String formatDateTime = datetime1.format(format);
+
+        System.out.println(formatDateTime);
+        System.out.println(datetime1);
 
         if (rol.equals("AdminRestaurante")){
             usuarioLogueado.setUltimafechaingreso(datetime1);
@@ -204,7 +209,6 @@ public class LoginController {
         }else if(rol.equals("AdminSistema")){
             usuarioLogueado.setUltimafechaingreso(datetime1);
             usuarioRepository.save(usuarioLogueado);
-            System.out.println("El rol es : "+rol);
             return "redirect:/admin/gestionCuentas";
         } else if(rol.equals("Repartidor")) {
             usuarioLogueado.setUltimafechaingreso(datetime1);

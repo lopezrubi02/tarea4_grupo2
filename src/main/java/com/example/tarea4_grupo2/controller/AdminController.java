@@ -985,6 +985,9 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
         model.addAttribute("rol",rol);
         model.addAttribute("searchField", searchField);
 
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        model.addAttribute("formatoFecha",format);
+
         return "adminsistema/ADMIN_ReportesVistaUsuarios";
     }
 
