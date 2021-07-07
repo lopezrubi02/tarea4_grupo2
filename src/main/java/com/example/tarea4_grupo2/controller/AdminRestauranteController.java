@@ -570,7 +570,6 @@ public class AdminRestauranteController {
                                Model model, HttpSession session){
 
         if(bindingResult.hasErrors()){
-
             /**Se obtiene Id de Restaurante**/
             Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
             Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
@@ -578,11 +577,51 @@ public class AdminRestauranteController {
             model.addAttribute("cupon",cupon);
             List<Plato> listaPlatos = platoRepository.buscarPlatosPorIdRestaurante(idrestaurante);
             model.addAttribute("listaPlatos",listaPlatos);
-            return "AdminRestaurantes/generarCupon";
+            if(cupon.getValordescuento() > cupon.getPlato().getPrecio()){
+                model.addAttribute("msg3", "El precio del descuento no puede ser mayor al precio del plato");
 
+            }
+            Date inicio = cupon.getFechainicio();
+            Date fin = cupon.getFechafin();
+            Date ahora = Date.valueOf(LocalDate.now());
+            if(fin.compareTo(inicio) < 0){
+                model.addAttribute("msg4", "La fecha de fin no puede ser antes que la fecha de inicio del cupon.");
+            }
+            return "AdminRestaurantes/generarCupon";
         }else {
 
             if (cupon.getIdcupones() == 0) {
+
+                if(cupon.getValordescuento() > cupon.getPlato().getPrecio()){
+                    model.addAttribute("msg3", "El precio del descuento no puede ser mayor al precio del plato");
+                    /**Se obtiene Id de Restaurante**/
+                    Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+                    Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
+                    /********************************/
+                    model.addAttribute("cupon",cupon);
+                    List<Plato> listaPlatos = platoRepository.buscarPlatosPorIdRestaurante(idrestaurante);
+                    model.addAttribute("listaPlatos",listaPlatos);
+                    Date inicio = cupon.getFechainicio();
+                    Date fin = cupon.getFechafin();
+                    if(fin.compareTo(inicio) < 0){
+                        model.addAttribute("msg4", "La fecha de fin no puede ser antes que la fecha de inicio del cupon.");
+                    }
+                    return "AdminRestaurantes/generarCupon";
+                }
+                Date inicio = cupon.getFechainicio();
+                Date fin = cupon.getFechafin();
+                if(fin.compareTo(inicio) < 0){
+                    /**Se obtiene Id de Restaurante**/
+                    Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+                    Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
+                    /********************************/
+                    model.addAttribute("cupon",cupon);
+                    List<Plato> listaPlatos = platoRepository.buscarPlatosPorIdRestaurante(idrestaurante);
+                    model.addAttribute("listaPlatos",listaPlatos);
+                    model.addAttribute("msg4", "La fecha de fin no puede ser antes que la fecha de inicio del cupon.");
+                    return "AdminRestaurantes/generarCupon";
+                }
+
 
                 cuponesRepository.save(cupon);
                 attr.addFlashAttribute("msg1", "Cupon creado exitosamente");
