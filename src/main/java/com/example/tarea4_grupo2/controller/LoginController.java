@@ -55,6 +55,9 @@ public class LoginController {
     @GetMapping("/registerAdminRestaurante")
     public String registerAdmin(@ModelAttribute("usuario") Usuario usuario, Model model){
         model.addAttribute("listadistritos",distritosRepository.findAll());
+        String direction=null;
+        model.addAttribute("direction",direction);
+        System.out.println(direction);
         return "AdminRestaurantes/register";
     }
     @PostMapping("/guardaradminrest")
@@ -63,7 +66,8 @@ public class LoginController {
                                @RequestParam("iddistrito") int iddistrito,
                                @RequestParam("direccion") String direccion,
                                Model model){
-
+        System.out.println(usuario.getContraseniaHash());
+        System.out.println(password2);
         if(bindingResult.hasErrors()){
             Optional<Usuario> persona = usuarioRepository.findByEmailAndAndRol(usuario.getEmail(), "AdminRestaurante");
             model.addAttribute("listadistritos",distritosRepository.findAll());
@@ -82,6 +86,7 @@ public class LoginController {
         else {
             //if(Pattern.matches("^[a-z0-9]+@gmail.com",usuario.getEmail())){
                 if(usuario.getContraseniaHash().equals(password2)) {
+                    System.out.println("aqui gozu");
                     if (validarContrasenia(usuario.getContraseniaHash())) {
                         Optional<Usuario> persona = usuarioRepository.findByEmailAndAndRol(usuario.getEmail(), "AdminRestaurante");
                         //Optional<Usuario> validardni = usuarioRepository.findByDniAndRol(usuario.getDni(), "AdminRestaurante");
@@ -149,7 +154,7 @@ public class LoginController {
                             model.addAttribute("msgdni","DNI no existe");
                         }
                         model.addAttribute("direction",direccion);
-                        model.addAttribute("msgcontra","La contraseña no cumple con los requisitos: mínimo 8 caracteres, un número y un caracter especial");
+                        model.addAttribute("msgcontra","La contraseña no cumple con los requisitos: mínimo 8 caracteres,una mayúscula, un número y un caracter especial");
                         model.addAttribute("listadistritos",distritosRepository.findAll());
                         return "AdminRestaurantes/register";
                     }
@@ -163,7 +168,7 @@ public class LoginController {
                         model.addAttribute("msgdni","DNI no existe");
                     }
                     if(!validarContrasenia(usuario.getContraseniaHash())){
-                        model.addAttribute("msgcontrapatron","La contraseña no cumple con los requisitos: mínimo 8 caracteres, un número y un caracter especial");
+                        model.addAttribute("msgcontrapatron","La contraseña no cumple con los requisitos: mínimo 8 caracteres,una mayúscula, un número y un caracter especial");
                     }
                     model.addAttribute("direction",direccion);
                     model.addAttribute("msgcontra","Contraseñas no son iguales");
@@ -293,8 +298,10 @@ public class LoginController {
                 0123456789$abcdefgAB
                 123Aa$Aa
          */
-        Pattern pattern1 = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$");
+        System.out.println(contrasenia1);
+        Pattern pattern1 = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[%!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$");
         Matcher matcher1 = pattern1.matcher(contrasenia1);
+        System.out.println(matcher1.matches());
         return matcher1.matches();
     }
 

@@ -116,6 +116,7 @@
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <label>Fecha Nacimiento</label>
+                                            <div class="text-danger" th:if="${#fields.hasErrors('fechaNacimiento')}" th:errors="*{fechaNacimiento}"></div>
                                             <input class="form-control"  type="date" th:field="*{fechaNacimiento}">
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
@@ -139,7 +140,8 @@
                                             <div id="error-distrito" class="text-danger"></div>
                                             <div id="error-direccion" class="text-danger"></div>
                                             <div class="input-group">
-                                                <input class="form-control" placeholder="Direccion" type="text" id="direccion" name="direccion" th:if="${direction!=null}" th:value="${direction}"/>
+                                                <input class="form-control" placeholder="Direccion" type="text" id="direccion" name="direccion" th:if="${direction==null}"/>
+                                                <input class="form-control" placeholder="Direccion" type="text" id="direccion" name="direccion" th:unless="${direction==null}" th:value="${direction}"/>
                                                 <span class="input-group-append"><img onclick="geocode()" src="https://st4.depositphotos.com/18690434/21687/v/600/depositphotos_216872396-stock-illustration-location-icon-location-concept-symbol.jpg" alt="" width="30" height="10"></span>
                                             </div>
                                         </div>

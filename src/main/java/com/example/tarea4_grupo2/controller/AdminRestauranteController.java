@@ -970,6 +970,7 @@ public class AdminRestauranteController {
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         if(sessionUser.getCuentaActiva()==1){
             Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
+            System.out.println(pedidosRepository.buscarPorReporte(name,idrestaurante));
             model.addAttribute("listaPedidosPorFecha",pedidosRepository.buscarPorReporte(name,idrestaurante));
             model.addAttribute("listaGanancias",pedidosRepository.gananciaPorMes(idrestaurante));
             model.addAttribute("platosTop5",pedidosRepository.platosMasVendidos(idrestaurante));
