@@ -27,9 +27,7 @@ public class WebSecurityConfigAdapter extends org.springframework.security.confi
                 .logoutSuccessUrl("/login")
                 .deleteCookies("JSESSIONID")
                 .invalidateHttpSession(true);
-
-
-
+        
         httpSecurity.authorizeRequests()
                 .antMatchers("/admin", "/admin/**").hasAuthority("AdminSistema")
                 .antMatchers("/cliente","/cliente/**").hasAuthority("Cliente")
