@@ -4,6 +4,7 @@ import com.example.tarea4_grupo2.dto.*;
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
 import com.example.tarea4_grupo2.service.SendMailService;
+import com.sun.javafx.UnmodifiableArrayList;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.json.JSONObject;
@@ -694,17 +695,23 @@ public class AdminRestauranteController {
 
     @GetMapping("/reporte")
     public String verReporte(Model model,HttpSession session,@RequestParam(name = "page", defaultValue = "1") String requestedPage,
-                             @RequestParam(name = "page2", defaultValue = "1") String requestedPage2){
+                             @RequestParam(name = "page2", defaultValue = "1") String requestedPage2,
+                             @RequestParam(name="name",defaultValue = "") String name,
+                             RedirectAttributes attr){
         Usuario usuario=(Usuario) session.getAttribute("usuarioLogueado");
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(usuario.getIdusuarios());
-        if(usuarioOptional.isPresent()) {
-            Usuario usuarioNuevo = usuarioOptional.get();
-            if(usuarioNuevo.getCuentaActiva()==1){
+            if(usuario.getCuentaActiva()==1){
                 float numberOfUsersPerPage = 7;
                 int page = Integer.parseInt(requestedPage);
                 int page2 = Integer.parseInt(requestedPage2);
                 int idrestaurante= restauranteRepository.buscarRestaurantePorIdAdmin(usuario.getIdusuarios()).get().getIdrestaurante();
-                List<PedidosReporteDto> pedidosReporte = pedidosRepository.listaPedidosReporteporFechamasantigua(idrestaurante);
+                List<PedidosReporteDto> pedidosReporte;
+                if(name==""){
+                    pedidosReporte = pedidosRepository.listaPedidosReporteporFechamasantigua(idrestaurante);
+                }
+                else{
+                    pedidosReporte=pedidosRepository.buscarPorReporte(name,idrestaurante);
+                }
                 List<PedidosGananciaMesDto> listaGanancias = pedidosRepository.gananciaPorMes(idrestaurante);
                 if(!(pedidosReporte.isEmpty())){
                     int numberOfPages = (int) Math.ceil(pedidosReporte.size() / numberOfUsersPerPage);
@@ -729,16 +736,18 @@ public class AdminRestauranteController {
                     model.addAttribute("maxNumberOfPages2", numberOfPages2);
                     model.addAttribute("platosTop5",pedidosRepository.platosMasVendidos(idrestaurante));
                     model.addAttribute("platosNoTop5",pedidosRepository.platosMenosVendidos(idrestaurante));
+                    System.out.println("Si hay");
+                    System.out.println(name);
+                    model.addAttribute("name",name);
                     return "AdminRestaurantes/reporte";
                 }else{
-                    return "redirect:/adminrest/login";
+                    System.out.println("No hay registros");
+                    attr.addFlashAttribute("msg_vacio","No hay resultados con esos reportes");
+                    return "redirect:/adminrest/reporte";
                 }
             }else{
-                return "redirect:/adminrest/login";
+                return "redirect:/login";
             }
-        }else{
-            return "redirect:/login";
-        }
     }
 
     private static CellStyle createVHCenterStyle(final Workbook wb) {
@@ -889,18 +898,16 @@ public class AdminRestauranteController {
     }
 
     @PostMapping("/buscarReporte")
-    public String searchReporte(@RequestParam("name") String name, Model model, HttpSession session) {
+    public String searchReporte(RedirectAttributes attr,@RequestParam("name") String name, Model model, HttpSession session) {
 
         /**Se obtiene Id de Restaurante**/
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         if(sessionUser.getCuentaActiva()==1){
             Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
             System.out.println(pedidosRepository.buscarPorReporte(name,idrestaurante));
-            model.addAttribute("listaPedidosPorFecha",pedidosRepository.buscarPorReporte(name,idrestaurante));
-            model.addAttribute("listaGanancias",pedidosRepository.gananciaPorMes(idrestaurante));
-            model.addAttribute("platosTop5",pedidosRepository.platosMasVendidos(idrestaurante));
-            model.addAttribute("platosNoTop5",pedidosRepository.platosMenosVendidos(idrestaurante));
-            return "AdminRestaurantes/reporte";
+            //model.addAttribute("listaPedidosPorFecha",pedidosRepository.buscarPorReporte(name,idrestaurante));
+            attr.addAttribute("name",name);
+            return "redirect:/adminrest/reporte";
         }
         else{
             return "redirect:/adminrest/login";
