@@ -736,13 +736,9 @@ public class AdminRestauranteController {
                     model.addAttribute("maxNumberOfPages2", numberOfPages2);
                     model.addAttribute("platosTop5",pedidosRepository.platosMasVendidos(idrestaurante));
                     model.addAttribute("platosNoTop5",pedidosRepository.platosMenosVendidos(idrestaurante));
-                    System.out.println("Si hay");
-                    System.out.println(name);
                     model.addAttribute("name",name);
                     return "AdminRestaurantes/reporte";
                 }else{
-                    System.out.println("No hay registros");
-                    attr.addFlashAttribute("msg_vacio","No hay resultados con esos reportes");
                     return "redirect:/adminrest/reporte";
                 }
             }else{
