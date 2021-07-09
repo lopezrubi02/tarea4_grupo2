@@ -6,6 +6,8 @@ import com.example.tarea4_grupo2.repository.*;
 import com.example.tarea4_grupo2.service.SendMailService;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.tomcat.util.http.fileupload.FileUploadBase;
+import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -18,9 +20,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.*;
@@ -361,9 +366,21 @@ public class AdminRestauranteController {
         }
     }
 
+    /*@ExceptionHandler(MaxUploadSizeExceededException.class)
+    public String handleError2(MaxUploadSizeExceededException e, RedirectAttributes redirectAttributes) throws MaxUploadSizeExceededException, IllegalStateException  {
+        try{
+            System.out.println("EXCEPCION5");
+            redirectAttributes.addFlashAttribute("msgFotoInvalida", "El archivo es muy grande");
+            return "redirect:/adminrest/menu";
+        }catch(MaxUploadSizeExceededException | IllegalStateException ex ){
+            redirectAttributes.addFlashAttribute("msgFotoInvalida", "El archivo es muy grande");
+            return "redirect:/adminrest/crearPlato";
+        }
+    }*/
+
     @PostMapping("/guardarPlato")
-    public String guardarPlato(@ModelAttribute("plato") @Valid Plato plato, BindingResult bindingResult, RedirectAttributes attr, Model model,
-                               @RequestParam( name="imagen", required = false) MultipartFile file, HttpSession session) throws IOException{
+    public String guardarPlato (@ModelAttribute("plato") @Valid Plato plato, BindingResult bindingResult, Model model, RedirectAttributes attr,
+                               @RequestParam( name="imagen", required = false) MultipartFile file, HttpSession session) throws IOException {
 
         if(bindingResult.hasErrors()) {
 
@@ -373,40 +390,90 @@ public class AdminRestauranteController {
             /********************************/
             model.addAttribute("plato",plato);
             model.addAttribute("iddelrestaurante", idrestaurante);
+
+            if(file.isEmpty()){
+                model.addAttribute("msgFotoInvalida", "Adjunte una imagen.");
+            }else{
+                if(!( (file.getContentType().contains("jpeg")) || (file.getContentType().contains("jpg")) || (file.getContentType().contains("png")) )) {
+                    model.addAttribute("msgFotoInvalida", "La foto no contiene el formato adecuado. Se aceptan solo archivos .jpeg, .jpg, .png");
+                    return "AdminRestaurantes/newPlato";
+                }
+            }
+
             return "AdminRestaurantes/newPlato";
 
-        }else{
-
-            String nombreplato = plato.getNombre();
+        }else {
+            /**Se obtiene Id de Restaurante**/
+            Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+            Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
+            /********************************/
 
             if (plato.getIdplato() == 0) {
 
-                platoRepository.save(plato);
-                Optional<Plato> platoguardado = platoRepository.buscarPlato(nombreplato);
-
-                if (platoguardado.isPresent()) {
-
-                    Plato plato1 = platoguardado.get();
-                    FotosPlatos fotosPlatos = new FotosPlatos();
-                    fotosPlatos.setIdplato(plato1);
-
-                    try {
-                        fotosPlatos.setFoto(file.getBytes());
-                        fotosPlatos.setFotocontenttype(file.getContentType());
-                        fotosPlatos.setFotonombre(file.getOriginalFilename());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        plato1.setActivo(0);
-                        platoRepository.save(plato1);
+                if (!(file.isEmpty())) {
+                    System.out.println("Hay archivo");
+                    if(!( (file.getContentType().contains("jpeg")) || (file.getContentType().contains("jpg")) || (file.getContentType().contains("png")) ||
+                            (file.getContentType().contains("JPEG")) || (file.getContentType().contains("JPG")) || (file.getContentType().contains("PNG")))) {
+                        model.addAttribute("msgFotoInvalida", "La foto no contiene el formato adecuado. Se aceptan solo archivos .jpeg, .jpg, .png");
+                        model.addAttribute("plato",plato);
+                        model.addAttribute("iddelrestaurante", idrestaurante);
+                        return "AdminRestaurantes/newPlato";
                     }
 
-                    fotosPlatosRepository.save(fotosPlatos);
-                    attr.addFlashAttribute("msg1", "Plato creado exitosamente");
+                    String nombreplato = plato.getNombre();
+                    platoRepository.save(plato);
+                    Optional<Plato> platoguardado = platoRepository.buscarPlato(nombreplato);
+
+                    if (platoguardado.isPresent()) {
+                        System.out.println("Plato guardado, se intenta guardar foto");
+                        Plato plato1 = platoguardado.get();
+                        FotosPlatos fotosPlatos = new FotosPlatos();
+                        fotosPlatos.setIdplato(plato1);
+                        try {
+                            System.out.println("Intentando");
+                            fotosPlatos.setFoto(file.getBytes());
+                            fotosPlatos.setFotocontenttype(file.getContentType());
+                            fotosPlatos.setFotonombre(file.getOriginalFilename());
+                        }catch (MaxUploadSizeExceededException exc){
+                            System.out.println("Excepcion de tamano");
+                            model.addAttribute("plato",plato);
+                            model.addAttribute("iddelrestaurante", idrestaurante);
+                            model.addAttribute("msgFotoInvalida", "El archivo es muy grande.");
+                            return "AdminRestaurantes/newPlato";
+                        }catch(IOException e) {
+                                System.out.println("ARCHIVO NO COMPATIBLE");
+                                e.printStackTrace();
+                                platoRepository.deleteById(plato1.getIdplato());
+                                model.addAttribute("plato",plato);
+                                model.addAttribute("iddelrestaurante", idrestaurante);
+                                model.addAttribute("msgFotoInvalida", "La foto no contiene el formato adecuado. Elija otra imagen.");
+                                return "AdminRestaurantes/newPlato";
+                        }
+                        System.out.println("GUARDANDO FOTOSPLATOS");
+                        fotosPlatosRepository.save(fotosPlatos);
+                        attr.addFlashAttribute("msg1", "Plato creado exitosamente");
+
+                    }else{
+
+                        model.addAttribute("plato",plato);
+                        model.addAttribute("iddelrestaurante", idrestaurante);
+                        model.addAttribute("msgFotoInvalida", "La foto no contiene el formato adecuado. Elija otra imagen.");
+                        return "AdminRestaurantes/newPlato";
+
+                    }
+
+                    return "redirect:/adminrest/menu";
+
+                }else{
+
+                    model.addAttribute("plato",plato);
+                    model.addAttribute("iddelrestaurante", idrestaurante);
+                    model.addAttribute("msgFotoInvalida", "Adjunte una imagen.");
+                    return "AdminRestaurantes/newPlato";
+
                 }
 
-                return "redirect:/adminrest/menu";
-
-            }else{
+        }else{
 
                 platoRepository.save(plato);
 
@@ -423,6 +490,10 @@ public class AdminRestauranteController {
                             fotosPlatos.setFotonombre(file.getOriginalFilename());
                         } catch (IOException e) {
                             e.printStackTrace();
+                            model.addAttribute("plato",plato);
+                            model.addAttribute("iddelrestaurante", idrestaurante);
+                            model.addAttribute("msgFotoInvalida", "La foto no contiene el formato adecuado. Elija otra imagen.");
+                            return "AdminRestaurantes/newPlato";
                         }
                         fotosPlatosRepository.save(fotosPlatos);
 
@@ -436,6 +507,10 @@ public class AdminRestauranteController {
                             fotosPlatos.setFotonombre(file.getOriginalFilename());
                         } catch (IOException e) {
                             e.printStackTrace();
+                            model.addAttribute("plato",plato);
+                            model.addAttribute("iddelrestaurante", idrestaurante);
+                            model.addAttribute("msgFotoInvalida", "La foto no contiene el formato adecuado. Elija otra imagen.");
+                            return "AdminRestaurantes/newPlato";
                         }
                         fotosPlatosRepository.save(fotosPlatos);
                     }

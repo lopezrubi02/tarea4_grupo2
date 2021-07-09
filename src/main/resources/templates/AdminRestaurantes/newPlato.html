@@ -72,6 +72,7 @@
                                             <input type="hidden" name="disponibilidad" id="disponibilidad" th:value="1">
                                             <input type="hidden" name="restaurante" id="restaurante" th:value="${iddelrestaurante}">
                                             <label>Imagen</label>
+                                            <div th:if="${msgFotoInvalida != null}" th:text="${msgFotoInvalida}" class="text-danger"></div>
                                             <input class="form-control" type="file" id="imagen" name="imagen">
                                         </div>
                                         </br>
