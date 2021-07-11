@@ -609,6 +609,7 @@ public class AdminRestauranteController {
         model.addAttribute("cupon",cupon);
         List<Plato> listaPlatos = platoRepository.buscarPlatosPorIdRestaurante(idrestaurante);
         model.addAttribute("listaPlatos",listaPlatos);
+        model.addAttribute("index",0);
         return "AdminRestaurantes/generarCupon";
     }
 
@@ -643,7 +644,7 @@ public class AdminRestauranteController {
 
     @PostMapping("/guardarCupon")
     public String guardarCupon(@ModelAttribute("cupon") @Valid Cupones cupon, BindingResult bindingResult, RedirectAttributes attr,
-                               Model model, HttpSession session){
+                               Model model, HttpSession session,@RequestParam("index") int index){
 
         if(bindingResult.hasErrors()){
             /**Se obtiene Id de Restaurante**/
@@ -663,6 +664,7 @@ public class AdminRestauranteController {
             if(fin.compareTo(inicio) < 0){
                 model.addAttribute("msg4", "La fecha de fin no puede ser antes que la fecha de inicio del cupon.");
             }
+            model.addAttribute("index",index);
             return "AdminRestaurantes/generarCupon";
         }else {
 
@@ -682,6 +684,7 @@ public class AdminRestauranteController {
                     if(fin.compareTo(inicio) < 0){
                         model.addAttribute("msg4", "La fecha de fin no puede ser antes que la fecha de inicio del cupon.");
                     }
+                    model.addAttribute("index",index);
                     return "AdminRestaurantes/generarCupon";
                 }
                 Date inicio = cupon.getFechainicio();
@@ -695,6 +698,7 @@ public class AdminRestauranteController {
                     List<Plato> listaPlatos = platoRepository.buscarPlatosPorIdRestaurante(idrestaurante);
                     model.addAttribute("listaPlatos",listaPlatos);
                     model.addAttribute("msg4", "La fecha de fin no puede ser antes que la fecha de inicio del cupon.");
+                    model.addAttribute("index",index);
                     return "AdminRestaurantes/generarCupon";
                 }
 

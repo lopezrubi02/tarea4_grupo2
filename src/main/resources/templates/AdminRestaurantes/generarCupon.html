@@ -43,6 +43,10 @@
                                 <form method="post" th:action="@{'/adminrest/guardarCupon'}" class="main_form" th:object="${cupon}">
                                     <input th:field="*{idcupones}" type="hidden"/>
                                     <input th:field="*{restaurante}" type="hidden"/>
+                                    <input name="index" id="index" th:value="${index}" type="hidden"/>
+                                    <select name="precios" id="precios" style="display: none">
+                                        <option th:each="precio:${listaPlatos}" th:value="${precio.precio}"></option>
+                                    </select>
                                     <div class="row">
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <label class="col-xl-12 col-lg-12 col-md-12 col-sm-12" for="nombre">Nombre del cupon</label>
@@ -83,10 +87,14 @@
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:unless="${cupon.idcupones}">
                                             <label for="plato">Plato asociado</label><br>
-                                            <select class="form-select" style="margin-bottom:20px;width: 100%;height: 50px;border: #fff solid 2px;box-shadow: 0 0 0 .2rem rgba(255, 255, 255, .25);" th:field="*{plato}">
+                                            <select id="platonombre" class="form-select" style="margin-bottom:20px;width: 100%;height: 50px;border: #fff solid 2px;box-shadow: 0 0 0 .2rem rgba(255, 255, 255, .25);" th:field="*{plato}">
                                                 <option th:each="plato: ${listaPlatos}" th:value="${plato.idplato}" th:text="${plato.nombre}"
                                                         th:selected="${plato.idplato == cupon.plato}"></option>
                                             </select>
+                                        </div>
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                            <label for="precioplato">Precio del plato (S/.)</label>
+                                            <input class="form-control" name="precioplato" id="precioplato" type="text" disabled>
                                         </div>
                                         </br>
                                         </br>
@@ -180,6 +188,15 @@
                 }
             })
         })
+    </script>
+    <script>
+        var index=document.getElementById("index").value;
+        document.getElementById("precioplato").value=document.getElementById("precios").options[index].value;
+        $("#platonombre").change(function(){
+            var index=document.getElementById("platonombre").selectedIndex;
+            document.getElementById("index").value=index;
+            document.getElementById("precioplato").value=document.getElementById("precios").options[index].value;
+        });
     </script>
 </div>
 </body>
