@@ -661,8 +661,10 @@ public class AdminRestauranteController {
             Date inicio = cupon.getFechainicio();
             Date fin = cupon.getFechafin();
             Date ahora = Date.valueOf(LocalDate.now());
-            if(fin.compareTo(inicio) < 0){
-                model.addAttribute("msg4", "La fecha de fin no puede ser antes que la fecha de inicio del cupon.");
+            if( (inicio != null) && (fin != null)) {
+                if (fin.compareTo(inicio) < 0) {
+                    model.addAttribute("msg4", "La fecha de fin no puede ser antes que la fecha de inicio del cupon.");
+                }
             }
             model.addAttribute("index",index);
             return "AdminRestaurantes/generarCupon";
@@ -785,10 +787,13 @@ public class AdminRestauranteController {
                 int page2 = Integer.parseInt(requestedPage2);
                 int idrestaurante= restauranteRepository.buscarRestaurantePorIdAdmin(usuario.getIdusuarios()).get().getIdrestaurante();
                 List<PedidosReporteDto> pedidosReporte;
-                if(name==""){
+                if(name.equals("")){
+                    System.out.println("Trace1");
                     pedidosReporte = pedidosRepository.listaPedidosReporteporFechamasantigua(idrestaurante);
                 }
                 else{
+                    System.out.println("Trace2");
+                    System.out.println(name);
                     pedidosReporte=pedidosRepository.buscarPorReporte(name,idrestaurante);
                 }
                 List<PedidosGananciaMesDto> listaGanancias = pedidosRepository.gananciaPorMes(idrestaurante);
@@ -818,6 +823,7 @@ public class AdminRestauranteController {
                     model.addAttribute("name",name);
                     return "AdminRestaurantes/reporte";
                 }else{
+                    attr.addFlashAttribute("registroVacio","No se encontraron registros con la búsqueda especificada.");
                     return "redirect:/adminrest/reporte";
                 }
             }else{
@@ -980,6 +986,7 @@ public class AdminRestauranteController {
         if(sessionUser.getCuentaActiva()==1){
             Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
             System.out.println(pedidosRepository.buscarPorReporte(name,idrestaurante));
+            System.out.println("Trace3");
             //model.addAttribute("listaPedidosPorFecha",pedidosRepository.buscarPorReporte(name,idrestaurante));
             attr.addAttribute("name",name);
             return "redirect:/adminrest/reporte";

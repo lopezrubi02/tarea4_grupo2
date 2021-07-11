@@ -6,6 +6,7 @@ import org.springframework.format.annotation.NumberFormat;
 import javax.persistence.*;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.sql.Date;
 
@@ -30,9 +31,11 @@ public class Cupones {
     @Column(nullable = false)
     private float valordescuento;
 
+    @NotNull(message = "Elija una fecha de inicio")
     @Column(nullable = false)
     private java.sql.Date fechainicio;
 
+    @NotNull(message = "Elija una fecha de fin")
     @Column(nullable = false)
     private java.sql.Date fechafin;
 
