@@ -71,11 +71,13 @@
                                         <form class="main_form">
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <label class="col-xl-12 col-lg-12 col-md-12 col-sm-12" for="fechainicio">Fecha de inicio</label>
+                                                <div class="text-danger" th:if="${#fields.hasErrors('fechainicio')}" th:errors="*{fechainicio}"></div>
                                                 <div th:if="${msg4 != null}" th:text="${msg4}" class="text-danger"></div>
                                                 <input class="form-control" type="date" th:field="${cupon.fechainicio}">
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <label class="col-xl-12 col-lg-12 col-md-12 col-sm-12" for="fechafin">Fecha de fin</label>
+                                                <div class="text-danger" th:if="${#fields.hasErrors('fechafin')}" th:errors="*{fechafin}"></div>
                                                 <input class="form-control" type="date" th:field="${cupon.fechafin}">
                                             </div>
                                         </form>
