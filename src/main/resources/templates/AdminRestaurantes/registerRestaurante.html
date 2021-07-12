@@ -116,32 +116,32 @@
                 <div class="footer">
                     <div class="container-fluid">
                         <div class="row">
-                            <div class="col-md-12">
-                                <h2>Llena el siguiente formulario</h2>
-                            </div>
+                            <h2>Llena el siguiente formulario</h2>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                                 <form method="post" th:action="@{/adminrest/categorias}" class="main_form" th:object="${restaurante}" enctype="multipart/form-data">
                                     <div class="row">
                                         <input class="form-control" type="hidden" th:field="*{usuario}">
                                         <input class="form-control" type="hidden" name="distrito" id="distrito">
                                         <input class="form-control" type="hidden" name="iddistrito" id="iddistrito">
+                                        <input class="form-control" type="hidden" id="direccion_real" name="direccion_real" value="">
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <label>Nombre del restaurante</label>
                                             <div class="text-danger" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
-                                            <input class="form-control" placeholder="Nombre del Restaurante" type="text" th:field="*{nombre}">
+                                            <input style="height: 50px" class="form-control" placeholder="Nombre del Restaurante" type="text" th:field="*{nombre}">
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <label>RUC</label>
                                             <div th:if="${msgrucerror != null}" th:text="${msgrucerror}" class="text-danger"></div>
                                             <div class="text-danger" th:if="${#fields.hasErrors('ruc')}" th:errors="*{ruc}"></div>
-                                            <input class="form-control" placeholder="RUC" type="text" th:field="*{ruc}">
+                                            <input style="height: 50px"  class="form-control" placeholder="RUC" type="text" th:field="*{ruc}">
                                         </div>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" style="padding-top: 25px">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <label id="direccion-texto">Direccion: Debe hacer click para validar</label>
                                             <div id="error-distrito" class="text-danger"></div>
                                             <div id="error-direccion" class="text-danger"></div>
                                             <div class="input-group">
-                                                <input class="form-control" placeholder="Direccion" type="text" id="direccion" name="direccion" th:if="${direction!=null}" th:value="${direction}"/>
+                                                <input style="height: 50px"  class="form-control" placeholder="Direccion" type="text" id="direccion" name="direccion" th:if="${direction==null}" disabled/>
+                                                <input style="height: 50px"  class="form-control" placeholder="Direccion" type="text" id="direccion" name="direccion" th:unless="${direction==null}" th:value="${direction}" disabled/>
                                                 <span class="input-group-append"><img onclick="geocode()" src="https://st4.depositphotos.com/18690434/21687/v/600/depositphotos_216872396-stock-illustration-location-icon-location-concept-symbol.jpg" alt="" width="30" height="10"></span>
                                             </div>
                                         </div>
@@ -154,15 +154,15 @@
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" style="padding-top: 25px">
                                             <label>Imagen</label>
-                                            <input class="form-control" type="file" id="imagen" name="imagen" >
+                                            <input style="height: 50px"  class="form-control" type="file" id="imagen" name="imagen" >
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <div class="row">
                                                 <div class="col-md-4">
-                                                    <button id="registrar" class="send" type="submit" style="display: none" >Registrar</button>
+                                                    <a class="send" th:href="@{/adminrest/sinrestaurante}" style="text-align: center">Regresar</a>
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <a class="send" th:href="@{/adminrest/sinrestaurante}" style="text-align: center">Regresar</a>
+                                                    <button id="registrar" class="send" type="submit" style="display: none" >Registrar</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -318,13 +318,15 @@
                             }
                             if(calle===undefined||numero===undefined){
                                 document.getElementById("direccion").value="";
+                                document.getElementById("direccion_real").value="";
                                 document.getElementById("error-direccion").className="text-danger";
-                                document.getElementById("error-direccion").innerHTML="Dirección no reconocida escriba la dirección";
+                                document.getElementById("error-direccion").innerHTML="Dirección no reconocida";
                             }
                             else{
-                                document.getElementById("direccion").value=calle+" "+numero;
+                                document.getElementById("direccion").value=calle+" "+numero+", "+distrito;
+                                document.getElementById("direccion_real").value=calle+" "+numero+", "+distrito;
                                 document.getElementById("error-direccion").className="text-success";
-                                document.getElementById("error-direccion").innerHTML="Si desea, puede editar la direccion";
+                                document.getElementById("error-direccion").innerHTML="Dirección reconocida";
                             }
                         })
                     google.maps.event.addListener(marker, "dragend", function (evt) {
@@ -360,13 +362,15 @@
                                 }
                                 if(calle===undefined||numero===undefined){
                                     document.getElementById("direccion").value="";
+                                    document.getElementById("direccion_real").value="";
                                     document.getElementById("error-direccion").className="text-danger";
-                                    document.getElementById("error-direccion").innerHTML="Dirección no reconocida escriba la dirección";
+                                    document.getElementById("error-direccion").innerHTML="Dirección no reconocida";
                                 }
                                 else{
-                                    document.getElementById("direccion").value=calle+" "+numero;
+                                    document.getElementById("direccion").value=calle+" "+numero+", "+distrito;
+                                    document.getElementById("direccion_real").value=calle+" "+numero+", "+distrito;
                                     document.getElementById("error-direccion").className="text-success";
-                                    document.getElementById("error-direccion").innerHTML="Si desea, puede editar la direccion";
+                                    document.getElementById("error-direccion").innerHTML="Dirección reconocida";
                                 }
 
                             })

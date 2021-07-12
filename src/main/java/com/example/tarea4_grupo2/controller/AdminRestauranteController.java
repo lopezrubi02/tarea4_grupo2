@@ -110,8 +110,8 @@ public class AdminRestauranteController {
     @PostMapping("/categorias")
     public String esperaConfirmacion(@ModelAttribute("restaurante") @Valid Restaurante restaurante,BindingResult bindingResult,
                                      @RequestParam("imagen") MultipartFile file,
-                                     @RequestParam("direccion") String direccion,
                                      @RequestParam("iddistrito") Integer iddistrito,
+                                     @RequestParam("direccion_real") String direccion,
                                      Model model,
                                      HttpSession session) throws IOException {
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
@@ -167,6 +167,8 @@ public class AdminRestauranteController {
         restaurante.setUsuario(sessionUser);
         model.addAttribute("listadistritos",distritosRepository.findAll());
         model.addAttribute("restaurante",restaurante);
+        String direction=null;
+        model.addAttribute("direction",direction);
         return "AdminRestaurantes/registerRestaurante";
     }
 
