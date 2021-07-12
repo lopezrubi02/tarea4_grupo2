@@ -46,14 +46,16 @@
         <!-- about -->
         <div class="about">
             <div class="container">
+                <div style="font-size: 20px" th:if="${suceso != null}" th:text="${suceso}" class="alert-success"></div>
+                <br>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="row">
                             <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 about_img_boxpdnt">
-                                <figure><img th:src="@{/adminrest/imagen}" alt="#/"></figure>
+                                <figure align="center"><img th:src="@{/adminrest/imagen}" alt="#/"></figure>
                                 <form method="post" th:action="@{'/adminrest/guardarrestedit'}" th:object="${restaurante}" enctype="multipart/form-data">
                                     <input type="hidden" th:field="*{usuario.idusuarios}">
-                                    <div class="about_box" style="height: 720px">
+                                    <div class="about_box" style="height: 640px">
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <label>Nombre del restaurante</label>
                                             <input class="form-control" th:value="*{nombre}" type="text" disabled>
@@ -64,19 +66,9 @@
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <label>Direccion del restaurante</label>
-                                            <div class="text-danger" th:if="${#fields.hasErrors('direccion')}" th:errors="*{direccion}"></div>
-                                            <input class="form-control" th:field="*{direccion}" th:value="*{direccion}" type="text">
+                                            <input class="form-control" th:value="${direccion_rest}" type="text" disabled>
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <label>Distrito</label>
-                                            <select type="text" class="form-select" th:field="*{distrito.iddistritos}"style="width: 100%;height: 50px;border: #fff solid 2px;box-shadow: 0 0 0 .2rem rgba(255, 255, 255, .25);">
-                                                <option th:each="lista : ${listadistritos}"
-                                                        th:text="${lista.nombredistrito}"
-                                                        th:value="${lista.iddistritos}"
-                                                        th:selected="${lista.nombredistrito==restaurante.distrito.nombredistrito}"></option>
-                                            </select>
-                                        </div>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" style="padding-top: 25px">
                                             <label>Imagen</label>
                                             <input class="form-control" type="file" id="imagen" name="imagen" >
                                         </div>
@@ -105,8 +97,6 @@
                                             <input th:field="*{idusuarios}" th:value="*{idusuarios}" type="hidden">
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <label>Correo</label>
-                                                <div th:if="${mensajemail != null}" th:text="${mensajemail}" class="text-danger"></div>
-                                                <div th:if="${mensajemail2 != null}" th:text="${mensajemail2}" class="text-danger"></div>
                                                 <input class="form-control" type="text" th:value="${datos.email}" disabled>
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
@@ -124,7 +114,8 @@
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <label>Número de celular</label>
                                                 <div class="text-danger" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}"></div>
-                                                <input class="form-control" type="number" th:field="*{telefono}">
+                                                <input class="form-control" type="text" id="telefono" name="telefono" th:unless="${usuario.telefono!=null}" th:value="${telefono}">
+                                                <input class="form-control" type="text" id="telefono" name="telefono" th:if="${usuario.telefono!=null}" th:value="${usuario.telefono}">
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <label>Fecha de nacimiento</label>
@@ -144,12 +135,14 @@
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <label>Contraseña</label>
+                                                <div th:if="${msg != null}" th:text="${msg}" class="text-danger"></div>
+                                                <div th:if="${msg2 != null}" th:text="${msg2}" class="text-danger"></div>
                                                 <div th:if="${msgpasserror != null}" th:text="${msgpasserror}" class="text-danger"></div>
-                                                <input placeholder="Confirmar contraseña" class="form-control" type="password" id="pass" name="pass">
+                                                <div class="text-danger" th:if="${#fields.hasErrors('contraseniaHash')}" th:errors="*{contraseniaHash}"></div>
+                                                <input placeholder="Contraseña" class="form-control" type="password" th:field="*{contraseniaHash}">
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <label>Confirmar contraseña</label>
-                                                <div th:if="${msgpasserror != null}" th:text="${msgpasserror}" class="text-danger"></div>
                                                 <input placeholder="Confirmar contraseña" class="form-control" type="password" id="pass2" name="pass2">
                                             </div>
                                             <div class="row">
