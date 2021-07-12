@@ -90,6 +90,7 @@
                                         <input class="form-control" type="hidden" name="iddistrito" id="iddistrito">
                                         <input class="form-control" type="hidden" id="rol" name="rol" value="AdminRestaurante">
                                         <input class="form-control" type="hidden" id="cuentaActiva" name="cuentaActiva" value="3">
+                                        <input class="form-control" type="hidden" id="direccion_real" name="direccion_real" value="">
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <label>Nombre</label>
                                             <div class="text-danger" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
@@ -140,8 +141,8 @@
                                             <div id="error-distrito" class="text-danger"></div>
                                             <div id="error-direccion" class="text-danger"></div>
                                             <div class="input-group">
-                                                <input class="form-control" placeholder="Direccion" type="text" id="direccion" name="direccion" th:if="${direction==null}"/>
-                                                <input class="form-control" placeholder="Direccion" type="text" id="direccion" name="direccion" th:unless="${direction==null}" th:value="${direction}"/>
+                                                <input class="form-control" placeholder="Direccion" type="text" id="direccion" name="direccion" th:if="${direction==null}" disabled/>
+                                                <input class="form-control" placeholder="Direccion" type="text" id="direccion" name="direccion" th:unless="${direction==null}" th:value="${direction}" disabled/>
                                                 <span class="input-group-append"><img onclick="geocode()" src="https://st4.depositphotos.com/18690434/21687/v/600/depositphotos_216872396-stock-illustration-location-icon-location-concept-symbol.jpg" alt="" width="30" height="10"></span>
                                             </div>
                                         </div>
@@ -266,13 +267,15 @@
                             }
                             if(calle===undefined||numero===undefined){
                                 document.getElementById("direccion").value="";
+                                document.getElementById("direccion_real").value="";
                                 document.getElementById("error-direccion").className="text-danger";
-                                document.getElementById("error-direccion").innerHTML="Dirección no reconocida escriba la dirección";
+                                document.getElementById("error-direccion").innerHTML="Dirección no reconocida";
                             }
                             else{
-                                document.getElementById("direccion").value=calle+" "+numero;
+                                document.getElementById("direccion").value=calle+" "+numero+", "+distrito;
+                                document.getElementById("direccion_real").value=calle+" "+numero+", "+distrito;
                                 document.getElementById("error-direccion").className="text-success";
-                                document.getElementById("error-direccion").innerHTML="Si desea, puede editar la direccion";
+                                document.getElementById("error-direccion").innerHTML="Dirección reconocida";
                             }
                         })
                     google.maps.event.addListener(marker, "dragend", function (evt) {
@@ -308,13 +311,15 @@
                                 }
                                 if(calle===undefined||numero===undefined){
                                     document.getElementById("direccion").value="";
+                                    document.getElementById("direccion_real").value="";
                                     document.getElementById("error-direccion").className="text-danger";
-                                    document.getElementById("error-direccion").innerHTML="Dirección no reconocida escriba la dirección";
+                                    document.getElementById("error-direccion").innerHTML="Dirección no reconocida";
                                 }
                                 else{
-                                    document.getElementById("direccion").value=calle+" "+numero;
+                                    document.getElementById("direccion").value=calle+" "+numero+", "+distrito;
+                                    document.getElementById("direccion_real").value=calle+" "+numero+", "+distrito;
                                     document.getElementById("error-direccion").className="text-success";
-                                    document.getElementById("error-direccion").innerHTML="Si desea, puede editar la direccion";
+                                    document.getElementById("error-direccion").innerHTML="Dirección reconocida";
                                 }
 
                             })

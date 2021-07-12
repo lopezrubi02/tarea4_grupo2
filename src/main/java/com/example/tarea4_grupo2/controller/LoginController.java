@@ -64,7 +64,7 @@ public class LoginController {
     public String guardarAdmin(@ModelAttribute("usuario") @Valid Usuario usuario, BindingResult bindingResult,
                                @RequestParam("password2") String password2,
                                @RequestParam("iddistrito") int iddistrito,
-                               @RequestParam("direccion") String direccion,
+                               @RequestParam("direccion_real") String direccion,
                                Model model){
         System.out.println(usuario.getContraseniaHash());
         System.out.println(password2);
