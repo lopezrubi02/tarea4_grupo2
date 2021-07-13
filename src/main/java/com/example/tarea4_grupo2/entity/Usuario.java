@@ -59,8 +59,8 @@ public class Usuario implements Serializable {
 
     @Column(nullable = false)
     @NotBlank(message = "No puede estar vacío")
-    @Size(max=8,message = "No puede tenr más de 8 dígitos")
-    @Size(min=8,message = "No puede tenr menos de 8 dígitos")
+    @Size(max=8,message = "No puede tener más de 8 dígitos")
+    @Size(min=8,message = "No puede tener menos de 8 dígitos")
     @Pattern(regexp = "^[0-9]*$",message = "Solo puede contener números")
     private String dni;
 
