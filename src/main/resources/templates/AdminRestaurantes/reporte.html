@@ -202,6 +202,12 @@
         <div class="row table-users">
           <!-- table -->
           <div class="col-md-12">
+            <select id="platosTopVendidos5" style="display: none">
+              <option th:each="p:${platosTop5}"
+                      th:text="${p.getnombreplato()}"
+                      th:value="${p.getcantidad()}">
+              </option>
+            </select>
             <div class="table-responsive">
               <table class="table table-striped" style="width: 600px" align="center">
                 <thead >
@@ -221,6 +227,9 @@
               </table>
             </div>
           </div>
+        </div>
+        <div class="container" style="width: 1000px; height: 500px">
+          <canvas id="myChartPlatosMasVendidos" width="1000px" height="500px"></canvas>
         </div>
       </div>
       <br>
@@ -286,8 +295,44 @@
 <script src="/js/owl.carousel.min.js"></script>
 <script src="/js/custom.js"></script>
 <script src="/js/jquery.mCustomScrollbar.concat.min.js"></script>
-
 <script src="/js/jquery-3.0.0.min.js"></script>
+
+<script>
+  let myChart;
+  var ctx = document.getElementById('myChartPlatosMasVendidos').getContext('2d');
+  var listaPlatosTopDto=document.getElementById("platosTopVendidos5");
+  var nombresPlatos=[listaPlatosTopDto.length];
+  var cantidadPlatos=[listaPlatosTopDto.length];
+  for(var i=0;i<listaPlatosTopDto.length;i++){
+    nombresPlatos[i]=listaPlatosTopDto[i].text;
+    console.log(nombresPlatos[i]);
+    cantidadPlatos[i]=listaPlatosTopDto[i].value;
+    console.log(cantidadPlatos[i]);
+  }
+  myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: nombresPlatos,
+      datasets: [{
+        label: 'Cantidad de platos vendidos',
+        data: cantidadPlatos,
+        backgroundColor: [
+          'rgb(216,176,15)',
+        ],
+        borderColor: [
+          'rgba(0,3,3,0.95)',
+        ],
+        borderWidth: 2
+      }]
+    },
+    options: {
+      scales: {
+        y: {}
+      }
+    }
+  });
+
+</script>
 <script type="text/javascript">
   $(document).ready(function() {
     $("#sidebar").mCustomScrollbar({
@@ -318,7 +363,10 @@
     height: auto;
   }
 </style>
-
+<script>
+  //console.log(document.getElementById("platosTopVendidos5"));
+  //console.log("Hola");
+</script>
 
 <script>
   $(document).ready(function() {

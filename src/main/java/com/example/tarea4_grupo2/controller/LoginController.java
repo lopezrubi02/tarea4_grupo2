@@ -98,6 +98,7 @@ public class LoginController {
                                 usuarioRepository.save(usuario);
                                 Usuario usuarionuevo = usuarioRepository.findByEmail(usuario.getEmail());
                                 Direcciones direccionactual = new Direcciones();
+                                direccion = direccion.split(",")[0];
                                 direccionactual.setDireccion(direccion);
                                 Distritos distritosactual = distritosRepository.findById(iddistrito).get();
                                 direccionactual.setDistrito(distritosactual);
