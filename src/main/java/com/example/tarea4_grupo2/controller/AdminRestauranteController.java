@@ -132,6 +132,7 @@ public class AdminRestauranteController {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    direccion = direccion.split(",")[0];
                     restaurante.setDireccion(direccion);
                     Distritos distrito = distritosRepository.findById(iddistrito).get();
                     restaurante.setDistrito(distrito);

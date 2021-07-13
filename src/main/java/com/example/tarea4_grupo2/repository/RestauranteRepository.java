@@ -73,7 +73,7 @@ public interface RestauranteRepository extends JpaRepository<Restaurante, Intege
             "inner join distritos d\n" +
             "            on d.iddistritos = r.iddistrito\n" +
             "            where d.nombredistrito = ?1 " +
-            " group by p.restauranteidrestaurante having sum(p.precio)/count(p.precio) <15",nativeQuery = true)
+            " group by p.restauranteidrestaurante having sum(p.precio)/count(p.precio) <=15",nativeQuery = true)
     List<Restaurante> listarestprecio1(String nombredistrito);
 
     @Query(value = "select r.*\n" +
@@ -83,7 +83,7 @@ public interface RestauranteRepository extends JpaRepository<Restaurante, Intege
             "inner join distritos d\n" +
             "            on d.iddistritos = r.iddistrito\n" +
             "            where d.nombredistrito = ?1 " +
-            " group by p.restauranteidrestaurante having sum(p.precio)/count(p.precio) <25 and sum(p.precio)/count(p.precio) > 15",nativeQuery = true)
+            " group by p.restauranteidrestaurante having sum(p.precio)/count(p.precio) <=25 and sum(p.precio)/count(p.precio) > 15",nativeQuery = true)
     List<Restaurante> listarestprecio2(String nombredistrito);
 
     @Query(value = "select r.*\n" +
@@ -93,7 +93,7 @@ public interface RestauranteRepository extends JpaRepository<Restaurante, Intege
             "inner join distritos d\n" +
             "            on d.iddistritos = r.iddistrito\n" +
             "            where d.nombredistrito = ?1 " +
-            " group by p.restauranteidrestaurante having sum(p.precio)/count(p.precio) <40 and sum(p.precio)/count(p.precio) > 25",nativeQuery = true)
+            " group by p.restauranteidrestaurante having sum(p.precio)/count(p.precio) <=40 and sum(p.precio)/count(p.precio) > 25",nativeQuery = true)
     List<Restaurante> listarestprecio3(String nombredistrito);
 
     @Query(value = "select r.*\n" +

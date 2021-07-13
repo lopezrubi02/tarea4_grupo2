@@ -13,6 +13,8 @@ public class Distritos {
 
     private String nombredistrito;
 
+    private String distritosalrededor;
+
     public int getIddistritos() {
         return iddistritos;
     }
@@ -27,5 +29,13 @@ public class Distritos {
 
     public void setNombredistrito(String nombredistrito) {
         this.nombredistrito = nombredistrito;
+    }
+
+    public String getDistritosalrededor() {
+        return distritosalrededor;
+    }
+
+    public void setDistritosalrededor(String distritosalrededor) {
+        this.distritosalrededor = distritosalrededor;
     }
 }

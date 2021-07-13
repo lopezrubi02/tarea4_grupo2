@@ -180,6 +180,11 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
             "from pedidos p where p.restauranteidrestaurante = ?1 and p.estadorestaurante = 'entregado'", nativeQuery = true)
     BigDecimal calificacionPromedio(Integer id);
 
+    @Query(value = "select\n" +
+            "            avg(p.calificacionrestaurante) as calificacionpromedio\n" +
+            "            from pedidos p where p.idrepartidor = ?1 and p.estadorepartidor = 'entregado'",nativeQuery = true)
+    BigDecimal calificacionpromediorepartidor(int idrepartidor);
+
     @Query(value="select p.idpedidos as idpedidos,\n" +
             "pl.nombre as nombre,\n" +
             "php.descripcion as descripcion,\n" +
@@ -241,7 +246,7 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
             "on p.direccionentrega = d.iddirecciones\n" +
             "inner join metodospago mp\n" +
             "on mp.idmetodospago = p.idmetodopago\n" +
-            "where p.idcliente = ?1",nativeQuery = true)
+            "where p.idcliente = ?1 and p.estadorestaurante = 'entregado' and p.estadorepartidor = 'entregado'",nativeQuery = true)
     List<PedidosclienteaexcelDTO> listapedidosexcel(int idcliente);
 
     @Query(value = "select * from pedidos where idcliente=?1 and montototal!='0' and estadorestaurante!=\"entregado\" and estadorepartidor != \"entregado\"",nativeQuery = true)

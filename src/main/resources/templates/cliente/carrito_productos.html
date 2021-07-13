@@ -84,8 +84,8 @@
                                         </li>
                                     </ul>
                                 </div>
-                                <div class="right_header_info" style="width: 370px;">
-                                    <ul class="list-unstyled components" >
+                                <div class="right_header_info">
+                                    <ul class="list-unstyled components" style="float: left;">
                                         <li class="active">
                                             <figure><img th:src="@{|/cliente/imagerestaurante/${pedidoencurso.restaurantepedido.idrestaurante}|}" width="70" height="70"/></figure>
                                         </li>
@@ -103,16 +103,14 @@
                                         <tr th:each="plato, i: ${platosxpedido}">
                                             <td><figure><img th:src="@{|/cliente/imagenplato/${plato.getPlato.idplato}|}" width="70" height="70"/></figure></td>
                                             <td th:text="${plato.getPlato().getNombre()}"></td>
-                                            <td style="width: 100px;"><input style="border: transparent; padding: 9px 11px; color: white; background-color: transparent" class="form-control" placeholder="Cantidad" type="number" id="cantidad" name="cantidad" min="1" th:value="${plato.getCantidadplatos()}">
-                                            </td>
-                                            <td>
-                                                <a th:href="@{'/cliente/eliminarplato?idplato=' + ${plato.getPlato.idplato}}" style="color: white;">Eliminar</a></td>
+                                            <td style="width: 100px;" th:text="${plato.getCantidadplatos()}"></td>
+                                            <td><a th:href="@{'/cliente/eliminarplato?idplato=' + ${plato.getPlato.idplato}}" style="color: white;">Eliminar</a></td>
                                         </tr>
                                         </tbody>
                                     </table>
                                 </div>
                                 <div>
-                                    <h4 style="color: white;" th:text="|Subtotal a pagar: S/ ${montototal.getpreciototal()}|"></h4>
+                                    <h4 style="color: white;" th:text="|Subtotal a pagar: S/${montototal.getpreciototal()}|"></h4>
                                 </div>
                                 <div class="row">
                                     <a th:href="@{/cliente/vaciarcarrrito}" style="width: 50%;">
