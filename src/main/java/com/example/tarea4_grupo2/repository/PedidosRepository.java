@@ -180,6 +180,11 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
             "from pedidos p where p.restauranteidrestaurante = ?1 and p.estadorestaurante = 'entregado'", nativeQuery = true)
     BigDecimal calificacionPromedio(Integer id);
 
+    @Query(value = "select\n" +
+            "            avg(p.calificacionrestaurante) as calificacionpromedio\n" +
+            "            from pedidos p where p.idrepartidor = ?1 and p.estadorepartidor = 'entregado'",nativeQuery = true)
+    BigDecimal calificacionpromediorepartidor(int idrepartidor);
+
     @Query(value="select p.idpedidos as idpedidos,\n" +
             "pl.nombre as nombre,\n" +
             "php.descripcion as descripcion,\n" +

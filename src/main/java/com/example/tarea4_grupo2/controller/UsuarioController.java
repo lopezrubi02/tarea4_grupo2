@@ -32,6 +32,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.*;
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -972,8 +974,8 @@ public class UsuarioController {
                          continuar = true;
                      }
                  }
-                 if(continuar){
-                     Restaurante rest = restopt.get();
+                 Restaurante rest = restopt.get();
+                 if(continuar == true && rest.getUsuario().getCuentaActiva()==1){
                      if (restopt.isPresent()) {
                          int idrestsel = idrestaurante;
                          System.out.println("VALIDACIONES NO REALIZAR PEDIDO");
@@ -1079,8 +1081,8 @@ public class UsuarioController {
                         continuar = true;
                     }
                 }
-
-                if(continuar){
+                Restaurante rest = restopt.get();
+                if(continuar == true && rest.getUsuario().getCuentaActiva() == 1){
                     int idrestsel = idrestaurante;
                     if (listapedidospendientes.size() >= 0 || pedidopendiente != null) {
                         if (pedidopendiente != null) {
@@ -1091,8 +1093,8 @@ public class UsuarioController {
                         for (Pedidos pedidoencurso : listapedidospendientes) {
                             idrestsel = pedidoencurso.getRestaurantepedido().getIdrestaurante();
                         }
-                        if (idrestsel == idrestaurante && pedidopendiente == null) {
-                            Plato platoseleccionado = platoopt.get();
+                        Plato platoseleccionado = platoopt.get();
+                        if (idrestsel == idrestaurante && pedidopendiente == null  && platoseleccionado.getActivo() == 1) {
                             Pedidos pedidoencurso = pedidosRepository.pedidoencursoxrestaurante(idusuarioactual, idrestaurante);
                             if(pedidoencurso != null){
                                 List<PedidoHasPlato> pedidoencurso2 = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
@@ -1579,8 +1581,24 @@ public class UsuarioController {
 
     /** Calificar pedido **/
     @GetMapping("/cliente/calificarpedido")
-    public String calificarpedido(){
-        return "cliente/calificarpedido";
+    public String calificarpedido(HttpSession session){
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuario=sessionUser.getIdusuarios();
+        List<Pedidos> listapedidosusuario = pedidosRepository.findAllByIdclienteEquals(idusuario);
+        boolean ultimopedido1 = true; //true -> hay al menos un pedido registrado
+        if(listapedidosusuario.isEmpty()){
+            ultimopedido1 = false; //false -> no hay pedidos registrados
+        }
+        if(ultimopedido1 == true) {
+            List<Pedidos> listapedidoscliente = pedidosRepository.pedidosfinxcliente(idusuario);
+            if(listapedidoscliente.get(listapedidoscliente.toArray().length - 1).getEstadorepartidor().equalsIgnoreCase("entregado") && listapedidoscliente.get(listapedidoscliente.toArray().length - 1).getEstadorestaurante().equalsIgnoreCase("entregado")){
+                return "cliente/calificarpedido";
+            }else{
+                return "redirect:/cliente/progresopedido";
+            }
+        }else{
+            return "redirect:/cliente/progresopedido";
+        }
     }
 
     @PostMapping("/cliente/guardarcalificacion")
@@ -1602,13 +1620,32 @@ public class UsuarioController {
 
         if(calrest != 0){
             pedidoencurso.setCalificacionrestaurante(calrest);
+            //actualizacion de calificacion promedio de restaurante
+            int idrestpedido = pedidoencurso.getRestaurantepedido().getIdrestaurante();
+            BigDecimal calificacion = pedidosRepository.calificacionPromedio(idrestpedido);
+            Optional<Restaurante> restopt = restauranteRepository.findById(idrestpedido);
+            Restaurante restget = restopt.get();
+            MathContext m = new MathContext(3);
+            calificacion = calificacion.round(m);
+            restget.setCalificacionpromedio(calificacion.floatValue());
+            restauranteRepository.save(restget);
         }
         if(calrep != 0){
             pedidoencurso.setCalificacionrepartidor(calrep);
+            pedidosRepository.save(pedidoencurso);
+            int idreppedido = pedidoencurso.getRepartidor().getIdusuarios();
+            BigDecimal calificacionrep = pedidosRepository.calificacionpromediorepartidor(idreppedido);
+            Optional<Repartidor> repopt = Optional.ofNullable(repartidorRepository.findRepartidorByIdusuariosEquals(idreppedido));
+            Repartidor repget = repopt.get();
+            MathContext m = new MathContext(3);
+            calificacionrep = calificacionrep.round(m);
+            repget.setCalificacionpromedio(calificacionrep.floatValue());
+            repartidorRepository.save(repget);
         }
         if(comentarios != null){
             pedidoencurso.setComentario(comentarios);
         }
+        pedidosRepository.save(pedidoencurso);
         return "redirect:/cliente/paginaprincipal";
     }
 
