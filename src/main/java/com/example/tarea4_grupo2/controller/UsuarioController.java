@@ -187,11 +187,14 @@ public class UsuarioController {
     {
         List<Distritos> listadistritos = distritosRepository.findAll();
         model.addAttribute("listadistritos",listadistritos);
+        String direction=null;
+        model.addAttribute("direction",direction);
+        System.out.println(direction);
         return "cliente/registroCliente";
     }
 
     @PostMapping("/guardarNuevo")
-    public String guardarCliente(@RequestParam("direccion") String direccion,
+    public String guardarCliente(@RequestParam("direccion_real") String direccion,
                                  @RequestParam("iddistrito") int iddistrito,
                                  @RequestParam("password2") String pass2,
                                  Model model,
@@ -1826,12 +1829,14 @@ public class UsuarioController {
 
         List<Distritos> listadistritos = distritosRepository.findAll();
         model.addAttribute("listadistritos",listadistritos);
-
+        String direction=null;
+        model.addAttribute("direction",direction);
+        System.out.println(direction);
         return "cliente/registrarNuevaDireccion";
     }
 
     @PostMapping("/cliente/guardarnuevadireccion")
-    public String guardarnuevadireccion(@RequestParam("direccion") String direccion,
+    public String guardarnuevadireccion(@RequestParam("direccion_real") String direccion,
                                         @RequestParam("iddistrito") int iddistrito,
                                         HttpSession session) {
 
