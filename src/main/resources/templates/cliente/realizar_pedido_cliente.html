@@ -57,10 +57,7 @@
                             <div class="row g-2">
                                 <form class="input-group" method="post" th:action="@{/cliente/filtrarnombre}"><!-- COMPLETAR -->
                                     <input type="hidden" th:value="${iddireccionxenviar}" name="direccion">
-                                    <input type="hidden" th:value="${distrito1}" name="distrito1">
-                                    <input type="hidden" th:value="${distrito2}" name="distrito2">
-                                    <input type="hidden" th:value="${distrito3}" name="distrito3">
-                                    <input type="hidden" th:value="${distrito4}" name="distrito4">
+                                    <input type="hidden" th:value="${restalrededor}" name="restalrededor">
                                     <div class="col-md">
                                         <div class="form-floating">
                                             <!--input type="email" class="form-control" id="floatingInputGrid" placeholder="Buscar plato o restaurante" -->
@@ -145,7 +142,7 @@
                                         </div>
                                     </div>
                                 </form>
-                                <!-- form -->
+                                <!-- fin form -->
                                 <div th:if="${alertaprecio != null}" th:text="${alertaprecio}" class="alert alert-warning" role="alert"></div>
                             </div>
                         </div>
@@ -154,7 +151,7 @@
                 <!-- lista restaurantes -->
                 <div class="row">
                     <div th:if="${listavacia != null}" th:text="${listavacia}" class="alert alert-warning" role="alert"></div>
-                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mar_bottom" th:each="restaurante : ${listarestaurantes}">
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mar_bottom" th:if="${listarestaurantes.size()!=0}" th:each="restaurante : ${listarestaurantes}">
                         <div class="blog_box">
                             <div class="blog_img_box">
                                 <figure><img th:src="@{|/cliente/imagerestaurante/${restaurante.idrestaurante}|}" width="70" height="70"/></figure>
@@ -163,7 +160,7 @@
                                 <h3 th:text="${restaurante.nombre}">Chifa Imperial</h3></a>
                             <p>
                               <span th:each="categoriarest : ${restaurante.categoriasrestList}"
-                                    th:text="${categoriarest.nombrecategoria} + ', '">
+                                    th:text="${categoriarest.nombrecategoria} + '-'">
                               </span>
                             </p>
                         </div>
