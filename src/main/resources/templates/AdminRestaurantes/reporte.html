@@ -202,12 +202,21 @@
         <div class="row table-users">
           <!-- table -->
           <div class="col-md-12">
+
             <select id="platosTopVendidos5" style="display: none">
               <option th:each="p:${platosTop5}"
                       th:text="${p.getnombreplato()}"
                       th:value="${p.getcantidad()}">
               </option>
             </select>
+
+            <select id="Top5Ganancias" style="display: none">
+                <option th:each="p:${platosTop5}"
+                        th:text="${p.getnombreplato()}"
+                        th:value="${p.getganancia()}">
+                </option>
+            </select>
+
             <div class="table-responsive">
               <table class="table table-striped" style="width: 600px" align="center">
                 <thead >
@@ -301,13 +310,17 @@
   let myChart;
   var ctx = document.getElementById('myChartPlatosMasVendidos').getContext('2d');
   var listaPlatosTopDto=document.getElementById("platosTopVendidos5");
+  var listaGanancia = document.getElementById("Top5Ganancias");
   var nombresPlatos=[listaPlatosTopDto.length];
   var cantidadPlatos=[listaPlatosTopDto.length];
+  var gananciasPlatos=[listaGanancia.length];
   for(var i=0;i<listaPlatosTopDto.length;i++){
     nombresPlatos[i]=listaPlatosTopDto[i].text;
     console.log(nombresPlatos[i]);
     cantidadPlatos[i]=listaPlatosTopDto[i].value;
     console.log(cantidadPlatos[i]);
+    gananciasPlatos[i] = listaGanancia[i].value;
+    console.log(gananciasPlatos[i]);
   }
   myChart = new Chart(ctx, {
     type: 'bar',
@@ -316,6 +329,16 @@
       datasets: [{
         label: 'Cantidad de platos vendidos',
         data: cantidadPlatos,
+        backgroundColor: [
+          'rgb(216,176,15)',
+        ],
+        borderColor: [
+          'rgba(0,3,3,0.95)',
+        ],
+        borderWidth: 2
+      },{
+        label: 'Ganancia por plato',
+        data: gananciasPlatos,
         backgroundColor: [
           'rgb(216,176,15)',
         ],
