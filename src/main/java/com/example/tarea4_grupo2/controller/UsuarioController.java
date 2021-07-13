@@ -4,17 +4,8 @@ import com.example.tarea4_grupo2.dto.*;
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
 import com.example.tarea4_grupo2.service.SendMailService;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.maps.GeoApiContext;
-import com.google.maps.GeocodingApi;
-import com.google.maps.errors.ApiException;
-import com.google.maps.model.GeocodingResult;
-import com.google.maps.model.LatLng;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -37,10 +28,8 @@ import java.math.MathContext;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -201,7 +190,7 @@ public class UsuarioController {
                                  @RequestParam("password2") String pass2,
                                  Model model,
                                  @ModelAttribute("usuario") @Valid Usuario usuario,
-                                 BindingResult bindingResult) throws MalformedURLException {
+                                 BindingResult bindingResult){
 
         if (bindingResult.hasErrors()) {
             List<Distritos> listadistritos = distritosRepository.findAll();
@@ -248,7 +237,6 @@ public class UsuarioController {
 
                         //Para guardar direccion
                         Usuario usuarionuevo = usuarioRepository.findByDniAndEmailEquals(usuario.getDni(), usuario.getEmail());
-                        int idusuarionuevo = usuarionuevo.getIdusuarios();
 
                         Direcciones direccionactual = new Direcciones();
                         direccion = direccion.split(",")[0];
@@ -258,7 +246,6 @@ public class UsuarioController {
                         if(distritoopt.isPresent()){
                             Distritos distritosactual = distritoopt.get();
                             direccionactual.setDistrito(distritosactual);
-                            //direccionactual.setUsuariosIdusuarios(idusuarionuevo);
                             direccionactual.setUsuario(usuarionuevo);
                             direccionactual.setActivo(1);
                             System.out.println("debería guardar direccion");
@@ -1585,16 +1572,21 @@ public class UsuarioController {
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuario=sessionUser.getIdusuarios();
         List<Pedidos> listapedidosusuario = pedidosRepository.findAllByIdclienteEquals(idusuario);
-        boolean ultimopedido1 = true; //true -> hay al menos un pedido registrado
-        if(listapedidosusuario.isEmpty()){
-            ultimopedido1 = false; //false -> no hay pedidos registrados
+        boolean ultimopedido1 = false; //true -> hay al menos un pedido registrado
+        if(!listapedidosusuario.isEmpty()){
+            System.out.println("LISTA CON UN PEDIDO REGISTRADO");
+            ultimopedido1 = true; //false -> no hay pedidos registrados
         }
         if(ultimopedido1 == true) {
             List<Pedidos> listapedidoscliente = pedidosRepository.pedidosfinxcliente(idusuario);
-            if(listapedidoscliente.get(listapedidoscliente.toArray().length - 1).getEstadorepartidor().equalsIgnoreCase("entregado") && listapedidoscliente.get(listapedidoscliente.toArray().length - 1).getEstadorestaurante().equalsIgnoreCase("entregado")){
-                return "cliente/calificarpedido";
-            }else{
+            if(listapedidoscliente.size() == 0){
                 return "redirect:/cliente/progresopedido";
+            }else{
+                if(listapedidoscliente.get(listapedidoscliente.size() - 1).getEstadorepartidor().equalsIgnoreCase("entregado") && listapedidoscliente.get(listapedidoscliente.size() - 1).getEstadorestaurante().equalsIgnoreCase("entregado")){
+                    return "cliente/calificarpedido";
+                }else{
+                    return "redirect:/cliente/progresopedido";
+                }
             }
         }else{
             return "redirect:/cliente/progresopedido";
@@ -1651,9 +1643,7 @@ public class UsuarioController {
 
     /** Editar mi perfil **/
     @GetMapping("/cliente/miperfil")
-    public String miperfil(
-            //@ModelAttribute("usuario") Usuario usuario,
-                           Model model, HttpSession session) {
+    public String miperfil(Model model, HttpSession session) {
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuario=sessionUser.getIdusuarios();

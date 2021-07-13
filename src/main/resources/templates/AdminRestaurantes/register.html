@@ -64,7 +64,7 @@
                         <div class="full">
                             <div class="right_header_info">
                                 <ul>
-                                    <li class="button_user"><a class="button active" th:href="@{/login}">Iniciar sesión</a><a class="button" th:href="@{/eleccion}">Soy parte de la empresa</a></li>
+                                    <li class="button_user"><a class="button active" th:href="@{/login}">Iniciar sesión</a><a class="button" th:href="@{/eleccion}">Elegir otro rol</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -143,7 +143,7 @@
                                             <div class="input-group">
                                                 <input class="form-control" placeholder="Direccion" type="text" id="direccion" name="direccion" th:if="${direction==null}" disabled/>
                                                 <input class="form-control" placeholder="Direccion" type="text" id="direccion" name="direccion" th:unless="${direction==null}" th:value="${direction}" disabled/>
-                                                <span class="input-group-append"><img onclick="geocode()" src="https://st4.depositphotos.com/18690434/21687/v/600/depositphotos_216872396-stock-illustration-location-icon-location-concept-symbol.jpg" alt="" width="30" height="10"></span>
+                                                <span class="input-group-append"><img onclick="geocode()" src="https://png.pngtree.com/png-vector/20190626/ourmid/pngtree-locationnavigationplace--flat-color-icon--vector-icon-banner-png-image_1493488.jpg" width="60px"></span>
                                             </div>
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">

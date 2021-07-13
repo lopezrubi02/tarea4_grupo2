@@ -61,36 +61,6 @@
         <div class="wrapper">
             <!-- end loader -->
 
-            <div class="sidebar">
-                <!-- Sidebar  -->
-                <nav id="sidebar">
-
-                    <div id="dismiss">
-                        <i class="fa fa-arrow-left"></i>
-                    </div>
-
-                    <ul class="list-unstyled components">
-
-                        <li >
-                            <a href="index.html">Home</a>
-                        </li>
-                        <li>
-                            <a href="about.html">About</a>
-                        </li>
-                        <li>
-                            <a href="recipe.html">Recipe</a>
-                        </li>
-                        <li>
-                            <a href="blog.html">Blog</a>
-                        </li>
-                        <li class="active">
-                            <a href="contact.html">Contact Us</a>
-                        </li>
-                    </ul>
-
-                </nav>
-            </div>
-
             <div id="content">
                 <!-- header -->
                 <header>
@@ -105,7 +75,7 @@
                                 <div class="full">
                                     <div class="right_header_info">
                                         <ul>
-                                            <li class="button_user"><a class="button active" th:href="@{/login}">Iniciar sesión</a><a class="button" th:href="@{/eleccion}">Soy parte de la empresa</a></li>
+                                            <li class="button_user"><a class="button active" th:href="@{/login}">Iniciar sesión</a><a class="button" th:href="@{/eleccion}">Elegir otro rol</a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -229,13 +199,15 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        </br>
+                    </div>
                             <div class="copyright">
                                 <div class="container">
                                     <p>© 2021 Todos los derechos reservados. Propiedad de "Troyanos de Software"</p>
                                 </div>
                             </div>
-                        </div>
-                    </div>
+
                 </footer>
                 <!-- end footer -->
 
@@ -251,25 +223,6 @@
         <script th:href="@{/js/jquery.mCustomScrollbar.concat.min.js}"></script>
 
         <script th:href="@{/js/jquery-3.0.0.min.js}"></script>
-        <script type="text/javascript">
-            $(document).ready(function() {
-                $("#sidebar").mCustomScrollbar({
-                    theme: "minimal"
-                });
-
-                $('#dismiss, .overlay').on('click', function() {
-                    $('#sidebar').removeClass('active');
-                    $('.overlay').removeClass('active');
-                });
-
-                $('#sidebarCollapse').on('click', function() {
-                    $('#sidebar').addClass('active');
-                    $('.overlay').addClass('active');
-                    $('.collapse.in').toggleClass('in');
-                    $('a[aria-expanded=true]').attr('aria-expanded', 'false');
-                });
-            });
-        </script>
 
     </body>
 
