@@ -249,6 +249,7 @@ public class UsuarioController {
                         int idusuarionuevo = usuarionuevo.getIdusuarios();
 
                         Direcciones direccionactual = new Direcciones();
+                        direccion = direccion.split(",")[0];
                         direccionactual.setDireccion(direccion);
                         Optional<Distritos> distritoopt = distritosRepository.findById(iddistrito);
 
@@ -364,7 +365,6 @@ public class UsuarioController {
         sheet.autoSizeColumn(3);
         sheet.autoSizeColumn(4);
 
-
         workbook.write(stream);
         workbook.close();
         return new ByteArrayInputStream(stream.toByteArray());
@@ -377,7 +377,7 @@ public class UsuarioController {
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuarios=sessionUser.getIdusuarios();
 
-        List<Pedidos> listapedidosusuario = pedidosRepository.findAllByIdclienteEquals(idusuarios);
+        List<PedidosclienteaexcelDTO> listapedidosusuario = pedidosRepository.listapedidosexcel(idusuarios);
         boolean ultimopedido1 = true; //true -> hay al menos un pedido registrado
         if(listapedidosusuario.isEmpty()){
             ultimopedido1 = false; //false -> no hay pedidos registrados
@@ -1846,6 +1846,7 @@ public class UsuarioController {
         Usuario usuario = usuarioopt.get();
 
         Direcciones direccioncrear = new Direcciones();
+        direccion = direccion.split(",")[0];
         direccioncrear.setDireccion(direccion);
 
         Optional<Distritos> distritoopt = distritosRepository.findById(iddistrito);

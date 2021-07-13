@@ -241,7 +241,7 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
             "on p.direccionentrega = d.iddirecciones\n" +
             "inner join metodospago mp\n" +
             "on mp.idmetodospago = p.idmetodopago\n" +
-            "where p.idcliente = ?1",nativeQuery = true)
+            "where p.idcliente = ?1 and p.estadorestaurante = 'entregado' and p.estadorepartidor = 'entregado'",nativeQuery = true)
     List<PedidosclienteaexcelDTO> listapedidosexcel(int idcliente);
 
     @Query(value = "select * from pedidos where idcliente=?1 and montototal!='0' and estadorestaurante!=\"entregado\" and estadorepartidor != \"entregado\"",nativeQuery = true)
