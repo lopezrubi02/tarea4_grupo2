@@ -265,6 +265,11 @@
                     document.getElementById("error-distrito").innerHTML=null;
                     break;
                 }
+                else if(real=="Cercado de Lima"){
+                    document.getElementById("iddistrito").value=listaDistritos.options[16].value;
+                    console.log(listaDistritos.options[16].text);
+                    document.getElementById("error-distrito").innerHTML=null;
+                }
                 else{
                     document.getElementById("iddistrito").value=-1;
                     document.getElementById("error-distrito").innerHTML="Distrito no válido";

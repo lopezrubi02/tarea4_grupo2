@@ -204,12 +204,16 @@
             var listaDistritos=document.getElementById("distrito-lista");
             var real=distrito.trim();
             for(var i=0;i<listaDistritos.length;i++){
-                console.log(listaDistritos.options[i].text);
                 if(real==listaDistritos.options[i].text){
-                    console.log(listaDistritos.options[i].value);
                     document.getElementById("iddistrito").value=listaDistritos.options[i].value;
+
                     document.getElementById("error-distrito").innerHTML=null;
                     break;
+                }
+                else if(real=="Cercado de Lima"){
+                    document.getElementById("iddistrito").value=listaDistritos.options[16].value;
+                    console.log(listaDistritos.options[16].text);
+                    document.getElementById("error-distrito").innerHTML=null;
                 }
                 else{
                     document.getElementById("iddistrito").value=-1;
