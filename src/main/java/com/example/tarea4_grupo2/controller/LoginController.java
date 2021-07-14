@@ -208,12 +208,14 @@ public class LoginController {
 
     @GetMapping("/redirectByRol")
     public String redirectByRol(Authentication auth, HttpSession session){
+        System.out.println("******TRACER 10**************");
         String rol="";
         //setear la última fecha y hora de ingreso
         for(GrantedAuthority role:auth.getAuthorities()){
             rol= role.getAuthority();
             break;
         }
+        System.out.println(auth.getName());
         Usuario usuarioLogueado= usuarioRepository.findByEmail(auth.getName());
         session.setAttribute("usuarioLogueado",usuarioLogueado);
         DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -229,6 +231,8 @@ public class LoginController {
             usuarioRepository.save(usuarioLogueado);
             return "redirect:/adminrest/login";
         }else if(rol.equals("AdminSistema")){
+            System.out.println("******TRACER 12**************");
+
             usuarioLogueado.setUltimafechaingreso(datetime1);
             usuarioRepository.save(usuarioLogueado);
             return "redirect:/admin/gestionCuentas";
@@ -237,6 +241,8 @@ public class LoginController {
             usuarioRepository.save(usuarioLogueado);
             return "redirect:/repartidor/home";
         }else if(rol.equals("Cliente")){
+            System.out.println("******TRACER 11**************");
+
             usuarioLogueado.setUltimafechaingreso(datetime1);
             usuarioRepository.save(usuarioLogueado);
             return "redirect:/cliente/paginaprincipal";

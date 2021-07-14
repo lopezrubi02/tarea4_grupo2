@@ -79,15 +79,15 @@ public class AdminRestauranteController {
             Usuario nuevoUsuario = usuarioOptional.get();
             System.out.println(id);
 
-            if(nuevoUsuario.getCuentaActiva() == 3){
+            if(nuevoUsuario.isCuentaActiva()){
                 System.out.println("TRACE CUENTA EN 3");
                 return "AdminRestaurantes/sinRestaurante";
 
-            }else if(nuevoUsuario.getCuentaActiva() == 2){
+            }else if(nuevoUsuario.isCuentaActiva()){
 
                 return "AdminRestaurantes/espera";
 
-            }else if(nuevoUsuario.getCuentaActiva() == 1){
+            }else if(nuevoUsuario.isCuentaActiva()){
 
                 System.out.println("TRACE3");
                 Optional<Restaurante> restauranteOpt = restauranteRepository.buscarRestaurantePorIdAdmin(id);
@@ -137,7 +137,7 @@ public class AdminRestauranteController {
                     Distritos distrito = distritosRepository.findById(iddistrito).get();
                     restaurante.setDistrito(distrito);
                     restauranteRepository.save(restaurante);
-                    sessionUser.setCuentaActiva(2);
+                    sessionUser.setCuentaActiva(true);
                     usuarioRepository.save(sessionUser);
                     model.addAttribute("id", restaurante.getIdrestaurante());
                     model.addAttribute("listacategorias", categoriasRepository.findAll());
@@ -291,7 +291,7 @@ public class AdminRestauranteController {
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(sessionUser.getIdusuarios());
         if(usuarioOptional.isPresent()){
             Usuario nuevoUsuario = usuarioOptional.get();
-            if(nuevoUsuario.getCuentaActiva()==1){
+            if(nuevoUsuario.isCuentaActiva()){
                 /********************************/
                 BigDecimal calificacion = pedidosRepository.calificacionPromedio(idrestaurante);
                 if(calificacion != null){
@@ -327,7 +327,7 @@ public class AdminRestauranteController {
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(sessionUser.getIdusuarios());
         if(usuarioOptional.isPresent()) {
             Usuario usuarioNuevo = usuarioOptional.get();
-            if(usuarioNuevo.getCuentaActiva()==1){
+            if(usuarioNuevo.isCuentaActiva()){
                 Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
                 List<Plato> listaPlatos = platoRepository.buscarPlatosPorIdRestaurante(idrestaurante);
                 if(listaPlatos.isEmpty()){
@@ -555,7 +555,7 @@ public class AdminRestauranteController {
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(usuario.getIdusuarios());
         if(usuarioOptional.isPresent()) {
             Usuario usuarioNuevo = usuarioOptional.get();
-            if(usuarioNuevo.getCuentaActiva()==1){
+            if(usuarioNuevo.isCuentaActiva()){
                 float numberOfUsersPerPage = 7;
                 int page = Integer.parseInt(requestedPage);
                 int idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(usuario.getIdusuarios()).get().getIdrestaurante();
@@ -737,7 +737,7 @@ public class AdminRestauranteController {
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(usuario.getIdusuarios());
         if(usuarioOptional.isPresent()) {
             Usuario usuarioNuevo = usuarioOptional.get();
-            if (usuarioNuevo.getCuentaActiva() == 1) {
+            if(usuarioNuevo.isCuentaActiva()){
                 float numberOfUsersPerPage = 7;
                 int page = Integer.parseInt(requestedPage);
                 int idrestaurante = restauranteRepository.buscarRestaurantePorIdAdmin(usuario.getIdusuarios()).get().getIdrestaurante();
@@ -792,7 +792,7 @@ public class AdminRestauranteController {
                              RedirectAttributes attr){
         Usuario usuario=(Usuario) session.getAttribute("usuarioLogueado");
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(usuario.getIdusuarios());
-            if(usuario.getCuentaActiva()==1){
+        if(usuarioOptional.get().isCuentaActiva()){
                 float numberOfUsersPerPage = 7;
                 int page = Integer.parseInt(requestedPage);
                 int page2 = Integer.parseInt(requestedPage2);
@@ -994,7 +994,7 @@ public class AdminRestauranteController {
 
         /**Se obtiene Id de Restaurante**/
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-        if(sessionUser.getCuentaActiva()==1){
+        if(sessionUser.isCuentaActiva()){
             Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
             System.out.println(pedidosRepository.buscarPorReporte(name,idrestaurante));
             System.out.println("Trace3");
@@ -1017,7 +1017,7 @@ public class AdminRestauranteController {
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(sessionUser.getIdusuarios());
         if(usuarioOptional.isPresent()) {
             Usuario usuarioNuevo = usuarioOptional.get();
-            if (usuarioNuevo.getCuentaActiva() == 1) {
+            if (usuarioNuevo.isCuentaActiva()) {
                 Integer idrestaurante = restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
                 /********************************/
                 float numberOfUsersPerPage = 7;
@@ -1125,7 +1125,7 @@ public class AdminRestauranteController {
         Restaurante rest= restauranteRepository.obtenerperfilRest(user.getIdusuarios());
         if(usuarioOptional.isPresent()) {
             Usuario usuarioNuevo = usuarioOptional.get();
-            if(usuarioNuevo.getCuentaActiva()==1){
+            if(usuarioNuevo.isCuentaActiva()){
                 model.addAttribute("listadirecciones",direccionesRepository.findAllByUsuarioAndActivoEquals(user,1));
                 model.addAttribute("restaurante",restauranteRepository.obtenerperfilRest(user.getIdusuarios()));
                 model.addAttribute("usuario",usuarioRepository.findById(user.getIdusuarios()).get());
@@ -1147,7 +1147,7 @@ public class AdminRestauranteController {
         Usuario user= (Usuario) session.getAttribute("usuarioLogueado");
         int id=restauranteRepository.buscarRestaurantePorIdAdmin(user.getIdusuarios()).get().getIdrestaurante();
         restauranteRepository.deleteById(id);
-        user.setCuentaActiva(3);
+        user.setCuentaActiva(true);
         usuarioRepository.save(user);
 
         return "redirect:/adminrest/sinrestaurante";

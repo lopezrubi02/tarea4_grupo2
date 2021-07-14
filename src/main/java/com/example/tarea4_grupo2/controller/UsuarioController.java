@@ -232,7 +232,7 @@ public class UsuarioController {
 
                         usuario.setContraseniaHash(contraseniahashbcrypt);
                         usuario.setRol("Cliente");
-                        usuario.setCuentaActiva(1);
+                        usuario.setCuentaActiva(true);
                         usuarioRepository.save(usuario);
 
                         //Para guardar direccion
@@ -597,7 +597,7 @@ public class UsuarioController {
 
                     List<Restaurante> restaurantescercanosxdistritodefault = restauranteRepository.listarestaurantesxdistrito(distritobuscar);
                     for (Restaurante resthallado : restaurantescercanosxdistritodefault) {
-                        if(resthallado.getUsuario().getCuentaActiva()==1){
+                        if(resthallado.getUsuario().isCuentaActiva()){
                             restauranteshallados.add(resthallado);
                             System.out.println(resthallado.getNombre());
                             System.out.println(resthallado.getDistrito().getNombredistrito());
@@ -609,7 +609,7 @@ public class UsuarioController {
                         System.out.println(listadr.split(",")[i]);
                         List<Restaurante> restaurantescercanosxdistrito = restauranteRepository.listarestaurantesxdistrito(listadr.split(",")[i]);
                         for (Restaurante resthallado : restaurantescercanosxdistrito) {
-                            if(resthallado.getUsuario().getCuentaActiva()==1){
+                            if(resthallado.getUsuario().isCuentaActiva()){
                                 restauranteshallados.add(resthallado);
                                 System.out.println(resthallado.getNombre());
                                 System.out.println(resthallado.getDistrito().getNombredistrito());
@@ -634,7 +634,7 @@ public class UsuarioController {
 
                         List<Restaurante> restaurantescercanosxdistritodefault = restauranteRepository.listarestaurantesxdistrito(distritobuscar);
                         for (Restaurante resthallado : restaurantescercanosxdistritodefault) {
-                            if(resthallado.getUsuario().getCuentaActiva()==1){
+                            if(resthallado.getUsuario().isCuentaActiva()){
                                 restauranteshallados.add(resthallado);
                                 System.out.println(resthallado.getNombre());
                                 System.out.println(resthallado.getDistrito().getNombredistrito());
@@ -646,7 +646,7 @@ public class UsuarioController {
                             System.out.println(listadr.split(",")[i]);
                             List<Restaurante> restaurantescercanosxdistrito = restauranteRepository.listarestaurantesxdistrito(listadr.split(",")[i]);
                             for (Restaurante resthallado : restaurantescercanosxdistrito) {
-                                if(resthallado.getUsuario().getCuentaActiva()==1){
+                                if(resthallado.getUsuario().isCuentaActiva()){
                                     restauranteshallados.add(resthallado);
                                     System.out.println(resthallado.getNombre());
                                     System.out.println(resthallado.getDistrito().getNombredistrito());
@@ -804,7 +804,7 @@ public class UsuarioController {
 
                 List<Restaurante> restaurantescercanosxdistritodefault = restauranteRepository.listarestaurantesxdistrito(distritobuscar);
                 for (Restaurante resthallado : restaurantescercanosxdistritodefault) {
-                    if(resthallado.getUsuario().getCuentaActiva()==1){
+                    if(resthallado.getUsuario().isCuentaActiva()){
                         restauranteshallados.add(resthallado);
                         System.out.println(resthallado.getNombre());
                         System.out.println(resthallado.getDistrito().getNombredistrito());
@@ -816,7 +816,7 @@ public class UsuarioController {
                     System.out.println(listadr.split(",")[i]);
                     List<Restaurante> restaurantescercanosxdistrito = restauranteRepository.listarestaurantesxdistrito(listadr.split(",")[i]);
                     for (Restaurante resthallado : restaurantescercanosxdistrito) {
-                        if(resthallado.getUsuario().getCuentaActiva()==1){
+                        if(resthallado.getUsuario().isCuentaActiva()){
                             restauranteshallados.add(resthallado);
                             System.out.println(resthallado.getNombre());
                             System.out.println(resthallado.getDistrito().getNombredistrito());
@@ -878,7 +878,7 @@ public class UsuarioController {
                 System.out.println(listadr.split(",")[i]);
                 List<Restaurante> restaurantescercanosxdistrito = restauranteRepository.buscarRestaurantexNombre(listadr.split(",")[i],buscar);
                 for (Restaurante resthallado : restaurantescercanosxdistrito) {
-                    if(resthallado.getUsuario().getCuentaActiva()==1){
+                    if(resthallado.getUsuario().isCuentaActiva()){
                         listarestaurantes.add(resthallado);
                         System.out.println(resthallado.getNombre());
                         System.out.println(resthallado.getDistrito().getNombredistrito());
@@ -935,7 +935,7 @@ public class UsuarioController {
                  List<Restaurante> restauranteshallados = new ArrayList<>();
                  List<Restaurante> restaurantescercanosxdistritodefault = restauranteRepository.listarestaurantesxdistrito(distritobuscar);
                  for (Restaurante resthallado : restaurantescercanosxdistritodefault) {
-                     if(resthallado.getUsuario().getCuentaActiva()==1){
+                     if(resthallado.getUsuario().isCuentaActiva()){
                          restauranteshallados.add(resthallado);
                          System.out.println(resthallado.getNombre());
                          System.out.println(resthallado.getDistrito().getNombredistrito());
@@ -947,7 +947,7 @@ public class UsuarioController {
                      System.out.println(listadr.split(",")[i]);
                      List<Restaurante> restaurantescercanosxdistrito = restauranteRepository.listarestaurantesxdistrito(listadr.split(",")[i]);
                      for (Restaurante resthallado : restaurantescercanosxdistrito) {
-                         if(resthallado.getUsuario().getCuentaActiva()==1){
+                         if(resthallado.getUsuario().isCuentaActiva()){
                              restauranteshallados.add(resthallado);
                              System.out.println(resthallado.getNombre());
                              System.out.println(resthallado.getDistrito().getNombredistrito());
@@ -962,7 +962,7 @@ public class UsuarioController {
                      }
                  }
                  Restaurante rest = restopt.get();
-                 if(continuar == true && rest.getUsuario().getCuentaActiva()==1){
+                 if(continuar == true && rest.getUsuario().isCuentaActiva()){
                      if (restopt.isPresent()) {
                          int idrestsel = idrestaurante;
                          System.out.println("VALIDACIONES NO REALIZAR PEDIDO");
@@ -1042,7 +1042,7 @@ public class UsuarioController {
                 List<Restaurante> restauranteshallados = new ArrayList<>();
                 List<Restaurante> restaurantescercanosxdistritodefault = restauranteRepository.listarestaurantesxdistrito(distritobuscar);
                 for (Restaurante resthallado : restaurantescercanosxdistritodefault) {
-                    if(resthallado.getUsuario().getCuentaActiva()==1){
+                    if(resthallado.getUsuario().isCuentaActiva()){
                         restauranteshallados.add(resthallado);
                         System.out.println(resthallado.getNombre());
                         System.out.println(resthallado.getDistrito().getNombredistrito());
@@ -1054,7 +1054,7 @@ public class UsuarioController {
                     System.out.println(listadr.split(",")[i]);
                     List<Restaurante> restaurantescercanosxdistrito = restauranteRepository.listarestaurantesxdistrito(listadr.split(",")[i]);
                     for (Restaurante resthallado : restaurantescercanosxdistrito) {
-                        if(resthallado.getUsuario().getCuentaActiva()==1){
+                        if(resthallado.getUsuario().isCuentaActiva()){
                             restauranteshallados.add(resthallado);
                             System.out.println(resthallado.getNombre());
                             System.out.println(resthallado.getDistrito().getNombredistrito());
@@ -1069,7 +1069,7 @@ public class UsuarioController {
                     }
                 }
                 Restaurante rest = restopt.get();
-                if(continuar == true && rest.getUsuario().getCuentaActiva() == 1){
+                if(continuar == true && rest.getUsuario().isCuentaActiva()){
                     int idrestsel = idrestaurante;
                     if (listapedidospendientes.size() >= 0 || pedidopendiente != null) {
                         if (pedidopendiente != null) {

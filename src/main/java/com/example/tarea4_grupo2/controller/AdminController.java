@@ -258,7 +258,7 @@ public class AdminController {
             int id = Integer.parseInt(idString);
         Optional<Usuario> optional = usuarioRepository.findById(id);
 
-        if (optional.isPresent() && optional.get().getCuentaActiva() == 1) {
+        if (optional.isPresent() && optional.get().isCuentaActiva()) {
             Usuario usuario = optional.get();
 
             switch (usuario.getRol()) {
@@ -634,7 +634,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
             List<Distritos> distritos = distritosRepository.findAll();
             if(optional.isPresent()){
                 Usuario usuario = optional.get();
-                if( (usuario.getCuentaActiva() == 2) || (usuario.getCuentaActiva() == -1) ){
+                if( (usuario.isCuentaActiva()) ){
 
                     switch (usuario.getRol()){
                         case "AdminRestaurante":
@@ -694,8 +694,8 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
         Optional<Usuario> optional = usuarioRepository.findById(id);
         if(optional.isPresent()){
             Usuario usuario = optional.get();
-            if(usuario.getCuentaActiva()==2 || usuario.getCuentaActiva()==-1){
-                usuario.setCuentaActiva(1);
+            if(!usuario.isCuentaActiva()){
+                usuario.setCuentaActiva(true);
                 usuarioRepository.save(usuario);
 
 
@@ -804,7 +804,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
                     return "redirect:/admin/gestionCuentas";
                 }
                 restauranteRepository.deleteById(restaurante.getIdrestaurante());
-                usuario.setCuentaActiva(3);
+                usuario.setCuentaActiva(false);
                 usuarioRepository.save(usuario);
 
                 //Envio de correo a usuario

@@ -873,7 +873,7 @@ public class RepartidorController {
 
             usuario2.setContraseniaHash(contraseniahashbcrypt);
             usuario2.setRol("Repartidor");
-            usuario2.setCuentaActiva(-1);
+            usuario2.setCuentaActiva(false);
             usuario2.setDni(usuario.getDni());
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 

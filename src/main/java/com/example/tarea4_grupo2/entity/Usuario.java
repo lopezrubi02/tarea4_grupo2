@@ -70,9 +70,13 @@ public class Usuario implements Serializable {
     private String rol;
 
     @Column(name = "cuentaactiva")
-    private Integer cuentaActiva;
+    private boolean cuentaActiva;
 
     private LocalDateTime ultimafechaingreso;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "authprovider")
+    private AuthenticationProvider authProvider;
 
     public Integer getIdusuarios() {
         return idusuarios;
@@ -154,11 +158,11 @@ public class Usuario implements Serializable {
         this.rol = rol;
     }
 
-    public Integer getCuentaActiva() {
+    public boolean isCuentaActiva() {
         return cuentaActiva;
     }
 
-    public void setCuentaActiva(Integer cuentaActiva) {
+    public void setCuentaActiva(boolean cuentaActiva) {
         this.cuentaActiva = cuentaActiva;
     }
 
@@ -184,5 +188,13 @@ public class Usuario implements Serializable {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public AuthenticationProvider getAuthProvider() {
+        return authProvider;
+    }
+
+    public void setAuthProvider(AuthenticationProvider authProvider) {
+        this.authProvider = authProvider;
     }
 }

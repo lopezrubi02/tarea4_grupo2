@@ -180,7 +180,7 @@
     <orderEntry type="library" name="Maven: io.opencensus:opencensus-api:0.28.0" level="project" />
     <orderEntry type="library" name="Maven: io.grpc:grpc-context:1.27.2" level="project" />
     <orderEntry type="library" name="Maven: io.opencensus:opencensus-contrib-http-util:0.28.0" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-oauth2-client:2.4.4" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-oauth2-client:2.2.5.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.security:spring-security-oauth2-client:5.4.5" level="project" />
     <orderEntry type="library" name="Maven: com.nimbusds:oauth2-oidc-sdk:8.36.1" level="project" />
     <orderEntry type="library" name="Maven: com.github.stephenc.jcip:jcip-annotations:1.0-1" level="project" />
