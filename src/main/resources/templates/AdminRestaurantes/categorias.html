@@ -64,7 +64,7 @@
                                     <input type="hidden" id="cantidad" value="4">
                                     <input type="hidden" th:field="*{idrestaurante}" th:value="${id}">
                                     <div th:each="lista:${listacategorias}" class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                        <input type="checkbox" th:field="*{categoriasrestList}" th:value="${lista.getIdcategorias()}" th:text="${lista.getNombrecategoria()}">
+                                        <input style="color: white" type="checkbox" th:field="*{categoriasrestList}" th:value="${lista.getIdcategorias()}" th:text="${lista.getNombrecategoria()}">
                                     </div>
                                     <div>Seleccionados: <span id="seleccionados">0</span></div>
                                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
