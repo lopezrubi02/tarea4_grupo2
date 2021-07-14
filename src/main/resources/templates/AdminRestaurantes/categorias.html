@@ -66,7 +66,10 @@
                                     <div style="color: white;font-size: 20px">Seleccionados: <span style="color: white;font-size: 20px" id="seleccionados">0</span></div>
                                     <br>
                                     <div style="color: white;" th:each="lista:${listacategorias}" class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                        <input type="checkbox" th:field="*{categoriasrestList}" th:value="${lista.getIdcategorias()}" th:text="${lista.getNombrecategoria()}">
+                                        <div class="input-group">
+                                            <input type="checkbox" th:field="*{categoriasrestList}" th:value="${lista.getIdcategorias()}">
+                                            <div style="margin-left: 20px;transform: translateY(-5px)" th:text="${lista.getNombrecategoria()}"></div>
+                                        </div>
                                     </div>
                                     <br>
                                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
