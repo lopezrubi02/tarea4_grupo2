@@ -31,7 +31,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="title">
-                                <h2>Nuestro menu</h2>
+                                <h2 style="color: #000000">Nuestro menu</h2>
                             </div>
                         </div>
                     </div>
@@ -41,7 +41,7 @@
             <section class="lqq-section">
                 <div class="container">
                     <div class="row">
-                        <a class="send" style="text-align: center;background:#d8b00f; margin-left: 15px; margin-top: 15px; margin-bottom: 15px"
+                        <a class="send" style="text-align: center;background:#e3d105; margin-left: 15px; margin-top: 15px; margin-bottom: 15px"
                            th:href="@{/adminrest/crearPlato}">Nuevo Plato
                         </a>
                         <div class="col-md-12">
@@ -58,7 +58,7 @@
                                         <span style="color: #002752">Precio: S/.</span><h4 style="color: #1f1f1f" th:text="${plato.precio}"></h4>
                                         <span style="color: #002752">¿Tiene stock?</span><h4 style="color: #1f1f1f" th:text="${plato.disponibilidad == 1? 'Si':'No'}"></h4>
                                         <div class="row" style="padding-bottom: 0px">
-                                            <a class="send" style="background:#d8b00f"
+                                            <a class="send" style="background:#e3d105"
                                                th:href="@{'/adminrest/borrarPlato' + '?idplato=' + ${plato.idplato}}">Borrar plato
                                             </a>
                                         </div>

@@ -108,7 +108,16 @@
                 <div class="footer">
                     <div class="container-fluid">
                         <div class="row">
-                            <h2>Llena el siguiente formulario</h2>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                                <h2>Llena el siguiente formulario</h2>
+                                <div class="container-fluid">
+                                    <div class="img-box" align="center">
+                                        <figure><img src="/images/bembos.png" style="width:500px;height:500px"></figure>
+                                    </div>
+                                    <h4 id="text-map" style="display: none">Puede mover el cursor para cambiar de dirección</h4>
+                                    <div id="map"></div>
+                                </div>
+                            </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                                 <form method="post" th:action="@{/adminrest/categorias}" class="main_form" th:object="${restaurante}" enctype="multipart/form-data">
                                     <div class="row">
@@ -161,13 +170,7 @@
                                     </div>
                                 </form>
                             </div>
-                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
-                                <div class="img-box" align="center">
-                                    <figure><img src="/images/bembos.png" style="width:500px;height:500px"></figure>
-                                </div>
-                                <h4 id="text-map" style="display: none">Puede mover el cursor para cambiar de dirección</h4>
-                                <div id="map"></div>
-                            </div>
+
                         </div>
                     </div>
                     <div class="copyright">

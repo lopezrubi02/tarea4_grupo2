@@ -99,7 +99,7 @@ public class AdminRestauranteController {
                 }
 
             }else{
-                return "login/login.html";
+                return "login/login";
             }
         }else{
             System.out.println("Revisar, esto no deberia pasar");
@@ -329,10 +329,13 @@ public class AdminRestauranteController {
             Usuario usuarioNuevo = usuarioOptional.get();
             if(usuarioNuevo.getCuentaActiva()==1){
                 Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
+                List<Plato> listaPlatos = platoRepository.buscarPlatosPorIdRestaurante(idrestaurante);
+                if(listaPlatos.isEmpty()){
+                    return "AdminRestaurantes/sinplatos";
+                }
                 /********************************/
-
                 model.addAttribute("iddelrestaurante", idrestaurante);
-                model.addAttribute("listaPlatos", platoRepository.buscarPlatosPorIdRestaurante(idrestaurante));
+                model.addAttribute("listaPlatos", listaPlatos);
                 return "AdminRestaurantes/menu";
             }
             else{
@@ -546,7 +549,7 @@ public class AdminRestauranteController {
     /************************CUPONES************************/
 
     @GetMapping("/cupones")
-    public String verCupones(Model model,@RequestParam(name = "page", defaultValue = "1") String requestedPage,HttpSession session){
+    public String verCupones(Model model,@RequestParam(name = "page", defaultValue = "1") String requestedPage,HttpSession session, RedirectAttributes attr){
         Usuario usuario= (Usuario) session.getAttribute("usuarioLogueado");
 
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(usuario.getIdusuarios());
@@ -603,7 +606,7 @@ public class AdminRestauranteController {
     }
 
     @GetMapping("/crearCupon")
-    public String crearCupon(@ModelAttribute("cupon") Cupones cupon, Model model,HttpSession session){
+    public String crearCupon(@ModelAttribute("cupon") Cupones cupon, Model model,HttpSession session, RedirectAttributes attr){
         Usuario usuario=(Usuario) session.getAttribute("usuarioLogueado");
         int idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(usuario.getIdusuarios()).get().getIdrestaurante();
         Restaurante restaurante = new Restaurante();
@@ -611,6 +614,10 @@ public class AdminRestauranteController {
         cupon.setRestaurante(restaurante);
         model.addAttribute("cupon",cupon);
         List<Plato> listaPlatos = platoRepository.buscarPlatosPorIdRestaurante(idrestaurante);
+        if(listaPlatos.isEmpty()){
+            attr.addFlashAttribute("sinPlatos","No puedes crear un cupon si no tienes ningun plato registrado.");
+            return "redirect:/adminrest/cupones";
+        }
         model.addAttribute("listaPlatos",listaPlatos);
         model.addAttribute("index",0);
         return "AdminRestaurantes/generarCupon";
@@ -725,7 +732,7 @@ public class AdminRestauranteController {
 
     @GetMapping("/calificaciones")
     public String verCalificaciones(Model model, @RequestParam(name = "page", defaultValue = "1") String requestedPage,
-                                    @RequestParam(name = "searchfield", defaultValue = "") String searchField,HttpSession session){
+                                    @RequestParam(name = "searchfield", defaultValue = "") String searchField,HttpSession session, RedirectAttributes attr){
         Usuario usuario=(Usuario) session.getAttribute("usuarioLogueado");
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(usuario.getIdusuarios());
         if(usuarioOptional.isPresent()) {
@@ -758,7 +765,8 @@ public class AdminRestauranteController {
                     model.addAttribute("searchfield", searchField);
                     return "AdminRestaurantes/calificaciones";
                 } else {
-                    return "AdminRestaurantes/sincalificaciones";
+                    attr.addFlashAttribute("sinCalificaciones","No tienes ninguna calificacion hasta la fecha.");
+                    return "redirect:/adminrest/perfil";
                 }
             }else {
                 return "redirect:/adminrest/login";
@@ -826,8 +834,8 @@ public class AdminRestauranteController {
                     model.addAttribute("name",name);
                     return "AdminRestaurantes/reporte";
                 }else{
-                    attr.addFlashAttribute("registroVacio","No se encontraron registros con la búsqueda especificada.");
-                    return "redirect:/adminrest/reporte";
+                    attr.addFlashAttribute("registroVacio","No tienes ningun reporte de pedidos hasta la fecha.");
+                    return "redirect:/adminrest/perfil";
                 }
             }else{
                 return "redirect:/login";
