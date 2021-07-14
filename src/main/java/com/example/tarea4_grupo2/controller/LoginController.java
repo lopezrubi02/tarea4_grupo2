@@ -95,6 +95,7 @@ public class LoginController {
                                 //if(!(validardni.isPresent())) {
                                 String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
                                 usuario.setContraseniaHash(contraseniahashbcrypt);
+                                usuarioRepository.save(usuario);
                                 Usuario usuarionuevo = usuarioRepository.findByEmail(usuario.getEmail());
                                 Direcciones direccionactual = new Direcciones();
                                 direccion = direccion.split(",")[0];
@@ -105,7 +106,7 @@ public class LoginController {
                                 direccionactual.setUsuario(usuarionuevo);
                                 direccionactual.setActivo(1);
                                 direccionesRepository.save(direccionactual);
-                                usuarioRepository.save(usuario);
+
                                 /* Envio de correo de confirmacion */
                                 String subject = "Creacion de cuenta";
                                 String aws = "ec2-user@ec2-3-84-20-210.compute-1.amazonaws.com";
