@@ -247,6 +247,20 @@
         <div class="row table-users">
           <!-- table -->
           <div class="col-md-12">
+
+            <select id="platosMenosVendidos5" style="display: none">
+              <option th:each="p:${platosNoTop5}"
+                      th:text="${p.getnombreplato()}"
+                      th:value="${p.getcantidad()}">
+              </option>
+            </select>
+
+            <select id="Top5Menos" style="display: none">
+              <option th:each="p:${platosNoTop5}"
+                      th:text="${p.getnombreplato()}"
+                      th:value="${p.getganancia()}">
+              </option>
+            </select>
             <div class="table-responsive">
               <table class="table table-striped" style="width: 600px" align="center">
                 <thead >
@@ -266,6 +280,9 @@
               </table>
             </div>
           </div>
+        </div>
+        <div class="container" style="width: 1000px; height: 500px">
+          <canvas id="myChartPlatosMenosVendidos" width="1000px" height="500px"></canvas>
         </div>
         <div class="row">
           <div class="col-md-2">
@@ -307,14 +324,13 @@
 <script src="/js/jquery-3.0.0.min.js"></script>
 
 <script>
-  var myoption = {
+  var myoption2 = {
     indexAxis: 'y',
   };
-
   let myChart;
-  var ctx = document.getElementById('myChartPlatosMasVendidos').getContext('2d');
-  var listaPlatosTopDto=document.getElementById("platosTopVendidos5");
-  var listaGanancia = document.getElementById("Top5Ganancias");
+  var ctx = document.getElementById('myChartPlatosMenosVendidos').getContext('2d');
+  var listaPlatosTopDto=document.getElementById("platosMenosVendidos5");
+  var listaGanancia = document.getElementById("Top5Menos");
   var nombresPlatos=[listaPlatosTopDto.length];
   var cantidadPlatos=[listaPlatosTopDto.length];
   var gananciasPlatos=[listaGanancia.length];
@@ -354,11 +370,61 @@
         borderWidth: 2
       }]
     },
+    options: myoption2
+  });
+</script>
+
+<script>
+  var myoption = {
+    indexAxis: 'y',
+  };
+  let myChart2;
+  var ctx = document.getElementById('myChartPlatosMasVendidos').getContext('2d');
+  var listaPlatosTopDto=document.getElementById("platosTopVendidos5");
+  var listaGanancia = document.getElementById("Top5Ganancias");
+  var nombresPlatos=[listaPlatosTopDto.length];
+  var cantidadPlatos=[listaPlatosTopDto.length];
+  var gananciasPlatos=[listaGanancia.length];
+  for(var i=0;i<listaPlatosTopDto.length;i++){
+    nombresPlatos[i]=listaPlatosTopDto[i].text;
+    console.log(nombresPlatos[i]);
+    cantidadPlatos[i]=listaPlatosTopDto[i].value;
+    console.log(cantidadPlatos[i]);
+    gananciasPlatos[i] = listaGanancia[i].value;
+    console.log(gananciasPlatos[i]);
+  }
+  myChart2 = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: nombresPlatos,
+      datasets: [{
+        label: 'Cantidad de platos vendidos',
+        fillColor: "#79D1CF",
+        strokeColor: "#79D1CF",
+        data: cantidadPlatos,
+        backgroundColor: [
+          'rgb(227,209,5)',
+        ],
+        borderColor: [
+          'rgba(0,3,3,0.95)',
+        ],
+        borderWidth: 2
+      },{
+        label: 'Ganancia por plato',
+        data: gananciasPlatos,
+        backgroundColor: [
+          'rgb(227,209,5)',
+        ],
+        borderColor: [
+          'rgba(0,3,3,0.95)',
+        ],
+        borderWidth: 2
+      }]
+    },
     options: myoption
   });
-
-
 </script>
+
 <script type="text/javascript">
   $(document).ready(function() {
     $("#sidebar").mCustomScrollbar({
