@@ -49,6 +49,8 @@
                                             <div style="font-size: large;color: black">Calificación general: <span th:text="${calificacionpromedio}"></span><img src="/images/pixlr-bg-result.png" style="width: 20px;height: 20px"></div>
                                             <div style="font-size: large;color: black">Cantidad de calificaciones: <span th:text="${cantidadcalificaciones}"></span></div>
                                         </div>
+                                        <div th:if="${sinCalificaciones != null}" th:text="${sinCalificaciones}" class="alert alert-danger" style="width: 630px; text-align: center;margin-top:10px; margin-left: 15px;margin-bottom: -25px"></div>
+                                        <div th:if="${registroVacio != null}" th:text="${registroVacio}" class="alert alert-danger" style="width: 630px; text-align: center;margin-top:10px; margin-left: 15px;margin-bottom: -25px"></div>
                                     </div>
                                     <div class="row" style="padding-top: 50px">
                                         <div class="col-md-6">

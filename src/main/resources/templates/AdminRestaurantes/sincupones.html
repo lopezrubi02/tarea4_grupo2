@@ -31,6 +31,7 @@
       <div class="blog">
         <div class="row table-users">
           <div class="col-md-12">
+            <div th:if="${sinPlatos != null}" th:text="${sinPlatos}" class="alert alert-danger" style="text-align: center"></div>
             <h1 class="title">AUN NO HAS AGREGADO NINGUN CUPON</h1>
               <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                 <div class="row">
@@ -45,7 +46,6 @@
             </div>
           </div>
         </div>
-      </div>
       <div class="copyright">
         <div class="container">
           <p>© 2021 Todos los derechos reservados.</p>
