@@ -63,7 +63,7 @@ public class UsuarioController {
     MetodosDePagoRepository metodosDePagoRepository;
     @Autowired
     TarjetasOnlineRepository tarjetasOnlineRepository;
-
+    /** PAGINA PRINCIPAL **/
     @GetMapping(value={"/cliente/paginaprincipal","/cliente/","/cliente"})
     public String paginaprincipal(HttpSession session, Model model) {
 
