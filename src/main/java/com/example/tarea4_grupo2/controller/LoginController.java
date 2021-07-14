@@ -77,6 +77,9 @@ public class LoginController {
             if(persona.isPresent()){
                 model.addAttribute("msgcorreo","Correo ya existe");
             }
+            if(!isValid(usuario.getEmail())){
+                model.addAttribute("msgcorreo","Correo no es válido");
+            }
             if(!validarDNI(usuario.getDni())){
                 model.addAttribute("msgdni","DNI no existe");
             }
@@ -129,6 +132,9 @@ public class LoginController {
                                 if (persona.isPresent()) {
                                     model.addAttribute("msgcorreo", "Correo ya existe");
                                 }
+                                if(!isValid(usuario.getEmail())){
+                                    model.addAttribute("msgcorreo","Correo no es válido");
+                                }
                                 model.addAttribute("direction", direccion);
                                 model.addAttribute("msgdni", "DNI no existe");
                                 model.addAttribute("listadistritos", distritosRepository.findAll());
@@ -140,6 +146,9 @@ public class LoginController {
                             }
                             if (!validarDNI(usuario.getDni())) {
                                 model.addAttribute("msgdni", "DNI no existe");
+                            }
+                            if(!isValid(usuario.getEmail())){
+                                model.addAttribute("msgcorreo","Correo no es válido");
                             }
                             model.addAttribute("direction", direccion);
                             model.addAttribute("msgcorreo", "Correo ya existe");
@@ -154,6 +163,9 @@ public class LoginController {
                         }
                         if(!validarDNI(usuario.getDni())){
                             model.addAttribute("msgdni","DNI no existe");
+                        }
+                        if(!isValid(usuario.getEmail())){
+                            model.addAttribute("msgcorreo","Correo no es válido");
                         }
                         model.addAttribute("direction",direccion);
                         model.addAttribute("msgcontra","La contraseña no cumple con los requisitos: mínimo 8 caracteres,una mayúscula, un número y un caracter especial");
@@ -171,6 +183,9 @@ public class LoginController {
                     }
                     if(!validarContrasenia(usuario.getContraseniaHash())){
                         model.addAttribute("msgcontrapatron","La contraseña no cumple con los requisitos: mínimo 8 caracteres,una mayúscula, un número y un caracter especial");
+                    }
+                    if(!isValid(usuario.getEmail())){
+                        model.addAttribute("msgcorreo","Correo no es válido");
                     }
                     model.addAttribute("direction",direccion);
                     model.addAttribute("msgcontra","Contraseñas no son iguales");
@@ -402,4 +417,12 @@ public class LoginController {
         return dniValido;
     }
 
+    public boolean isValid(String email) {
+        String emailREGEX = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        Pattern pattern = Pattern.compile(emailREGEX );
+        if (email == null){
+            return false;
+        }
+        return pattern .matcher(email).matches();
+    }
 }

@@ -1301,5 +1301,6 @@ public class AdminRestauranteController {
         }
         return "redirect:/adminrest/perfil";
     }
+
 }
 
