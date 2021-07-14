@@ -122,11 +122,13 @@
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <label>Sexo</label>
+                                            <div class="input-group">
                                             <div class="text-danger" th:if="${#fields.hasErrors('sexo')}" th:errors="*{sexo}"></div>
-                                            <select class="form-select" placeholder="Sexo" type="text" name="sexo" id="sexo"  style="width: 100%;height: 40px;border: #fff solid 2px;box-shadow: 0 0 0 .2rem rgba(255, 255, 255, .25);">
+                                            <select class="form-control" placeholder="Sexo" type="text" name="sexo" id="sexo"  style="width: 100%;height: 60px;">
                                                 <option value="Masculino">Masculino</option>
                                                 <option value="Femenino">Femenino</option>
                                             </select>
+                                            </div>
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" style="display: none">
                                             <select id="distrito-lista">
@@ -136,7 +138,7 @@
                                                 </option>
                                             </select>
                                         </div>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" style="padding-top: 25px">
+                                        <div style="margin-top: 30px" class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <label id="direccion-texto">Direccion: Debe hacer click para validar</label>
                                             <div id="error-distrito" class="text-danger"></div>
                                             <div id="error-direccion" class="text-danger"></div>
@@ -146,7 +148,7 @@
                                                 <span class="input-group-append"><img onclick="geocode()" th:src="@{/images/locationcursor.jpg}" width="60px"></span>
                                             </div>
                                         </div>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                        <div style="margin-top:30px " class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <label>Correo</label>
                                             <div th:if="${msgcorreo != null}" th:text="${msgcorreo}" class="text-danger"></div>
                                             <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
