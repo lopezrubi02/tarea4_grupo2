@@ -307,6 +307,10 @@
 <script src="/js/jquery-3.0.0.min.js"></script>
 
 <script>
+  var myoption = {
+    indexAxis: 'y',
+  };
+
   let myChart;
   var ctx = document.getElementById('myChartPlatosMasVendidos').getContext('2d');
   var listaPlatosTopDto=document.getElementById("platosTopVendidos5");
@@ -328,9 +332,11 @@
       labels: nombresPlatos,
       datasets: [{
         label: 'Cantidad de platos vendidos',
+        fillColor: "#79D1CF",
+        strokeColor: "#79D1CF",
         data: cantidadPlatos,
         backgroundColor: [
-          'rgb(216,176,15)',
+          'rgb(227,209,5)',
         ],
         borderColor: [
           'rgba(0,3,3,0.95)',
@@ -340,7 +346,7 @@
         label: 'Ganancia por plato',
         data: gananciasPlatos,
         backgroundColor: [
-          'rgb(216,176,15)',
+          'rgb(227,209,5)',
         ],
         borderColor: [
           'rgba(0,3,3,0.95)',
@@ -348,12 +354,9 @@
         borderWidth: 2
       }]
     },
-    options: {
-      scales: {
-        y: {}
-      }
-    }
+    options: myoption
   });
+
 
 </script>
 <script type="text/javascript">
