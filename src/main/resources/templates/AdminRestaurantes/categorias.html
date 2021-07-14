@@ -63,10 +63,12 @@
                                 <form method="post" th:action="@{/adminrest/llenarcategoria}" th:object="${restaurante}" class="main_form">
                                     <input type="hidden" id="cantidad" value="4">
                                     <input type="hidden" th:field="*{idrestaurante}" th:value="${id}">
-                                    <div th:each="lista:${listacategorias}" class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                        <input style="color: white" type="checkbox" th:field="*{categoriasrestList}" th:value="${lista.getIdcategorias()}" th:text="${lista.getNombrecategoria()}">
+                                    <div style="color: white;font-size: 20px">Seleccionados: <span style="color: white;font-size: 20px" id="seleccionados">0</span></div>
+                                    <br>
+                                    <div style="color: white;" th:each="lista:${listacategorias}" class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                        <input type="checkbox" th:field="*{categoriasrestList}" th:value="${lista.getIdcategorias()}" th:text="${lista.getNombrecategoria()}">
                                     </div>
-                                    <div>Seleccionados: <span id="seleccionados">0</span></div>
+                                    <br>
                                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                         <div class="row">
                                             <div class="col-md-4">
