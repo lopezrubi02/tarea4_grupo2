@@ -3,6 +3,8 @@ package com.example.tarea4_grupo2.controller;
 import com.example.tarea4_grupo2.entity.Direcciones;
 import com.example.tarea4_grupo2.entity.Distritos;
 import com.example.tarea4_grupo2.entity.Usuario;
+import com.example.tarea4_grupo2.oauth.CustomOAuth2User;
+import com.example.tarea4_grupo2.oauth.GrantedAuthorityImpl;
 import com.example.tarea4_grupo2.repository.DireccionesRepository;
 import com.example.tarea4_grupo2.repository.DistritosRepository;
 import com.example.tarea4_grupo2.repository.UsuarioRepository;
@@ -11,8 +13,11 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -32,8 +37,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -206,18 +210,29 @@ public class LoginController {
         return "login/login";
     }
 
+    @GetMapping("/prueba")
+    public String prueba(){
+        return "cliente/prueba";
+    }
+
     @GetMapping("/redirectByRol")
     public String redirectByRol(Authentication auth, HttpSession session){
         System.out.println("******TRACER 10**************");
         String rol="";
-        //setear la última fecha y hora de ingreso
         for(GrantedAuthority role:auth.getAuthorities()){
             rol= role.getAuthority();
             break;
         }
         System.out.println(auth.getName());
-        Usuario usuarioLogueado= usuarioRepository.findByEmail(auth.getName());
+        System.out.println("correo logeado por api google");
+        CustomOAuth2User oauthUser = (CustomOAuth2User) auth.getPrincipal();
+        System.out.println(oauthUser.getEmail());
+
+        Usuario usuarioLogueado= usuarioRepository.getUserByUsername(oauthUser.getEmail());
         session.setAttribute("usuarioLogueado",usuarioLogueado);
+        String rol_log = usuarioLogueado.getRol();
+        System.out.println("ROL OBTENIDO DEL USUARIO OBTENIDO");
+        System.out.println(rol_log);
         DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         ZoneId zoneId = ZoneId.of("America/Lima");
         LocalDateTime datetime1 = LocalDateTime.now(zoneId);
@@ -226,30 +241,33 @@ public class LoginController {
         System.out.println(formatDateTime);
         System.out.println(datetime1);
 
-        if (rol.equals("AdminRestaurante")){
+        if (rol_log.equalsIgnoreCase("AdminRestaurante")){
             usuarioLogueado.setUltimafechaingreso(datetime1);
             usuarioRepository.save(usuarioLogueado);
             return "redirect:/adminrest/login";
-        }else if(rol.equals("AdminSistema")){
+        }else if(rol_log.equalsIgnoreCase("AdminSistema")){
             System.out.println("******TRACER 12**************");
+            //oauthUser.getAuthorities().add("AdminSistema");
+            System.out.println(oauthUser.getAuthorities());
 
+            System.out.println(oauthUser.getAuthorities());
             usuarioLogueado.setUltimafechaingreso(datetime1);
             usuarioRepository.save(usuarioLogueado);
             return "redirect:/admin/gestionCuentas";
-        } else if(rol.equals("Repartidor")) {
+        } else if(rol_log.equalsIgnoreCase("Repartidor")) {
             usuarioLogueado.setUltimafechaingreso(datetime1);
             usuarioRepository.save(usuarioLogueado);
             return "redirect:/repartidor/home";
-        }else if(rol.equals("Cliente")){
+        }else if(rol_log.equalsIgnoreCase("Cliente")){
             System.out.println("******TRACER 11**************");
 
             usuarioLogueado.setUltimafechaingreso(datetime1);
             usuarioRepository.save(usuarioLogueado);
             return "redirect:/cliente/paginaprincipal";
-        }
-        else{
+        }else{
             System.out.println(rol);
-            return "/login";
+            System.out.println(rol_log);
+            return "login/login";
         }
     }
     @GetMapping("/olvidoContrasenia")

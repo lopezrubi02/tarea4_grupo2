@@ -512,7 +512,9 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
         Usuario usuarioActual = (Usuario) session.getAttribute("usuarioLogueado");
         int id = usuarioActual.getIdusuarios();
         model.addAttribute("idAdmin",id);
-
+        System.out.println("DATOS OBTENIDOS EN VISTA DEFAULT");
+        System.out.println(usuarioActual.getEmail());
+        System.out.println(id);
         List<String> direccionIp = null;
         try {
             direccionIp = getIpAndProt();

@@ -1,12 +1,18 @@
 package com.example.tarea4_grupo2.oauth;
 
+import com.example.tarea4_grupo2.entity.Usuario;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import sun.plugin2.message.LaunchJVMAppletMessage;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
-public class CustomOAuth2User implements OAuth2User {
+public class CustomOAuth2User implements OAuth2User, Serializable {
 
     private OAuth2User oAuth2User;
 
@@ -24,14 +30,22 @@ public class CustomOAuth2User implements OAuth2User {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
-        System.out.println("*********TRACER 21******************");
         return oAuth2User.getAuthorities();
     }
 
+ /*   public Collection<? extends GrantedAuthority> getAuthorities(
+            String roles) {
+        List<GrantedAuthority> authorities
+                = new ArrayList<>();
+
+        authorities.add(new SimpleGrantedAuthority(roles));
+
+        return authorities;
+    }
+*/
     @Override
     public String getName() {
         System.out.println("****************TRACER 13************");
-        System.out.println(oAuth2User.getAuthorities());
         return oAuth2User.getAttribute("name");
     }
 

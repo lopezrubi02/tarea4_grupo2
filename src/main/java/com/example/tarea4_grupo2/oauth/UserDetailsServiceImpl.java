@@ -20,8 +20,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (user == null) {
             System.out.println("USUARIO NULO");
             throw new UsernameNotFoundException("Could not find user");
+        }else{
+            System.out.println("USUARIO NO NULO");
         }
-
         return new MyUserDetails(user);
     }
 }

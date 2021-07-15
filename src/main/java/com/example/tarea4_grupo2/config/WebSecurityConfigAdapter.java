@@ -63,16 +63,16 @@ public class WebSecurityConfigAdapter extends org.springframework.security.confi
                 .antMatchers("/cambiar1/**", "/cambiar1/", "/cambiarContrasenia").permitAll()
                 .anyRequest().permitAll()
                 .and()
-                .formLogin()
+                .formLogin().permitAll()
                     .loginPage("/login")
                     .usernameParameter("username")
                     .passwordParameter("password")
-                    .loginProcessingUrl("/processLogin")
-                    .defaultSuccessUrl("/redirectByRol",true)
+                    .defaultSuccessUrl("/prueba",true)
                 .and()
                 .oauth2Login()
                     .loginPage("/login")
-                    .userInfoEndpoint().userService(oauthUserService)
+                    .userInfoEndpoint()
+                        .userService(oauthUserService)
                     .and()
                     .successHandler(new AuthenticationSuccessHandler() {
 
@@ -136,9 +136,11 @@ public class WebSecurityConfigAdapter extends org.springframework.security.confi
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        System.out.println("¨*****TRACER LOG DB*************");
         auth.authenticationProvider(authenticationProvider());
 
     }
+
 
  /*   @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception{
