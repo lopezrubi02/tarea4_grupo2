@@ -47,6 +47,7 @@
                                                 <div th:if="${sinCalificaciones != null}" th:text="${sinCalificaciones}" class="alert alert-danger" style="width: 630px; text-align: center;margin-top:10px; margin-left: 15px;margin-bottom: -25px"></div>
                                                 <div th:if="${registroVacio != null}" th:text="${registroVacio}" class="alert alert-danger" style="width: 630px; text-align: center;margin-top:10px; margin-left: 15px;margin-bottom: -25px"></div>
                                                 <div th:if="${sinPlatos != null}" th:text="${sinPlatos}" class="alert alert-danger" style="width: 630px; text-align: center;margin-top:10px; margin-left: 15px;margin-bottom: -25px"></div>
+                                                <div th:if="${nopedidos != null}" th:text="${nopedidos}" class="alert alert-danger" style="width: 630px; text-align: center;margin-top:10px; margin-left: 15px;margin-bottom: -25px"></div>
                                                 <a th:if="${sinPlatosCreados != null}"  th:text="${sinPlatosCreados}" th:href="@{/adminrest/crearPlato}" class="alert alert-danger" style="width: 630px; text-align: center;margin-top:10px; margin-left: 15px;margin-bottom: -25px"></a>
                                                 <a th:if="${NoHayCupones != null}"  th:text="${NoHayCupones}" th:href="@{/adminrest/crearCupon}" class="alert alert-danger" style="width: 630px; text-align: center;margin-top:10px; margin-left: 15px;margin-bottom: -25px"></a>
                                             </div>

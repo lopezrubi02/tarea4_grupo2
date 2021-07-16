@@ -115,52 +115,70 @@ public class AdminRestauranteController {
                                      Model model,
                                      HttpSession session) throws IOException {
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int correcto = 1;
         if(bindingResult.hasFieldErrors("nombre")||bindingResult.hasFieldErrors("ruc")){
             restaurante.setUsuario(sessionUser);
             model.addAttribute("listadistritos",distritosRepository.findAll());
             model.addAttribute("restaurante",restaurante);
             model.addAttribute("direction",direccion);
-            return "AdminRestaurantes/registerRestaurante";
-        }
-        else {
-            if (restaurante.getRuc().startsWith("20") || restaurante.getRuc().startsWith("10")) {
-                if(validarRUC(restaurante.getRuc())){
-                    try {
-                        restaurante.setFoto(file.getBytes());
-                        restaurante.setFotocontenttype(file.getContentType());
-                        restaurante.setFotonombre(file.getOriginalFilename());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    direccion = direccion.split(",")[0];
-                    restaurante.setDireccion(direccion);
-                    Distritos distrito = distritosRepository.findById(iddistrito).get();
-                    restaurante.setDistrito(distrito);
-                    Optional<Restaurante> OptRestaurante = restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios());
-                    if(!(OptRestaurante.isPresent())){
-                        restauranteRepository.save(restaurante);
-                    }else{
-                        restauranteRepository.deleteById(OptRestaurante.get().getIdrestaurante());
-                        restauranteRepository.save(restaurante);
-                    }
-                    sessionUser.setCuentaActiva(2);
-                    usuarioRepository.save(sessionUser);
-                    model.addAttribute("id", restaurante.getIdrestaurante());
-                    model.addAttribute("listacategorias", categoriasRepository.findAll());
-                    return "AdminRestaurantes/categorias";
-                }else{
-                    restaurante.setUsuario(sessionUser);
-                    model.addAttribute("direction",direccion);
-                    model.addAttribute("msgrucerror","No es un RUC registrado.");
-                    model.addAttribute("listadistritos",distritosRepository.findAll());
-                    model.addAttribute("restaurante",restaurante);
+            if(file.isEmpty()){
+                model.addAttribute("msgFotoInvalida", "Adjunte una imagen.");
+            }else{
+                if(!( (file.getContentType().contains("jpeg")) || (file.getContentType().contains("jpg")) || (file.getContentType().contains("png")) )) {
+                    model.addAttribute("msgFotoInvalida", "La foto no contiene el formato adecuado. Se aceptan solo archivos .jpeg, .jpg, .png");
                     return "AdminRestaurantes/registerRestaurante";
                 }
             }
-            else{
+            return "AdminRestaurantes/registerRestaurante";
+        }else{
+            if(file.isEmpty()){
+                correcto = 0;
+                model.addAttribute("msgSinFoto", "Adjunte una imagen.");
+            }else{
+                if (!((file.getContentType().contains("jpeg")) || (file.getContentType().contains("jpg")) || (file.getContentType().contains("png")) ||
+                        (file.getContentType().contains("JPEG")) || (file.getContentType().contains("JPG")) || (file.getContentType().contains("PNG")))) {
+                    correcto = 0;
+                    model.addAttribute("msgFotoInvalida", "La foto no contiene el formato adecuado. Se aceptan solo archivos .jpeg, .jpg, .png");
+                }
+            }
+
+            if (!(restaurante.getRuc().startsWith("20") || restaurante.getRuc().startsWith("10"))) {
+                correcto = 0;
+                model.addAttribute("msgrucerror","No es un RUC valido.");
+            }else{
+                if(!(validarRUC(restaurante.getRuc()))){
+                    correcto = 0;
+                    model.addAttribute("msgrucerror","No es un RUC registrado.");
+                }
+            }
+
+            if(correcto == 1){
+                try {
+                    restaurante.setFoto(file.getBytes());
+                    restaurante.setFotocontenttype(file.getContentType());
+                    restaurante.setFotonombre(file.getOriginalFilename());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                direccion = direccion.split(",")[0];
+                restaurante.setDireccion(direccion);
+                Distritos distrito = distritosRepository.findById(iddistrito).get();
+                restaurante.setDistrito(distrito);
+                Optional<Restaurante> OptRestaurante = restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios());
+                if(!(OptRestaurante.isPresent())){
+                    restauranteRepository.save(restaurante);
+                }else{
+                    restauranteRepository.deleteById(OptRestaurante.get().getIdrestaurante());
+                    restauranteRepository.save(restaurante);
+                }
+                sessionUser.setCuentaActiva(2);
+                usuarioRepository.save(sessionUser);
+                model.addAttribute("id", restaurante.getIdrestaurante());
+                model.addAttribute("listacategorias", categoriasRepository.findAll());
+                return "AdminRestaurantes/categorias";
+            }else{
                 restaurante.setUsuario(sessionUser);
                 model.addAttribute("direction",direccion);
-                model.addAttribute("msgrucerror","No es un RUC valido.");
                 model.addAttribute("listadistritos",distritosRepository.findAll());
                 model.addAttribute("restaurante",restaurante);
                 return "AdminRestaurantes/registerRestaurante";
@@ -408,7 +426,8 @@ public class AdminRestauranteController {
             if(file.isEmpty()){
                 model.addAttribute("msgFotoInvalida", "Adjunte una imagen.");
             }else{
-                if(!( (file.getContentType().contains("jpeg")) || (file.getContentType().contains("jpg")) || (file.getContentType().contains("png")) )) {
+                if(!( (file.getContentType().contains("jpeg")) || (file.getContentType().contains("jpg")) || (file.getContentType().contains("png")) ||
+                        (file.getContentType().contains("JPEG")) || (file.getContentType().contains("JPG")) || (file.getContentType().contains("PNG")))) {
                     model.addAttribute("msgFotoInvalida", "La foto no contiene el formato adecuado. Se aceptan solo archivos .jpeg, .jpg, .png");
                     return "AdminRestaurantes/newPlato";
                 }

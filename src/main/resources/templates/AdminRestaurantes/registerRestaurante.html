@@ -146,6 +146,8 @@
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" style="padding-top: 25px">
                                             <label>Imagen</label>
+                                            <div th:if="${msgFotoInvalida != null}" th:text="${msgFotoInvalida}" class="text-danger"></div>
+                                            <div th:if="${msgSinFoto != null}" th:text="${msgSinFoto}" class="text-danger"></div>
                                             <input   class="form-control" type="file" id="imagen" name="imagen" >
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
