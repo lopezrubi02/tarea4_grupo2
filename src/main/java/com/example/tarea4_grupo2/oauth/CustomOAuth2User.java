@@ -27,8 +27,11 @@ public class CustomOAuth2User implements OAuth2User, Serializable {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-
-        return AuthorityUtils.createAuthorityList(user.getRol());
+        if(user != null){
+            return AuthorityUtils.createAuthorityList(user.getRol());
+        }else{
+            return oAuth2User.getAuthorities();
+        }
     }
 
     @Override

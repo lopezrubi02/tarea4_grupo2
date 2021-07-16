@@ -301,8 +301,18 @@ public class LoginController {
         } else if(rol_log.equalsIgnoreCase("Repartidor")) {
             usuarioLogueado.setUltimafechaingreso(datetime1);
 
-            usuarioRepository.save(usuarioLogueado);
-            return "redirect:/repartidor/home";
+            int repactivado = usuarioLogueado.getCuentaActiva();
+            if(repactivado == -1){
+                session.invalidate();
+                return "redirect:/login";
+            } else if(repactivado == 1){
+                usuarioRepository.save(usuarioLogueado);
+                return "redirect:/repartidor/home";
+            }else{
+                session.invalidate();
+                return "redirect:/login";
+            }
+
         }else if(rol_log.equalsIgnoreCase("Cliente")){
             usuarioLogueado.setUltimafechaingreso(datetime1);
             usuarioRepository.save(usuarioLogueado);
