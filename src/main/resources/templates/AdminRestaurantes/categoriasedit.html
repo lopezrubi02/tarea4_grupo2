@@ -1,6 +1,30 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/adminRestaurante.html :: header( title = 'Menu')"></head>
+<head>
+        <!-- basic -->
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <!-- mobile metas -->
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+        <!-- site metas -->
+        <title>Register</title>
+
+        <!-- bootstrap css -->
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <!-- owl css -->
+        <link rel="stylesheet" href="/css/owl.carousel.min.css">
+        <!-- style css -->
+        <link rel="stylesheet" href="/css/style.css">
+        <link rel="stylesheet" href="/css/styleAdminRest.css">
+        <!-- responsive-->
+        <link rel="stylesheet" href="/css/responsive.css">
+        <!-- awesome fontfamily -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
+</head>
 
 <!-- body -->
 <body class="main-layout Recipes_page">
@@ -41,10 +65,15 @@
                                 <form method="post" th:action="@{/adminrest/guardarcategoriaedit}" th:object="${restaurante}" class="main_form">
                                     <input type="hidden" id="cantidad" value="4">
                                     <input type="hidden" th:field="*{idrestaurante}" th:value="${id}">
-                                    <div th:each="lista:${listacategorias}" class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                        <input type="checkbox" th:field="*{categoriasrestList}" th:value="${lista.getIdcategorias()}" th:text="${lista.getNombrecategoria()}">
+                                    <div style="color: white;font-size: 20px">Seleccionados: <span style="color: white;font-size: 20px" id="seleccionados" th:text="${numero}">0</span></div>
+                                    <br>
+                                    <div style="color: white;" th:each="lista:${listacategorias}" class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                        <div class="input-group">
+                                            <input type="checkbox" th:field="*{categoriasrestList}" th:value="${lista.getIdcategorias()}">
+                                             <div style="margin-left: 20px; transform: translateY(-5px)" th:text="${lista.getNombrecategoria()}"></div>
+                                        </div>
                                     </div>
-                                    <div>Seleccionados: <span id="seleccionados">0</span></div>
+                                    <br>
                                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                         <div class="row">
                                             <div class="col-md-4">

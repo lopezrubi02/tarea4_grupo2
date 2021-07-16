@@ -87,7 +87,7 @@ public class LoginController {
             return "AdminRestaurantes/register";
         }
         else {
-            //if(Pattern.matches("^[a-z0-9]+@gmail.com",usuario.getEmail())){
+            if(isValid(usuario.getEmail())){
                 if(usuario.getContraseniaHash().equals(password2)) {
                     System.out.println("aqui gozu");
                     if (validarContrasenia(usuario.getContraseniaHash())) {
@@ -192,12 +192,26 @@ public class LoginController {
                     model.addAttribute("listadistritos",distritosRepository.findAll());
                     return "AdminRestaurantes/register";
                 }
-            //}
-            //else{
-                //model.addAttribute("msg2","Ingrese un correo valido");
-                //model.addAttribute("listadistritos",distritosRepository.findAll());
-                //return "AdminRestaurantes/register";
-            //}
+            }
+            else{
+                Optional<Usuario> persona = usuarioRepository.findByEmailAndAndRol(usuario.getEmail(), "AdminRestaurante");
+                if(persona.isPresent()){
+                    model.addAttribute("msgcorreo","Correo ya existe");
+                }
+                if(!validarDNI(usuario.getDni())){
+                    model.addAttribute("msgdni","DNI no existe");
+                }
+                if(!validarContrasenia(usuario.getContraseniaHash())){
+                    model.addAttribute("msgcontrapatron","La contraseña no cumple con los requisitos: mínimo 8 caracteres,una mayúscula, un número y un caracter especial");
+                }
+                if(!isValid(usuario.getEmail())){
+                    model.addAttribute("msgcorreo","Correo no es válido");
+                }
+                model.addAttribute("direction",direccion);
+                model.addAttribute("msgcontra","Contraseñas no son iguales");
+                model.addAttribute("listadistritos",distritosRepository.findAll());
+                return "AdminRestaurantes/register";
+            }
         }
     }
 

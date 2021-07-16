@@ -4,11 +4,8 @@ import com.example.tarea4_grupo2.dto.*;
 import com.example.tarea4_grupo2.entity.*;
 import com.example.tarea4_grupo2.repository.*;
 import com.example.tarea4_grupo2.service.SendMailService;
-import com.sun.javafx.UnmodifiableArrayList;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.tomcat.util.http.fileupload.FileUploadBase;
-import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -22,11 +19,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
-import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.io.*;
@@ -80,7 +74,6 @@ public class AdminRestauranteController {
             System.out.println(id);
 
             if(nuevoUsuario.getCuentaActiva() == 3){
-                System.out.println("TRACE CUENTA EN 3");
                 return "AdminRestaurantes/sinRestaurante";
 
             }else if(nuevoUsuario.getCuentaActiva() == 2){
@@ -89,7 +82,6 @@ public class AdminRestauranteController {
 
             }else if(nuevoUsuario.getCuentaActiva() == 1){
 
-                System.out.println("TRACE3");
                 Optional<Restaurante> restauranteOpt = restauranteRepository.buscarRestaurantePorIdAdmin(id);
 
                 if(restauranteOpt.isPresent()){
@@ -107,6 +99,8 @@ public class AdminRestauranteController {
         }
     }
 
+    /************************RESTAURANTE************************/
+
     @PostMapping("/categorias")
     public String esperaConfirmacion(@ModelAttribute("restaurante") @Valid Restaurante restaurante,BindingResult bindingResult,
                                      @RequestParam("imagen") MultipartFile file,
@@ -115,46 +109,116 @@ public class AdminRestauranteController {
                                      Model model,
                                      HttpSession session) throws IOException {
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int correcto = 1;
+        try {
+            restaurante.setFoto(file.getBytes());
+            restaurante.setFotocontenttype(file.getContentType());
+            restaurante.setFotonombre(file.getOriginalFilename());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Direccion: ");
+        System.out.println(direccion);
+
         if(bindingResult.hasFieldErrors("nombre")||bindingResult.hasFieldErrors("ruc")){
+
             restaurante.setUsuario(sessionUser);
             model.addAttribute("listadistritos",distritosRepository.findAll());
             model.addAttribute("restaurante",restaurante);
             model.addAttribute("direction",direccion);
-            return "AdminRestaurantes/registerRestaurante";
-        }
-        else {
-            if (restaurante.getRuc().startsWith("20") || restaurante.getRuc().startsWith("10")) {
-                if(validarRUC(restaurante.getRuc())){
-                    try {
-                        restaurante.setFoto(file.getBytes());
-                        restaurante.setFotocontenttype(file.getContentType());
-                        restaurante.setFotonombre(file.getOriginalFilename());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    direccion = direccion.split(",")[0];
-                    restaurante.setDireccion(direccion);
-                    Distritos distrito = distritosRepository.findById(iddistrito).get();
-                    restaurante.setDistrito(distrito);
-                    restauranteRepository.save(restaurante);
-                    sessionUser.setCuentaActiva(2);
-                    usuarioRepository.save(sessionUser);
-                    model.addAttribute("id", restaurante.getIdrestaurante());
-                    model.addAttribute("listacategorias", categoriasRepository.findAll());
-                    return "AdminRestaurantes/categorias";
-                }else{
-                    restaurante.setUsuario(sessionUser);
-                    model.addAttribute("direction",direccion);
-                    model.addAttribute("msgrucerror","No es un RUC registrado.");
-                    model.addAttribute("listadistritos",distritosRepository.findAll());
-                    model.addAttribute("restaurante",restaurante);
-                    return "AdminRestaurantes/registerRestaurante";
+
+            if(file.isEmpty()){
+                correcto = 0;
+                model.addAttribute("msgSinFoto", "Adjunte una imagen.");
+            }else{
+                if (!((file.getContentType().contains("jpeg")) || (file.getContentType().contains("jpg")) || (file.getContentType().contains("png")) ||
+                        (file.getContentType().contains("JPEG")) || (file.getContentType().contains("JPG")) || (file.getContentType().contains("PNG")))) {
+                    correcto = 0;
+                    model.addAttribute("msgFotoInvalida", "La foto no contiene el formato adecuado. Se aceptan solo archivos .jpeg, .jpg, .png");
                 }
             }
-            else{
+
+            if(!(restauranteRepository.findRestauranteByRuc(restaurante.getRuc()).isPresent())){
+                if (!(restaurante.getRuc().startsWith("20") || restaurante.getRuc().startsWith("10"))) {
+                    correcto = 0;
+                    model.addAttribute("msgrucerror","No es un RUC valido.");
+                }else{
+                    if(!(validarRUC(restaurante.getRuc()))){
+                        correcto = 0;
+                        model.addAttribute("msgrucerror","No es un RUC registrado.");
+                    }
+                }
+            }else{
+                correcto = 0;
+                model.addAttribute("msgrucerror","Ya existe un restaurante registrado con este RUC.");
+            }
+            if(direccion.equals("")){
+                correcto = 0;
+                model.addAttribute("direccionNula","La direccion no puede ser nula.");
+            }
+
+            return "AdminRestaurantes/registerRestaurante";
+
+        }else{
+
+            if(file.isEmpty()){
+                correcto = 0;
+                model.addAttribute("msgSinFoto", "Adjunte una imagen.");
+            }else{
+                if (!((file.getContentType().contains("jpeg")) || (file.getContentType().contains("jpg")) || (file.getContentType().contains("png")) ||
+                        (file.getContentType().contains("JPEG")) || (file.getContentType().contains("JPG")) || (file.getContentType().contains("PNG")))) {
+                    correcto = 0;
+                    model.addAttribute("msgFotoInvalida", "La foto no contiene el formato adecuado. Se aceptan solo archivos .jpeg, .jpg, .png");
+                }
+            }
+
+            if(!(restauranteRepository.findRestauranteByRuc(restaurante.getRuc()).isPresent())){
+                if (!(restaurante.getRuc().startsWith("20") || restaurante.getRuc().startsWith("10"))) {
+                    correcto = 0;
+                    model.addAttribute("msgrucerror","No es un RUC valido.");
+                }else{
+                    if(!(validarRUC(restaurante.getRuc()))){
+                        correcto = 0;
+                        model.addAttribute("msgrucerror","No es un RUC registrado.");
+                    }
+                }
+            }else{
+                correcto = 0;
+                model.addAttribute("msgrucerror","Ya existe un restaurante registrado con este RUC.");
+            }
+
+            if(direccion.equals("")){
+                correcto = 0;
+                model.addAttribute("direccionNula","La direccion no puede ser nula.");
+            }
+
+            if(correcto == 1){
+                try {
+                    restaurante.setFoto(file.getBytes());
+                    restaurante.setFotocontenttype(file.getContentType());
+                    restaurante.setFotonombre(file.getOriginalFilename());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                direccion = direccion.split(",")[0];
+                restaurante.setDireccion(direccion);
+                Distritos distrito = distritosRepository.findById(iddistrito).get();
+                restaurante.setDistrito(distrito);
+                Optional<Restaurante> OptRestaurante = restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios());
+                if(!(OptRestaurante.isPresent())){
+                    restauranteRepository.save(restaurante);
+                }else{
+                    restauranteRepository.deleteById(OptRestaurante.get().getIdrestaurante());
+                    restauranteRepository.save(restaurante);
+                }
+                sessionUser.setCuentaActiva(2);
+                usuarioRepository.save(sessionUser);
+                model.addAttribute("id", restaurante.getIdrestaurante());
+                model.addAttribute("listacategorias", categoriasRepository.findAll());
+                return "AdminRestaurantes/categorias";
+            }else{
                 restaurante.setUsuario(sessionUser);
                 model.addAttribute("direction",direccion);
-                model.addAttribute("msgrucerror","No es un RUC valido.");
                 model.addAttribute("listadistritos",distritosRepository.findAll());
                 model.addAttribute("restaurante",restaurante);
                 return "AdminRestaurantes/registerRestaurante";
@@ -173,21 +237,29 @@ public class AdminRestauranteController {
         return "AdminRestaurantes/registerRestaurante";
     }
 
+    @GetMapping("/borrarRestaurante")
+    public String borrarRestaurante(HttpSession session){
+        Usuario user= (Usuario) session.getAttribute("usuarioLogueado");
+        int id=restauranteRepository.buscarRestaurantePorIdAdmin(user.getIdusuarios()).get().getIdrestaurante();
+        restauranteRepository.deleteById(id);
+        user.setCuentaActiva(3);
+        usuarioRepository.save(user);
+
+        return "redirect:/adminrest/sinrestaurante";
+    }
+
+    @PostMapping("/llenarcategoria")
+    public String llenarcategorias(@ModelAttribute("restaurante") Restaurante restaurante,Model model){
+        Optional<Restaurante> optional = restauranteRepository.findById(restaurante.getIdrestaurante());
+        optional.get().setCategoriasrestList(restaurante.getCategoriasrestList());
+        restauranteRepository.save(optional.get());
+        model.addAttribute("id",optional.get().getIdrestaurante());
+        return "AdminRestaurantes/espera";
+    }
+
     @GetMapping("/sinrestaurante")
     public String sinRestaurante(){
         return "AdminRestaurantes/sinRestaurante";
-    }
-
-    //TODO se usa esto?
-    @PostMapping("/validarpersona")
-    public String validarPersona(){
-        return "AdminRestaurantes/restaurante";
-    }
-
-    @GetMapping("/correoconfirmar")
-    public String correoConfirmar(){
-
-        return "AdminRestaurantes/correo";
     }
 
     public boolean validarRUC(String dni){
@@ -229,9 +301,7 @@ public class AdminRestauranteController {
             }
             System.out.println(responseContent.toString());
             JSONObject jsonObj = new JSONObject(responseContent.toString());
-            //System.out.println(jsonObj.get("nombres"));
 
-            // Validar si existe documento
             if((!jsonObj.get("nombre_o_razon_social").equals("")) && (!jsonObj.get("nombre_o_razon_social").equals(null))){
                 System.out.println("RUC valido");
                 rucValido = true;
@@ -244,6 +314,43 @@ public class AdminRestauranteController {
         }
 
         return rucValido;
+    }
+
+    @PostMapping("/guardarrestedit")
+    public String editPerfilUsuario(@ModelAttribute("restaurante") Restaurante restaurante,
+                                    HttpSession session,
+                                    @RequestParam("imagen") MultipartFile file,
+                                    Model model){
+        Usuario user=(Usuario) session.getAttribute("usuarioLogueado");
+        Restaurante rest = restauranteRepository.buscarRestaurantePorIdAdmin(user.getIdusuarios()).get();
+        try {
+            rest.setFoto(file.getBytes());
+            rest.setFotocontenttype(file.getContentType());
+            rest.setFotonombre(file.getOriginalFilename());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        restauranteRepository.save(rest);
+        return "redirect:/adminrest/cuentaAdmin";
+    }
+
+    @GetMapping("/categoriaedit")
+    public String llenarcategoriasedit(@ModelAttribute("restaurante") Restaurante restaurante,Model model,HttpSession session){
+        Usuario usuario= (Usuario) session.getAttribute("usuarioLogueado");
+        model.addAttribute("restaurante",restauranteRepository.buscarRestaurantePorIdAdmin(usuario.getIdusuarios()));
+        model.addAttribute("listacategorias",categoriasRepository.findAll());
+        model.addAttribute("numero",restauranteRepository.buscarRestaurantePorIdAdmin(usuario.getIdusuarios()).get().getCategoriasrestList().size());
+        System.out.println(restauranteRepository.buscarRestaurantePorIdAdmin(usuario.getIdusuarios()).get().getCategoriasrestList().size());
+        return "AdminRestaurantes/categoriasedit";
+    }
+
+    @PostMapping("/guardarcategoriaedit")
+    public String nuevascategorias(@ModelAttribute("restaurante") Restaurante restaurante, HttpSession session){
+        Usuario usuario=(Usuario) session.getAttribute("usuarioLogueado");
+        Restaurante rest= restauranteRepository.buscarRestaurantePorIdAdmin(usuario.getIdusuarios()).get();
+        rest.setCategoriasrestList(restaurante.getCategoriasrestList());
+        restauranteRepository.save(rest);
+        return "redirect:/adminrest/cuentaAdmin";
     }
 
     /************************FOTOS************************/
@@ -320,7 +427,7 @@ public class AdminRestauranteController {
     /************************PLATOS************************/
 
     @GetMapping("/menu")
-    public String verMenu(Model model, HttpSession session){
+    public String verMenu(Model model, HttpSession session, RedirectAttributes attr){
 
         /**Se obtiene Id de Restaurante**/
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
@@ -331,7 +438,8 @@ public class AdminRestauranteController {
                 Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
                 List<Plato> listaPlatos = platoRepository.buscarPlatosPorIdRestaurante(idrestaurante);
                 if(listaPlatos.isEmpty()){
-                    return "AdminRestaurantes/sinplatos";
+                    attr.addFlashAttribute("sinPlatosCreados","No tienes ningún plato registrado. Crea uno aquí.");
+                    return "redirect:/adminrest/perfil";
                 }
                 /********************************/
                 model.addAttribute("iddelrestaurante", idrestaurante);
@@ -373,18 +481,6 @@ public class AdminRestauranteController {
         }
     }
 
-    /*@ExceptionHandler(MaxUploadSizeExceededException.class)
-    public String handleError2(MaxUploadSizeExceededException e, RedirectAttributes redirectAttributes) throws MaxUploadSizeExceededException, IllegalStateException  {
-        try{
-            System.out.println("EXCEPCION5");
-            redirectAttributes.addFlashAttribute("msgFotoInvalida", "El archivo es muy grande");
-            return "redirect:/adminrest/menu";
-        }catch(MaxUploadSizeExceededException | IllegalStateException ex ){
-            redirectAttributes.addFlashAttribute("msgFotoInvalida", "El archivo es muy grande");
-            return "redirect:/adminrest/crearPlato";
-        }
-    }*/
-
     @PostMapping("/guardarPlato")
     public String guardarPlato (@ModelAttribute("plato") @Valid Plato plato, BindingResult bindingResult, Model model, RedirectAttributes attr,
                                @RequestParam( name="imagen", required = false) MultipartFile file, HttpSession session) throws IOException {
@@ -401,7 +497,8 @@ public class AdminRestauranteController {
             if(file.isEmpty()){
                 model.addAttribute("msgFotoInvalida", "Adjunte una imagen.");
             }else{
-                if(!( (file.getContentType().contains("jpeg")) || (file.getContentType().contains("jpg")) || (file.getContentType().contains("png")) )) {
+                if(!( (file.getContentType().contains("jpeg")) || (file.getContentType().contains("jpg")) || (file.getContentType().contains("png")) ||
+                        (file.getContentType().contains("JPEG")) || (file.getContentType().contains("JPG")) || (file.getContentType().contains("PNG")))) {
                     model.addAttribute("msgFotoInvalida", "La foto no contiene el formato adecuado. Se aceptan solo archivos .jpeg, .jpg, .png");
                     return "AdminRestaurantes/newPlato";
                 }
@@ -595,7 +692,8 @@ public class AdminRestauranteController {
                     model.addAttribute("maxNumberOfPages", numberOfPages);
                     return "AdminRestaurantes/cupones";
                 }
-                return "AdminRestaurantes/sincupones";
+                attr.addFlashAttribute("NoHayCupones","No tienes cupones activos. Crea uno");
+                return "redirect:/adminrest/perfil";
             }
             else{
                 return "redirect:/adminrest/login";
@@ -616,7 +714,7 @@ public class AdminRestauranteController {
         List<Plato> listaPlatos = platoRepository.buscarPlatosPorIdRestaurante(idrestaurante);
         if(listaPlatos.isEmpty()){
             attr.addFlashAttribute("sinPlatos","No puedes crear un cupon si no tienes ningun plato registrado.");
-            return "redirect:/adminrest/cupones";
+            return "redirect:/adminrest/perfil";
         }
         model.addAttribute("listaPlatos",listaPlatos);
         model.addAttribute("index",0);
@@ -638,6 +736,7 @@ public class AdminRestauranteController {
             return "redirect:/adminrest/cupones";
         }
     }
+
     @GetMapping("/borrarCupon")
     public String borrarCupon(@RequestParam("idcupon") int id, RedirectAttributes attr){
 
@@ -678,6 +777,7 @@ public class AdminRestauranteController {
             }
             model.addAttribute("index",index);
             return "AdminRestaurantes/generarCupon";
+
         }else {
 
             if (cupon.getIdcupones() == 0) {
@@ -713,7 +813,6 @@ public class AdminRestauranteController {
                     model.addAttribute("index",index);
                     return "AdminRestaurantes/generarCupon";
                 }
-
 
                 cuponesRepository.save(cupon);
                 attr.addFlashAttribute("msg1", "Cupon creado exitosamente");
@@ -783,6 +882,154 @@ public class AdminRestauranteController {
         return "redirect:/adminrest/calificaciones";
     }
 
+    /************************EXCEL************************/
+
+    private static CellStyle createVHCenterStyle(final Workbook wb) {
+        CellStyle style = wb.createCellStyle (); // objeto de estilo
+        style.setVerticalAlignment (VerticalAlignment.CENTER); // vertical
+        style.setAlignment (HorizontalAlignment.CENTER); // horizontal
+        style.setWrapText (true); // Especifica el salto de línea automático cuando no se puede mostrar el contenido de la celda
+        // agregar borde
+        style.setBorderBottom(BorderStyle.THIN);
+        style.setBorderLeft(BorderStyle.THIN);
+        style.setBorderRight(BorderStyle.THIN);
+        style.setBorderTop(BorderStyle.THIN);
+        return style;
+    }
+
+    private static CellStyle createHeadStyle(final Workbook wb) {
+        CellStyle style = createVHCenterStyle(wb);
+        final Font font = wb.createFont();
+        font.setFontName ("Songti");
+        font.setFontHeight((short) 150);
+        font.setBold(true);
+        style.setFont(font);
+        style.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        return style;
+    }
+
+    @GetMapping("/excelexportar")
+    public ResponseEntity<InputStreamResource> exportAllData(HttpSession session) throws Exception {
+
+        Usuario user = (Usuario) session.getAttribute("usuarioLogueado");
+        int id=restauranteRepository.buscarRestaurantePorIdAdmin(user.getIdusuarios()).get().getIdrestaurante();
+
+        ByteArrayInputStream stream2 = exportReporte(id);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=reportes.xls");
+        return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream2));
+    }
+
+    public ByteArrayInputStream exportReporte(int id) throws IOException {
+        Workbook workbook = new HSSFWorkbook();
+        CellStyle headStyle = createHeadStyle(workbook);
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        if(!pedidosRepository.listaPedidos(id).isEmpty()) {
+            String[] columnsPedido = {"N° PEDIDO", "FECHA DEL PEDIDO", "NOMBRE DEL CLIENTE", "MONTO DEL PEDIDO", "NOMBRE DEL PLATO", "METODO DE PAGO", "DISTRITO DEL PEDIDO"};
+            Sheet sheet1 = workbook.createSheet("Pedidos");
+            Row row1 = sheet1.createRow(0);
+            for (int i = 0; i < columnsPedido.length; i++) {
+                Cell cell = row1.createCell(i);
+                cell.setCellValue(columnsPedido[i]);
+                cell.setCellStyle(headStyle);
+            }
+            List<PedidosReporteDto> listaPedidos = pedidosRepository.listaPedidosReporteporFechamasantigua(id);
+            int initRow = 1;
+            for (PedidosReporteDto pedido : listaPedidos) {
+                row1 = sheet1.createRow(initRow);
+                row1.createCell(0).setCellValue(pedido.getnumeropedido());
+                row1.createCell(1).setCellValue(String.valueOf(pedido.getfechahorapedido()));
+                row1.createCell(2).setCellValue(pedido.getnombre());
+                row1.createCell(3).setCellValue(pedido.getmontototal());
+                row1.createCell(4).setCellValue(pedido.getnombreplato());
+                row1.createCell(5).setCellValue(pedido.getmetodo());
+                row1.createCell(6).setCellValue(pedido.getdistrito());
+                initRow++;
+            }
+            sheet1.autoSizeColumn(0);
+            sheet1.autoSizeColumn(1);
+            sheet1.autoSizeColumn(2);
+            sheet1.autoSizeColumn(3);
+            sheet1.autoSizeColumn(4);
+            sheet1.autoSizeColumn(5);
+            sheet1.autoSizeColumn(6);
+        }
+        if(!pedidosRepository.gananciaPorMes(id).isEmpty()) {
+            String[] columnsMes = {"MES", "AÑO", "  GANANCIAS  "};
+            Sheet sheet2 = workbook.createSheet("IngresoMensual");
+            Row row2 = sheet2.createRow(0);
+            for (int i = 0; i < columnsMes.length; i++) {
+                Cell cell = row2.createCell(i);
+                cell.setCellValue(columnsMes[i]);
+                cell.setCellStyle(headStyle);
+            }
+
+            List<PedidosGananciaMesDto> listaGanancia = pedidosRepository.gananciaPorMes(id);
+            int initRow2 = 1;
+            for (PedidosGananciaMesDto mes : listaGanancia) {
+                row2 = sheet2.createRow(initRow2);
+                row2.createCell(0).setCellValue(mes.getmes());
+                row2.createCell(1).setCellValue(mes.getanio());
+                row2.createCell(2).setCellValue(mes.getganancia());
+                initRow2++;
+            }
+            sheet2.autoSizeColumn(0);
+            sheet2.autoSizeColumn(1);
+            sheet2.autoSizeColumn(2);
+        }
+        if(!pedidosRepository.platosMasVendidos(id).isEmpty()) {
+            String[] columnsPlatosMas = {"NOMBRE", "CANTIDAD", "GANANCIAS"};
+            Sheet sheet3 = workbook.createSheet("PlatosMasVendidos");
+            Row row3 = sheet3.createRow(0);
+            for (int i = 0; i < columnsPlatosMas.length; i++) {
+                Cell cell = row3.createCell(i);
+                cell.setCellValue(columnsPlatosMas[i]);
+                cell.setCellStyle(headStyle);
+            }
+
+            List<PedidosTop5Dto> listaPlatosMas = pedidosRepository.platosMasVendidos(id);
+            int initRow3 = 1;
+            for (PedidosTop5Dto plato : listaPlatosMas) {
+                row3 = sheet3.createRow(initRow3);
+                row3.createCell(0).setCellValue(plato.getnombreplato());
+                row3.createCell(1).setCellValue(plato.getcantidad());
+                row3.createCell(2).setCellValue(plato.getganancia());
+                initRow3++;
+            }
+
+            sheet3.autoSizeColumn(0);
+            sheet3.autoSizeColumn(1);
+            sheet3.autoSizeColumn(2);
+        }
+        if(!pedidosRepository.platosMenosVendidos(id).isEmpty()) {
+            String[] columnsPlatosMenos = {"NOMBRE", "CANTIDAD", "GANANCIAS"};
+            Sheet sheet4 = workbook.createSheet("PlatosMenosVendidos");
+            Row row4 = sheet4.createRow(0);
+            for (int i = 0; i < columnsPlatosMenos.length; i++) {
+                Cell cell = row4.createCell(i);
+                cell.setCellValue(columnsPlatosMenos[i]);
+                cell.setCellStyle(headStyle);
+            }
+            List<PedidosTop5Dto> listaPlatosMenos = pedidosRepository.platosMenosVendidos(id);
+            int initRow4 = 1;
+            for (PedidosTop5Dto plato : listaPlatosMenos) {
+                row4 = sheet4.createRow(initRow4);
+                row4.createCell(0).setCellValue(plato.getnombreplato());
+                row4.createCell(1).setCellValue(plato.getcantidad());
+                row4.createCell(2).setCellValue(plato.getganancia());
+                initRow4++;
+            }
+
+            sheet4.autoSizeColumn(0);
+            sheet4.autoSizeColumn(1);
+            sheet4.autoSizeColumn(2);
+        }
+        workbook.write(stream);
+        workbook.close();
+        return new ByteArrayInputStream(stream.toByteArray());
+    }
+
     /************************REPORTE************************/
 
     @GetMapping("/reporte")
@@ -842,153 +1089,6 @@ public class AdminRestauranteController {
             }
     }
 
-    private static CellStyle createVHCenterStyle(final Workbook wb) {
-        CellStyle style = wb.createCellStyle (); // objeto de estilo
-        style.setVerticalAlignment (VerticalAlignment.CENTER); // vertical
-        style.setAlignment (HorizontalAlignment.CENTER); // horizontal
-        style.setWrapText (true); // Especifica el salto de línea automático cuando no se puede mostrar el contenido de la celda
-        // agregar borde
-        style.setBorderBottom(BorderStyle.THIN);
-        style.setBorderLeft(BorderStyle.THIN);
-        style.setBorderRight(BorderStyle.THIN);
-        style.setBorderTop(BorderStyle.THIN);
-        return style;
-    }
-
-
-    private static CellStyle createHeadStyle(final Workbook wb) {
-        CellStyle style = createVHCenterStyle(wb);
-        final Font font = wb.createFont();
-        font.setFontName ("Songti");
-        font.setFontHeight((short) 150);
-        font.setBold(true);
-        style.setFont(font);
-        style.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
-        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        return style;
-    }
-
-    @GetMapping("/excelexportar")
-    public ResponseEntity<InputStreamResource> exportAllData(HttpSession session) throws Exception {
-
-        Usuario user = (Usuario) session.getAttribute("usuarioLogueado");
-        int id=restauranteRepository.buscarRestaurantePorIdAdmin(user.getIdusuarios()).get().getIdrestaurante();
-
-        ByteArrayInputStream stream2 = exportReporte(id);
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "attachment; filename=reportes.xls");
-        return ResponseEntity.ok().headers(headers).body(new InputStreamResource(stream2));
-    }
-
-    public ByteArrayInputStream exportReporte(int id) throws IOException {
-            Workbook workbook = new HSSFWorkbook();
-            CellStyle headStyle = createHeadStyle(workbook);
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            if(!pedidosRepository.listaPedidos(id).isEmpty()) {
-                String[] columnsPedido = {"N° PEDIDO", "FECHA DEL PEDIDO", "NOMBRE DEL CLIENTE", "MONTO DEL PEDIDO", "NOMBRE DEL PLATO", "METODO DE PAGO", "DISTRITO DEL PEDIDO"};
-                Sheet sheet1 = workbook.createSheet("Pedidos");
-                Row row1 = sheet1.createRow(0);
-                for (int i = 0; i < columnsPedido.length; i++) {
-                    Cell cell = row1.createCell(i);
-                    cell.setCellValue(columnsPedido[i]);
-                    cell.setCellStyle(headStyle);
-                }
-                List<PedidosReporteDto> listaPedidos = pedidosRepository.listaPedidosReporteporFechamasantigua(id);
-                int initRow = 1;
-                for (PedidosReporteDto pedido : listaPedidos) {
-                    row1 = sheet1.createRow(initRow);
-                    row1.createCell(0).setCellValue(pedido.getnumeropedido());
-                    row1.createCell(1).setCellValue(String.valueOf(pedido.getfechahorapedido()));
-                    row1.createCell(2).setCellValue(pedido.getnombre());
-                    row1.createCell(3).setCellValue(pedido.getmontototal());
-                    row1.createCell(4).setCellValue(pedido.getnombreplato());
-                    row1.createCell(5).setCellValue(pedido.getmetodo());
-                    row1.createCell(6).setCellValue(pedido.getdistrito());
-                    initRow++;
-                }
-                sheet1.autoSizeColumn(0);
-                sheet1.autoSizeColumn(1);
-                sheet1.autoSizeColumn(2);
-                sheet1.autoSizeColumn(3);
-                sheet1.autoSizeColumn(4);
-                sheet1.autoSizeColumn(5);
-                sheet1.autoSizeColumn(6);
-            }
-            if(!pedidosRepository.gananciaPorMes(id).isEmpty()) {
-                String[] columnsMes = {"MES", "AÑO", "  GANANCIAS  "};
-                Sheet sheet2 = workbook.createSheet("IngresoMensual");
-                Row row2 = sheet2.createRow(0);
-                for (int i = 0; i < columnsMes.length; i++) {
-                    Cell cell = row2.createCell(i);
-                    cell.setCellValue(columnsMes[i]);
-                    cell.setCellStyle(headStyle);
-                }
-
-                List<PedidosGananciaMesDto> listaGanancia = pedidosRepository.gananciaPorMes(id);
-                int initRow2 = 1;
-                for (PedidosGananciaMesDto mes : listaGanancia) {
-                    row2 = sheet2.createRow(initRow2);
-                    row2.createCell(0).setCellValue(mes.getmes());
-                    row2.createCell(1).setCellValue(mes.getanio());
-                    row2.createCell(2).setCellValue(mes.getganancia());
-                    initRow2++;
-                }
-                sheet2.autoSizeColumn(0);
-                sheet2.autoSizeColumn(1);
-                sheet2.autoSizeColumn(2);
-            }
-            if(!pedidosRepository.platosMasVendidos(id).isEmpty()) {
-                String[] columnsPlatosMas = {"NOMBRE", "CANTIDAD", "GANANCIAS"};
-                Sheet sheet3 = workbook.createSheet("PlatosMasVendidos");
-                Row row3 = sheet3.createRow(0);
-                for (int i = 0; i < columnsPlatosMas.length; i++) {
-                    Cell cell = row3.createCell(i);
-                    cell.setCellValue(columnsPlatosMas[i]);
-                    cell.setCellStyle(headStyle);
-                }
-
-                List<PedidosTop5Dto> listaPlatosMas = pedidosRepository.platosMasVendidos(id);
-                int initRow3 = 1;
-                for (PedidosTop5Dto plato : listaPlatosMas) {
-                    row3 = sheet3.createRow(initRow3);
-                    row3.createCell(0).setCellValue(plato.getnombreplato());
-                    row3.createCell(1).setCellValue(plato.getcantidad());
-                    row3.createCell(2).setCellValue(plato.getganancia());
-                    initRow3++;
-                }
-
-                sheet3.autoSizeColumn(0);
-                sheet3.autoSizeColumn(1);
-                sheet3.autoSizeColumn(2);
-            }
-            if(!pedidosRepository.platosMenosVendidos(id).isEmpty()) {
-                String[] columnsPlatosMenos = {"NOMBRE", "CANTIDAD", "GANANCIAS"};
-                Sheet sheet4 = workbook.createSheet("PlatosMenosVendidos");
-                Row row4 = sheet4.createRow(0);
-                for (int i = 0; i < columnsPlatosMenos.length; i++) {
-                    Cell cell = row4.createCell(i);
-                    cell.setCellValue(columnsPlatosMenos[i]);
-                    cell.setCellStyle(headStyle);
-                }
-                List<PedidosTop5Dto> listaPlatosMenos = pedidosRepository.platosMenosVendidos(id);
-                int initRow4 = 1;
-                for (PedidosTop5Dto plato : listaPlatosMenos) {
-                    row4 = sheet4.createRow(initRow4);
-                    row4.createCell(0).setCellValue(plato.getnombreplato());
-                    row4.createCell(1).setCellValue(plato.getcantidad());
-                    row4.createCell(2).setCellValue(plato.getganancia());
-                    initRow4++;
-                }
-
-                sheet4.autoSizeColumn(0);
-                sheet4.autoSizeColumn(1);
-                sheet4.autoSizeColumn(2);
-            }
-            workbook.write(stream);
-            workbook.close();
-            return new ByteArrayInputStream(stream.toByteArray());
-    }
-
     @PostMapping("/buscarReporte")
     public String searchReporte(RedirectAttributes attr,@RequestParam("name") String name, Model model, HttpSession session) {
 
@@ -1011,7 +1111,7 @@ public class AdminRestauranteController {
 
     @GetMapping("/pedidos")
     public String verPedidos(Model model, @RequestParam(name = "page", defaultValue = "1") String requestedPage,
-                             HttpSession session) {
+                             HttpSession session, RedirectAttributes attr) {
         /**Se obtiene Id de Restaurante**/
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(sessionUser.getIdusuarios());
@@ -1027,7 +1127,7 @@ public class AdminRestauranteController {
                     int numberOfPages = (int) Math.ceil(listaPedidos.size() / numberOfUsersPerPage);
                     if (page > numberOfPages) {
                         page = numberOfPages;
-                    } // validation
+                    }
 
                     int start = (int) numberOfUsersPerPage * (page - 1);
                     int end = (int) (start + numberOfUsersPerPage);
@@ -1039,7 +1139,15 @@ public class AdminRestauranteController {
                     model.addAttribute("maxNumberOfPages", numberOfPages);
                     return "AdminRestaurantes/pedidos";
                 } else {
-                    return "AdminRestaurantes/sinpedidos.html";
+                    if(!pedidosRepository.aceptadopedidos(idrestaurante).isEmpty()){
+                        model.addAttribute("listaAceptado",pedidosRepository.aceptadopedidos(idrestaurante));
+                        model.addAttribute("valid",listaPedidos.isEmpty());
+                        return "AdminRestaurantes/preparacion";
+                    }
+                    else {
+                        attr.addFlashAttribute("nopedidos","No tiene pedidos pendientes");
+                        return "redirect:/adminrest/perfil";
+                    }
                 }
             }else {
                 return "redirect:/adminrest/login";
@@ -1058,15 +1166,12 @@ public class AdminRestauranteController {
         /********************************/
 
         model.addAttribute("listaAceptado",pedidosRepository.aceptadopedidos(idrestaurante));
-        model.addAttribute("listaPreparado",pedidosRepository.preparadopedidos(idrestaurante));
         return"AdminRestaurantes/preparacion";
     }
 
     @GetMapping("/detallepedidos")
     public String detallePedidos(@RequestParam("id")int id,Model model){
-        System.out.println("Trace1");
         model.addAttribute("detalle",pedidosRepository.detallepedidos(id));
-        System.out.println("Trace2");
         return "AdminRestaurantes/detalle";
     }
 
@@ -1104,25 +1209,18 @@ public class AdminRestauranteController {
         Optional<Pedidos> optional = pedidosRepository.findById(id);
         optional.get().setEstadorestaurante("preparado");
         pedidosRepository.save(optional.get());
-        return "redirect:/adminrest/preparacion";
-    }
-
-    @GetMapping("/entregadopedido")
-    public String entregadoPedido(@RequestParam("id") int id){
-        Optional<Pedidos> optional = pedidosRepository.findById(id);
-        optional.get().setEstadorestaurante("entregado");
-        pedidosRepository.save(optional.get());
-        return"redirect:/adminrest/preparacion";
+        return "redirect:/adminrest/pedidos";
     }
 
     /************************CUENTA************************/
 
     @GetMapping("/cuentaAdmin")
     public String cuenta(@ModelAttribute("restaurante") Restaurante restaurante, @ModelAttribute("usuario") Usuario usuario, Model model,HttpSession session){
-        Usuario user=(Usuario)session.getAttribute("usuarioLogueado");
 
+        Usuario user=(Usuario)session.getAttribute("usuarioLogueado");
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(user.getIdusuarios());
         Restaurante rest= restauranteRepository.obtenerperfilRest(user.getIdusuarios());
+
         if(usuarioOptional.isPresent()) {
             Usuario usuarioNuevo = usuarioOptional.get();
             if(usuarioNuevo.getCuentaActiva()==1){
@@ -1134,32 +1232,14 @@ public class AdminRestauranteController {
                 model.addAttribute("ruc",restauranteRepository.buscarRuc(user.getIdusuarios()));
                 model.addAttribute("direccion_rest",rest.getDireccion()+", "+rest.getDistrito().getNombredistrito());
                 return "AdminRestaurantes/cuenta";
-            }
-            else{
+            }else{
                 return "redirect:/adminrest/login";
             }
         }else{
             return "redirect:/login";
         }
     }
-    @GetMapping("/borrarRestaurante")
-    public String borrarRestaurante(HttpSession session){
-        Usuario user= (Usuario) session.getAttribute("usuarioLogueado");
-        int id=restauranteRepository.buscarRestaurantePorIdAdmin(user.getIdusuarios()).get().getIdrestaurante();
-        restauranteRepository.deleteById(id);
-        user.setCuentaActiva(3);
-        usuarioRepository.save(user);
 
-        return "redirect:/adminrest/sinrestaurante";
-    }
-    @PostMapping("/llenarcategoria")
-    public String llenarcategorias(@ModelAttribute("restaurante") Restaurante restaurante,Model model){
-        Optional<Restaurante> optional = restauranteRepository.findById(restaurante.getIdrestaurante());
-        optional.get().setCategoriasrestList(restaurante.getCategoriasrestList());
-        restauranteRepository.save(optional.get());
-        model.addAttribute("id",optional.get().getIdrestaurante());
-        return "AdminRestaurantes/espera";
-    }
     @PostMapping("/guardaradminedit")
     public String editPerfilUsuario(@ModelAttribute("usuario") @Valid Usuario usuario,
                                     BindingResult bindingResult,
@@ -1231,38 +1311,7 @@ public class AdminRestauranteController {
             }
         }
     }
-    @PostMapping("/guardarrestedit")
-    public String editPerfilUsuario(@ModelAttribute("restaurante") Restaurante restaurante,
-                                    HttpSession session,
-                                    @RequestParam("imagen") MultipartFile file,
-                                    Model model){
-        Usuario user=(Usuario) session.getAttribute("usuarioLogueado");
-        Restaurante rest = restauranteRepository.buscarRestaurantePorIdAdmin(user.getIdusuarios()).get();
-        try {
-            rest.setFoto(file.getBytes());
-            rest.setFotocontenttype(file.getContentType());
-            rest.setFotonombre(file.getOriginalFilename());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        restauranteRepository.save(rest);
-        return "redirect:/adminrest/cuentaAdmin";
-    }
-    @GetMapping("/categoriaedit")
-    public String llenarcategoriasedit(@ModelAttribute("restaurante") Restaurante restaurante,Model model,HttpSession session){
-        Usuario usuario= (Usuario) session.getAttribute("usuarioLogueado");
-        model.addAttribute("restaurante",restauranteRepository.buscarRestaurantePorIdAdmin(usuario.getIdusuarios()));
-        model.addAttribute("listacategorias",categoriasRepository.findAll());
-        return "AdminRestaurantes/categoriasedit";
-    }
-    @PostMapping("/guardarcategoriaedit")
-    public String nuevascategorias(@ModelAttribute("restaurante") Restaurante restaurante, HttpSession session){
-        Usuario usuario=(Usuario) session.getAttribute("usuarioLogueado");
-        Restaurante rest= restauranteRepository.buscarRestaurantePorIdAdmin(usuario.getIdusuarios()).get();
-        rest.setCategoriasrestList(restaurante.getCategoriasrestList());
-        restauranteRepository.save(rest);
-        return "redirect:/adminrest/cuentaAdmin";
-    }
+
     @GetMapping("/agregardireccion")
     public String agregardireccion(Model model) {
 
@@ -1271,6 +1320,7 @@ public class AdminRestauranteController {
 
         return "AdminRestaurantes/agregardireccion";
     }
+
     @PostMapping("/guardardireccion")
     public String guardarnuevadireccion(@RequestParam("direccion") String direccion,
                                         @RequestParam("iddistrito") int iddistrito,
@@ -1291,6 +1341,7 @@ public class AdminRestauranteController {
         direccionesRepository.save(direccioncrear);
         return "redirect:/adminrest/perfil";
     }
+
     @GetMapping("/borrardireccion")
     public String borrarDireccion(@RequestParam("iddireccion") int iddireccion){
         Optional<Direcciones> direccionopt = direccionesRepository.findById(iddireccion);
@@ -1303,4 +1354,3 @@ public class AdminRestauranteController {
     }
 
 }
-
