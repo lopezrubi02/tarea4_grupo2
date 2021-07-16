@@ -26,14 +26,14 @@ import java.util.Collection;
 @EnableWebSecurity
 public class WebSecurityConfigAdapter extends org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter {
 
-    @Autowired
-    DataSource dataSource;
-
+    //para api google
     @Autowired
     private CustomOAuth2UserService oauthUserService;
-
     @Autowired
     private UserService userService;
+
+    @Autowired
+    DataSource dataSource;
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception{
@@ -70,7 +70,7 @@ public class WebSecurityConfigAdapter extends org.springframework.security.confi
                     .loginPage("/login")
                     .usernameParameter("username")
                     .passwordParameter("password")
-                    .defaultSuccessUrl("/prueba",true)
+                    .defaultSuccessUrl("/prueba")
                 .and()
                 .oauth2Login()
                     .loginPage("/login")
@@ -85,11 +85,7 @@ public class WebSecurityConfigAdapter extends org.springframework.security.confi
                             System.out.println("AuthenticationSuccessHandler invoked");
                             System.out.println("Authentication name: " + authentication.getName());
                             CustomOAuth2User oauthUser = (CustomOAuth2User) authentication.getPrincipal();
-                            System.out.println(oauthUser.getEmail());
-                            System.out.println(authentication);
-
                             boolean existe = userService.processOAuthPostLogin(oauthUser.getEmail());
-                            System.out.println(existe);
                             if(existe){
                                 System.out.println("DEBERIA IR A REDIRECT BY ROL");
                                 response.sendRedirect("/redirectByRol");
@@ -97,7 +93,6 @@ public class WebSecurityConfigAdapter extends org.springframework.security.confi
                                 System.out.println("REGRESA LA LOGIN");
                                 response.sendRedirect("/login");
                             }
-                            System.out.println(existe);
                         }
                     })
                 .and()
@@ -106,13 +101,13 @@ public class WebSecurityConfigAdapter extends org.springframework.security.confi
                     .deleteCookies("JSESSIONID")
                     .invalidateHttpSession(true)
                 .and()
-                .exceptionHandling().accessDeniedPage("/403");
+                .exceptionHandling().accessDeniedPage("/login/403");
 
         System.out.println("****************TRACER 1************");
     }
 
-
-    @Bean
+    //para login por db se usa MyUserDetails, UserDetailsService y UserService
+    /*@Bean
     public UserDetailsService userDetailsService() {
         System.out.println("*********TRACER 22******************");
 
@@ -143,10 +138,10 @@ public class WebSecurityConfigAdapter extends org.springframework.security.confi
         System.out.println("¨*****TRACER LOG DB*************");
         auth.authenticationProvider(authenticationProvider());
 
-    }
+    }*/
 
 
- /*   @Override
+    @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception{
         auth.jdbcAuthentication()
                 .dataSource(dataSource)

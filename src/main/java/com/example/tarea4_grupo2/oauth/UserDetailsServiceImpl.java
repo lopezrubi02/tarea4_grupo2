@@ -16,11 +16,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username){
         Usuario user = userRepository.getUserByUsername(username);
         System.out.println("******TRACER 2**************");
-        System.out.println(user.getEmail());
         if (user == null) {
             System.out.println("USUARIO NULO");
             throw new UsernameNotFoundException("Could not find user");
         }else{
+            System.out.println(user.getEmail());
             System.out.println("USUARIO NO NULO");
         }
         return new MyUserDetails(user);

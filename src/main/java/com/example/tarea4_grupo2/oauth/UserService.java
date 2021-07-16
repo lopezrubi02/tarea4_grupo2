@@ -12,7 +12,6 @@ public class UserService {
     UsuarioRepository repo;
 
     public boolean processOAuthPostLogin(String username) {
-        System.out.println("******TRACER 3**************");
         Usuario existUser = repo.getUserByUsername(username);
         boolean existe = true;
         if (existUser == null) {

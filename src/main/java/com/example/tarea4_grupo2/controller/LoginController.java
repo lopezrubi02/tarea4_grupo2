@@ -4,7 +4,6 @@ import com.example.tarea4_grupo2.entity.Direcciones;
 import com.example.tarea4_grupo2.entity.Distritos;
 import com.example.tarea4_grupo2.entity.Usuario;
 import com.example.tarea4_grupo2.oauth.CustomOAuth2User;
-import com.example.tarea4_grupo2.oauth.GrantedAuthorityImpl;
 import com.example.tarea4_grupo2.repository.DireccionesRepository;
 import com.example.tarea4_grupo2.repository.DistritosRepository;
 import com.example.tarea4_grupo2.repository.UsuarioRepository;
@@ -13,11 +12,8 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -35,7 +31,6 @@ import java.net.URL;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -248,7 +243,6 @@ public class LoginController {
             usuarioRepository.save(usuarioLogueado);
             return "redirect:/adminrest/login";
         }else if(rol_log.equalsIgnoreCase("AdminSistema")){
-            System.out.println("******TRACER 12**************");
             usuarioLogueado.setUltimafechaingreso(datetime1);
             usuarioRepository.save(usuarioLogueado);
             return "redirect:/admin/gestionCuentas";
@@ -257,14 +251,10 @@ public class LoginController {
             usuarioRepository.save(usuarioLogueado);
             return "redirect:/repartidor/home";
         }else if(rol_log.equalsIgnoreCase("Cliente")){
-            System.out.println("******TRACER 11**************");
-
             usuarioLogueado.setUltimafechaingreso(datetime1);
             usuarioRepository.save(usuarioLogueado);
             return "redirect:/cliente/paginaprincipal";
         }else{
-            System.out.println(rol);
-            System.out.println(rol_log);
             return "login/login";
         }
     }

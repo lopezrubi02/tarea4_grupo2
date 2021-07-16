@@ -14,18 +14,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     @Autowired
     UsuarioRepository userRepository;
+
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        System.out.println("****************TRACER 5************");
-
         OAuth2User user = super.loadUser(userRequest);
         System.out.println("CustomOAuth2UserService invoked 2");
-        System.out.println("obtenemos el correo en el loaduser*********************");
         System.out.println(user.getAttribute("email").toString());
         Usuario userobtenido = userRepository.getUserByUsername(user.getAttribute("email").toString());
-        if (userobtenido != null) {
-            System.out.println(userobtenido.getRol());
-        }
         return new CustomOAuth2User(user,userobtenido);
     }
 }

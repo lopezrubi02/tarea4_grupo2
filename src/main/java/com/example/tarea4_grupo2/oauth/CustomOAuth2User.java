@@ -26,7 +26,6 @@ public class CustomOAuth2User implements OAuth2User, Serializable {
 
     @Override
     public Map<String, Object> getAttributes() {
-        System.out.println("*********TRACER 22******************");
         return oAuth2User.getAttributes();
     }
 
@@ -38,17 +37,14 @@ public class CustomOAuth2User implements OAuth2User, Serializable {
 
     @Override
     public String getName() {
-        System.out.println("****************TRACER 13************");
         return oAuth2User.getAttribute("name");
     }
 
     public String getFullName(){
-        System.out.println("****************TRACER 4************");
         return oAuth2User.getAttribute("name");
     }
 
     public String getEmail(){
-        System.out.println("****************TRACER 7************");
         return oAuth2User.getAttribute("email");
     }
 }
