@@ -38,24 +38,6 @@ public class WebSecurityConfigAdapter extends org.springframework.security.confi
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception{
 
-
-     /*   httpSecurity.formLogin()
-                .loginPage("/login") // for the Controlller
-                .loginProcessingUrl("/processLogin") // for the POST request of the login form
-                .defaultSuccessUrl("/redirectByRol",true);
-
-        httpSecurity.oauth2Login()
-                .loginPage("/login") // for the Controlller
-                .userInfoEndpoint().userService(oauthUserService)
-                .and()
-                .successHandler(oAuth2LoginSuccessHandler);
-
-
-        httpSecurity.logout()
-                .logoutSuccessUrl("/login")
-                .deleteCookies("JSESSIONID")
-                .invalidateHttpSession(true);
-*/
         httpSecurity.authorizeRequests()
                 .antMatchers("/oauth2/**").permitAll()
                 .antMatchers("/admin", "/admin/**").hasAuthority("AdminSistema")
@@ -105,41 +87,6 @@ public class WebSecurityConfigAdapter extends org.springframework.security.confi
 
         System.out.println("****************TRACER 1************");
     }
-
-    //para login por db se usa MyUserDetails, UserDetailsService y UserService
-    /*@Bean
-    public UserDetailsService userDetailsService() {
-        System.out.println("*********TRACER 22******************");
-
-        return new UserDetailsServiceImpl();
-    }
-
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        System.out.println("*********TRACER 23******************");
-
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
-        System.out.println("*********TRACER 24******************");
-
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService());
-        authProvider.setPasswordEncoder(passwordEncoder());
-
-        return authProvider;
-    }
-
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        System.out.println("¨*****TRACER LOG DB*************");
-        auth.authenticationProvider(authenticationProvider());
-
-    }*/
-
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception{

@@ -74,10 +74,6 @@ public class Usuario implements Serializable {
 
     private LocalDateTime ultimafechaingreso;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "authprovider")
-    private AuthenticationProvider authProvider;
-
     public Integer getIdusuarios() {
         return idusuarios;
     }
@@ -190,11 +186,5 @@ public class Usuario implements Serializable {
         this.token = token;
     }
 
-    public AuthenticationProvider getAuthProvider() {
-        return authProvider;
-    }
 
-    public void setAuthProvider(AuthenticationProvider authProvider) {
-        this.authProvider = authProvider;
-    }
 }
