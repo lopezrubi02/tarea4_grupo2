@@ -1253,6 +1253,8 @@ public class AdminRestauranteController {
         Usuario usuario= (Usuario) session.getAttribute("usuarioLogueado");
         model.addAttribute("restaurante",restauranteRepository.buscarRestaurantePorIdAdmin(usuario.getIdusuarios()));
         model.addAttribute("listacategorias",categoriasRepository.findAll());
+        model.addAttribute("numero",restauranteRepository.buscarRestaurantePorIdAdmin(usuario.getIdusuarios()).get().getCategoriasrestList().size());
+        System.out.println(restauranteRepository.buscarRestaurantePorIdAdmin(usuario.getIdusuarios()).get().getCategoriasrestList().size());
         return "AdminRestaurantes/categoriasedit";
     }
     @PostMapping("/guardarcategoriaedit")
