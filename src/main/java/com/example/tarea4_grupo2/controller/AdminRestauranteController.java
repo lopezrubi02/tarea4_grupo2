@@ -136,7 +136,13 @@ public class AdminRestauranteController {
                     restaurante.setDireccion(direccion);
                     Distritos distrito = distritosRepository.findById(iddistrito).get();
                     restaurante.setDistrito(distrito);
-                    restauranteRepository.save(restaurante);
+                    Optional<Restaurante> OptRestaurante = restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios());
+                    if(!(OptRestaurante.isPresent())){
+                        restauranteRepository.save(restaurante);
+                    }else{
+                        restauranteRepository.deleteById(OptRestaurante.get().getIdrestaurante());
+                        restauranteRepository.save(restaurante);
+                    }
                     sessionUser.setCuentaActiva(2);
                     usuarioRepository.save(sessionUser);
                     model.addAttribute("id", restaurante.getIdrestaurante());
@@ -320,7 +326,7 @@ public class AdminRestauranteController {
     /************************PLATOS************************/
 
     @GetMapping("/menu")
-    public String verMenu(Model model, HttpSession session){
+    public String verMenu(Model model, HttpSession session, RedirectAttributes attr){
 
         /**Se obtiene Id de Restaurante**/
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
@@ -331,7 +337,8 @@ public class AdminRestauranteController {
                 Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
                 List<Plato> listaPlatos = platoRepository.buscarPlatosPorIdRestaurante(idrestaurante);
                 if(listaPlatos.isEmpty()){
-                    return "AdminRestaurantes/sinplatos";
+                    attr.addFlashAttribute("sinPlatosCreados","No tienes ningún plato registrado. Crea uno aquí.");
+                    return "redirect:/adminrest/perfil";
                 }
                 /********************************/
                 model.addAttribute("iddelrestaurante", idrestaurante);
@@ -595,7 +602,8 @@ public class AdminRestauranteController {
                     model.addAttribute("maxNumberOfPages", numberOfPages);
                     return "AdminRestaurantes/cupones";
                 }
-                return "AdminRestaurantes/sincupones";
+                attr.addFlashAttribute("NoHayCupones","No tienes cupones activos. Crea uno");
+                return "redirect:/adminrest/perfil";
             }
             else{
                 return "redirect:/adminrest/login";
@@ -616,7 +624,7 @@ public class AdminRestauranteController {
         List<Plato> listaPlatos = platoRepository.buscarPlatosPorIdRestaurante(idrestaurante);
         if(listaPlatos.isEmpty()){
             attr.addFlashAttribute("sinPlatos","No puedes crear un cupon si no tienes ningun plato registrado.");
-            return "redirect:/adminrest/cupones";
+            return "redirect:/adminrest/perfil";
         }
         model.addAttribute("listaPlatos",listaPlatos);
         model.addAttribute("index",0);
