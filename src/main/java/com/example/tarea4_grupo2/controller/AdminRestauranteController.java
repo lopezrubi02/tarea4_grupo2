@@ -1145,7 +1145,7 @@ public class AdminRestauranteController {
                         return "AdminRestaurantes/preparacion";
                     }
                     else {
-                        attr.addFlashAttribute("nopedidos","No tiene platos pendientes");
+                        attr.addFlashAttribute("nopedidos","No tiene pedidos pendientes");
                         return "redirect:/adminrest/perfil";
                     }
                 }
