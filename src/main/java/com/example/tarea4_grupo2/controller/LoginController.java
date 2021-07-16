@@ -210,6 +210,47 @@ public class LoginController {
         return "cliente/prueba";
     }
 
+    @GetMapping("/redirectByRolDB")
+    public String redirectByRolDB(Authentication auth, HttpSession session){
+        String rol="";
+        //setear la última fecha y hora de ingreso
+        for(GrantedAuthority role:auth.getAuthorities()){
+            rol= role.getAuthority();
+            break;
+        }
+        Usuario usuarioLogueado= usuarioRepository.findByEmail(auth.getName());
+        session.setAttribute("usuarioLogueado",usuarioLogueado);
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        ZoneId zoneId = ZoneId.of("America/Lima");
+        LocalDateTime datetime1 = LocalDateTime.now(zoneId);
+        String formatDateTime = datetime1.format(format);
+
+        System.out.println(formatDateTime);
+        System.out.println(datetime1);
+
+        if (rol.equals("AdminRestaurante")){
+            usuarioLogueado.setUltimafechaingreso(datetime1);
+            usuarioRepository.save(usuarioLogueado);
+            return "redirect:/adminrest/login";
+        }else if(rol.equals("AdminSistema")){
+            usuarioLogueado.setUltimafechaingreso(datetime1);
+            usuarioRepository.save(usuarioLogueado);
+            return "redirect:/admin/gestionCuentas";
+        } else if(rol.equals("Repartidor")) {
+            usuarioLogueado.setUltimafechaingreso(datetime1);
+            usuarioRepository.save(usuarioLogueado);
+            return "redirect:/repartidor/home";
+        }else if(rol.equals("Cliente")){
+            usuarioLogueado.setUltimafechaingreso(datetime1);
+            usuarioRepository.save(usuarioLogueado);
+            return "redirect:/cliente/paginaprincipal";
+        }
+        else{
+            System.out.println(rol);
+            return "/login";
+        }
+    }
+
     @GetMapping("/redirectByRol")
     public String redirectByRol(Authentication auth, HttpSession session){
         System.out.println("******TRACER 10**************");
@@ -248,6 +289,7 @@ public class LoginController {
             return "redirect:/admin/gestionCuentas";
         } else if(rol_log.equalsIgnoreCase("Repartidor")) {
             usuarioLogueado.setUltimafechaingreso(datetime1);
+
             usuarioRepository.save(usuarioLogueado);
             return "redirect:/repartidor/home";
         }else if(rol_log.equalsIgnoreCase("Cliente")){

@@ -70,7 +70,7 @@ public class WebSecurityConfigAdapter extends org.springframework.security.confi
                     .loginPage("/login")
                     .usernameParameter("username")
                     .passwordParameter("password")
-                    .defaultSuccessUrl("/prueba")
+                    .defaultSuccessUrl("/redirectByRolDB")
                 .and()
                 .oauth2Login()
                     .loginPage("/login")
