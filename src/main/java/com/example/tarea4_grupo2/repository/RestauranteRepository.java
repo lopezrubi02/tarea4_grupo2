@@ -65,6 +65,8 @@ public interface RestauranteRepository extends JpaRepository<Restaurante, Intege
     @Query(value="select ruc from restaurante where idadminrest=?1",nativeQuery = true)
     String buscarRuc(int id);
 
+    Optional<Restaurante> findRestauranteByRuc(String ruc);
+
     // filtro por precio de platos promedio
     @Query(value = "select r.*\n" +
             "from plato p \n" +
