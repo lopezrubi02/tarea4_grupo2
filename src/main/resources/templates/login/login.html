@@ -90,7 +90,7 @@
                                 <div align="center" th:if="${msg2 != null}" th:text="${msg2}" class="alert alert-danger" role="alert"></div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
-                                <form class="main_form" method="post" th:action="@{/processLogin}">
+                                <form class="main_form" method="post" th:action="@{/login}">
                                     <div class="row">
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <h4 th:if="${(param.error != null)}" >
@@ -116,9 +116,14 @@
                                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
                                             <button class="send" type="submit">Ingresar</button>
                                         </div>
+                                        <!-- Login con google-->
                                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
                                             <div class="g-signin2" data-width="190" data-height="55" data-onsuccess="onSignIn" style="float: right;"></div>
                                         </div>
+                                        <div>
+                                            <a th:href="@{/oauth2/authorization/google}">Google</a>
+                                        </div>
+                                        <!-- Fin login con google-->
                                     </div>
                                 </form>
                             </div>

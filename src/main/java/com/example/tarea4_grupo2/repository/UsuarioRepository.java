@@ -4,6 +4,7 @@ import com.example.tarea4_grupo2.dto.DatosDTO;
 import com.example.tarea4_grupo2.entity.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import javax.swing.text.html.Option;
 import java.util.Date;
@@ -19,6 +20,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
     Usuario findByEmailEqualsAndRolEquals(String email, String rol);
     Usuario findByEmailEquals(String email);
+    @Query(value = "SELECT * FROM usuarios u WHERE u.email = :username",nativeQuery = true)
+    Usuario getUserByUsername(@Param("username") String username);
 
     Usuario findByToken(String token);
 

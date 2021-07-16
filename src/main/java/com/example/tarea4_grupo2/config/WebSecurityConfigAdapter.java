@@ -1,17 +1,31 @@
 package com.example.tarea4_grupo2.config;
 
+import com.example.tarea4_grupo2.oauth.CustomOAuth2User;
+import com.example.tarea4_grupo2.oauth.CustomOAuth2UserService;
+import com.example.tarea4_grupo2.oauth.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
+import java.io.IOException;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfigAdapter extends org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter {
+    //para api google
+    @Autowired
+    private CustomOAuth2UserService oauthUserService;
+    @Autowired
+    private UserService userService;
 
     @Autowired
     DataSource dataSource;
@@ -19,25 +33,54 @@ public class WebSecurityConfigAdapter extends org.springframework.security.confi
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception{
 
-        httpSecurity.formLogin()
-                .loginPage("/login") // for the Controlller
-                .loginProcessingUrl("/processLogin") // for the POST request of the login form
-                .defaultSuccessUrl("/redirectByRol",true);
-        httpSecurity.logout()
-                .logoutSuccessUrl("/login")
-                .deleteCookies("JSESSIONID")
-                .invalidateHttpSession(true);
-        
         httpSecurity.authorizeRequests()
+                .antMatchers("/oauth2/**").permitAll()
                 .antMatchers("/admin", "/admin/**").hasAuthority("AdminSistema")
                 .antMatchers("/cliente","/cliente/**").hasAuthority("Cliente")
                 .antMatchers("/adminrest","/adminrest/**").hasAuthority("AdminRestaurante")
                 .antMatchers("/repartidor","/repartidor/**").hasAuthority("Repartidor")
                 .antMatchers("/login", "/login/**").permitAll()
                 .antMatchers("/cambiar1/**", "/cambiar1/", "/cambiarContrasenia").permitAll()
-                .anyRequest().permitAll();
+                .anyRequest().permitAll()
+                .and()
+                .formLogin().permitAll()
+                .loginPage("/login")
+                .usernameParameter("username")
+                .passwordParameter("password")
+                .defaultSuccessUrl("/redirectByRolDB")
+                .and()
+                .oauth2Login()
+                .loginPage("/login")
+                .userInfoEndpoint()
+                .userService(oauthUserService)
+                .and()
+                .successHandler(new AuthenticationSuccessHandler() {
 
+                    @Override
+                    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+                                                        Authentication authentication) throws IOException, ServletException {
+                        System.out.println("AuthenticationSuccessHandler invoked");
+                        System.out.println("Authentication name: " + authentication.getName());
+                        CustomOAuth2User oauthUser = (CustomOAuth2User) authentication.getPrincipal();
+                        boolean existe = userService.processOAuthPostLogin(oauthUser.getEmail());
+                        if(existe){
+                            System.out.println("DEBERIA IR A REDIRECT BY ROL");
+                            response.sendRedirect("/redirectByRol");
+                        }else{
+                            System.out.println("REGRESA LA LOGIN");
+                            response.sendRedirect("/login");
+                        }
+                    }
+                })
+                .and()
+                .logout()
+                .logoutSuccessUrl("/login")
+                .deleteCookies("JSESSIONID")
+                .invalidateHttpSession(true)
+                .and()
+                .exceptionHandling().accessDeniedPage("/login/403");
 
+        System.out.println("****************TRACER 1************");
     }
 
     @Override

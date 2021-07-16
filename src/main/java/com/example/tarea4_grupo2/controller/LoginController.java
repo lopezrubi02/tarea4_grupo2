@@ -3,6 +3,7 @@ package com.example.tarea4_grupo2.controller;
 import com.example.tarea4_grupo2.entity.Direcciones;
 import com.example.tarea4_grupo2.entity.Distritos;
 import com.example.tarea4_grupo2.entity.Usuario;
+import com.example.tarea4_grupo2.oauth.CustomOAuth2User;
 import com.example.tarea4_grupo2.repository.DireccionesRepository;
 import com.example.tarea4_grupo2.repository.DistritosRepository;
 import com.example.tarea4_grupo2.repository.UsuarioRepository;
@@ -220,8 +221,8 @@ public class LoginController {
         return "login/login";
     }
 
-    @GetMapping("/redirectByRol")
-    public String redirectByRol(Authentication auth, HttpSession session){
+    @GetMapping("/redirectByRolDB")
+    public String redirectByRolDB(Authentication auth, HttpSession session){
         String rol="";
         //setear la última fecha y hora de ingreso
         for(GrantedAuthority role:auth.getAuthorities()){
@@ -260,6 +261,57 @@ public class LoginController {
             return "/login";
         }
     }
+
+    @GetMapping("/redirectByRol")
+    public String redirectByRol(Authentication auth, HttpSession session){
+        System.out.println("******TRACER 10**************");
+        String rol="";
+        for(GrantedAuthority role:auth.getAuthorities()){
+            rol= role.getAuthority();
+            System.out.println(rol);
+            break;
+        }
+
+        System.out.println(auth.getName());
+        System.out.println("correo logeado por api google");
+        CustomOAuth2User oauthUser = (CustomOAuth2User) auth.getPrincipal();
+        System.out.println(oauthUser.getEmail());
+
+        Usuario usuarioLogueado= usuarioRepository.getUserByUsername(oauthUser.getEmail());
+        session.setAttribute("usuarioLogueado",usuarioLogueado);
+        String rol_log = usuarioLogueado.getRol();
+        System.out.println("ROL OBTENIDO DEL USUARIO OBTENIDO");
+        System.out.println(rol_log);
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        ZoneId zoneId = ZoneId.of("America/Lima");
+        LocalDateTime datetime1 = LocalDateTime.now(zoneId);
+        String formatDateTime = datetime1.format(format);
+
+        System.out.println(formatDateTime);
+        System.out.println(datetime1);
+
+        if (rol_log.equalsIgnoreCase("AdminRestaurante")){
+            usuarioLogueado.setUltimafechaingreso(datetime1);
+            usuarioRepository.save(usuarioLogueado);
+            return "redirect:/adminrest/login";
+        }else if(rol_log.equalsIgnoreCase("AdminSistema")){
+            usuarioLogueado.setUltimafechaingreso(datetime1);
+            usuarioRepository.save(usuarioLogueado);
+            return "redirect:/admin/gestionCuentas";
+        } else if(rol_log.equalsIgnoreCase("Repartidor")) {
+            usuarioLogueado.setUltimafechaingreso(datetime1);
+
+            usuarioRepository.save(usuarioLogueado);
+            return "redirect:/repartidor/home";
+        }else if(rol_log.equalsIgnoreCase("Cliente")){
+            usuarioLogueado.setUltimafechaingreso(datetime1);
+            usuarioRepository.save(usuarioLogueado);
+            return "redirect:/cliente/paginaprincipal";
+        }else{
+            return "login/login";
+        }
+    }
+
     @GetMapping("/olvidoContrasenia")
     public String olvidoContrasenia(RedirectAttributes attr) {
         return "login/olvidoContrasenia";
