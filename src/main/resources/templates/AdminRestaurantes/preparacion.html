@@ -64,7 +64,8 @@
                     </div>
                     <!-- end of table -->
                 </div>
-                <a class="send" th:href="@{/adminrest/pedidos}" style="background: #d8b00f;text-align: center">Regresar</a>
+                <a class="send" th:if="${valid}" th:href="@{/adminrest/perfil}" style="background: #d8b00f;text-align: center">Regresar</a>
+                <a class="send" th:unless="${valid}" th:href="@{/adminrest/pedidos}" style="background: #d8b00f;text-align: center">Regresar</a>
             </div>
         </div>
     </div>

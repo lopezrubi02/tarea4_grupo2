@@ -1019,7 +1019,7 @@ public class AdminRestauranteController {
 
     @GetMapping("/pedidos")
     public String verPedidos(Model model, @RequestParam(name = "page", defaultValue = "1") String requestedPage,
-                             HttpSession session) {
+                             HttpSession session, RedirectAttributes attr) {
         /**Se obtiene Id de Restaurante**/
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(sessionUser.getIdusuarios());
@@ -1047,7 +1047,15 @@ public class AdminRestauranteController {
                     model.addAttribute("maxNumberOfPages", numberOfPages);
                     return "AdminRestaurantes/pedidos";
                 } else {
-                    return "AdminRestaurantes/sinpedidos.html";
+                    if(!pedidosRepository.aceptadopedidos(idrestaurante).isEmpty()){
+                        model.addAttribute("listaAceptado",pedidosRepository.aceptadopedidos(idrestaurante));
+                        model.addAttribute("valid",listaPedidos.isEmpty());
+                        return "AdminRestaurantes/preparacion";
+                    }
+                    else {
+                        attr.addFlashAttribute("nopedidos","No tiene platos pendientes");
+                        return "redirect:/adminrest/perfil";
+                    }
                 }
             }else {
                 return "redirect:/adminrest/login";
@@ -1066,7 +1074,6 @@ public class AdminRestauranteController {
         /********************************/
 
         model.addAttribute("listaAceptado",pedidosRepository.aceptadopedidos(idrestaurante));
-        model.addAttribute("listaPreparado",pedidosRepository.preparadopedidos(idrestaurante));
         return"AdminRestaurantes/preparacion";
     }
 
@@ -1112,7 +1119,7 @@ public class AdminRestauranteController {
         Optional<Pedidos> optional = pedidosRepository.findById(id);
         optional.get().setEstadorestaurante("preparado");
         pedidosRepository.save(optional.get());
-        return "redirect:/adminrest/preparacion";
+        return "redirect:/adminrest/pedidos";
     }
 
     @GetMapping("/entregadopedido")
@@ -1261,6 +1268,8 @@ public class AdminRestauranteController {
         Usuario usuario= (Usuario) session.getAttribute("usuarioLogueado");
         model.addAttribute("restaurante",restauranteRepository.buscarRestaurantePorIdAdmin(usuario.getIdusuarios()));
         model.addAttribute("listacategorias",categoriasRepository.findAll());
+        model.addAttribute("numero",restauranteRepository.buscarRestaurantePorIdAdmin(usuario.getIdusuarios()).get().getCategoriasrestList().size());
+        System.out.println(restauranteRepository.buscarRestaurantePorIdAdmin(usuario.getIdusuarios()).get().getCategoriasrestList().size());
         return "AdminRestaurantes/categoriasedit";
     }
     @PostMapping("/guardarcategoriaedit")
