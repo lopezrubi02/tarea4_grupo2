@@ -1,4 +1,4 @@
-/* package com.example.tarea4_grupo2.controller;
+package com.example.tarea4_grupo2.controller;
 
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
@@ -34,4 +34,3 @@ public class Error implements ErrorController {
     }
 }
 
- */

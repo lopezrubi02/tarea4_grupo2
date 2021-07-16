@@ -68,6 +68,7 @@ public class WebSecurityConfigAdapter extends org.springframework.security.confi
                             response.sendRedirect("/redirectByRol");
                         }else{
                             System.out.println("REGRESA LA LOGIN");
+                            request.logout();
                             response.sendRedirect("/login");
                         }
                     }

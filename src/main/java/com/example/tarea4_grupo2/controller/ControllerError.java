@@ -1,4 +1,4 @@
-/*
+
 package com.example.tarea4_grupo2.controller;
 
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -11,4 +11,3 @@ public class ControllerError {
         return "login/error500";
     }
 }
-*/
