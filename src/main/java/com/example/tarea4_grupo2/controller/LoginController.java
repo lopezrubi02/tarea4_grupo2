@@ -221,8 +221,10 @@ public class LoginController {
         String rol="";
         for(GrantedAuthority role:auth.getAuthorities()){
             rol= role.getAuthority();
+            System.out.println(rol);
             break;
         }
+
         System.out.println(auth.getName());
         System.out.println("correo logeado por api google");
         CustomOAuth2User oauthUser = (CustomOAuth2User) auth.getPrincipal();
@@ -247,10 +249,6 @@ public class LoginController {
             return "redirect:/adminrest/login";
         }else if(rol_log.equalsIgnoreCase("AdminSistema")){
             System.out.println("******TRACER 12**************");
-            //oauthUser.getAuthorities().add("AdminSistema");
-            System.out.println(oauthUser.getAuthorities());
-
-            System.out.println(oauthUser.getAuthorities());
             usuarioLogueado.setUltimafechaingreso(datetime1);
             usuarioRepository.save(usuarioLogueado);
             return "redirect:/admin/gestionCuentas";

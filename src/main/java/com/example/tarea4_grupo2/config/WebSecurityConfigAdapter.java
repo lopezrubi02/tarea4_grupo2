@@ -9,6 +9,8 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -18,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.util.Collection;
 
 @Configuration
 @EnableWebSecurity
@@ -101,8 +104,9 @@ public class WebSecurityConfigAdapter extends org.springframework.security.confi
                 .logout()
                     .logoutSuccessUrl("/login")
                     .deleteCookies("JSESSIONID")
-                    .invalidateHttpSession(true);
-
+                    .invalidateHttpSession(true)
+                .and()
+                .exceptionHandling().accessDeniedPage("/403");
 
         System.out.println("****************TRACER 1************");
     }
