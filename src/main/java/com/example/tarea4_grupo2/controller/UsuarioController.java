@@ -846,39 +846,41 @@ public class UsuarioController {
     @PostMapping("/cliente/filtrarnombre")
     public String filtronombre(Model model,
                                @RequestParam(value = "searchField" ,defaultValue = "") String buscar,
-                               @RequestParam(value = "direccion") int direccionxenviar,
+                               @RequestParam(value = "direccion") String direccion,
                                @RequestParam(value = "restalrededor") String listadr,
                                RedirectAttributes redirectAttributes, HttpSession session){
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuarioactual=sessionUser.getIdusuarios();
         System.out.println("****************************");
         System.out.println(buscar);
-        if(buscar.equalsIgnoreCase("")){
-            System.out.println("REGRESA A VISTA REALIZAR PEDIDO");
-            Optional<Direcciones> direccionopt = direccionesRepository.findById(direccionxenviar);
-            if(direccionopt.isPresent()){
-                return "redirect:/cliente/realizarpedido?direccion=" + direccionxenviar;
-            }else{
-                return "redirect:/cliente/realizarpedido";
-            }
-        }else{
-            System.out.println("DISTRITOS RECIBE FILTRO NOMBRE");
-            List<Plato> listaplatos = new ArrayList<>();
-            for (int i = 0; i < listadr.split(",").length; i++) {
-                System.out.println(listadr.split(",")[i]);
-                List<Plato> platoshallados = platoRepository.buscarPlatoxNombre(listadr.split(",")[i],buscar);
-                for (Plato platomostrar : platoshallados) {
-                    if(platomostrar.getActivo() == 1){
-                        listaplatos.add(platomostrar);
+        try{
+            int direccionxenviar = Integer.parseInt(direccion);
+            if(buscar.equalsIgnoreCase("")){
+                System.out.println("REGRESA A VISTA REALIZAR PEDIDO");
+                Optional<Direcciones> direccionopt = direccionesRepository.findById(direccionxenviar);
+                if(direccionopt.isPresent()){
+                    return "redirect:/cliente/realizarpedido?direccion=" + direccionxenviar;
+                }else{
+                 return "redirect:/cliente/realizarpedido";
+             }
+            }else {
+                System.out.println("DISTRITOS RECIBE FILTRO NOMBRE");
+                List<Plato> listaplatos = new ArrayList<>();
+                for (int i = 0; i < listadr.split(",").length; i++) {
+                    System.out.println(listadr.split(",")[i]);
+                    List<Plato> platoshallados = platoRepository.buscarPlatoxNombre(listadr.split(",")[i], buscar);
+                    for (Plato platomostrar : platoshallados) {
+                        if (platomostrar.getActivo() == 1) {
+                            listaplatos.add(platomostrar);
+                        }
                     }
                 }
-            }
             List<Restaurante> listarestaurantes = new ArrayList<>();
             for (int i = 0; i < listadr.split(",").length; i++) {
                 System.out.println(listadr.split(",")[i]);
-                List<Restaurante> restaurantescercanosxdistrito = restauranteRepository.buscarRestaurantexNombre(listadr.split(",")[i],buscar);
+                List<Restaurante> restaurantescercanosxdistrito = restauranteRepository.buscarRestaurantexNombre(listadr.split(",")[i], buscar);
                 for (Restaurante resthallado : restaurantescercanosxdistrito) {
-                    if(resthallado.getUsuario().getCuentaActiva()==1){
+                    if (resthallado.getUsuario().getCuentaActiva() == 1) {
                         listarestaurantes.add(resthallado);
                         System.out.println(resthallado.getNombre());
                         System.out.println(resthallado.getDistrito().getNombredistrito());
@@ -886,13 +888,13 @@ public class UsuarioController {
                 }
             }
             Optional<Direcciones> direccionopt = direccionesRepository.findById(direccionxenviar);
-            if(direccionopt.isPresent()){
+            if (direccionopt.isPresent()) {
                 Direcciones direccionseleccionada = direccionopt.get();
-                model.addAttribute("iddireccionxenviar",direccionxenviar);
-                model.addAttribute("direccionseleccionada",direccionseleccionada.getDireccion());
-                listaplatos.addAll(platoRepository.buscarPlatoxNombre(direccionseleccionada.getDistrito().getNombredistrito(),buscar));
-                listarestaurantes.addAll(restauranteRepository.buscarRestaurantexNombre(direccionseleccionada.getDistrito().getNombredistrito(),buscar));
-                model.addAttribute("restalrededor",listadr);
+                model.addAttribute("iddireccionxenviar", direccionxenviar);
+                model.addAttribute("direccionseleccionada", direccionseleccionada.getDireccion());
+                listaplatos.addAll(platoRepository.buscarPlatoxNombre(direccionseleccionada.getDistrito().getNombredistrito(), buscar));
+                listarestaurantes.addAll(restauranteRepository.buscarRestaurantexNombre(direccionseleccionada.getDistrito().getNombredistrito(), buscar));
+                model.addAttribute("restalrededor", listadr);
             }
             List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuario_Idusuarios(idusuarioactual);
             model.addAttribute("listadirecciones", listadireccionescliente);
@@ -901,16 +903,20 @@ public class UsuarioController {
             listarestaurantes = new ArrayList<Restaurante>(set);
             HashSet<Plato> set2 = new HashSet<Plato>(listaplatos);
             listaplatos = new ArrayList<Plato>(set2);
-            if(listaplatos.size()==0 && listarestaurantes.size()==0){
+            if (listaplatos.size() == 0 && listarestaurantes.size() == 0) {
                 System.out.println("NO ENCONTRÓ BUSQUEDA FILTRO POR NOMBRE");
-                model.addAttribute("alertabusqueda","No hay coincidencia de búsqueda");
-            }else{
+                model.addAttribute("alertabusqueda", "No hay coincidencia de búsqueda");
+            } else {
                 System.out.println("DEBIÓ ENCONTRAR BUSQUEDA FILTRO POR NOMBRE");
             }
-            model.addAttribute("nombrebuscado",buscar);
-            model.addAttribute("listaplatosbuscado",listaplatos);
-            model.addAttribute("listarestaurantesbuscado",listarestaurantes);
+            model.addAttribute("nombrebuscado", buscar);
+            model.addAttribute("listaplatosbuscado", listaplatos);
+            model.addAttribute("listarestaurantesbuscado", listarestaurantes);
             return "cliente/busquedanombre";
+        }
+
+        }catch(NumberFormatException e){
+            return "redirect:/cliente/realizarpedido";
         }
     }
 
