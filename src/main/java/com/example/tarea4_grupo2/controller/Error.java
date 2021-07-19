@@ -1,3 +1,4 @@
+
 package com.example.tarea4_grupo2.controller;
 
 import org.springframework.boot.web.servlet.error.ErrorController;
@@ -32,5 +33,6 @@ public class Error implements ErrorController {
     public String getErrorPath() {
         return null;
     }
+
 }
 

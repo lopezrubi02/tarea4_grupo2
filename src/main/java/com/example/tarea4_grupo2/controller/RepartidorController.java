@@ -385,7 +385,7 @@ public class RepartidorController {
 
 
     public ByteArrayInputStream exportAllData1(int id) throws IOException {
-        String[] columns1 = { "# PEDIDO", "RESTAURANTE", "DISTRITO DEL RESTAURANTE", "LUGAR DE DESTINO", "S/. COMISIÓN", "CALIFICACION"};
+        String[] columns1 = { "# PEDIDO", "RESTAURANTE", "DISTRITO DEL RESTAURANTE", "DISTRITO DE DESTINO", "S/. COMISIÓN", "CALIFICACION"};
         String[] columns2 = { "MES", "AÑO", "COMISIÓN MENSUAL" };
 
         Workbook workbook = new HSSFWorkbook();
@@ -557,8 +557,6 @@ public class RepartidorController {
     public String guardarPerfilRepartidor(@ModelAttribute("usuario") @Valid Usuario usuario,
                                           BindingResult bindingResult,
                                           @RequestParam("password2") String password2,
-                                          @RequestParam("direccion") String direccion,
-                                          @RequestParam("distrito") String distrito,
                                           @RequestParam("archivo") MultipartFile file,
                                           HttpSession session,
                                           RedirectAttributes attributes,
@@ -611,15 +609,8 @@ public class RepartidorController {
             if(usuario.getContraseniaHash().equals(password2)){
                 if (file.isEmpty()) {
                     user.setTelefono(usuario.getTelefono());
-                    Direcciones dnueva = direccionesRepository.findByUsuario(usuario);
-                    dnueva.setDireccion(direccion);
-                    int iddistrito= Integer.parseInt(distrito);
-                    Optional<Distritos> distrito2=distritosRepository.findById(iddistrito);
-                    Distritos distritos=distrito2.get();
-                    dnueva.setDistrito(distritos);
-                    direccionesRepository.save(dnueva);
                     usuarioRepository.save(user);
-                    String msgR="El registro fue exitoso";
+                    String msgR="El perfil fue editado exitosamente";
                     attributes.addFlashAttribute("msgR",msgR);
                     return "redirect:/repartidor/miperfil";
                 }
@@ -640,15 +631,9 @@ public class RepartidorController {
                     return "repartidor/repartidor_perfil";
                 }
                 user.setTelefono(usuario.getTelefono());
-                Direcciones dnueva = direccionesRepository.findByUsuario(usuario);
-                dnueva.setDireccion(direccion);
-                int iddistrito= Integer.parseInt(distrito);
-                Optional<Distritos> distrito2=distritosRepository.findById(iddistrito);
-                Distritos distritos=distrito2.get();
-                dnueva.setDistrito(distritos);
-                direccionesRepository.save(dnueva);
+
                 usuarioRepository.save(user);
-                String msgR="El registro fue exitoso";
+                String msgR="El perfil fue editado exitosamente";
                 attributes.addFlashAttribute("msgR",msgR);
                 return "redirect:/repartidor/miperfil";
             }
@@ -656,15 +641,9 @@ public class RepartidorController {
                 if(password2.isEmpty()){
                     if (file.isEmpty()) {
                         user.setTelefono(usuario.getTelefono());
-                        Direcciones dnueva = direccionesRepository.findByUsuario(usuario);
-                        dnueva.setDireccion(direccion);
-                        int iddistrito= Integer.parseInt(distrito);
-                        Optional<Distritos> distrito2=distritosRepository.findById(iddistrito);
-                        Distritos distritos=distrito2.get();
-                        dnueva.setDistrito(distritos);
-                        direccionesRepository.save(dnueva);
+
                         usuarioRepository.save(user);
-                        String msgR="El registro fue exitoso";
+                        String msgR="El perfil fue editado exitosamente";
                         attributes.addFlashAttribute("msgR",msgR);
                         return "redirect:/repartidor/miperfil";
                     }
@@ -685,15 +664,9 @@ public class RepartidorController {
                         return "repartidor/repartidor_perfil";
                     }
                     user.setTelefono(usuario.getTelefono());
-                    Direcciones dnueva = direccionesRepository.findByUsuario(usuario);
-                    dnueva.setDireccion(direccion);
-                    int iddistrito= Integer.parseInt(distrito);
-                    Optional<Distritos> distrito2=distritosRepository.findById(iddistrito);
-                    Distritos distritos=distrito2.get();
-                    dnueva.setDistrito(distritos);
-                    direccionesRepository.save(dnueva);
+
                     usuarioRepository.save(user);
-                    String msgR="El registro fue exitoso";
+                    String msgR="El perfil fue editado exitosamente";
                     attributes.addFlashAttribute("msgR",msgR);
                     return "redirect:/repartidor/miperfil";
                 }else{
@@ -813,8 +786,8 @@ public class RepartidorController {
                                      @RequestParam("direccion_real") String direccion,
                                      @RequestParam("iddistrito") int iddistrito,
                                      @RequestParam("password2") String pass2,
-                                     @RequestParam(value = "placa",defaultValue = "0") String placa,
-                                     @RequestParam(value = "licencia",defaultValue = "0") String licencia,
+                                     @RequestParam(value = "placa",defaultValue = "") String placa,
+                                     @RequestParam(value = "licencia",defaultValue = "") String licencia,
                                      @RequestParam("archivo") MultipartFile file,
                                      @RequestParam(value = "movilidad2",defaultValue = "0") String movilidad2,
                                      Model model, RedirectAttributes attributes) {
@@ -975,7 +948,9 @@ public class RepartidorController {
         String aws = "ec2-user@ec2-3-84-20-210.compute-1.amazonaws.com";
         String direccionurl = "http://" + aws + ":8081/login";
         String mensaje = "¡Hola!<br><br>" +
-                "Ahora es parte de Spicyo. Para ingresar a su cuenta haga click: <a href='" + direccionurl + "'>AQUÍ</a> <br><br>Atte. Equipo de Spicy :D</b>";
+                "La cuenta fue registada exitosamente; sin embargo, debe esperar el " +
+                "correo de activación de la cuenta para acceder a ella.<br><br>" +
+                "Atte. Equipo de Spicy :D</b>";
         String correoDestino = usuario.getEmail();
         sendMailService.sendMail(correoDestino, "saritaatanacioarenas@gmail.com", subject, mensaje);
         return "redirect:/login";
