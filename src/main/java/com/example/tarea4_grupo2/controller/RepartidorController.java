@@ -758,6 +758,7 @@ public class RepartidorController {
                                    BindingResult bindingResult, Model model) {
         System.out.println(movilidad2);
         if( movilidad2.equalsIgnoreCase("bicicleta") || movilidad2.equalsIgnoreCase("moto") || movilidad2.equalsIgnoreCase("bicimoto")){
+            System.out.println("********************************** movilidad");
             System.out.println(movilidad2);
             model.addAttribute("movilidad2",movilidad2);
         }
@@ -807,8 +808,19 @@ public class RepartidorController {
                                      @RequestParam(value = "placa",defaultValue = "") String placa,
                                      @RequestParam(value = "licencia",defaultValue = "") String licencia,
                                      @RequestParam("archivo") MultipartFile file,
-                                     @RequestParam(value = "movilidad2",defaultValue = "0") String movilidad2,
+                                     @RequestParam(value = "movilidad2",defaultValue = "") String movilidad2,
                                      Model model, RedirectAttributes attributes) {
+
+        boolean movilidadselec=true;
+        if( !(movilidad2.equalsIgnoreCase("bicicleta") || movilidad2.equalsIgnoreCase("moto") || movilidad2.equalsIgnoreCase("bicimoto"))){
+            movilidadselec=false;
+            movilidad2=null;
+        }
+
+        if((usuario.getSexo().equalsIgnoreCase("femenino")||
+                usuario.getSexo().equalsIgnoreCase("masculino"))){
+            usuario.setSexo("Masculino");
+        }
 
         boolean correoExis = false;
         boolean correovalido = isValid(usuario.getEmail());
@@ -851,12 +863,6 @@ public class RepartidorController {
         boolean dniexiste = validarDNI(usuario.getDni());
 
 
-        String correoVal=null;
-        if (!correovalido) {
-                correoVal = "El correo ya se encuentra registrado";
-
-        }
-
         String placaVal=null;
         if (!placaValida) {
             placaVal = "La placa no es válida";
@@ -867,17 +873,17 @@ public class RepartidorController {
             licenciaVal = "La licencia no es válida";
         }
 
-        if (bindingResult.hasErrors() || correoExis || !dniexiste || !correovalido || !placaValida || !licenciaValida) {
+        if (bindingResult.hasErrors() || correoExis || !dniexiste || !correovalido || !placaValida || !licenciaValida || !movilidadselec) {
             model.addAttribute("listadistritos", distritosRepository.findAll());
             model.addAttribute("errordni","Ingrese un DNI válido");
             model.addAttribute("correoExis", correoExis);
-            model.addAttribute("correoVal",correoVal);
             model.addAttribute("placaVal",placaVal);
             model.addAttribute("licenciaVal",licenciaVal);
             model.addAttribute("msgC",msgC);
             model.addAttribute("msgc1",msgc1);
             model.addAttribute("msgc2",msgc2);
             model.addAttribute("direccionVal",direccionVal);
+            model.addAttribute("movilidadselec",movilidadselec);
             model.addAttribute("movilidad2",movilidad2);
             if(placa!=null){
                 model.addAttribute("placa",placa);
