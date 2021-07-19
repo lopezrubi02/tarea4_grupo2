@@ -129,19 +129,21 @@
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12"
                                                  th:if="${movilidad2 == 'moto' || movilidad2 == 'bicimoto' || placa != null}">
                                                 <label>Placa</label>
+                                                <div th:if="${placaVal != null}" th:text="${placaVal}" class="text-danger"></div>
                                                 <input class="form-control" placeholder="Placa" th:value="${placa}" name="placa" id="placa">
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12"
                                                  th:if="${movilidad2 == 'moto' || movilidad2 == 'bicimoto' || licencia != null }">
                                                 <label>Licencia</label>
+                                                <div th:if="${licenciaVal != null}" th:text="${licenciaVal}" class="text-danger"></div>
                                                 <input class="form-control" placeholder="Licencia de conducir" th:value="${licencia}" name="licencia" id="licencia">
                                             </div>
 
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <label>Correo</label>
-                                                <input class="form-control" placeholder="Correo" type="text" th:field="*{email}">
                                                 <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
                                                 <div th:if="${msgC != null}" th:text="${msgC}" class="text-danger"></div>
+                                                <input class="form-control" placeholder="Correo" type="text" th:field="*{email}">
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <label>Nombre</label>

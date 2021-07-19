@@ -1,6 +1,7 @@
 package com.example.tarea4_grupo2.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
 import java.sql.Blob;
 
 @Entity
@@ -11,7 +12,6 @@ public class Repartidor {
     private int idrepartidor;
 
     private String movilidad;
-    
     private String placa;
     private String licencia;
     private String fotonombre;

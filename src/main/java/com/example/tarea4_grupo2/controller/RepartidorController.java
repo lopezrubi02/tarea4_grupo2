@@ -780,6 +780,24 @@ public class RepartidorController {
         return pattern .matcher(email).matches();
     }
 
+    public boolean isValidLicencia(String licencia) {
+        String emailREGEX = "^(Q)+[A-Z0-9]{8}$";
+        Pattern pattern = Pattern.compile(emailREGEX );
+        if (licencia == null){
+            return false;
+        }
+        return pattern .matcher(licencia).matches();
+    }
+
+    public boolean isValidPlaca(String placa) {
+        String emailREGEX = "^([A-Z0-9]{3}-+[A-Z0-9]{3})$";
+        Pattern pattern = Pattern.compile(emailREGEX );
+        if (placa == null){
+            return false;
+        }
+        return pattern .matcher(placa).matches();
+    }
+
     @PostMapping("/save3")
     public String guardarRepartidor3(@ModelAttribute("usuario") @Valid Usuario usuario,
                                      BindingResult bindingResult,
@@ -794,6 +812,8 @@ public class RepartidorController {
 
         boolean correoExis = false;
         boolean correovalido = isValid(usuario.getEmail());
+        boolean licenciaValida=isValidLicencia(licencia);
+        boolean placaValida=isValidPlaca(placa);
 
         Usuario usuario1 = usuarioRepository.findByEmail(usuario.getEmail());
 
@@ -837,11 +857,23 @@ public class RepartidorController {
 
         }
 
-        if (bindingResult.hasErrors() || correoExis || !dniexiste || !correovalido) {
+        String placaVal=null;
+        if (!placaValida) {
+            placaVal = "La placa no es válida";
+        }
+
+        String licenciaVal=null;
+        if (!licenciaValida) {
+            licenciaVal = "La licencia no es válida";
+        }
+
+        if (bindingResult.hasErrors() || correoExis || !dniexiste || !correovalido || !placaValida || !licenciaValida) {
             model.addAttribute("listadistritos", distritosRepository.findAll());
             model.addAttribute("errordni","Ingrese un DNI válido");
             model.addAttribute("correoExis", correoExis);
             model.addAttribute("correoVal",correoVal);
+            model.addAttribute("placaVal",placaVal);
+            model.addAttribute("licenciaVal",licenciaVal);
             model.addAttribute("msgC",msgC);
             model.addAttribute("msgc1",msgc1);
             model.addAttribute("msgc2",msgc2);
