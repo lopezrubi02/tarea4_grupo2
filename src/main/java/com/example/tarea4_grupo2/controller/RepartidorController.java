@@ -812,9 +812,14 @@ public class RepartidorController {
                                      Model model, RedirectAttributes attributes) {
 
         boolean movilidadselec=true;
-        if(movilidad2.isEmpty()){
+        if( !(movilidad2.equalsIgnoreCase("bicicleta") || movilidad2.equalsIgnoreCase("moto") || movilidad2.equalsIgnoreCase("bicimoto"))){
             movilidadselec=false;
             movilidad2=null;
+        }
+
+        if((usuario.getSexo().equalsIgnoreCase("femenino")||
+                usuario.getSexo().equalsIgnoreCase("masculino"))){
+            usuario.setSexo("Masculino");
         }
 
         boolean correoExis = false;
