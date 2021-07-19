@@ -850,7 +850,6 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
                 String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
                 usuario.setContraseniaHash(contraseniahashbcrypt);
 
-                //
                 Optional<Usuario> usuarioValidacion = Optional.ofNullable(usuarioRepository.findByEmailEquals(usuario.getEmail()));
                 if(!usuarioValidacion.isPresent()){
 
