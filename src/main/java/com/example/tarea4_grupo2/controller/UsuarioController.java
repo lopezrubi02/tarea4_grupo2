@@ -196,18 +196,12 @@ public class UsuarioController {
             List<Distritos> listadistritos = distritosRepository.findAll();
             model.addAttribute("listadistritos", listadistritos);
             boolean correovalido = isValid(usuario.getEmail());
-            System.out.println("***********************");
-            System.out.println(usuario.getEmail());
-            System.out.println(correovalido);
             return "cliente/registroCliente";
         } else {
             boolean errorcorreo = validarcorreounico(usuario.getEmail(), usuario);
             boolean errorstringsexo = validarstringsexo(usuario.getSexo());
             boolean dniexiste = validarDNI(usuario.getDni());
             boolean correovalido = isValid(usuario.getEmail());
-            System.out.println("***********************");
-            System.out.println(usuario.getEmail());
-            System.out.println(correovalido);
             if (errorcorreo == true || errorstringsexo == true || direccion == null || dniexiste == false || correovalido == false) {
                 if(errorcorreo==true){
                     model.addAttribute("errorcorreo", "Ya hay una cuenta registrada con el correo ingresado.");
@@ -265,18 +259,22 @@ public class UsuarioController {
                         }else{
                             List<Distritos> listadistritos = distritosRepository.findAll();
                             model.addAttribute("listadistritos", listadistritos);
+                            model.addAttribute("direction", direccion);
                             return "cliente/registroCliente";
                         }
                     } else {
                         List<Distritos> listadistritos = distritosRepository.findAll();
                         model.addAttribute("listadistritos", listadistritos);
-                        model.addAttribute("errorpatroncontra", "La contraseña no cumple con los requisitos: mínimo 8 caracteres, un número y un caracter especial");
+                        model.addAttribute("errorpatroncontra", "La contraseña no cumple con los requisitos mínimos.");
                         model.addAttribute("usuario", usuario);
+                        model.addAttribute("direction", direccion);
                         return "cliente/registroCliente";
                     }
                 } else {
                     List<Distritos> listadistritos = distritosRepository.findAll();
                     model.addAttribute("listadistritos", listadistritos);
+                    model.addAttribute("errorpatroncontra", "Las contraseñas no coinciden");
+                    model.addAttribute("direction", direccion);
                     return "cliente/registroCliente";
                 }
             }
