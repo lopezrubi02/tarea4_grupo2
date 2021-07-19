@@ -513,20 +513,6 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
         int id = usuarioActual.getIdusuarios();
         model.addAttribute("idAdmin",id);
 
-        List<String> direccionIp = null;
-        try {
-            direccionIp = getIpAndProt();
-            String direccion1 = direccionIp.get(0);
-            String direccion2 = direccionIp.get(1);
-            System.out.println("****************************************************");
-            String direccion = "http://"+direccionIp.get(0)+":"+direccionIp.get(1)+"/login";
-            System.out.println(direccion);
-            System.out.println(direccionIp.get(2));
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-
-
         return "adminsistema/GestionCuentasPrincipal";
     }
 
@@ -698,25 +684,11 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
                 usuario.setCuentaActiva(1);
                 usuarioRepository.save(usuario);
 
-
-                String direccion;
-                try {
-                    List<String> direccionIp = getIpAndProt();
-                    direccion = "http://"+direccionIp.get(0)+":"+direccionIp.get(1)+"/login";
-                } catch (UnknownHostException e) {
-                    e.printStackTrace();
-                    //Tmodificar direcion url despues de despliegue aws.
-                    //Pegar aquí los datos del AWS;
-                    String aws = "ec2-user@ec2-3-84-20-210.compute-1.amazonaws.com";
-                    direccion = "http://" + aws + ":8080/login";
-                }
-
-
-
                 //String direccion = "http://localhost:8090/login";
                 //TODO modificar direcion url despues de despliegue aws.
                 //Pegar aquí los datos del AWS;
                 //String aws = "ec2-user@ec2-3-84-20-210.compute-1.amazonaws.com";
+                String direccion="http://g-spicyo.publicvm.com:8080/";
 
                 if(usuario.getRol().equals("AdminRestaurante")){
 
@@ -765,64 +737,64 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
         Optional<Usuario> optional = usuarioRepository.findById(id);
         if(optional.isPresent()){
             Usuario usuario = optional.get();
-            if(usuario.getRol().equals("Repartidor")){
-                try {
-                    List<Direcciones> direccionLista = direccionesRepository.findAllByUsuario_Idusuarios(id);
-                    Repartidor repartidor = repartidorRepository.findRepartidorByIdusuariosEquals(id);
+                if(usuario.getRol().equals("Repartidor") && usuario.getCuentaActiva()==-1){
+                    try {
+                        List<Direcciones> direccionLista = direccionesRepository.findAllByUsuario_Idusuarios(id);
+                        Repartidor repartidor = repartidorRepository.findRepartidorByIdusuariosEquals(id);
 
-                    for(Direcciones direccion: direccionLista){
-                        direccionesRepository.deleteById(direccion.getIddirecciones());
+                        for(Direcciones direccion: direccionLista){
+                            direccionesRepository.deleteById(direccion.getIddirecciones());
+                        }
+                        repartidorRepository.deleteById(repartidor.getIdrepartidor());
+
+                        usuarioRepository.deleteById(id);
+                        //Envio de correo a usuario
+                        String correoDestino = usuario.getEmail();
+                        String subject = "SPYCYO - Cuenta Denegada";
+                        String texto = "<p><strong>Mensaje de SPYCYO - Cuenta Repartidor Denegada</strong></p>\n" +
+                                "<p>La cuenta nueva de repartidor que ha registrado se le ha denegado la solicitud de aprobación.</p>\n" +
+                                "<p>Motivo: '" + message + "'</p>\n" +
+                                "<p>&nbsp;</p>\n" +
+                                "<p>Nota: Si en el motivo de denegación se le indicaron puntos que mejorar o detallar, puede volver a intentar a registrar su cuenta</p>\n" +
+                                "<p>&nbsp;</p>\n" +
+                                "<br>Atte. Equipo de Spicyo</br>";
+                        sendMailService.sendMail(correoDestino, "saritaatanacioarenas@gmail.com", subject, texto);
+
+                        attr.addFlashAttribute("msg", "Cuenta denegada exitosamente");
+                        return "redirect:/admin/nuevosUsuarios";
+                    }catch (Exception e){
+                        System.out.println(e.getMessage());
+                        attr.addFlashAttribute("msg", "Ocurrió un error al denegar la cuenta");
+                        return "redirect:/admin/nuevosUsuarios";
                     }
-                    repartidorRepository.deleteById(repartidor.getIdrepartidor());
+                }else if(usuario.getRol().equals("AdminRestaurante") && usuario.getCuentaActiva()==2){
+                    Restaurante restaurante = restauranteRepository.findRestauranteByUsuario_Idusuarios(id);
 
-                    usuarioRepository.deleteById(id);
+                    if(restaurante==null){
+                        attr.addFlashAttribute("msg1","Ocurrio un error al denegar la cuenta");
+                        System.out.println("Llegamos aqui");
+                        return "redirect:/admin/gestionCuentas";
+                    }
+                    restauranteRepository.deleteById(restaurante.getIdrestaurante());
+                    usuario.setCuentaActiva(3);
+                    usuarioRepository.save(usuario);
+
                     //Envio de correo a usuario
                     String correoDestino = usuario.getEmail();
-                    String subject = "SPYCYO - Cuenta Denegada";
-                    String texto = "<p><strong>Mensaje de SPYCYO - Cuenta Repartidor Denegada</strong></p>\n" +
-                            "<p>La cuenta nueva de repartidor que ha registrado se le ha denegado la solicitud de aprobación.</p>\n" +
-                            "<p>Motivo: '" + message + "'</p>\n" +
+                    String subject = "SPYCYO - Cuenta de Restaurante Denegada";
+                    String texto = "<p><strong>Mensaje de SPYCYO - Cuenta de Restaurante Denegada</strong></p>\n" +
+                            "<p>El restaurante asociado a la cuenta que ha registrado se le ha denegado la solicitud de aprobación.</p>\n" +
+                            "<p>Motivo: '" +message +"'</p>\n" +
                             "<p>&nbsp;</p>\n" +
                             "<p>Nota: Si en el motivo de denegación se le indicaron puntos que mejorar o detallar, puede volver a intentar a registrar su cuenta</p>\n" +
                             "<p>&nbsp;</p>\n" +
                             "<br>Atte. Equipo de Spicyo</br>";
-                    sendMailService.sendMail(correoDestino, "saritaatanacioarenas@gmail.com", subject, texto);
 
-                    attr.addFlashAttribute("msg", "Cuenta denegada exitosamente");
-                    return "redirect:/admin/nuevosUsuarios";
-                }catch (Exception e){
-                    System.out.println(e.getMessage());
-                    attr.addFlashAttribute("msg", "Ocurrió un error al denegar la cuenta");
+                    sendMailService.sendMail(correoDestino,"saritaatanacioarenas@gmail.com",subject,texto);
+
+                    attr.addFlashAttribute("msg","Cuenta denegada exitosamente");
                     return "redirect:/admin/nuevosUsuarios";
                 }
-            }else if(usuario.getRol().equals("AdminRestaurante")){
-                Restaurante restaurante = restauranteRepository.findRestauranteByUsuario_Idusuarios(id);
-
-                if(restaurante==null){
-                    attr.addFlashAttribute("msg1","Ocurrio un error al denegar la cuenta");
-                    System.out.println("Llegamos aqui");
-                    return "redirect:/admin/gestionCuentas";
-                }
-                restauranteRepository.deleteById(restaurante.getIdrestaurante());
-                usuario.setCuentaActiva(3);
-                usuarioRepository.save(usuario);
-
-                //Envio de correo a usuario
-                String correoDestino = usuario.getEmail();
-                String subject = "SPYCYO - Cuenta de Restaurante Denegada";
-                String texto = "<p><strong>Mensaje de SPYCYO - Cuenta de Restaurante Denegada</strong></p>\n" +
-                        "<p>El restaurante asociado a la cuenta que ha registrado se le ha denegado la solicitud de aprobación.</p>\n" +
-                        "<p>Motivo: '" +message +"'</p>\n" +
-                        "<p>&nbsp;</p>\n" +
-                        "<p>Nota: Si en el motivo de denegación se le indicaron puntos que mejorar o detallar, puede volver a intentar a registrar su cuenta</p>\n" +
-                        "<p>&nbsp;</p>\n" +
-                        "<br>Atte. Equipo de Spicyo</br>";
-
-                sendMailService.sendMail(correoDestino,"saritaatanacioarenas@gmail.com",subject,texto);
-
-                attr.addFlashAttribute("msg","Cuenta denegada exitosamente");
-                return "redirect:/admin/nuevosUsuarios";
-            }
             attr.addFlashAttribute("msg","Ocurrio un error al denegar la cuenta");
             return "redirect:/admin/nuevosUsuarios";
         }
