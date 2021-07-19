@@ -195,6 +195,7 @@ public class UsuarioController {
         if (bindingResult.hasErrors()) {
             List<Distritos> listadistritos = distritosRepository.findAll();
             model.addAttribute("listadistritos", listadistritos);
+            model.addAttribute("direction", direccion);
             boolean correovalido = isValid(usuario.getEmail());
             return "cliente/registroCliente";
         } else {
@@ -212,6 +213,7 @@ public class UsuarioController {
                     model.addAttribute("errorcorreo","Formato de correo no válido");
                 }
                 List<Distritos> listadistritos = distritosRepository.findAll();
+                model.addAttribute("direction", direccion);
                 model.addAttribute("listadistritos", listadistritos);
                 return "cliente/registroCliente";
             } else {
@@ -516,28 +518,6 @@ public class UsuarioController {
         }
     }
 
-    @GetMapping("/cliente/imagenrepartidor/{id}")
-    public ResponseEntity<byte[]>mostrarImagenRepart(@PathVariable("id") int id){
-        Optional<Repartidor> opt = repartidorRepository.findById(id);
-
-        if(opt.isPresent()){
-            Repartidor r = opt.get();
-
-            byte[] imagenComoBytes = r.getFoto();
-
-            HttpHeaders httpHeaders = new HttpHeaders();
-            httpHeaders.setContentType(
-                    MediaType.parseMediaType(r.getFotocontenttype()));
-
-            return new ResponseEntity<>(
-                    imagenComoBytes,
-                    httpHeaders,
-                    HttpStatus.OK);
-        }else{
-            return null;
-        }
-    }
-
     /** Realizar pedido **/
     @GetMapping("/cliente/realizarpedido")
     public String realizarpedido(Model model, HttpSession session, RedirectAttributes attr,
@@ -550,6 +530,8 @@ public class UsuarioController {
         System.out.println(direccion);
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuarioactual=sessionUser.getIdusuarios();
+        Optional<Usuario> useropt = usuarioRepository.findById(idusuarioactual);
+        Usuario user = useropt.get();
         List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idusuarioactual);
         Pedidos pedidopendiente = pedidosRepository.pedidoencurso(idusuarioactual);
         if(listapedidospendientes.size() >= 1 || pedidopendiente != null){
@@ -576,7 +558,7 @@ public class UsuarioController {
             listaidcalificacion.add("5 estrellas");
             model.addAttribute("listaidcalificacion",listaidcalificacion);
 
-            List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuario_Idusuarios(idusuarioactual);
+            List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuarioAndActivoEquals(user, 1);
             List<Categorias> listacategorias = categoriasRepository.findAll();
             model.addAttribute("listacategorias", listacategorias);
             model.addAttribute("listadirecciones", listadireccionescliente);
@@ -769,6 +751,8 @@ public class UsuarioController {
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuarioactual=sessionUser.getIdusuarios();
+        Optional<Usuario> useropt = usuarioRepository.findById(idusuarioactual);
+        Usuario user = useropt.get();
         try {
             int direccionxenviar = Integer.parseInt(direccion);
             Optional<Direcciones> direccionopt = Optional.ofNullable(direccionesRepository.findDireccionesByIddireccionesAndUsuario_Idusuarios(direccionxenviar, idusuarioactual));
@@ -788,7 +772,7 @@ public class UsuarioController {
                 model.addAttribute("listaidcalificacion",listaidcalificacion);
 
                 Direcciones direccionseleccionada = direccionopt.get();
-                List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuario_Idusuarios(idusuarioactual);
+                List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuarioAndActivoEquals(user, 1);
                 List<Categorias> listacategorias = categoriasRepository.findAll();
                 model.addAttribute("listacategorias", listacategorias);
                 model.addAttribute("listadirecciones", listadireccionescliente);
@@ -849,8 +833,8 @@ public class UsuarioController {
                                RedirectAttributes redirectAttributes, HttpSession session){
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuarioactual=sessionUser.getIdusuarios();
-        System.out.println("****************************");
-        System.out.println(buscar);
+        Optional<Usuario> useropt = usuarioRepository.findById(idusuarioactual);
+        Usuario user = useropt.get();
         try{
             int direccionxenviar = Integer.parseInt(direccion);
             if(buscar.equalsIgnoreCase("")){
@@ -894,7 +878,7 @@ public class UsuarioController {
                 listarestaurantes.addAll(restauranteRepository.buscarRestaurantexNombre(direccionseleccionada.getDistrito().getNombredistrito(), buscar));
                 model.addAttribute("restalrededor", listadr);
             }
-            List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuario_Idusuarios(idusuarioactual);
+            List<Direcciones> listadireccionescliente = direccionesRepository.findAllByUsuarioAndActivoEquals(user, 1);
             model.addAttribute("listadirecciones", listadireccionescliente);
 
             HashSet<Restaurante> set = new HashSet<Restaurante>(listarestaurantes);
