@@ -789,15 +789,29 @@ public class RepartidorController {
             model.addAttribute("movilidad2",movilidad2);
         }
 
+        String direction=null;
+        model.addAttribute("direction",direction);
+        System.out.println(direction);
+
         model.addAttribute("listadistritos", distritosRepository.findAll());
         return "repartidor/registro_parte3";
+    }
+
+    /** Para validar correo **/
+    public boolean isValid(String email) {
+        String emailREGEX = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        Pattern pattern = Pattern.compile(emailREGEX );
+        if (email == null){
+            return false;
+        }
+        return pattern .matcher(email).matches();
     }
 
     @PostMapping("/save3")
     public String guardarRepartidor3(@ModelAttribute("usuario") @Valid Usuario usuario,
                                      BindingResult bindingResult,
-                                     @RequestParam("direccion") String direccion,
-                                     @RequestParam("distrito") Distritos distrito,
+                                     @RequestParam("direccion_real") String direccion,
+                                     @RequestParam("iddistrito") int iddistrito,
                                      @RequestParam("password2") String pass2,
                                      @RequestParam(value = "placa",defaultValue = "0") String placa,
                                      @RequestParam(value = "licencia",defaultValue = "0") String licencia,
@@ -806,6 +820,7 @@ public class RepartidorController {
                                      Model model, RedirectAttributes attributes) {
 
         boolean correoExis = false;
+        boolean correovalido = isValid(usuario.getEmail());
 
         Usuario usuario1 = usuarioRepository.findByEmail(usuario.getEmail());
 
@@ -817,6 +832,7 @@ public class RepartidorController {
                  msgC = "El correo ya se encuentra registrado";
             }
         }
+
 
         boolean cont1val=false;
         String msgc1=null;
@@ -841,10 +857,18 @@ public class RepartidorController {
 
         boolean dniexiste = validarDNI(usuario.getDni());
 
-        if (bindingResult.hasErrors() || correoExis || !dniexiste) {
+
+        String correoVal=null;
+        if (!correovalido) {
+                correoVal = "El correo ya se encuentra registrado";
+
+        }
+
+        if (bindingResult.hasErrors() || correoExis || !dniexiste || !correovalido) {
             model.addAttribute("listadistritos", distritosRepository.findAll());
             model.addAttribute("errordni","Ingrese un DNI válido");
             model.addAttribute("correoExis", correoExis);
+            model.addAttribute("correoVal",correoVal);
             model.addAttribute("msgC",msgC);
             model.addAttribute("msgc1",msgc1);
             model.addAttribute("msgc2",msgc2);
@@ -881,12 +905,23 @@ public class RepartidorController {
             usuarioRepository.save(usuario2);
             //System.out.println(fechaNacimiento);
 
+            //Para guardar direccion
+            Usuario usuarionuevo = usuarioRepository.findByDniAndEmailEquals(usuario2.getDni(), usuario2.getEmail());
+
             Direcciones direccionactual = new Direcciones();
+            direccion = direccion.split(",")[0];
             direccionactual.setDireccion(direccion);
-            direccionactual.setDistrito(distrito);
-            //direccionactual.setUsuariosIdusuarios(usuario2.getIdusuarios());
-            direccionactual.setUsuario(usuario2);
-            direccionesRepository.save(direccionactual);
+            Optional<Distritos> distritoopt = distritosRepository.findById(iddistrito);
+
+            if(distritoopt.isPresent()) {
+                Distritos distritosactual = distritoopt.get();
+                direccionactual.setDistrito(distritosactual);
+                direccionactual.setUsuario(usuarionuevo);
+                direccionactual.setActivo(1);
+                System.out.println("debería guardar direccion");
+                direccionesRepository.save(direccionactual);
+                System.out.println("ya guardó direccion");
+            }
 
             if (file.isEmpty()) {
                 model.addAttribute("msg", "Debe subir un archivo");
@@ -903,7 +938,9 @@ public class RepartidorController {
                 repartidor.setFoto(file.getBytes());
                 repartidor.setFotonombre(fileName);
                 repartidor.setFotocontenttype(file.getContentType());
-                repartidor.setDistritos(distrito);
+
+                Distritos distritosactual = distritoopt.get();
+                repartidor.setDistritos(distritosactual);
                 repartidor.setDisponibilidad(false);
                 repartidor.setMovilidad(movilidad2);
                 if(!movilidad2.equalsIgnoreCase("bicicleta")){
@@ -913,6 +950,7 @@ public class RepartidorController {
                     repartidor.setLicencia(licencia);
                 }
                 repartidorRepository.save(repartidor);
+
 
 
             } catch (IOException e) {
@@ -943,5 +981,6 @@ public class RepartidorController {
         return "redirect:/login";
 
     }
+
 
 }
