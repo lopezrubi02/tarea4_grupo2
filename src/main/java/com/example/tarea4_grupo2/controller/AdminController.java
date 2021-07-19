@@ -11,10 +11,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -726,8 +723,15 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
     @GetMapping("/correo")
     public String envioCorreo(@RequestParam(value="id") int id,
                               Model model){
-        model.addAttribute("id",id);
-        return "adminsistema/ADMIN_RazonDenegacionCuenta";
+        Optional<Usuario> optional = usuarioRepository.findById(id);
+        if(optional.isPresent()) {
+            Usuario usuario = optional.get();
+            if ((usuario.getRol().equals("Repartidor") && usuario.getCuentaActiva() == -1) || (usuario.getRol().equals("AdminRestaurante") && usuario.getCuentaActiva() == 2)) {
+                model.addAttribute("id", id);
+                return "adminsistema/ADMIN_RazonDenegacionCuenta";
+            }
+        }
+        return "redirect:/admin/nuevosUsuarios";
     }
 
     @PostMapping("/denegar")
@@ -861,13 +865,10 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
                         return "adminsistema/agregarAdmin";
                     }
 
-
                 }else{
                     model.addAttribute("emailUnico", "Ya existe un usuario registrado con el mismo correo");
                     return "adminsistema/agregarAdmin";
                 }
-
-
 
             }else {
 
@@ -877,17 +878,41 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
                 if (validacionContrasenias == false){
                     model.addAttribute("contras","Debe tener al menos 8 caracteres, uno especial y una mayuscula");
                 }
-
                 return "adminsistema/agregarAdmin";
             }
         }
-
         return "redirect:/admin/gestionCuentas";
     }
 
 
 
     //Reportes
+
+    /**excel**/
+    private static CellStyle createVHCenterStyle(final Workbook wb) {
+        CellStyle style = wb.createCellStyle (); // objeto de estilo
+        style.setVerticalAlignment (VerticalAlignment.CENTER); // vertical
+        style.setAlignment (HorizontalAlignment.CENTER); // horizontal
+        style.setWrapText (true); // Especifica el salto de línea automático cuando no se puede mostrar el contenido de la celda
+        // agregar borde
+        style.setBorderBottom(BorderStyle.THIN);
+        style.setBorderLeft(BorderStyle.THIN);
+        style.setBorderRight(BorderStyle.THIN);
+        style.setBorderTop(BorderStyle.THIN);
+        return style;
+    }
+
+    private static CellStyle createHeadStyle(final Workbook wb) {
+        CellStyle style = createVHCenterStyle(wb);
+        final Font font = wb.createFont();
+        font.setFontName ("Songti");
+        font.setFontHeight((short) 150);
+        font.setBold(true);
+        style.setFont(font);
+        style.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        return style;
+    }
 
     @GetMapping("/reportes")
     public String reportesAdmin(){
@@ -1285,6 +1310,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
 
         Workbook workbook = new HSSFWorkbook();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        CellStyle headStyle = createHeadStyle(workbook);
 
         Sheet sheet = workbook.createSheet("Usuarios");
         Row row = sheet.createRow(0);
@@ -1293,6 +1319,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
         for (int i = 0; i < columns.length; i++) {
             Cell cell = row.createCell(i);
             cell.setCellValue(columns[i]);
+            cell.setCellStyle(headStyle);
         }
 
         List<Usuario> usuarioList = usuarioRepository.usuarioreportes();
@@ -1304,7 +1331,9 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
             row.createCell(1).setCellValue(usuario.getRol());
             row.createCell(2).setCellValue(usuario.getEmail());
             row.createCell(3).setCellValue(Integer.toString(usuario.getTelefono()));
-            row.createCell(4).setCellValue(String.valueOf(usuario.getUltimafechaingreso()));
+            if(usuario.getUltimafechaingreso()!=null){
+                row.createCell(4).setCellValue(String.valueOf(usuario.getUltimafechaingreso()).replace('T',' '));
+            }
             initRow++;
 
         }
@@ -1333,6 +1362,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
 
         Workbook workbook = new HSSFWorkbook();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        CellStyle headStyle = createHeadStyle(workbook);
 
         Sheet sheet = workbook.createSheet("Delivery");
         Row row = sheet.createRow(0);
@@ -1341,6 +1371,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
         for (int i = 0; i < columns.length; i++) {
             Cell cell = row.createCell(i);
             cell.setCellValue(columns[i]);
+            cell.setCellStyle(headStyle);
         }
         String primerpedido = pedidosRepository.primerPedido();
         List<DeliveryReportes_DTO> deliveryReportes = pedidosRepository.reportesDelivery2(primerpedido);
@@ -1376,6 +1407,8 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
 
         Workbook workbook = new HSSFWorkbook();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        CellStyle headStyle = createHeadStyle(workbook);
+
 
         Sheet sheet = workbook.createSheet("Restaurantes");
         Row row = sheet.createRow(0);
@@ -1384,6 +1417,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
         for (int i = 0; i < columns.length; i++) {
             Cell cell = row.createCell(i);
             cell.setCellValue(columns[i]);
+            cell.setCellStyle(headStyle);
         }
 
         List<RestauranteReportes_DTO> restaurantesList = restauranteRepository.reportesRestaurantes();
@@ -1420,6 +1454,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
 
         Workbook workbook = new HSSFWorkbook();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        CellStyle headStyle = createHeadStyle(workbook);
 
         Sheet sheet = workbook.createSheet("Repartidor");
         Row row = sheet.createRow(0);
@@ -1428,6 +1463,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
         for (int i = 0; i < columns.length; i++) {
             Cell cell = row.createCell(i);
             cell.setCellValue(columns[i]);
+            cell.setCellStyle(headStyle);
         }
 
         List<RepartidoresReportes_DTO> repartidorList = repartidorRepository.reporteRepartidores();
