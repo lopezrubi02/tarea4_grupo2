@@ -33,7 +33,6 @@ public class Usuario implements Serializable {
     private String token;
 
     @Column(nullable = false)
-    @Email(message = "Ingrese un correo valido")
     @NotBlank(message = "No puede estar vacío")
     @Pattern(regexp = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$",message = "Formato de correo inválido.")
     @Size(max=45, message = "El email no puede tener más de 45 caracteres")
