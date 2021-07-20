@@ -11,9 +11,7 @@
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
     <!-- site metas -->
     <title>Spicyo</title>
-    <meta name="keywords" content="">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="author" content="laFeLoMasLindoDeLaVida">
     <!-- bootstrap css -->
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <!-- owl css -->
@@ -32,6 +30,14 @@
         select.form-control:not([size]):not([multiple]){
             height: auto;
         }
+        #owl-demo .item{
+            margin: 3px;
+        }
+        #owl-demo .item img{
+            display: block;
+            width: 100%;
+            height: auto;
+        }
     </style>
 </head>
 
@@ -44,7 +50,6 @@
     </div>
 
     <div class="wrapper">
-    <!-- end loader -->
 
         <div th:replace="fragments/adminSistema.html:: slider" class="sidebar">
             <!-- Sidebar  -->
@@ -90,8 +95,6 @@
                                 <li class="dinone"><a th:href="@{gestionCuentas}">Gestión de nuevas cuentas</a></li>
                                 <li class="dinone"><a th:href="@{reportes}">Reportes</a></li>
 
-                                
-                                <!-- TODO -->
                                 <li class="button_user">
                                     <a class="button active" th:href="@{/admin/miCuenta}">Mi cuenta</a>
 
@@ -135,8 +138,7 @@
             </div>
         </div>
     </header>
-    <!-- end header -->
-    
+
     <!-- blog -->
     <div class="blog">
         <div class="container">
@@ -207,7 +209,6 @@
         </div>
     </div>
     </div>
-    <!-- end blog -->
 
 
         <!-- footer -->
@@ -226,6 +227,7 @@
     </div>
     </div>
     <div class="overlay"></div>
+
     <!-- Javascript files-->
     <script th:src="@{/js/jquery.min.js}" ></script>
     <script th:src="@{/js/popper.min.js}" ></script>
@@ -261,39 +263,6 @@
 
     </script>
 
-    <style>
-        #owl-demo .item{
-            margin: 3px;
-        }
-        #owl-demo .item img{
-            display: block;
-            width: 100%;
-            height: auto;
-        }
-    </style>
-
-
-    <script>
-        $(document).ready(function() {
-            var owl = $('.owl-carousel');
-            owl.owlCarousel({
-                margin: 10,
-                nav: true,
-                loop: true,
-                responsive: {
-                    0: {
-                        items: 1
-                    },
-                    600: {
-                        items: 2
-                    },
-                    1000: {
-                        items: 5
-                    }
-                }
-            })
-        })
-    </script>
 
 </body>
 
