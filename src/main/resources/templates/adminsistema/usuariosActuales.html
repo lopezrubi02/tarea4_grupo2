@@ -126,7 +126,8 @@
                     </select>
                 </div>
                 <div class="col-8">
-                    <input style="padding: 0 0 7px 9px; width: 100%;" name="searchField" class="input-search-bar" placeholder="Busque un usuario por nombre...">
+                    <input th:if="${searchField == null}" style="padding: 0 0 7px 9px; width: 100%;" name="searchField" class="input-search-bar" placeholder="Busque un usuario por nombre...">
+                    <input th:if="${searchField != null}" style="padding: 0 0 7px 9px; width: 100%;" name="searchField" class="input-search-bar" th:value="${searchField}">
                 </div>
                 <div class="col-2">
                     <button type="submit" class="btn btn-warning">Buscar</button>
