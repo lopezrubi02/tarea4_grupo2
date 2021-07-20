@@ -844,8 +844,16 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
                 model.addAttribute("dniValido", "Ingrese un DNI valido");
             }
 
+            // 4. Validacion de sexo
+            Boolean sexoValido = false;
+            if(usuario.getSexo().equals("Masculino") || usuario.getSexo().equals("Femenino")){
+                sexoValido = true;
+            } else{
+                model.addAttribute("sexoValido", "Ingrese un sexo valido");
+            }
+
             // Guardar usuario
-            if(contraseniasValidas == true && correoUnico == true && dniValido == true){
+            if(contraseniasValidas == true && correoUnico == true && dniValido == true && sexoValido == true){
                 usuarioRepository.save(usuario);
                 attr.addFlashAttribute("msg", "Administrador creado exitosamente");
             } else{
