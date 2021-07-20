@@ -836,38 +836,21 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
     @PostMapping("/agregarAdmin")
     public String agregarAdmin(@ModelAttribute("usuario") @Valid Usuario usuario, BindingResult bindingResult,
                                @RequestParam("password2") String password2,
-                               @RequestParam(value = "contras",defaultValue = "") String contras,
                                Model model, RedirectAttributes attr){
 
         if(bindingResult.hasErrors()){
             return "adminsistema/agregarAdmin";
         }
         else {
-            Boolean validacionContrasenias = validarContrasenia(password2);
 
+            // 1. Validacion de contraseñas
+            Boolean contraseniasValidas = false; // para la validacion final
+            Boolean validacionContrasenias = validarContrasenia(password2);
             if(usuario.getContraseniaHash().equals(password2) && validacionContrasenias==true) {
 
                 String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
                 usuario.setContraseniaHash(contraseniahashbcrypt);
-
-                Optional<Usuario> usuarioValidacion = Optional.ofNullable(usuarioRepository.findByEmailEquals(usuario.getEmail()));
-                if(!usuarioValidacion.isPresent()){
-
-                    // validacion de dni
-                    System.out.println("***************************");
-                    boolean dniValido = validarDNI(usuario.getDni());
-                    if(dniValido == true){
-                        usuarioRepository.save(usuario);
-                        attr.addFlashAttribute("msg", "Administrador creado exitosamente");
-                    } else{
-                        model.addAttribute("dniValido", "Ingrese un DNI valido");
-                        return "adminsistema/agregarAdmin";
-                    }
-
-                }else{
-                    model.addAttribute("emailUnico", "Ya existe un usuario registrado con el mismo correo");
-                    return "adminsistema/agregarAdmin";
-                }
+                contraseniasValidas = true;
 
             }else {
 
@@ -875,10 +858,34 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
                     model.addAttribute("contras","Las contraseñas no coinciden");
                 }
                 if (validacionContrasenias == false){
-                    model.addAttribute("contras","Debe tener al menos 8 caracteres, uno especial y una mayuscula");
+                    model.addAttribute("contras","La contraseña no cumple con los requisitos minimos");
                 }
+            }
+
+            // 2. Validacion de correo unico
+            Boolean correoUnico = false; // para la validacion final
+            Optional<Usuario> usuarioValidacion = Optional.ofNullable(usuarioRepository.findByEmailEquals(usuario.getEmail()));
+            if(!usuarioValidacion.isPresent()){
+                correoUnico = true;
+
+            }else{
+                model.addAttribute("emailUnico", "Ya existe un usuario registrado con el mismo correo");
+            }
+
+            // 3. Validacion de dni
+            boolean dniValido = validarDNI(usuario.getDni());
+            if(dniValido == false){
+                model.addAttribute("dniValido", "Ingrese un DNI valido");
+            }
+
+            // Guardar usuario
+            if(contraseniasValidas == true && correoUnico == true && dniValido == true){
+                usuarioRepository.save(usuario);
+                attr.addFlashAttribute("msg", "Administrador creado exitosamente");
+            } else{
                 return "adminsistema/agregarAdmin";
             }
+
         }
         return "redirect:/admin/gestionCuentas";
     }
