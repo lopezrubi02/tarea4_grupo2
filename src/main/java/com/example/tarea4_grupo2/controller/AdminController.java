@@ -411,16 +411,26 @@ public class AdminController {
     }
 
     @GetMapping("/delete")
-    public String borrarAdmin(@RequestParam("id") int id, RedirectAttributes attr) {
+    public String borrarAdmin(@RequestParam("id") int id, RedirectAttributes attr, HttpSession session) {
 
-        Optional<Usuario> optional = usuarioRepository.findById(id);
+        Usuario usuarioActual = (Usuario) session.getAttribute("usuarioLogueado");
+        int idUsuarioactual = usuarioActual.getIdusuarios();
+        if (idUsuarioactual == 1){
+            Optional<Usuario> optional = usuarioRepository.findById(id);
 
-        if (optional.isPresent()) {
-            usuarioRepository.deleteById(id);
+            if (optional.isPresent()) {
+
+                if(optional.get().getRol().equals("AdminSistema")){
+                    // solo puede eliminar usuarios admin
+                    usuarioRepository.deleteById(id);
+                }
+            }
+
+            attr.addFlashAttribute("msg", "Usuario eliminado correctamente");
+            return "redirect:/admin/usuariosActuales";
+        } else{
+            return "redirect:/admin/usuariosActuales";
         }
-
-        attr.addFlashAttribute("msg", "Usuario eliminado correctamente");
-        return "redirect:/admin/usuariosActuales";
     }
 
 //  Imagenes
