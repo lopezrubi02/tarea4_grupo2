@@ -361,51 +361,37 @@ public class AdminController {
             Model model
     ) throws IOException {
 
-        if(bindingResult.hasErrors()) {
-            return "adminsistema/miCuenta";
-        } else {
 
+            // 1. Validacion de email unico
+            Boolean emailValido = false;
             Optional<Usuario> usuario = Optional.ofNullable(usuarioRepository.findByEmailEquals(usuarioRecibido.getEmail()));
             if(!usuario.isPresent()) {
                 // CREAR NUEVO: si no hay un usuario con el mismo correo
-
-                // validacion de dni
-                System.out.println("***************************");
-                boolean dniValido = validarDNI(usuarioRecibido.getDni());
-                if(dniValido == true){
-                    usuarioRepository.save(usuarioRecibido);
-                    attr.addFlashAttribute("msg", "Usuario actualizado correctamente");
-                    return "redirect:/admin/usuariosActuales";
-                } else{
-                    model.addAttribute("dniValido", "Ingrese un DNI valido");
-
-                    return "adminsistema/editaradmin";
-                }
-
+                emailValido = true;
             } else {
                 if(usuario.get().getIdusuarios() == usuarioRecibido.getIdusuarios()) {
                     // EDICION: si el usuario que se ha extraido, es el que se esta editando
-
-                    // validacion de dni
-                    System.out.println("***************************");
-                    boolean dniValido = validarDNI(usuarioRecibido.getDni());
-                    if(dniValido == true){
-                        usuarioRepository.save(usuarioRecibido);
-                        attr.addFlashAttribute("msg", "Usuario actualizado correctamente");
-                        return "redirect:/admin/usuariosActuales";
-                    } else{
-                        model.addAttribute("dniValido", "Ingrese un DNI valido");
-                        return "adminsistema/editaradmin";
-                    }
-
-
+                    emailValido = true;
                 } else{
                     model.addAttribute("emailUnico", "Ya existe un usuario registrado con el mismo correo");
-                    return "adminsistema/miCuenta";
                 }
-
             }
-        }
+
+            // 2. Validacion de dni
+            boolean dniValido = validarDNI(usuarioRecibido.getDni());
+            if (dniValido == false){
+                model.addAttribute("dniValido", "Ingrese un DNI valido");
+            }
+
+            // Actualizar los datos
+            if( emailValido == true && dniValido == true){
+                usuarioRepository.save(usuarioRecibido);
+                attr.addFlashAttribute("msg", "Usuario actualizado correctamente");
+                return "redirect:/admin/usuariosActuales";
+            } else{
+                return "adminsistema/editaradmin";
+            }
+
 
     }
 
@@ -821,10 +807,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
                                @RequestParam("password2") String password2,
                                Model model, RedirectAttributes attr){
 
-        if(bindingResult.hasErrors()){
-            return "adminsistema/agregarAdmin";
-        }
-        else {
+
 
             // 1. Validacion de contraseñas
             Boolean contraseniasValidas = false; // para la validacion final
@@ -841,7 +824,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
                     model.addAttribute("contras","Las contraseñas no coinciden");
                 }
                 if (validacionContrasenias == false){
-                    model.addAttribute("contras","La contraseña no cumple con los requisitos minimos");
+                    model.addAttribute("contras2","La contraseña no cumple con los requisitos minimos");
                 }
             }
 
@@ -869,7 +852,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
                 return "adminsistema/agregarAdmin";
             }
 
-        }
+
         return "redirect:/admin/gestionCuentas";
     }
 
