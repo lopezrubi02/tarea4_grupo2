@@ -10,9 +10,7 @@
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
     <!-- site metas -->
     <title>Spicyo</title>
-    <meta name="keywords" content="">
-    <meta name="description" content="">
-    <meta name="author" content="">
+
     <!-- bootstrap css -->
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <!-- owl css -->
@@ -88,8 +86,6 @@
                                 <li class="dinone"><a th:href="@{gestionCuentas}">Gestión de nuevas cuentas</a></li>
                                 <li class="dinone"><a th:href="@{reportes}">Reportes</a></li>
 
-                                
-                                <!-- TODO -->
                                 <li class="button_user">
                                     <a class="button active" th:href="@{/admin/miCuenta}">Mi cuenta</a>
 
@@ -199,13 +195,15 @@
                                 </div>
                             </div>
                         </div>
+                        <div style="height: 25px"></div>
+                        <li class="button_user"><a class="button active" th:href="@{usuariosActuales}" > Regresar </a></li>
+
                     </div>
                 </div>
 
 
             </div>
         </div>
-    <!-- end blog -->
 
         <!-- footer -->
         <fooetr>
@@ -218,7 +216,6 @@
                 </div>
             </div>
         </fooetr>
-        <!-- end footer -->
 
     </div>
     </div>
@@ -270,27 +267,7 @@
     </style>
 
 
-    <script>
-        $(document).ready(function() {
-            var owl = $('.owl-carousel');
-            owl.owlCarousel({
-                margin: 10,
-                nav: true,
-                loop: true,
-                responsive: {
-                    0: {
-                        items: 1
-                    },
-                    600: {
-                        items: 2
-                    },
-                    1000: {
-                        items: 5
-                    }
-                }
-            })
-        })
-    </script>
+
 
 </body>
 
