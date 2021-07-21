@@ -28,8 +28,10 @@ import java.math.MathContext;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -334,15 +336,14 @@ public class UsuarioController {
             cell.setCellValue(columns[i]);
             cell.setCellStyle(headStyle);
         }
-
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// Date format: yyyy-MM-dd year month day yyyy-MM-dd HH:mm:ss year month day hour minute second
         List<PedidosclienteaexcelDTO> listapedidos = pedidosRepository.listapedidosexcel(id);
-
         int initRow = 1;
         for (PedidosclienteaexcelDTO pedidoexcel : listapedidos) {
             row = sheet.createRow(initRow);
             row.createCell(0).setCellValue(pedidoexcel.getMontototal());
             row.createCell(1).setCellValue(pedidoexcel.getNombre());
-            row.createCell(2).setCellValue(pedidoexcel.getFechahorapedido());
+            row.createCell(2).setCellValue(sdf.format(pedidoexcel.getFechahorapedido()));
             row.createCell(3).setCellValue(pedidoexcel.getDireccion());
             row.createCell(4).setCellValue(pedidoexcel.getMetodo());
             initRow++;
@@ -364,7 +365,7 @@ public class UsuarioController {
                                   RedirectAttributes redirectAttributes,
                                   HttpSession session) {
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-        int idusuarios=sessionUser.getIdusuarios();
+        int idusuarios = sessionUser.getIdusuarios();
 
         List<PedidosclienteaexcelDTO> listapedidosusuario = pedidosRepository.listapedidosexcel(idusuarios);
         boolean ultimopedido1 = true; //true -> hay al menos un pedido registrado
