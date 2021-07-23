@@ -1310,45 +1310,29 @@ public class AdminRestauranteController {
         }
     }
 
-    @GetMapping("/agregardireccion")
+    @GetMapping("/editardireccion")
     public String agregardireccion(Model model) {
-
         List<Distritos> listadistritos = distritosRepository.findAll();
         model.addAttribute("listadistritos",listadistritos);
-
+        String direction=null;
+        model.addAttribute("direction",direction);
+        System.out.println(direction);
         return "AdminRestaurantes/agregardireccion";
     }
 
     @PostMapping("/guardardireccion")
-    public String guardarnuevadireccion(@RequestParam("direccion") String direccion,
-                                        @RequestParam("iddistrito") int iddistrito,
+    public String guardarnuevadireccion(@RequestParam("iddistrito") Integer iddistrito,
+                                        @RequestParam("direccion_real") String direccion,
                                         HttpSession session) {
 
         Usuario user=(Usuario) session.getAttribute("usuarioLogueado");
-        int idusuario=user.getIdusuarios();
-        Optional<Usuario> usuarioxguardar = usuarioRepository.findById(idusuario);
-        Usuario usuario2 = usuarioxguardar.get();
-        Direcciones direccioncrear = new Direcciones();
-        direccioncrear.setDireccion(direccion);
-        //direccioncrear.setDistrito(distrito);
-        Optional<Distritos> distritoopt = distritosRepository.findById(iddistrito);
-        Distritos distritonuevo = distritoopt.get();
-        direccioncrear.setDistrito(distritonuevo);
-        direccioncrear.setUsuario(usuario2);
-        direccioncrear.setActivo(1);
-        direccionesRepository.save(direccioncrear);
-        return "redirect:/adminrest/perfil";
-    }
-
-    @GetMapping("/borrardireccion")
-    public String borrarDireccion(@RequestParam("iddireccion") int iddireccion){
-        Optional<Direcciones> direccionopt = direccionesRepository.findById(iddireccion);
-        Direcciones direccionborrar = direccionopt.get();
-        if(direccionborrar != null){
-            direccionborrar.setActivo(0);
-            direccionesRepository.save(direccionborrar);
-        }
-        return "redirect:/adminrest/perfil";
+        Direcciones direccion_user = direccionesRepository.findByUsuario(user);
+        String dir = direccion.split(",")[0].trim();
+        direccion_user.setDireccion(dir);
+        System.out.println(iddistrito);
+        direccion_user.setDistrito(distritosRepository.findById(iddistrito).get());
+        direccionesRepository.save(direccion_user);
+        return "redirect:/adminrest/cuentaAdmin";
     }
 
 }

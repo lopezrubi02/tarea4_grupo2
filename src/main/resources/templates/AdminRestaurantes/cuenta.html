@@ -122,16 +122,9 @@
                                                 <input class="form-control" type="date" th:value="${datos.fechanacimiento}" disabled>
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                                <label>Dirección</label>
-                                                <div class="form-floating">
-                                                    <table class="table table-light table-hover">
-                                                        <tbody>
-                                                        <tr th:each="d: ${listadirecciones}">
-                                                            <td th:text = "${d.direccion}"></td>
-                                                        </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
+                                                <label>Dirección</label><br><a th:href="@{'/adminrest/editardireccion'}">Editar dirección</a><br>
+                                                <input class="form-control" type="text" th:if="${listadirecciones.get(0).distrito.nombredistrito.equals('Lima District')}" th:value="${listadirecciones.get(0).direccion + ', Cercado de Lima'}" disabled>
+                                                <input class="form-control" type="text" th:unless="${listadirecciones.get(0).distrito.nombredistrito.equals('Lima District')}" th:value="${listadirecciones.get(0).direccion + ', '+listadirecciones.get(0).distrito.nombredistrito}" disabled>
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <label>Contraseña</label>
