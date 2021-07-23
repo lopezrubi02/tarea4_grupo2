@@ -404,8 +404,6 @@ public class AdminRestauranteController {
                 if(calificacion != null){
                     MathContext m = new MathContext(3);
                     calificacion = calificacion.round(m);
-                    restaurante.setCalificacionpromedio(calificacion.floatValue());
-                    restauranteRepository.save(restaurante);
                     model.addAttribute("calificacionpromedio",calificacion);
                 }else{
                     model.addAttribute("calificacionpromedio","No hay calificaciones");
