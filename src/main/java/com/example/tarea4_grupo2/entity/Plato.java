@@ -25,6 +25,7 @@ public class Plato {
 
     @NotBlank(message = "La descripcion no puede estar vacia.")
     @Size(min = 3, message = "La descripcion debe tener como minimo 3 caracteres.")
+    @Size(max = 200, message = "El descripcion no puede sobrepasar los 200 caracteres.")
     private String descripcion;
 
     @Digits(integer=10, fraction = 2, message = "El precio debe tener 2 decimales como maximo.")
