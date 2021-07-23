@@ -728,6 +728,7 @@ public class AdminRestauranteController {
             int idrestaurante = restaurante.getIdrestaurante();
             model.addAttribute("cupon",cupon);
             List<Plato> listaPlatos = platoRepository.buscarPlatosPorIdRestaurante(idrestaurante);
+            model.addAttribute("index",0);
             model.addAttribute("listaPlatos",listaPlatos);
             return "AdminRestaurantes/generarCupon";
         }else{
