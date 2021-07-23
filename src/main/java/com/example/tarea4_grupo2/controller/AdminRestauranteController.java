@@ -923,7 +923,7 @@ public class AdminRestauranteController {
         Workbook workbook = new HSSFWorkbook();
         CellStyle headStyle = createHeadStyle(workbook);
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        if(!pedidosRepository.listaPedidos(id).isEmpty()) {
+        if(!pedidosRepository.listaPedidosReporteporFechamasantigua(id).isEmpty()) {
             String[] columnsPedido = {"N° PEDIDO", "FECHA DEL PEDIDO", "NOMBRE DEL CLIENTE", "MONTO DEL PEDIDO", "NOMBRE DEL PLATO", "METODO DE PAGO", "DISTRITO DEL PEDIDO"};
             Sheet sheet1 = workbook.createSheet("Pedidos");
             Row row1 = sheet1.createRow(0);
