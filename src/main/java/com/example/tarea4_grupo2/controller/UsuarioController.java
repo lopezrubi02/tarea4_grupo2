@@ -1335,11 +1335,11 @@ public class UsuarioController {
             for (Pedidos pedidoencurso : listapedidospendientes){
                 List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
                 MontoTotal_PedidoHasPlatoDTO montoTotal_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montototal(pedidoencurso.getIdpedidos());
-                MontoPagar_PedidoHasPlatoDTO montoPagar_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montopagar(pedidoencurso.getIdpedidos());
+                Double montoPagar = pedidoHasPlatoRepository.pagarTodo(pedidoencurso.getIdpedidos());
                 model.addAttribute("platosxpedido",platosxpedido);
                 model.addAttribute("pedidoencurso",pedidoencurso);
                 model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
-                model.addAttribute("montopagar", montoPagar_pedidoHasPlatoDTO);
+                model.addAttribute("montopagar", montoPagar);
             }
             return "cliente/checkoutcarrito";
         }
@@ -1408,24 +1408,18 @@ public class UsuarioController {
                     System.out.println(pedidoencurso.getIdpedidos());
                     System.out.println(pedidoencurso.getDireccionentrega().getIddirecciones());
                     MontoTotal_PedidoHasPlatoDTO montoTotal_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montototal(pedidoencurso.getIdpedidos());
-                    MontoPagar_PedidoHasPlatoDTO montoPagar_pedidoHasPlatoDTO;
-                    if(pedidoencurso.getRestaurantepedido().getDistrito() == pedidoencurso.getDireccionentrega().getDistrito()){
-                        montoPagar_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montopagar2(pedidoencurso.getIdpedidos());
-                        model.addAttribute("montopagar", montoPagar_pedidoHasPlatoDTO);
-                    }else {
-                        montoPagar_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montopagar(pedidoencurso.getIdpedidos());
-                        model.addAttribute("montopagar", montoPagar_pedidoHasPlatoDTO);
-                    }
+                    Double montoPagar = pedidoHasPlatoRepository.pagarTodo(pedidoencurso.getIdpedidos());
                     model.addAttribute("platosxpedido",platosxpedido);
                     model.addAttribute("pedidoencurso",pedidoencurso);
                     model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
-                    System.out.println(montoPagar_pedidoHasPlatoDTO);
+                    model.addAttribute("montopagar", montoPagar);
+                    System.out.println(montoPagar);
                     System.out.println(montoTotal_pedidoHasPlatoDTO);
                     pedidoencurso.setMetododepago(metodosel);
                     if(idmetodo == 3){
                         if(montoexacto != 0){
                             System.out.println(montoexacto);
-                            if(montoexacto >= (montoPagar_pedidoHasPlatoDTO.getpreciopagar())){
+                            if(montoexacto >= (montoPagar)){
                                 pedidoencurso.setMontoexacto(String.valueOf(montoexacto));
                             }
                             else{
@@ -1469,7 +1463,7 @@ public class UsuarioController {
                         pedidoencurso.setComisionrepartidor(6);
                         pedidoencurso.setComisionsistema(2);
                     }
-                    pedidoencurso.setMontototal(String.valueOf(montoPagar_pedidoHasPlatoDTO.getpreciopagar()));
+                    pedidoencurso.setMontototal(String.valueOf(montoPagar));
                     pedidoencurso.setEstadorestaurante("pendiente");
                     pedidoencurso.setEstadorepartidor("indefinido");
                     System.out.println(LocalDateTime.now());
