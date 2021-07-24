@@ -1495,7 +1495,6 @@ public class UsuarioController {
         }
 
         if(ultimopedido1 == true){
-            //TODO mostrar más datos en la vista de progreso pedido
             List<Pedidos> listapedidoscliente = pedidosRepository.pedidosfinxcliente(idusuario);
             if(!listapedidoscliente.isEmpty()){
                 int tam = listapedidoscliente.size();
