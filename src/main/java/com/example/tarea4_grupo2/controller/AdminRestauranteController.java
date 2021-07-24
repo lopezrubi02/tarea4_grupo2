@@ -442,6 +442,7 @@ public class AdminRestauranteController {
                 /********************************/
                 model.addAttribute("iddelrestaurante", idrestaurante);
                 model.addAttribute("listaPlatos", listaPlatos);
+                model.addAttribute("cantidadPlatos", listaPlatos.size());
                 return "AdminRestaurantes/menu";
             }
             else{
