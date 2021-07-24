@@ -404,8 +404,6 @@ public class AdminRestauranteController {
                 if(calificacion != null){
                     MathContext m = new MathContext(3);
                     calificacion = calificacion.round(m);
-                    restaurante.setCalificacionpromedio(calificacion.floatValue());
-                    restauranteRepository.save(restaurante);
                     model.addAttribute("calificacionpromedio",calificacion);
                 }else{
                     model.addAttribute("calificacionpromedio","No hay calificaciones");
@@ -730,6 +728,7 @@ public class AdminRestauranteController {
             int idrestaurante = restaurante.getIdrestaurante();
             model.addAttribute("cupon",cupon);
             List<Plato> listaPlatos = platoRepository.buscarPlatosPorIdRestaurante(idrestaurante);
+            model.addAttribute("index",0);
             model.addAttribute("listaPlatos",listaPlatos);
             return "AdminRestaurantes/generarCupon";
         }else{
@@ -925,7 +924,7 @@ public class AdminRestauranteController {
         Workbook workbook = new HSSFWorkbook();
         CellStyle headStyle = createHeadStyle(workbook);
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        if(!pedidosRepository.listaPedidos(id).isEmpty()) {
+        if(!pedidosRepository.listaPedidosReporteporFechamasantigua(id).isEmpty()) {
             String[] columnsPedido = {"N° PEDIDO", "FECHA DEL PEDIDO", "NOMBRE DEL CLIENTE", "MONTO DEL PEDIDO", "NOMBRE DEL PLATO", "METODO DE PAGO", "DISTRITO DEL PEDIDO"};
             Sheet sheet1 = workbook.createSheet("Pedidos");
             Row row1 = sheet1.createRow(0);
@@ -1033,21 +1032,35 @@ public class AdminRestauranteController {
     /************************REPORTE************************/
 
     @GetMapping("/reporte")
-    public String verReporte(Model model,HttpSession session,@RequestParam(name = "page", defaultValue = "1") String requestedPage,
+    public String verReporte (Model model,HttpSession session,@RequestParam(name = "page", defaultValue = "1") String requestedPage,
                              @RequestParam(name = "page2", defaultValue = "1") String requestedPage2,
                              @RequestParam(name="name",defaultValue = "") String name,
-                             RedirectAttributes attr){
+                             RedirectAttributes attr) throws NumberFormatException,IllegalArgumentException {
         Usuario usuario=(Usuario) session.getAttribute("usuarioLogueado");
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(usuario.getIdusuarios());
+        int page;
+        int page2;
             if(usuario.getCuentaActiva()==1){
                 float numberOfUsersPerPage = 7;
-                int page = Integer.parseInt(requestedPage);
-                int page2 = Integer.parseInt(requestedPage2);
+                try {
+                    page = Integer.parseInt(requestedPage);
+                }catch(Exception e) {
+                    return "redirect:/adminrest/reporte";
+                }
+                try {
+                    page2 = Integer.parseInt(requestedPage2);
+                }catch(Exception e) {
+                    return "redirect:/adminrest/reporte";
+                }
                 int idrestaurante= restauranteRepository.buscarRestaurantePorIdAdmin(usuario.getIdusuarios()).get().getIdrestaurante();
                 List<PedidosReporteDto> pedidosReporte;
                 if(name.equals("")){
                     System.out.println("Trace1");
                     pedidosReporte = pedidosRepository.listaPedidosReporteporFechamasantigua(idrestaurante);
+                    if(pedidosReporte.isEmpty()){
+                        attr.addFlashAttribute("registroVacio","No tienes ningun reporte de pedidos hasta la fecha.");
+                        return "redirect:/adminrest/perfil";
+                    }
                 }
                 else{
                     System.out.println("Trace2");
@@ -1081,8 +1094,8 @@ public class AdminRestauranteController {
                     model.addAttribute("name",name);
                     return "AdminRestaurantes/reporte";
                 }else{
-                    attr.addFlashAttribute("registroVacio","No tienes ningun reporte de pedidos hasta la fecha.");
-                    return "redirect:/adminrest/perfil";
+                    attr.addFlashAttribute("registroVacio","No se han encontrado registros");
+                    return "redirect:/adminrest/reporte";
                 }
             }else{
                 return "redirect:/login";
@@ -1312,45 +1325,38 @@ public class AdminRestauranteController {
         }
     }
 
-    @GetMapping("/agregardireccion")
+    @GetMapping("/editardireccion")
     public String agregardireccion(Model model) {
-
         List<Distritos> listadistritos = distritosRepository.findAll();
         model.addAttribute("listadistritos",listadistritos);
-
+        String direction=null;
+        model.addAttribute("direction",direction);
+        System.out.println(direction);
         return "AdminRestaurantes/agregardireccion";
     }
 
     @PostMapping("/guardardireccion")
-    public String guardarnuevadireccion(@RequestParam("direccion") String direccion,
-                                        @RequestParam("iddistrito") int iddistrito,
+    public String guardarnuevadireccion(@RequestParam("iddistrito") Integer iddistrito,
+                                        @RequestParam("direccion_real") String direccion,
                                         HttpSession session) {
 
         Usuario user=(Usuario) session.getAttribute("usuarioLogueado");
-        int idusuario=user.getIdusuarios();
-        Optional<Usuario> usuarioxguardar = usuarioRepository.findById(idusuario);
-        Usuario usuario2 = usuarioxguardar.get();
-        Direcciones direccioncrear = new Direcciones();
-        direccioncrear.setDireccion(direccion);
-        //direccioncrear.setDistrito(distrito);
-        Optional<Distritos> distritoopt = distritosRepository.findById(iddistrito);
-        Distritos distritonuevo = distritoopt.get();
-        direccioncrear.setDistrito(distritonuevo);
-        direccioncrear.setUsuario(usuario2);
-        direccioncrear.setActivo(1);
-        direccionesRepository.save(direccioncrear);
-        return "redirect:/adminrest/perfil";
+        Direcciones direccion_user = direccionesRepository.findByUsuario(user);
+        String dir = direccion.split(",")[0].trim();
+        direccion_user.setDireccion(dir);
+        System.out.println(iddistrito);
+        direccion_user.setDistrito(distritosRepository.findById(iddistrito).get());
+        direccionesRepository.save(direccion_user);
+        return "redirect:/adminrest/cuentaAdmin";
     }
-
-    @GetMapping("/borrardireccion")
-    public String borrarDireccion(@RequestParam("iddireccion") int iddireccion){
-        Optional<Direcciones> direccionopt = direccionesRepository.findById(iddireccion);
-        Direcciones direccionborrar = direccionopt.get();
-        if(direccionborrar != null){
-            direccionborrar.setActivo(0);
-            direccionesRepository.save(direccionborrar);
+    @GetMapping("/errores")
+    public String hackeandoURL(@RequestParam("id") Integer id,RedirectAttributes attr){
+        if(id==1) {
+            attr.addFlashAttribute("msgpage","No existe la página solicitada");
+            return "redirect:/adminrest/reporte";
         }
-        return "redirect:/adminrest/perfil";
+        else{
+            return "redirect:/adminrest/perfil";
+        }
     }
-
 }

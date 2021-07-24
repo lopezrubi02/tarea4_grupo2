@@ -45,6 +45,7 @@
           <div class="col-8">
             <h1>Historial de pedidos</h1>
             <div th:if="${registroVacio != null}" th:text="${registroVacio}" class="alert alert-danger"></div>
+            <div th:if="${msgpage != null}" th:text="${msgpage}" class="alert alert-danger"></div>
           </div>
         </div>
         <br>
@@ -58,9 +59,9 @@
           -->
           <div class="col-md-10" style="border-style: groove">
             <input name="name" class="form-control" style="height: 50px;margin-bottom: 0px"
-                   type="text" placeholder="Nombre del cliente, Nombre del plato, Método de pago, Distritio del pedido " th:if="${name==''}"/>
+                   type="text" placeholder="Nombre del cliente, Nombre del plato, Método de pago, Distrito del pedido " th:if="${name==''}"/>
             <input name="name" class="form-control" style="height: 50px;margin-bottom: 0px"
-                   type="text" placeholder="Nombre del cliente, Nombre del plato, Método de pago, Distritio del pedido " th:unless="${name==''}" th:value="${name}"/>
+                   type="text" placeholder="Nombre del cliente, Nombre del plato, Método de pago, Distrito del pedido " th:unless="${name==''}" th:value="${name}"/>
           </div>
           <div class="col-md-1">
             <button style="height: 50px" class="btn btn-dark" type="submit">Buscar</button>
