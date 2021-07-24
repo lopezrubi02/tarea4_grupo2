@@ -1713,7 +1713,7 @@ public class UsuarioController {
                         sessionUser.setTelefono(usuario.getTelefono());
                         sessionUser.setContraseniaHash(contraseniahashbcrypt);
                         System.out.println("deberia guardaaar");
-                        redirectAttributes.addFlashAttribute("perfilact", "Cuenta actualizada exitósamente");
+                        redirectAttributes.addFlashAttribute("perfilact", "Cuenta actualizada exitosamente");
                         usuarioRepository.save(sessionUser);
                         return "redirect:/cliente/miperfil";
                     }else{
@@ -1745,7 +1745,7 @@ public class UsuarioController {
     /** borrar tarjeta **/
     @GetMapping("/cliente/borrartarjeta")
     public String borrartarjeta(@RequestParam("idtarjeta") String idtarjeta,
-                                Model model, HttpSession session){
+                                Model model, HttpSession session, RedirectAttributes redirectAttributes){
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuario=sessionUser.getIdusuarios();
@@ -1756,6 +1756,7 @@ public class UsuarioController {
             List<TarjetasOnline> tarjetasxusuario = tarjetasOnlineRepository.findAllByIdtarjetasonlineAndClienteEquals(Integer.parseInt(idtarjeta),userlog);
             if(!tarjetasxusuario.isEmpty()){
                 tarjetasOnlineRepository.deleteById(Integer.parseInt(idtarjeta));
+                redirectAttributes.addFlashAttribute("perfilact", "Tarjeta borrada exitosamente");
             }
         }catch(NumberFormatException e){
             System.out.println(e.getMessage());
@@ -1767,7 +1768,7 @@ public class UsuarioController {
     /** borrar dirección **/
     @GetMapping("/cliente/borrardireccion")
     public String borrardireccion(@RequestParam("iddireccion") String iddireccion,
-                                  Model model, HttpSession session) {
+                                  Model model, HttpSession session, RedirectAttributes redirectAttributes) {
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuario=sessionUser.getIdusuarios();
         Optional<Usuario> optional = usuarioRepository.findById(idusuario);
@@ -1778,6 +1779,7 @@ public class UsuarioController {
             if (direccionborrar != null) {
                 direccionborrar.setActivo(0);
                 direccionesRepository.save(direccionborrar);
+                redirectAttributes.addFlashAttribute("perfilact", "Dirección borrada exitosamente");
             }
         }catch(NumberFormatException e){
             System.out.println(e.getMessage());
