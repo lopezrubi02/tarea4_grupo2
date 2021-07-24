@@ -1317,7 +1317,7 @@ public class UsuarioController {
 
     @GetMapping("/cliente/checkout")
     public String checkout(Model model, HttpSession session,
-                           @RequestParam(value = "idmetodo",defaultValue = "0") int idmetodo){
+                           @RequestParam(value = "idmetodo",defaultValue = "0") int idmetodo, RedirectAttributes attr){
 
          Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuario=sessionUser.getIdusuarios();
@@ -1337,6 +1337,16 @@ public class UsuarioController {
             for (Pedidos pedidoencurso : listapedidospendientes){
                 try {
                     List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
+                    boolean carritoactualizado = false;
+                    for (PedidoHasPlato php : platosxpedido){
+                        if(php.getPlato().getActivo() == 0){
+                            //borrar ese plato del pedido
+                            carritoactualizado = true;
+                        }
+                    }
+                    if(carritoactualizado){
+                        attr.addFlashAttribute("carritoact","Tu carrito se ha actualizado");
+                    }
                     MontoTotal_PedidoHasPlatoDTO montoTotal_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montototal(pedidoencurso.getIdpedidos());
                     int montoPagar = pedidoHasPlatoRepository.pagarTodo(pedidoencurso.getIdpedidos());
                     int descuento = pedidoHasPlatoRepository.descuento(pedidoencurso.getIdpedidos());
