@@ -248,20 +248,22 @@
 					<div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
 						</br>
 						</br>
-						<table class="table table-light table-hover" style="margin-left: 185px; width: 80%;">
-							<thead>
-								<tr>
-									<th scope="col">Cantidad</th>
-									<th scope="col">Nombre del Plato</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr th:each="plato : ${lista}">
-									<td th:text="${plato.getCantidadplatos()}"></td>
-									<td th:text="${plato.getPlato().getNombre()}">Mark</td>
-								</tr>
-							</tbody>
-						</table>
+						<div class="card" style="margin-top: 0px; margin-bottom: 50px;margin-left: 185px; width: 80%; border-radius: 5px;">
+							<table class="table table-hover" style="width: 95%; margin:15px;">
+								<thead>
+									<tr>
+										<th scope="col">Cantidad</th>
+										<th scope="col">Nombre del Plato</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="plato : ${lista}">
+										<td th:text="${plato.getCantidadplatos()}"></td>
+										<td th:text="${plato.getPlato().getNombre()}">Mark</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
 					</div>
 					<div  class="col-xl-4 col-lg-4 col-md-4 col-sm-12" >
 						</br>
