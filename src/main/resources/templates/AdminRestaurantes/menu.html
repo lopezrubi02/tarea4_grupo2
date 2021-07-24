@@ -44,6 +44,7 @@
                         <a class="send" style="text-align: center;background:#e3d105; margin-left: 15px; margin-top: 15px; margin-bottom: 15px"
                            th:href="@{/adminrest/crearPlato}">Nuevo Plato
                         </a>
+                        <input id="cantidadPlatos" style="color: #1f1f1f;display: none" th:value="${cantidadPlatos}">
                         <div class="col-md-12">
                             <div class="owl-carousel owl-theme">
                                 <div class="item" th:each="plato : ${listaPlatos}">
@@ -116,23 +117,48 @@
 
     <script>
         $(document).ready(function () {
-            var owl = $('.owl-carousel');
-            owl.owlCarousel({
-                margin: 10,
-                nav: true,
-                loop: true,
-                responsive: {
-                    0: {
-                        items: 1
-                    },
-                    600: {
-                        items: 2
-                    },
-                    1000: {
-                        items: 5
+            console.log("Numero de platos: ");
+            let cant = $("#cantidadPlatos").val();
+            console.log(cant);
+            if(cant>5){
+                console.log("Mayor a 5");
+                var owl = $('.owl-carousel');
+                owl.owlCarousel({
+                    margin: 10,
+                    nav: true,
+                    loop: true,
+                    responsive: {
+                        0: {
+                            items: 1
+                        },
+                        600: {
+                            items: 2
+                        },
+                        1000: {
+                            items: 5
+                        }
                     }
-                }
-            })
+                });
+            }else{
+                console.log("Menor a 5");
+                var owl = $('.owl-carousel');
+                owl.owlCarousel({
+                    margin: 10,
+                    nav: true,
+                    loop: false,
+                    responsive: {
+                        0: {
+                            items: 1
+                        },
+                        600: {
+                            items: 2
+                        },
+                        1000: {
+                            items: 5
+                        }
+                    }
+                });
+            }
         })
     </script>
 </body>

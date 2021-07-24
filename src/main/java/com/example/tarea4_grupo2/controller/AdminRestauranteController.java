@@ -442,6 +442,7 @@ public class AdminRestauranteController {
                 /********************************/
                 model.addAttribute("iddelrestaurante", idrestaurante);
                 model.addAttribute("listaPlatos", listaPlatos);
+                model.addAttribute("cantidadPlatos", listaPlatos.size());
                 return "AdminRestaurantes/menu";
             }
             else{
@@ -453,28 +454,40 @@ public class AdminRestauranteController {
     }
 
     @GetMapping("/crearPlato")
-    public String crearPlato(@ModelAttribute("plato") Plato plato, Model model, HttpSession session){
+    public String crearPlato(@ModelAttribute("plato") Plato plato, Model model, HttpSession session) {
 
-        /**Se obtiene Id de Restaurante**/
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-        Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
-        /********************************/
-
-        model.addAttribute("plato",plato);
-        model.addAttribute("iddelrestaurante", idrestaurante);
-        return "AdminRestaurantes/newPlato";
+        Integer idrestaurante = restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
+        Optional<Usuario> usuarioOptional = usuarioRepository.findById(sessionUser.getIdusuarios());
+        if (usuarioOptional.isPresent()) {
+            Usuario usuarioNuevo = usuarioOptional.get();
+            if (usuarioNuevo.getCuentaActiva() == 1) {
+                model.addAttribute("plato", plato);
+                model.addAttribute("iddelrestaurante", idrestaurante);
+                return "AdminRestaurantes/newPlato";
+            }else{
+                return "redirect:/adminrest/login";
+            }
+        }else {
+            return "redirect:/login";
+        }
     }
 
     @GetMapping("/editarPlato")
-    public String editarPlato(Model model, @RequestParam("idplato") int id, @ModelAttribute("plato") Plato plato){
+    public String editarPlato(Model model, @RequestParam("idplato") String idString, @ModelAttribute("plato") Plato plato) throws IOException{
 
-        Optional<Plato> optionalPlato = platoRepository.findById(id);
-
-        if(optionalPlato.isPresent()){
-            plato = optionalPlato.get();
-            model.addAttribute("plato",plato);
-            return "AdminRestaurantes/newPlato";
-        }else{
+        try{
+            int id = Integer.parseInt(idString);
+            Optional<Plato> optionalPlato = platoRepository.findById(id);
+            if(optionalPlato.isPresent()){
+                plato = optionalPlato.get();
+                model.addAttribute("plato",plato);
+                return "AdminRestaurantes/newPlato";
+            }else{
+                return "redirect:/adminrest/menu";
+            }
+        }catch (NumberFormatException e) {
+            e.printStackTrace();
             return "redirect:/adminrest/menu";
         }
     }
