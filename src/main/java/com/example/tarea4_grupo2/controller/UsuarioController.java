@@ -1076,7 +1076,7 @@ public class UsuarioController {
                                 List<PedidoHasPlato> pedidoencurso2 = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
                                 if(!pedidoencurso2.isEmpty()){
                                     for(PedidoHasPlato pedidoencurso3 : pedidoencurso2){
-                                        if(pedidoencurso3.getPlato().getIdplato() == idplatopedir){
+                                        if(Integer.parseInt(pedidoencurso3.getPlato().getIdplato()) == idplatopedir){
                                             String comentariohecho = pedidoencurso3.getDescripcion();
                                             int cantpedida = pedidoencurso3.getCantidadplatos();
                                             int cubiertoelegido = pedidoencurso3.isCubiertos();
@@ -1271,7 +1271,7 @@ public class UsuarioController {
                         int cantplatosrest = platosxpedido.size();
 
                         for(PedidoHasPlato plato1 : platosxpedido){
-                            int idplatoobtenido = plato1.getPlato().getIdplato();
+                            int idplatoobtenido = Integer.parseInt(plato1.getPlato().getIdplato());
                             if(idplatoobtenido == idplatoint){
                                 PedidoHasPlatoKey pedidoHasPlatoKey = plato1.getId();
                                 pedidoHasPlatoRepository.deleteById(pedidoHasPlatoKey);

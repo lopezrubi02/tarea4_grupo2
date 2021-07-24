@@ -60,24 +60,35 @@
                                             <input th:field="*{precio}" class="form-control" placeholder="Precio" type="text" name="precio" id="precio">
                                             <div class="text-danger" style="margin-top: -20px" th:if="${#fields.hasErrors('precio')}" th:errors="*{precio}"></div>
                                         </div>
-                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:if="${plato.idplato}">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:if="( ${plato.idplato} != '' and ${plato.idplato} != null)">
                                             <label for="disponibilidad">Stock</label>
                                             <select class="form-select" style="margin-bottom:20px;width: 100%;height: 50px;border: #fff solid 2px;box-shadow: 0 0 0 .2rem rgba(255, 255, 255, .25);" th:field="*{disponibilidad}">
                                                 <option value="1">Disponible</option>
                                                 <option value="0">Agotado</option>
                                             </select>
-                                            <div style="padding-top: 10px" class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                                <div style="position: relative"><input class="form-control-file" type="file" id="imagen" name="imagen" style="opacity: 0%;position: absolute">Editar Imagen</div>
+                                            <label>Editar Imagen (opcional)</label>
+                                            <div th:if="${msgFotoInvalida != null}" th:text="${msgFotoInvalida}" class="text-danger"></div>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <input class="form-control" style="margin-left: -15px; width: " type="file" id="imagen" name="imagen" >
                                             </div>
                                             <input type="hidden" name="restaurante" th:field="*{restaurante}">
+                                        </div>
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:if="(${plato.idplato} == '')">
+                                            <input type="hidden" name="disponibilidad" id="disponibilidad" th:value="1">
+                                            <input type="hidden" name="restaurante" id="restaurante" th:value="${iddelrestaurante}">
+                                            <label>Imagen</label>
+                                            <div th:if="${msgFotoInvalida != null}" th:text="${msgFotoInvalida}" class="text-danger"></div>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <input class="form-control" style="margin-left: -15px; width: " type="file" id="imagen" name="imagen" >
+                                            </div>
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:unless="${plato.idplato}">
                                             <input type="hidden" name="disponibilidad" id="disponibilidad" th:value="1">
                                             <input type="hidden" name="restaurante" id="restaurante" th:value="${iddelrestaurante}">
                                             <label>Imagen</label>
                                             <div th:if="${msgFotoInvalida != null}" th:text="${msgFotoInvalida}" class="text-danger"></div>
-                                            <div style="padding-top: 10px" class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                                <div style="position: relative"><input class="form-control-file" type="file" id="imagen" name="imagen" style="opacity: 0%;position: absolute">Adjuntar Imagen</div>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                                <input class="form-control" style="margin-left: -15px; width: " type="file" id="imagen" name="imagen" >
                                             </div>
                                         </div>
                                         </br>
@@ -99,7 +110,10 @@
                                 <div class="img-box" align="center" th:unless="${plato.idplato}">
                                     <figure><img src="/images/bembos.png" style="width:500px;height:500px"></figure>
                                 </div>
-                                <div class="img-box" align="center" th:if="${plato.idplato}">
+                                <div class="img-box" align="center" th:if="(${plato.idplato} == '')">
+                                    <figure><img src="/images/bembos.png" style="width:500px;height:500px"></figure>
+                                </div>
+                                <div class="img-box" align="center" th:if="( ${plato.idplato} != '' and ${plato.idplato} != null)">
                                     <figure><img th:src="@{'/adminrest/imagenplato' + '?idplato=' + ${plato.idplato}}" style="width:500px;height:500px"></figure>
                                 </div>
                                 <div style="text-align: center;font-size: 30px;color: black">Imagen referencial</div>
