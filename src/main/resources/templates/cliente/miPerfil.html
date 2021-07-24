@@ -124,14 +124,13 @@
                     </div>
 				</div>
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:unless="${listatarjetas.isEmpty()}">
-                    <label>Mis tarjetas </label><br/>
-                    </br>
+                    <label>Mis tarjetas </label>
                     <div class="form-floating">
                         <table class="table table-light table-hover">
                             <tbody>
                             <tr th:each="tarjeta : ${listatarjetas}">
                                 <td th:text = "${tarjeta.getNumerotarjeta()}">Mark</td>
-                                <td><a href=""><img src="http://cdn.onlinewebfonts.com/svg/img_512185.png"  width="25" height="25"/></a></td>
+                                <td><a th:href="@{'/cliente/borrartarjeta?idtarjeta=' + ${tarjeta.getIdtarjetasonline()}}"><img src="http://cdn.onlinewebfonts.com/svg/img_512185.png"  width="25" height="25"/></a></td>
                             </tr>
                             </tbody>
                         </table>

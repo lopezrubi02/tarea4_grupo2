@@ -1742,21 +1742,48 @@ public class UsuarioController {
         }
     }
 
+    /** borrar tarjeta **/
+    @GetMapping("/cliente/borrartarjeta")
+    public String borrartarjeta(@RequestParam("idtarjeta") String idtarjeta,
+                                Model model, HttpSession session){
+
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuario=sessionUser.getIdusuarios();
+        Optional<Usuario> optional = usuarioRepository.findById(idusuario);
+        Usuario userlog = optional.get();
+
+        try{
+            List<TarjetasOnline> tarjetasxusuario = tarjetasOnlineRepository.findAllByIdtarjetasonlineAndClienteEquals(Integer.parseInt(idtarjeta),userlog);
+            if(!tarjetasxusuario.isEmpty()){
+                tarjetasOnlineRepository.deleteById(Integer.parseInt(idtarjeta));
+            }
+        }catch(NumberFormatException e){
+            System.out.println(e.getMessage());
+        }
+        return "redirect:/cliente/miperfil";
+
+    }
+
     /** borrar dirección **/
     @GetMapping("/cliente/borrardireccion")
     public String borrardireccion(@RequestParam("iddireccion") String iddireccion,
-                                  Model model) {
+                                  Model model, HttpSession session) {
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuario=sessionUser.getIdusuarios();
+        Optional<Usuario> optional = usuarioRepository.findById(idusuario);
+        Usuario userlog = optional.get();
         try {
-            Optional<Direcciones> direccionopt = direccionesRepository.findById(Integer.valueOf(iddireccion));
-            Direcciones direccionborrar = direccionopt.get();
+            Direcciones direccionborrar = direccionesRepository.findDireccionesByIddireccionesAndUsuario_Idusuarios(Integer.valueOf(iddireccion),idusuario);
+            //Direcciones direccionborrar = direccionopt.get();
             if (direccionborrar != null) {
                 direccionborrar.setActivo(0);
                 direccionesRepository.save(direccionborrar);
             }
-            return "redirect:/cliente/miperfil";
         }catch(NumberFormatException e){
-            return "redirect:/cliente/miperfil";
+            System.out.println(e.getMessage());
         }
+        return "redirect:/cliente/miperfil";
+
     }
 
     /** Guardar nueva dirección **/
