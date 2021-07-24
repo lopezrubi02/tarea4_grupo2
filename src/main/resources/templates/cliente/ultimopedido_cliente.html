@@ -59,7 +59,7 @@
 			<fooetr>
 				<div class="footer">
 					<div class="container-fluid">
-						<div class="row" th:if="${ultimopedido}" style="padding-right:190px;"> <!-- hay algun pedido -->
+						<div class="row" th:if="${ultimopedido}"> <!-- hay algun pedido -->
 							<div th:if="${hayunpedidoencurso != null}" th:text="${hayunpedidoencurso}" class="alert alert-warning" role="alert" style="margin-left: 10%;padding-left:30%;"></div>
 							<div class=" col-md-12">
 								<h2 style="padding-left: 223px;">Tu pedido más reciente</h2>
@@ -98,19 +98,20 @@
 								</div>
 								<div class="col-xl-6 col-lg-6 col-md-6 col-sm-12" th:if="${cancelar}">
 									<div class="row" style="padding-left:240px;">
-										<a th:href="@{'/cliente/cancelarpedido'}" style="width: 275px;"><button onclick="return confirm('¿Esta seguro de cancelar este pedido?')" class="send">Cancelar pedido</button></a>
+										<a th:href="@{'/cliente/cancelarpedido'}" style="width: 275px;"><button onclick="return confirm('¿Está seguro de cancelar este pedido?')" class="send">Cancelar pedido</button></a>
 									</div>
+									</br>
 								</div>
 							</br>
 							<div>
-								<h3 style="padding-left: 223px;"><strong class="white">En caso hayas escogido tu método de pago como tarjeta online, se te cobrará el monto total cuando se marque como entregado el pedido</strong></h3>
+								<h3 style="padding-left: 223px; padding-right: 125px;"><strong class="white">En caso hayas escogido tu método de pago como tarjeta online, se te cobrará el monto total cuando se marque como entregado el pedido</strong></h3>
 							</div>
 						</div> <!--termino hay pedido -->
 						<div class = "row" th:unless="${ultimopedido}">
 							<div class="col-md-6 offset-md-3">
 								<div class="Client_box">
 									<h3>Aún no haz realizado ningún pedido :(</h3>
-									<p>Te invitamos a visitar nuestros restaurante y agregar productos a tu canasta.</p>
+									<p>Te invitamos a visitar nuestros restaurantes y agregar productos a tu canasta.</p>
 								</div>
 							</div>
 						</div>
@@ -171,29 +172,6 @@
 			height: auto;
 		}
 	</style>
-
-
-	<script>
-		$(document).ready(function() {
-			var owl = $('.owl-carousel');
-			owl.owlCarousel({
-				margin: 10,
-				nav: true,
-				loop: true,
-				responsive: {
-					0: {
-						items: 1
-					},
-					600: {
-						items: 2
-					},
-					1000: {
-						items: 5
-					}
-				}
-			})
-		})
-	</script>
 
 
 </body>
