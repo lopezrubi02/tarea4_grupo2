@@ -91,6 +91,8 @@
     <!-- blog -->
     <div class="blog" style="padding-top: 20px;">
       <div class="container">
+        <div th:if="${alertabusqueda != null}" th:text="${alertabusqueda}" class="alert alert-warning" role="alert"></div>
+
         <!-- lista platos buscado -->
 
         <div class="row" th:if="${listaplatosbuscado.size()!=0}">

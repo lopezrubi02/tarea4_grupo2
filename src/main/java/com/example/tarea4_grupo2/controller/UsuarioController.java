@@ -886,10 +886,10 @@ public class UsuarioController {
             listarestaurantes = new ArrayList<Restaurante>(set);
             HashSet<Plato> set2 = new HashSet<Plato>(listaplatos);
             listaplatos = new ArrayList<Plato>(set2);
-            if (listaplatos.size() == 0 && listarestaurantes.size() == 0) {
+            if(listaplatos.size() == 0 && listarestaurantes.size() == 0) {
                 System.out.println("NO ENCONTRÓ BUSQUEDA FILTRO POR NOMBRE");
                 model.addAttribute("alertabusqueda", "No hay coincidencia de búsqueda");
-            } else {
+            }else {
                 System.out.println("DEBIÓ ENCONTRAR BUSQUEDA FILTRO POR NOMBRE");
             }
             model.addAttribute("nombrebuscado", buscar);
@@ -1522,6 +1522,8 @@ public class UsuarioController {
                 List<PedidoHasPlato> pedidoHasPlatoencurso = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(idultimopedido);
                 Optional<Pedidos> pedidoencursoopt = pedidosRepository.findById(pedidoHasPlatoencurso.get(0).getPedido().getIdpedidos());
                 Pedidos pedidoencurso = pedidoencursoopt.get();
+                System.out.println("*********************");
+                System.out.println(pedidoencurso.getIdpedidos());
                 model.addAttribute("pedido",pedidoencurso);
                 model.addAttribute("lista",pedidoHasPlatoencurso);
 
