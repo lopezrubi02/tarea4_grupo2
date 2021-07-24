@@ -26,8 +26,10 @@ public interface PedidoHasPlatoRepository extends JpaRepository<PedidoHasPlato, 
             "where pepla.pedidosidpedidos = ?1", nativeQuery = true)
     MontoTotal_PedidoHasPlatoDTO montototal(int idpedido);
 
-    /*Si es que están en distritos distintos*/
-    @Query(value = "select pagarTodo(?1)", nativeQuery = true)
-    Double pagarTodo(int idpedido);
 
+    @Query(value = "select pagarTodo(?1)", nativeQuery = true)
+    int pagarTodo(int idpedido);
+
+    @Query(value = "select descuento(?1)", nativeQuery = true)
+    int descuento(int idpedido);
 }

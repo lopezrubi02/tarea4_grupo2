@@ -1044,21 +1044,35 @@ public class AdminRestauranteController {
     /************************REPORTE************************/
 
     @GetMapping("/reporte")
-    public String verReporte(Model model,HttpSession session,@RequestParam(name = "page", defaultValue = "1") String requestedPage,
+    public String verReporte (Model model,HttpSession session,@RequestParam(name = "page", defaultValue = "1") String requestedPage,
                              @RequestParam(name = "page2", defaultValue = "1") String requestedPage2,
                              @RequestParam(name="name",defaultValue = "") String name,
-                             RedirectAttributes attr){
+                             RedirectAttributes attr) throws NumberFormatException,IllegalArgumentException {
         Usuario usuario=(Usuario) session.getAttribute("usuarioLogueado");
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(usuario.getIdusuarios());
+        int page;
+        int page2;
             if(usuario.getCuentaActiva()==1){
                 float numberOfUsersPerPage = 7;
-                int page = Integer.parseInt(requestedPage);
-                int page2 = Integer.parseInt(requestedPage2);
+                try {
+                    page = Integer.parseInt(requestedPage);
+                }catch(Exception e) {
+                    return "redirect:/adminrest/reporte";
+                }
+                try {
+                    page2 = Integer.parseInt(requestedPage2);
+                }catch(Exception e) {
+                    return "redirect:/adminrest/reporte";
+                }
                 int idrestaurante= restauranteRepository.buscarRestaurantePorIdAdmin(usuario.getIdusuarios()).get().getIdrestaurante();
                 List<PedidosReporteDto> pedidosReporte;
                 if(name.equals("")){
                     System.out.println("Trace1");
                     pedidosReporte = pedidosRepository.listaPedidosReporteporFechamasantigua(idrestaurante);
+                    if(pedidosReporte.isEmpty()){
+                        attr.addFlashAttribute("registroVacio","No tienes ningun reporte de pedidos hasta la fecha.");
+                        return "redirect:/adminrest/perfil";
+                    }
                 }
                 else{
                     System.out.println("Trace2");
@@ -1092,8 +1106,8 @@ public class AdminRestauranteController {
                     model.addAttribute("name",name);
                     return "AdminRestaurantes/reporte";
                 }else{
-                    attr.addFlashAttribute("registroVacio","No tienes ningun reporte de pedidos hasta la fecha.");
-                    return "redirect:/adminrest/perfil";
+                    attr.addFlashAttribute("registroVacio","No se han encontrado registros");
+                    return "redirect:/adminrest/reporte";
                 }
             }else{
                 return "redirect:/login";
@@ -1347,5 +1361,14 @@ public class AdminRestauranteController {
         direccionesRepository.save(direccion_user);
         return "redirect:/adminrest/cuentaAdmin";
     }
-
+    @GetMapping("/errores")
+    public String hackeandoURL(@RequestParam("id") Integer id,RedirectAttributes attr){
+        if(id==1) {
+            attr.addFlashAttribute("msgpage","No existe la página solicitada");
+            return "redirect:/adminrest/reporte";
+        }
+        else{
+            return "redirect:/adminrest/perfil";
+        }
+    }
 }
