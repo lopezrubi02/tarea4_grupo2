@@ -639,7 +639,7 @@ header .container-fluid {
 /** end Our Client **/
 /*--------------------------------------------------------------------- footer ---------------------------------------------------------------------*/
 .footer {
-    background: #e3d105;
+    background: #d8b00f;
     padding-top:90px;
     margin-top: 90px;
 }
@@ -907,7 +907,7 @@ a.article, a.article:hover {
     font-weight: 500;
 }
 .yellow_bg {
-    background-color: #d8b00f;
+    background-color: #e3d105;
     padding: 40px 0px;
     margin-top: 90px;
 }
