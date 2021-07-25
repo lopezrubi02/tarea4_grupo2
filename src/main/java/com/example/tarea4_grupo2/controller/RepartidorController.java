@@ -553,6 +553,14 @@ public class RepartidorController {
         return "repartidor/repartidor_perfil";
     }
 
+
+    /** para validar patron de contraseña **/
+    public  boolean validarContrasenia(String contrasenia1) {
+        Pattern pattern1 = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$");
+        Matcher matcher1 = pattern1.matcher(contrasenia1);
+        return matcher1.matches();
+    }
+
     @PostMapping("/repartidor/save_perfil")
     public String guardarPerfilRepartidor(@ModelAttribute("usuario") @Valid Usuario usuario,
                                           BindingResult bindingResult,
@@ -561,62 +569,87 @@ public class RepartidorController {
                                           HttpSession session,
                                           RedirectAttributes attributes,
                                           Model model) {
-        Usuario user=(Usuario) session.getAttribute("usuarioLogueado");
-        int id=usuario.getIdusuarios();
+        Usuario user = (Usuario) session.getAttribute("usuarioLogueado");
+        int id = usuario.getIdusuarios();
         Optional<Usuario> optional = usuarioRepository.findById(id);
 
         Usuario user2 = optional.get();
 
-        String msgc1=null;
+        String msgc1 = null;
         Pattern pattern1 = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$");
         Matcher matcher1 = pattern1.matcher(usuario.getContraseniaHash());
-        if( matcher1.matches()){
-            msgc1="La contraseña debe tener al menos una letra, un número y un caracter especial";
+
+        System.out.println(usuario.getContraseniaHash());
+
+        if (!matcher1.matches()) {
+            msgc1 = "La contraseña debe tener al menos una letra, un número y un caracter especial";
         }
-        String msgc2=null;
+        String msgc2 = null;
         Matcher matcher2 = pattern1.matcher(password2);
-        if( matcher2.matches()){
-            msgc2="La contraseña debe tener al menos una letra, un número y un caracter especial";
+        if (password2.isEmpty()) {
+            msgc2 = null;
+        } else {
+            if (!matcher2.matches()) {
+                msgc2 = "La contraseña debe tener al menos una letra, un número y un caracter especial";
+            }
         }
 
-        if(  bindingResult.hasFieldErrors("telefono")|| msgc1!=null || msgc2!=null ){
+        if (bindingResult.hasFieldErrors("telefono") ||  bindingResult.hasFieldErrors("contraseniaHash")) {
 
-            model.addAttribute("msgc1",msgc1);
-            model.addAttribute("msgc2",msgc2);
+            model.addAttribute("msgc1", msgc1);
+            model.addAttribute("msgc2", msgc2);
 
-            String msgT=null;
-            if(bindingResult.hasFieldErrors("telefono")){
-                 msgT="El teléfono no es válido";
+            String msgT = null;
+            if (bindingResult.hasFieldErrors("telefono")) {
+                msgT = "El teléfono no es válido";
             }
             Usuario usuario2 = optional.get();
             model.addAttribute("usuario", usuario2);
 
-            model.addAttribute("msgT",msgT);
-            Repartidor repartidor2 = repartidorRepository.findRepartidorByIdusuariosEquals(id);
-            model.addAttribute("repartidor", repartidor2);
+            model.addAttribute("msgT", msgT);
 
-            Direcciones direcciones2 = direccionesRepository.findByUsuario(usuario2);
-            model.addAttribute("direcciones", direcciones2);
+            if (user.getContraseniaHash().equals(password2)) {
+                String contraxvalidarpatron = usuario.getContraseniaHash();
+                boolean validarcontra = validarContrasenia(contraxvalidarpatron);
+                if (validarcontra == true) {
+                    String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
+                    user.setTelefono(usuario.getTelefono());
+                    user.setContraseniaHash(contraseniahashbcrypt);
+                    System.out.println("deberia guardaaar");
+                    model.addAttribute("msgR", "Cuenta actualizada exitósamente");
+                    usuarioRepository.save(user);
+                    return "redirect:/repartidor/miperfil";
+                } else {
+                    model.addAttribute("errorpatroncontra", "La contraseña no cumple con los requisitos: mínimo 8 caracteres, un número y un caracter especial");
+                    model.addAttribute("usuario", user2);
 
-            Distritos distritoUsuario=direcciones2.getDistrito();
-            model.addAttribute("distritoUsuario", distritoUsuario);
-            model.addAttribute("listadistritos", distritosRepository.findAll());
+                    return "repartidor/repartidor_perfil";
+                }
+            } else {
+                model.addAttribute("errorpatroncontra", "Las contraseñas no son iguales");
+                model.addAttribute("usuario", user2);
+
+                return "repartidor/repartidor_perfil";
+            }
 
 
-            return "repartidor/repartidor_perfil";
-        }
-        else {
-            if(usuario.getContraseniaHash().equals(password2)){
+        } else {
+            if (usuario.getContraseniaHash().equals(password2)) {
                 if (file.isEmpty()) {
                     user.setTelefono(usuario.getTelefono());
                     usuarioRepository.save(user);
-                    String msgR="El perfil fue editado exitosamente";
-                    attributes.addFlashAttribute("msgR",msgR);
+                    String msgR = "El perfil fue editado exitosamente";
+                    attributes.addFlashAttribute("msgR", msgR);
                     return "redirect:/repartidor/miperfil";
                 }
                 String fileName = file.getOriginalFilename();
                 if (fileName.contains("..")) {
                     model.addAttribute("msg", "No se permiten '..' en el archivo");
+                    return "repartidor/repartidor_perfil";
+                }
+
+                if (!fileName.contains(".jpg") || !fileName.contains(".png")) {
+                    model.addAttribute("msg", "Solo se permiten formatos jpg y png en las fotos");
                     return "repartidor/repartidor_perfil";
                 }
                 try {
@@ -633,18 +666,17 @@ public class RepartidorController {
                 user.setTelefono(usuario.getTelefono());
 
                 usuarioRepository.save(user);
-                String msgR="El perfil fue editado exitosamente";
-                attributes.addFlashAttribute("msgR",msgR);
+                String msgR = "El perfil fue editado exitosamente";
+                attributes.addFlashAttribute("msgR", msgR);
                 return "redirect:/repartidor/miperfil";
-            }
-            else{
-                if(password2.isEmpty()){
+            } else {
+                if (password2.isEmpty()) {
                     if (file.isEmpty()) {
                         user.setTelefono(usuario.getTelefono());
 
                         usuarioRepository.save(user);
-                        String msgR="El perfil fue editado exitosamente";
-                        attributes.addFlashAttribute("msgR",msgR);
+                        String msgR = "El perfil fue editado exitosamente";
+                        attributes.addFlashAttribute("msgR", msgR);
                         return "redirect:/repartidor/miperfil";
                     }
                     String fileName = file.getOriginalFilename();
@@ -666,11 +698,11 @@ public class RepartidorController {
                     user.setTelefono(usuario.getTelefono());
 
                     usuarioRepository.save(user);
-                    String msgR="El perfil fue editado exitosamente";
-                    attributes.addFlashAttribute("msgR",msgR);
+                    String msgR = "El perfil fue editado exitosamente";
+                    attributes.addFlashAttribute("msgR", msgR);
                     return "redirect:/repartidor/miperfil";
-                }else{
-                    model.addAttribute("msg","Contraseñas no son iguales");
+                } else {
+                    model.addAttribute("msg", "Contraseñas no son iguales");
                     Usuario usuario2 = optional.get();
                     model.addAttribute("usuario", usuario2);
 
@@ -679,15 +711,15 @@ public class RepartidorController {
                     Direcciones direcciones2 = direccionesRepository.findByUsuario(usuario2);
                     model.addAttribute("direcciones", direcciones2);
 
-                    Distritos distritoUsuario=direcciones2.getDistrito();
+                    Distritos distritoUsuario = direcciones2.getDistrito();
                     model.addAttribute("distritoUsuario", distritoUsuario);
                     model.addAttribute("listadistritos", distritosRepository.findAll());
                     return "repartidor/repartidor_perfil";
                 }
 
             }
-        }
 
+        }
     }
 
     /** Para validación de DNI con la api **/
