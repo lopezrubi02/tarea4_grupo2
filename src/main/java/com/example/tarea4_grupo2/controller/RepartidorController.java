@@ -693,8 +693,10 @@ public class RepartidorController {
                         return "redirect:/repartidor/miperfil";
                     }
                     String fileName = file.getOriginalFilename();
+                    String msg=null;
                     if (fileName.contains("..") || !(fileName.contains(".jpg") || fileName.contains(".png"))) {
-                        model.addAttribute("msg", "El formato del archivo debe ser .jpg o .png");
+                        msg="El formato del archivo debe ser .jpg o .png";
+                        model.addAttribute("msg", msg);
                         Usuario usuario2 = optional.get();
                         model.addAttribute("usuario", usuario2);
 
@@ -995,9 +997,11 @@ public class RepartidorController {
                 model.addAttribute("msg", "Debe subir un archivo");
                 return "repartidor/registro_parte3";
             }
+            String msg=null;
             String fileName = file.getOriginalFilename();
-            if (fileName.contains("..")) {
-                model.addAttribute("msg", "No se permiten '..' en el archivo");
+            if (fileName.contains("..") || !(fileName.contains(".jpg") || fileName.contains(".png"))) {
+                msg="El formato del archivo debe ser .jpg o .png";
+                model.addAttribute("msg", msg);
                 return "repartidor/registro_parte3";
             }
             try {
