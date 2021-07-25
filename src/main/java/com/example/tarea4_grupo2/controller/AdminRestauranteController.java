@@ -244,7 +244,6 @@ public class AdminRestauranteController {
         restauranteRepository.deleteById(id);
         user.setCuentaActiva(3);
         usuarioRepository.save(user);
-
         return "redirect:/adminrest/sinrestaurante";
     }
 
@@ -404,8 +403,6 @@ public class AdminRestauranteController {
                 if(calificacion != null){
                     MathContext m = new MathContext(3);
                     calificacion = calificacion.round(m);
-                    restaurante.setCalificacionpromedio(calificacion.floatValue());
-                    restauranteRepository.save(restaurante);
                     model.addAttribute("calificacionpromedio",calificacion);
                 }else{
                     model.addAttribute("calificacionpromedio","No hay calificaciones");
@@ -444,6 +441,7 @@ public class AdminRestauranteController {
                 /********************************/
                 model.addAttribute("iddelrestaurante", idrestaurante);
                 model.addAttribute("listaPlatos", listaPlatos);
+                model.addAttribute("cantidadPlatos", listaPlatos.size());
                 return "AdminRestaurantes/menu";
             }
             else{
@@ -455,28 +453,40 @@ public class AdminRestauranteController {
     }
 
     @GetMapping("/crearPlato")
-    public String crearPlato(@ModelAttribute("plato") Plato plato, Model model, HttpSession session){
+    public String crearPlato(@ModelAttribute("plato") Plato plato, Model model, HttpSession session) {
 
-        /**Se obtiene Id de Restaurante**/
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-        Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
-        /********************************/
-
-        model.addAttribute("plato",plato);
-        model.addAttribute("iddelrestaurante", idrestaurante);
-        return "AdminRestaurantes/newPlato";
+        Integer idrestaurante = restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
+        Optional<Usuario> usuarioOptional = usuarioRepository.findById(sessionUser.getIdusuarios());
+        if (usuarioOptional.isPresent()) {
+            Usuario usuarioNuevo = usuarioOptional.get();
+            if (usuarioNuevo.getCuentaActiva() == 1) {
+                model.addAttribute("plato", plato);
+                model.addAttribute("iddelrestaurante", idrestaurante);
+                return "AdminRestaurantes/newPlato";
+            }else{
+                return "redirect:/adminrest/login";
+            }
+        }else {
+            return "redirect:/login";
+        }
     }
 
     @GetMapping("/editarPlato")
-    public String editarPlato(Model model, @RequestParam("idplato") int id, @ModelAttribute("plato") Plato plato){
+    public String editarPlato(Model model, @RequestParam("idplato") String idString, @ModelAttribute("plato") Plato plato) throws IOException{
 
-        Optional<Plato> optionalPlato = platoRepository.findById(id);
-
-        if(optionalPlato.isPresent()){
-            plato = optionalPlato.get();
-            model.addAttribute("plato",plato);
-            return "AdminRestaurantes/newPlato";
-        }else{
+        try{
+            int id = Integer.parseInt(idString);
+            Optional<Plato> optionalPlato = platoRepository.findById(id);
+            if(optionalPlato.isPresent()){
+                plato = optionalPlato.get();
+                model.addAttribute("plato",plato);
+                return "AdminRestaurantes/newPlato";
+            }else{
+                return "redirect:/adminrest/menu";
+            }
+        }catch (NumberFormatException e) {
+            e.printStackTrace();
             return "redirect:/adminrest/menu";
         }
     }
@@ -730,6 +740,7 @@ public class AdminRestauranteController {
             int idrestaurante = restaurante.getIdrestaurante();
             model.addAttribute("cupon",cupon);
             List<Plato> listaPlatos = platoRepository.buscarPlatosPorIdRestaurante(idrestaurante);
+            model.addAttribute("index",0);
             model.addAttribute("listaPlatos",listaPlatos);
             return "AdminRestaurantes/generarCupon";
         }else{
@@ -925,7 +936,7 @@ public class AdminRestauranteController {
         Workbook workbook = new HSSFWorkbook();
         CellStyle headStyle = createHeadStyle(workbook);
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        if(!pedidosRepository.listaPedidos(id).isEmpty()) {
+        if(!pedidosRepository.listaPedidosReporteporFechamasantigua(id).isEmpty()) {
             String[] columnsPedido = {"N° PEDIDO", "FECHA DEL PEDIDO", "NOMBRE DEL CLIENTE", "MONTO DEL PEDIDO", "NOMBRE DEL PLATO", "METODO DE PAGO", "DISTRITO DEL PEDIDO"};
             Sheet sheet1 = workbook.createSheet("Pedidos");
             Row row1 = sheet1.createRow(0);
@@ -1033,21 +1044,35 @@ public class AdminRestauranteController {
     /************************REPORTE************************/
 
     @GetMapping("/reporte")
-    public String verReporte(Model model,HttpSession session,@RequestParam(name = "page", defaultValue = "1") String requestedPage,
+    public String verReporte (Model model,HttpSession session,@RequestParam(name = "page", defaultValue = "1") String requestedPage,
                              @RequestParam(name = "page2", defaultValue = "1") String requestedPage2,
                              @RequestParam(name="name",defaultValue = "") String name,
-                             RedirectAttributes attr){
+                             RedirectAttributes attr) throws NumberFormatException,IllegalArgumentException {
         Usuario usuario=(Usuario) session.getAttribute("usuarioLogueado");
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(usuario.getIdusuarios());
+        int page;
+        int page2;
             if(usuario.getCuentaActiva()==1){
                 float numberOfUsersPerPage = 7;
-                int page = Integer.parseInt(requestedPage);
-                int page2 = Integer.parseInt(requestedPage2);
+                try {
+                    page = Integer.parseInt(requestedPage);
+                }catch(Exception e) {
+                    return "redirect:/adminrest/reporte";
+                }
+                try {
+                    page2 = Integer.parseInt(requestedPage2);
+                }catch(Exception e) {
+                    return "redirect:/adminrest/reporte";
+                }
                 int idrestaurante= restauranteRepository.buscarRestaurantePorIdAdmin(usuario.getIdusuarios()).get().getIdrestaurante();
                 List<PedidosReporteDto> pedidosReporte;
                 if(name.equals("")){
                     System.out.println("Trace1");
                     pedidosReporte = pedidosRepository.listaPedidosReporteporFechamasantigua(idrestaurante);
+                    if(pedidosReporte.isEmpty()){
+                        attr.addFlashAttribute("registroVacio","No tienes ningun reporte de pedidos hasta la fecha.");
+                        return "redirect:/adminrest/perfil";
+                    }
                 }
                 else{
                     System.out.println("Trace2");
@@ -1081,8 +1106,8 @@ public class AdminRestauranteController {
                     model.addAttribute("name",name);
                     return "AdminRestaurantes/reporte";
                 }else{
-                    attr.addFlashAttribute("registroVacio","No tienes ningun reporte de pedidos hasta la fecha.");
-                    return "redirect:/adminrest/perfil";
+                    attr.addFlashAttribute("registroVacio","No se han encontrado registros");
+                    return "redirect:/adminrest/reporte";
                 }
             }else{
                 return "redirect:/login";
@@ -1195,8 +1220,8 @@ public class AdminRestauranteController {
         /********************************/
         /* Envio de correo de confirmacion */
         String subject = "Pedido rechazado";
-        String aws = "ec2-user@ec2-3-84-20-210.compute-1.amazonaws.com";
-        String direccionurl = "http://" + aws + ":8081/login";
+        String aws = "g-spicyo.publicvm.com";
+        String direccionurl = "http://" + aws + ":8080/login";
         String mensaje = "¡Hola! Tu pedido ha sido rechazado por el administrador de restaurante. Por favor, intenta con un nuevo pedido.<br><br>" +
                 "Ahora es parte de Spicyo. Para ingresar a su cuenta haga click: <a href='" + direccionurl + "'>AQUÍ</a> <br><br>Atte. Equipo de Spicy :D</b>";
         String correoDestino = sessionUser.getEmail();
@@ -1220,7 +1245,6 @@ public class AdminRestauranteController {
         Usuario user=(Usuario)session.getAttribute("usuarioLogueado");
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(user.getIdusuarios());
         Restaurante rest= restauranteRepository.obtenerperfilRest(user.getIdusuarios());
-
         if(usuarioOptional.isPresent()) {
             Usuario usuarioNuevo = usuarioOptional.get();
             if(usuarioNuevo.getCuentaActiva()==1){
@@ -1233,7 +1257,7 @@ public class AdminRestauranteController {
                 model.addAttribute("direccion_rest",rest.getDireccion()+", "+rest.getDistrito().getNombredistrito());
                 return "AdminRestaurantes/cuenta";
             }else{
-                return "redirect:/adminrest/login";
+                return "redirect:/login";
             }
         }else{
             return "redirect:/login";
@@ -1250,6 +1274,54 @@ public class AdminRestauranteController {
                                     Model model){
         Usuario user=(Usuario) session.getAttribute("usuarioLogueado");
         Restaurante rest= restauranteRepository.obtenerperfilRest(user.getIdusuarios());
+        int correcto=1;
+        int flg_contra=0;
+
+        if(bindingResult.hasFieldErrors("telefono")){
+            correcto=0;
+        }
+        System.out.println("contraseña");
+        System.out.println(usuario.getContraseniaHash());
+        if(usuario.getContraseniaHash()!=null&&(!(usuario.getContraseniaHash().equals("")))){
+            System.out.println("Entre");
+            flg_contra=1;
+            if(!Pattern.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$",usuario.getContraseniaHash())){
+                correcto=0;
+                model.addAttribute("msgpasserror", "Contraseñas no cumple con los requisitos");
+
+            }
+            if(usuario.getContraseniaHash().equals(pass2)){
+                correcto=0;
+                model.addAttribute("msgpasserror2","Contraseñas no osn iguales");
+            }
+        }
+        if(correcto==0){
+            model.addAttribute("direccion_rest",rest.getDireccion()+", "+rest.getDistrito().getNombredistrito());
+            model.addAttribute("datos",usuarioRepository.obtenerDatos(usuario.getIdusuarios()));
+            model.addAttribute("listadirecciones",direccionesRepository.findAllByUsuarioAndActivoEquals(usuario,1));
+            model.addAttribute("restaurante",restauranteRepository.obtenerperfilRest(usuario.getIdusuarios()));
+            model.addAttribute("ruc",restauranteRepository.buscarRuc(usuario.getIdusuarios()));
+            model.addAttribute("listadistritos",distritosRepository.findAll());
+            model.addAttribute("telefono",telefono);
+            return "AdminRestaurantes/cuenta";
+        }
+        else{
+            if(flg_contra==0){
+                user.setTelefono(usuario.getTelefono());
+                usuarioRepository.save(user);
+                attr.addFlashAttribute("suceso","Perfil actualizado exitosamente");
+                return "redirect:/adminrest/cuentaAdmin";
+            }
+            else{
+                user.setTelefono(usuario.getTelefono());
+                user.setContraseniaHash(BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt()));
+                usuarioRepository.save(user);
+                attr.addFlashAttribute("suceso","Perfil actualizado exitosamente");
+                return "redirect:/adminrest/cuentaAdmin";
+            }
+        }
+/*
+
         if(bindingResult.hasFieldErrors("telefono")|| bindingResult.hasFieldErrors("contraseniaHash")){
             if (!BCrypt.checkpw(usuario.getContraseniaHash(),user.getContraseniaHash())) {
                 model.addAttribute("msg", "Contraseña incorrecta");
@@ -1310,47 +1382,41 @@ public class AdminRestauranteController {
                 return "AdminRestaurantes/cuenta";
             }
         }
+ */
     }
 
-    @GetMapping("/agregardireccion")
+    @GetMapping("/editardireccion")
     public String agregardireccion(Model model) {
-
         List<Distritos> listadistritos = distritosRepository.findAll();
         model.addAttribute("listadistritos",listadistritos);
-
+        String direction=null;
+        model.addAttribute("direction",direction);
+        System.out.println(direction);
         return "AdminRestaurantes/agregardireccion";
     }
 
     @PostMapping("/guardardireccion")
-    public String guardarnuevadireccion(@RequestParam("direccion") String direccion,
-                                        @RequestParam("iddistrito") int iddistrito,
+    public String guardarnuevadireccion(@RequestParam("iddistrito") Integer iddistrito,
+                                        @RequestParam("direccion_real") String direccion,
                                         HttpSession session) {
 
         Usuario user=(Usuario) session.getAttribute("usuarioLogueado");
-        int idusuario=user.getIdusuarios();
-        Optional<Usuario> usuarioxguardar = usuarioRepository.findById(idusuario);
-        Usuario usuario2 = usuarioxguardar.get();
-        Direcciones direccioncrear = new Direcciones();
-        direccioncrear.setDireccion(direccion);
-        //direccioncrear.setDistrito(distrito);
-        Optional<Distritos> distritoopt = distritosRepository.findById(iddistrito);
-        Distritos distritonuevo = distritoopt.get();
-        direccioncrear.setDistrito(distritonuevo);
-        direccioncrear.setUsuario(usuario2);
-        direccioncrear.setActivo(1);
-        direccionesRepository.save(direccioncrear);
-        return "redirect:/adminrest/perfil";
+        Direcciones direccion_user = direccionesRepository.findByUsuario(user);
+        String dir = direccion.split(",")[0].trim();
+        direccion_user.setDireccion(dir);
+        System.out.println(iddistrito);
+        direccion_user.setDistrito(distritosRepository.findById(iddistrito).get());
+        direccionesRepository.save(direccion_user);
+        return "redirect:/adminrest/cuentaAdmin";
     }
-
-    @GetMapping("/borrardireccion")
-    public String borrarDireccion(@RequestParam("iddireccion") int iddireccion){
-        Optional<Direcciones> direccionopt = direccionesRepository.findById(iddireccion);
-        Direcciones direccionborrar = direccionopt.get();
-        if(direccionborrar != null){
-            direccionborrar.setActivo(0);
-            direccionesRepository.save(direccionborrar);
+    @GetMapping("/errores")
+    public String hackeandoURL(@RequestParam("id") Integer id,RedirectAttributes attr){
+        if(id==1) {
+            attr.addFlashAttribute("msgpage","No existe la página solicitada");
+            return "redirect:/adminrest/reporte";
         }
-        return "redirect:/adminrest/perfil";
+        else{
+            return "redirect:/adminrest/perfil";
+        }
     }
-
 }

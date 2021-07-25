@@ -10,9 +10,7 @@
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
     <!-- site metas -->
     <title>Spicyo</title>
-    <meta name="keywords" content="">
-    <meta name="description" content="">
-    <meta name="author" content="">
+
     <!-- bootstrap css -->
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <!-- owl css -->
@@ -42,7 +40,6 @@
 </div>
 
 <div class="wrapper">
-    <!-- end loader -->
 
     <div class="sidebar">
         <!-- Sidebar  -->
@@ -88,8 +85,6 @@
                                     <li class="dinone"><a th:href="@{gestionCuentas}">Gestión de nuevas cuentas</a></li>
                                     <li class="dinone"><a th:href="@{reportes}">Reportes</a></li>
 
-
-                                    <!-- TODO -->
                                     <li class="button_user">
                                         <a class="button active" th:href="@{/admin/miCuenta}">Mi cuenta</a>
 
@@ -132,8 +127,6 @@
                 </div>
             </div>
         </header>
-        <!-- end header -->
-
 
         <!-- blog -->
         <div class="blog">
@@ -148,7 +141,6 @@
                     <div class="col-12 col-lg-6 text-center" style="margin-bottom: 4vh;">
                         <!-- imagen -->
                         <figure><img th:src="@{|/admin/imagenrepartidor/${repartidor.getIdrepartidor()}|}" height="360" width="auto" class="img-responsive"/></figure>
-                        <!--                        <img th:src="@{/images/userImage.jpg}" class="img-responsive">-->
                     </div>
                     <div class="col-12 col-lg-6">
                         <!-- datos -->
@@ -226,16 +218,26 @@
                                         </div>
                                         <div class="col-sm-9 text-secondary" th:text="${repartidor.distritos.nombredistrito}"></div>
                                     </div>
+
+
                                 </div>
+
+
                             </div>
+
+                            <div style="height: 25px"></div>
+                            <li class="button_user"><a class="button active" th:href="@{usuariosActuales}" > Regresar </a></li>
+
                         </div>
                     </div>
+
+
+
                 </div>
 
 
             </div>
         </div>
-        <!-- end blog -->
 
         <!-- footer -->
         <fooetr>

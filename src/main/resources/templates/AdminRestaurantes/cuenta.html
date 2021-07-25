@@ -122,23 +122,14 @@
                                                 <input class="form-control" type="date" th:value="${datos.fechanacimiento}" disabled>
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                                <label>Dirección</label>
-                                                <div class="form-floating">
-                                                    <table class="table table-light table-hover">
-                                                        <tbody>
-                                                        <tr th:each="d: ${listadirecciones}">
-                                                            <td th:text = "${d.direccion}"></td>
-                                                        </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
+                                                <label>Dirección</label><br><a th:href="@{'/adminrest/editardireccion'}">Editar dirección</a><br>
+                                                <input class="form-control" type="text" th:if="${listadirecciones.get(0).distrito.nombredistrito.equals('Lima District')}" th:value="${listadirecciones.get(0).direccion + ', Cercado de Lima'}" disabled>
+                                                <input class="form-control" type="text" th:unless="${listadirecciones.get(0).distrito.nombredistrito.equals('Lima District')}" th:value="${listadirecciones.get(0).direccion + ', '+listadirecciones.get(0).distrito.nombredistrito}" disabled>
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <label>Contraseña</label>
-                                                <div th:if="${msg != null}" th:text="${msg}" class="text-danger"></div>
-                                                <div th:if="${msg2 != null}" th:text="${msg2}" class="text-danger"></div>
+                                                <div th:if="${msgpasserror2 != null}" th:text="${msgpasserror2}" class="text-danger"></div>
                                                 <div th:if="${msgpasserror != null}" th:text="${msgpasserror}" class="text-danger"></div>
-                                                <div class="text-danger" th:if="${#fields.hasErrors('contraseniaHash')}" th:errors="*{contraseniaHash}"></div>
                                                 <input placeholder="Contraseña" class="form-control" type="password" th:field="*{contraseniaHash}">
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">

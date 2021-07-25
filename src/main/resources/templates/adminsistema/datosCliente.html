@@ -10,9 +10,6 @@
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
     <!-- site metas -->
     <title>Spicyo</title>
-    <meta name="keywords" content="">
-    <meta name="description" content="">
-    <meta name="author" content="">
     <!-- bootstrap css -->
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <!-- owl css -->
@@ -42,7 +39,6 @@
 </div>
 
 <div class="wrapper">
-    <!-- end loader -->
 
     <div class="sidebar">
         <!-- Sidebar  -->
@@ -76,7 +72,7 @@
                 <div class="row">
                     <div class="col-md-3">
                         <div class="full">
-                            <a class="logo" href="index.html"><img th:src="@{/images/logo.png}" alt="#" /></a>
+                            <a class="logo" th:href="@{/admin/usuariosActuales}"><img th:src="@{/images/logo.png}" alt="#" /></a>
                         </div>
                     </div>
                     <div class="col-md-9">
@@ -89,7 +85,6 @@
                                     <li class="dinone"><a th:href="@{reportes}">Reportes</a></li>
 
 
-                                    <!-- TODO -->
                                     <li class="button_user">
                                         <a class="button active" th:href="@{/admin/miCuenta}">Mi cuenta</a>
 
@@ -223,10 +218,13 @@
                     </table>
                 </div>
 
+                <div style="height: 25px"></div>
+                <li class="button_user"><a class="button active" th:href="@{usuariosActuales}" > Regresar </a></li>
 
             </div>
+
+
         </div>
-        <!-- end blog -->
 
         <!-- footer -->
         <fooetr>
@@ -291,27 +289,6 @@
 </style>
 
 
-<script>
-    $(document).ready(function() {
-        var owl = $('.owl-carousel');
-        owl.owlCarousel({
-            margin: 10,
-            nav: true,
-            loop: true,
-            responsive: {
-                0: {
-                    items: 1
-                },
-                600: {
-                    items: 2
-                },
-                1000: {
-                    items: 5
-                }
-            }
-        })
-    })
-</script>
 
 </body>
 

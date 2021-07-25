@@ -127,6 +127,7 @@
 
                                             </select>
                                         </div>
+                                        </br>
                                         <h4 id="text-map" style="display: none">Puede mover el cursor para cambiar de dirección</h4>
                                         <div id="map"></div>
                                         </br>
@@ -161,7 +162,6 @@
     <script th:src="@{/js/jquery.min.js}" ></script>
     <script th:src="@{/js/popper.min.js}" ></script>
     <script th:src="@{/js/bootstrap.bundle.min.js}" ></script>
-    <script th:src="@{/js/owl.carousel.min.js}" ></script>
     <script th:src="@{/js/custom.js}" ></script>
     <script th:src="@{/js/jquery.mCustomScrollbar.concat.min.js}" ></script>
 
@@ -201,12 +201,16 @@
             var listaDistritos=document.getElementById("distrito-lista");
             var real=distrito.trim();
             for(var i=0;i<listaDistritos.length;i++){
-                console.log(listaDistritos.options[i].text);
                 if(real==listaDistritos.options[i].text){
-                    console.log(listaDistritos.options[i].value);
                     document.getElementById("iddistrito").value=listaDistritos.options[i].value;
+
                     document.getElementById("error-distrito").innerHTML=null;
                     break;
+                }
+                else if(real=="Cercado de Lima"){
+                    document.getElementById("iddistrito").value=listaDistritos.options[16].value;
+                    console.log(listaDistritos.options[16].text);
+                    document.getElementById("error-distrito").innerHTML=null;
                 }
                 else{
                     document.getElementById("iddistrito").value=-1;

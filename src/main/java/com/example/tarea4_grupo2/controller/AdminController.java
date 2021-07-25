@@ -11,10 +11,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -325,51 +322,34 @@ public class AdminController {
             Model model
     ) throws IOException {
 
-        if(bindingResult.hasErrors()) {
-            return "adminsistema/miCuenta";
-        } else {
-
+            // 1. Validacion de email unico
+            Boolean emailValido = false;
             Optional<Usuario> usuario = Optional.ofNullable(usuarioRepository.findByEmailEquals(usuarioRecibido.getEmail()));
             if(!usuario.isPresent()) {
                 // CREAR NUEVO: si no hay un usuario con el mismo correo
-
-                // validacion de dni
-                System.out.println("***************************");
-                boolean dniValido = validarDNI(usuarioRecibido.getDni());
-                if(dniValido == true){
-                    usuarioRepository.save(usuarioRecibido);
-                    attr.addFlashAttribute("msg", "Usuario actualizado correctamente");
-                    return "redirect:/admin/usuariosActuales";
-                } else{
-                    model.addAttribute("dniValido", "Ingrese un DNI valido");
-
-                    return "adminsistema/miCuenta";
-                }
-
+                emailValido = true;
             } else {
                 if(usuario.get().getIdusuarios() == usuarioRecibido.getIdusuarios()) {
                     // EDICION: si el usuario que se ha extraido, es el que se esta editando
-
-                    // validacion de dni
-                    System.out.println("***************************");
-                    boolean dniValido = validarDNI(usuarioRecibido.getDni());
-                    if(dniValido == true){
-                        usuarioRepository.save(usuarioRecibido);
-                        attr.addFlashAttribute("msg", "Usuario actualizado correctamente");
-                        return "redirect:/admin/usuariosActuales";
-                    } else{
-                        model.addAttribute("dniValido", "Ingrese un DNI valido");
-                        return "adminsistema/miCuenta";
-                    }
-
-
+                    emailValido = true;
                 } else{
                     model.addAttribute("emailUnico", "Ya existe un usuario registrado con el mismo correo");
-                    return "adminsistema/miCuenta";
                 }
-
             }
-        }
+
+            // 2. Validacion de dni
+            boolean dniValido = validarDNI(usuarioRecibido.getDni());
+            if(dniValido == false){
+                model.addAttribute("dniValido", "Ingrese un DNI valido");
+            }
+
+            if(emailValido == true && dniValido == true){
+                usuarioRepository.save(usuarioRecibido);
+                attr.addFlashAttribute("msg", "Usuario actualizado correctamente");
+                return "redirect:/admin/usuariosActuales";
+            } else{
+                return "adminsistema/miCuenta";
+            }
 
     }
 
@@ -381,51 +361,37 @@ public class AdminController {
             Model model
     ) throws IOException {
 
-        if(bindingResult.hasErrors()) {
-            return "adminsistema/miCuenta";
-        } else {
 
+            // 1. Validacion de email unico
+            Boolean emailValido = false;
             Optional<Usuario> usuario = Optional.ofNullable(usuarioRepository.findByEmailEquals(usuarioRecibido.getEmail()));
             if(!usuario.isPresent()) {
                 // CREAR NUEVO: si no hay un usuario con el mismo correo
-
-                // validacion de dni
-                System.out.println("***************************");
-                boolean dniValido = validarDNI(usuarioRecibido.getDni());
-                if(dniValido == true){
-                    usuarioRepository.save(usuarioRecibido);
-                    attr.addFlashAttribute("msg", "Usuario actualizado correctamente");
-                    return "redirect:/admin/usuariosActuales";
-                } else{
-                    model.addAttribute("dniValido", "Ingrese un DNI valido");
-
-                    return "adminsistema/editaradmin";
-                }
-
+                emailValido = true;
             } else {
                 if(usuario.get().getIdusuarios() == usuarioRecibido.getIdusuarios()) {
                     // EDICION: si el usuario que se ha extraido, es el que se esta editando
-
-                    // validacion de dni
-                    System.out.println("***************************");
-                    boolean dniValido = validarDNI(usuarioRecibido.getDni());
-                    if(dniValido == true){
-                        usuarioRepository.save(usuarioRecibido);
-                        attr.addFlashAttribute("msg", "Usuario actualizado correctamente");
-                        return "redirect:/admin/usuariosActuales";
-                    } else{
-                        model.addAttribute("dniValido", "Ingrese un DNI valido");
-                        return "adminsistema/editaradmin";
-                    }
-
-
+                    emailValido = true;
                 } else{
                     model.addAttribute("emailUnico", "Ya existe un usuario registrado con el mismo correo");
-                    return "adminsistema/miCuenta";
                 }
-
             }
-        }
+
+            // 2. Validacion de dni
+            boolean dniValido = validarDNI(usuarioRecibido.getDni());
+            if (dniValido == false){
+                model.addAttribute("dniValido", "Ingrese un DNI valido");
+            }
+
+            // Actualizar los datos
+            if( emailValido == true && dniValido == true){
+                usuarioRepository.save(usuarioRecibido);
+                attr.addFlashAttribute("msg", "Usuario actualizado correctamente");
+                return "redirect:/admin/usuariosActuales";
+            } else{
+                return "adminsistema/editaradmin";
+            }
+
 
     }
 
@@ -445,16 +411,26 @@ public class AdminController {
     }
 
     @GetMapping("/delete")
-    public String borrarAdmin(@RequestParam("id") int id, RedirectAttributes attr) {
+    public String borrarAdmin(@RequestParam("id") int id, RedirectAttributes attr, HttpSession session) {
 
-        Optional<Usuario> optional = usuarioRepository.findById(id);
+        Usuario usuarioActual = (Usuario) session.getAttribute("usuarioLogueado");
+        int idUsuarioactual = usuarioActual.getIdusuarios();
+        if (idUsuarioactual == 1){
+            Optional<Usuario> optional = usuarioRepository.findById(id);
 
-        if (optional.isPresent()) {
-            usuarioRepository.deleteById(id);
+            if (optional.isPresent()) {
+
+                if(optional.get().getRol().equals("AdminSistema")){
+                    // solo puede eliminar usuarios admin
+                    usuarioRepository.deleteById(id);
+                }
+            }
+
+            attr.addFlashAttribute("msg", "Usuario eliminado correctamente");
+            return "redirect:/admin/usuariosActuales";
+        } else{
+            return "redirect:/admin/usuariosActuales";
         }
-
-        attr.addFlashAttribute("msg", "Usuario eliminado correctamente");
-        return "redirect:/admin/usuariosActuales";
     }
 
 //  Imagenes
@@ -613,7 +589,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
     //----------------------------
     @GetMapping("/newuser")
     public String revisarCuenta(Model model,
-            @RequestParam(value = "id") String idString, RedirectAttributes attr){
+            @RequestParam(value = "id",defaultValue = "") String idString, RedirectAttributes attr){
         try{
             int id = Integer.parseInt(idString);
             Optional<Usuario> optional = usuarioRepository.findById(id);
@@ -726,8 +702,15 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
     @GetMapping("/correo")
     public String envioCorreo(@RequestParam(value="id") int id,
                               Model model){
-        model.addAttribute("id",id);
-        return "adminsistema/ADMIN_RazonDenegacionCuenta";
+        Optional<Usuario> optional = usuarioRepository.findById(id);
+        if(optional.isPresent()) {
+            Usuario usuario = optional.get();
+            if ((usuario.getRol().equals("Repartidor") && usuario.getCuentaActiva() == -1) || (usuario.getRol().equals("AdminRestaurante") && usuario.getCuentaActiva() == 2)) {
+                model.addAttribute("id", id);
+                return "adminsistema/ADMIN_RazonDenegacionCuenta";
+            }
+        }
+        return "redirect:/admin/nuevosUsuarios";
     }
 
     @PostMapping("/denegar")
@@ -832,42 +815,18 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
     @PostMapping("/agregarAdmin")
     public String agregarAdmin(@ModelAttribute("usuario") @Valid Usuario usuario, BindingResult bindingResult,
                                @RequestParam("password2") String password2,
-                               @RequestParam(value = "contras",defaultValue = "") String contras,
                                Model model, RedirectAttributes attr){
 
-        if(bindingResult.hasErrors()){
-            return "adminsistema/agregarAdmin";
-        }
-        else {
-            Boolean validacionContrasenias = validarContrasenia(password2);
 
+
+            // 1. Validacion de contraseñas
+            Boolean contraseniasValidas = false; // para la validacion final
+            Boolean validacionContrasenias = validarContrasenia(password2);
             if(usuario.getContraseniaHash().equals(password2) && validacionContrasenias==true) {
 
                 String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
                 usuario.setContraseniaHash(contraseniahashbcrypt);
-
-                //
-                Optional<Usuario> usuarioValidacion = Optional.ofNullable(usuarioRepository.findByEmailEquals(usuario.getEmail()));
-                if(!usuarioValidacion.isPresent()){
-
-                    // validacion de dni
-                    System.out.println("***************************");
-                    boolean dniValido = validarDNI(usuario.getDni());
-                    if(dniValido == true){
-                        usuarioRepository.save(usuario);
-                        attr.addFlashAttribute("msg", "Administrador creado exitosamente");
-                    } else{
-                        model.addAttribute("dniValido", "Ingrese un DNI valido");
-                        return "adminsistema/agregarAdmin";
-                    }
-
-
-                }else{
-                    model.addAttribute("emailUnico", "Ya existe un usuario registrado con el mismo correo");
-                    return "adminsistema/agregarAdmin";
-                }
-
-
+                contraseniasValidas = true;
 
             }else {
 
@@ -875,12 +834,42 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
                     model.addAttribute("contras","Las contraseñas no coinciden");
                 }
                 if (validacionContrasenias == false){
-                    model.addAttribute("contras","Debe tener al menos 8 caracteres, uno especial y una mayuscula");
+                    model.addAttribute("contras2","La contraseña no cumple con los requisitos minimos");
                 }
+            }
 
+            // 2. Validacion de correo unico
+            Boolean correoUnico = false; // para la validacion final
+            Optional<Usuario> usuarioValidacion = Optional.ofNullable(usuarioRepository.findByEmailEquals(usuario.getEmail()));
+            if(!usuarioValidacion.isPresent()){
+                correoUnico = true;
+
+            }else{
+                model.addAttribute("emailUnico", "Ya existe un usuario registrado con el mismo correo");
+            }
+
+            // 3. Validacion de dni
+            boolean dniValido = validarDNI(usuario.getDni());
+            if(dniValido == false){
+                model.addAttribute("dniValido", "Ingrese un DNI valido");
+            }
+
+            // 4. Validacion de sexo
+            Boolean sexoValido = false;
+            if(usuario.getSexo().equals("Masculino") || usuario.getSexo().equals("Femenino")){
+                sexoValido = true;
+            } else{
+                model.addAttribute("sexoValido", "Ingrese un sexo valido");
+            }
+
+            // Guardar usuario
+            if(contraseniasValidas == true && correoUnico == true && dniValido == true && sexoValido == true){
+                usuarioRepository.save(usuario);
+                attr.addFlashAttribute("msg", "Administrador creado exitosamente");
+            } else{
                 return "adminsistema/agregarAdmin";
             }
-        }
+
 
         return "redirect:/admin/gestionCuentas";
     }
@@ -888,6 +877,32 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
 
 
     //Reportes
+
+    /**excel**/
+    private static CellStyle createVHCenterStyle(final Workbook wb) {
+        CellStyle style = wb.createCellStyle (); // objeto de estilo
+        style.setVerticalAlignment (VerticalAlignment.CENTER); // vertical
+        style.setAlignment (HorizontalAlignment.CENTER); // horizontal
+        style.setWrapText (true); // Especifica el salto de línea automático cuando no se puede mostrar el contenido de la celda
+        // agregar borde
+        style.setBorderBottom(BorderStyle.THIN);
+        style.setBorderLeft(BorderStyle.THIN);
+        style.setBorderRight(BorderStyle.THIN);
+        style.setBorderTop(BorderStyle.THIN);
+        return style;
+    }
+
+    private static CellStyle createHeadStyle(final Workbook wb) {
+        CellStyle style = createVHCenterStyle(wb);
+        final Font font = wb.createFont();
+        font.setFontName ("Songti");
+        font.setFontHeight((short) 150);
+        font.setBold(true);
+        style.setFont(font);
+        style.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        return style;
+    }
 
     @GetMapping("/reportes")
     public String reportesAdmin(){
@@ -1285,6 +1300,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
 
         Workbook workbook = new HSSFWorkbook();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        CellStyle headStyle = createHeadStyle(workbook);
 
         Sheet sheet = workbook.createSheet("Usuarios");
         Row row = sheet.createRow(0);
@@ -1293,6 +1309,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
         for (int i = 0; i < columns.length; i++) {
             Cell cell = row.createCell(i);
             cell.setCellValue(columns[i]);
+            cell.setCellStyle(headStyle);
         }
 
         List<Usuario> usuarioList = usuarioRepository.usuarioreportes();
@@ -1304,7 +1321,9 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
             row.createCell(1).setCellValue(usuario.getRol());
             row.createCell(2).setCellValue(usuario.getEmail());
             row.createCell(3).setCellValue(Integer.toString(usuario.getTelefono()));
-            row.createCell(4).setCellValue(String.valueOf(usuario.getUltimafechaingreso()));
+            if(usuario.getUltimafechaingreso()!=null){
+                row.createCell(4).setCellValue(String.valueOf(usuario.getUltimafechaingreso()).replace('T',' '));
+            }
             initRow++;
 
         }
@@ -1333,6 +1352,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
 
         Workbook workbook = new HSSFWorkbook();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        CellStyle headStyle = createHeadStyle(workbook);
 
         Sheet sheet = workbook.createSheet("Delivery");
         Row row = sheet.createRow(0);
@@ -1341,6 +1361,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
         for (int i = 0; i < columns.length; i++) {
             Cell cell = row.createCell(i);
             cell.setCellValue(columns[i]);
+            cell.setCellStyle(headStyle);
         }
         String primerpedido = pedidosRepository.primerPedido();
         List<DeliveryReportes_DTO> deliveryReportes = pedidosRepository.reportesDelivery2(primerpedido);
@@ -1376,6 +1397,8 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
 
         Workbook workbook = new HSSFWorkbook();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        CellStyle headStyle = createHeadStyle(workbook);
+
 
         Sheet sheet = workbook.createSheet("Restaurantes");
         Row row = sheet.createRow(0);
@@ -1384,6 +1407,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
         for (int i = 0; i < columns.length; i++) {
             Cell cell = row.createCell(i);
             cell.setCellValue(columns[i]);
+            cell.setCellStyle(headStyle);
         }
 
         List<RestauranteReportes_DTO> restaurantesList = restauranteRepository.reportesRestaurantes();
@@ -1420,6 +1444,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
 
         Workbook workbook = new HSSFWorkbook();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        CellStyle headStyle = createHeadStyle(workbook);
 
         Sheet sheet = workbook.createSheet("Repartidor");
         Row row = sheet.createRow(0);
@@ -1428,6 +1453,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
         for (int i = 0; i < columns.length; i++) {
             Cell cell = row.createCell(i);
             cell.setCellValue(columns[i]);
+            cell.setCellStyle(headStyle);
         }
 
         List<RepartidoresReportes_DTO> repartidorList = repartidorRepository.reporteRepartidores();

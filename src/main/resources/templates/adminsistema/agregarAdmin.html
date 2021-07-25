@@ -11,9 +11,8 @@
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
     <!-- site metas -->
     <title>Spicyo</title>
-    <meta name="keywords" content="">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="author" content="lapad10s">
+
     <!-- bootstrap css -->
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <!-- owl css -->
@@ -46,18 +45,22 @@
         label{
             color: black;
         }
+        #owl-demo .item{
+            margin: 3px;
+        }
+        #owl-demo .item img{
+            display: block;
+            width: 100%;
+            height: auto;
+        }
     </style>
 </head>
-<!-- body -->
+
 
 <body class="main-layout">
-<!-- loader  -->
-<!--div class="loader_bg">
-    <div class="loader"><img th:src="@{/images/loading.gif}" alt="" /></div>
-</div-->
+
 
 <div class="wrapper">
-    <!-- end loader -->
 
     <div th:replace="fragments/adminSistema.html:: slider" class="sidebar">
         <!-- Sidebar  -->
@@ -70,7 +73,6 @@
             <ul class="list-unstyled components">
 
                 <li class="active">
-                    <!-- TODO -->
                     <a href="index.html">Usuarios actuales</a>
                 </li>
                 <li>
@@ -101,7 +103,6 @@
                                     <li class="dinone"><a href="#">Usuarios Actuales</a></li>
                                     <li class="dinone"><a href="GestionCuentasPrincipal.html">Gestión de nuevas cuentas</a></li>
                                     <li class="dinone"><a href="#">Reportes</a></li>
-                                    <!-- TODO -->
                                     <li class="button_user"><a class="button active" href="#login.html">Mi cuenta</a><a class="button" href="#">Logout</a></li>
                                     <li>
                                         <button type="button" id="sidebarCollapse">
@@ -117,7 +118,6 @@
         </header>
     </div>
 </div>
-<!-- end header -->
 
 
 <!-- blog -->
@@ -162,7 +162,6 @@
                         <div class="form-group">
                             <label>DNI</label>
                             <p class="text-danger" th:if="${dniValido != null}" th:text="${dniValido}"></p>
-                            <!--                            <div th:if="${dni != null}" th:text="${dni}" class="text-danger"></div>-->
                             <div class="text-danger" th:if="${#fields.hasErrors('dni')}" th:errors="*{dni}"></div>
                             <input class="form-control" placeholder="DNI" type="text" th:field="*{dni}">
 
@@ -181,20 +180,18 @@
                         <div class="form-group">
                             <label>Sexo</label>
                             <div class="text-danger" th:if="${#fields.hasErrors('sexo')}" th:errors="*{sexo}"></div>
+                            <div th:if="${sexoValido != null}" th:text="${sexoValido}" class="text-danger"></div>
                             <select class="form-select" placeholder="Sexo" type="text" th:field="*{sexo}" style="width: 100%;">
                                 <option value="Masculino" text="Masculino">Masculino</option>
                                 <option value="Femenino" text="Femenino">Femenino</option>
                             </select>
                         </div>
 
-                        <!--div class="form-group">
-                            <label >Confirmar Contraseña:</label>
-                            <input type="password" class="form-control" name="password2">
-                        </div-->
                         <div class="form-group">
                             <label>Contraseña</label>
-                            <div style="color: white;">Debe de tener como minimo 8 caracteres incluyendo como minimo 1 digito y 1 caracter especial</div>
+                            <div style="color: white;">Debe de tener como minimo 8 caracteres incluyendo como minimo mayusculas, minusculas, 1 digito y 1 caracter especial </div>
                             <div th:if="${contras != null}" th:text="${contras}" class="text-danger"></div>
+                            <div th:if="${contras2 != null}" th:text="${contras2}" class="text-danger"></div>
                             <div class="text-danger" th:if="${#fields.hasErrors('contraseniaHash')}" th:errors="*{contraseniaHash}"></div>
                             <input class="form-control" placeholder="Contraseña" type="password" th:field="*{contraseniaHash}">
                         </div>
@@ -203,7 +200,7 @@
                             <input class="form-control" placeholder="Confirmar contraseña" type="password" id="password2" name="password2">
                         </div>
 
-                        <button type="submit" class="btn btn-warning">Aceptar</button>
+                        <button type="submit" class="btn btn-warning">Agregar usuario</button>
                         <a th:href="@{'/admin/gestionCuentas'}" class="btn btn-light">Cancelar</a>
 
                     </form>
@@ -220,15 +217,11 @@
     </div>
 </fooetr>
 
-<!-- end blog -->
-
-<!-- footer -->
-
-<!-- end footer -->
 
 </div>
 </div>
 <div class="overlay"></div>
+
 <!-- Javascript files-->
 <script th:src="@{/js/jquery.min.js}" ></script>
 <script th:src="@{/js/popper.min.js}" ></script>
@@ -236,7 +229,6 @@
 <script th:src="@{/js/owl.carousel.min.js}" ></script>
 <script th:src="@{/js/custom.js}" ></script>
 <script th:src="@{/js/jquery.mCustomScrollbar.concat.min.js}" ></script>
-
 <script th:src="@{/js/jquery-3.0.0.min.js}" ></script>
 <script type="text/javascript">
     $(document).ready(function() {
@@ -258,39 +250,6 @@
     });
 </script>
 
-<style>
-    #owl-demo .item{
-        margin: 3px;
-    }
-    #owl-demo .item img{
-        display: block;
-        width: 100%;
-        height: auto;
-    }
-</style>
-
-
-<script>
-    $(document).ready(function() {
-        var owl = $('.owl-carousel');
-        owl.owlCarousel({
-            margin: 10,
-            nav: true,
-            loop: true,
-            responsive: {
-                0: {
-                    items: 1
-                },
-                600: {
-                    items: 2
-                },
-                1000: {
-                    items: 5
-                }
-            }
-        })
-    })
-</script>
 
 </body>
 

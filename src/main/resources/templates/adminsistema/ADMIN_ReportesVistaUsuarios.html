@@ -124,7 +124,7 @@
                                     <td th:text="${usuario.nombre + ' ' + usuario.apellidos }"></td>
                                     <td th:text="${usuario.rol}"></td>
                                     <td th:text="${usuario.email}"></td>
-                                    <td th:text="${usuario.ultimafechaingreso}"></td>
+                                    <td th:if="${usuario.ultimafechaingreso!=null}" th:text="${usuario.ultimafechaingreso.toString().replace('T',' ')}"></td>
                                 </tr>
                                 </tbody>
                             </table>

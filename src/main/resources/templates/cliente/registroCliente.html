@@ -115,35 +115,35 @@
                                 <div class="text-danger" th:if="${#fields.globalErrors()}" ></div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <label>Correo</label>
-                                    <input class="form-control" placeholder="Correo" type="text" th:field="*{email}">
                                     <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
                                     <div th:if="${errorcorreo != null}" th:text="${errorcorreo}" class="text-danger"></div>
+                                    <input class="form-control" placeholder="Correo" type="text" th:field="*{email}">
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <label>Nombres</label>
-                                    <input class="form-control" placeholder="Nombres" type="text" th:field="*{nombre}">
                                     <div class="text-danger" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
+                                    <input class="form-control" placeholder="Nombres" type="text" th:field="*{nombre}">
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <label>Apellidos</label>
-                                    <input class="form-control" placeholder="Apellidos" type="text" th:field="*{apellidos}">
                                     <div class="text-danger" th:if="${#fields.hasErrors('apellidos')}" th:errors="*{apellidos}"></div>
+                                    <input class="form-control" placeholder="Apellidos" type="text" th:field="*{apellidos}">
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <label>DNI</label>
-                                    <input class="form-control" placeholder="DNI" type="text" th:field="*{dni}">
-                                    <div class="text-danger" th:if="${#fields.hasErrors('dni')}" th:errors="*{dni}"></div>
                                     <div th:if="${errordni != null}" th:text="${errordni}" class="text-danger"></div>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('dni')}" th:errors="*{dni}"></div>
+                                    <input class="form-control" placeholder="DNI" type="text" th:field="*{dni}">
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <label>Celular</label>
-                                    <input class="form-control" placeholder="Celular" type="number" th:field="*{telefono}">
                                     <div class="text-danger" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}"></div>
+                                    <input class="form-control" placeholder="Celular" type="number" th:field="*{telefono}">
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <label>Fecha de Nacimiento</label>
-                                    <input placeholder="Fecha de nacimiento"  type="date" class="form-control" th:field="*{fechaNacimiento}">
                                     <div class="text-danger" th:if="${#fields.hasErrors('fechaNacimiento')}" th:errors="*{fechaNacimiento}"></div>
+                                    <input placeholder="Fecha de nacimiento"  type="date" class="form-control" th:field="*{fechaNacimiento}">
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <label>Sexo</label>
@@ -173,9 +173,9 @@
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <label>Contraseña</label>
                                     <div style="color: white;">Debe de tener como minimo 8 caracteres incluyendo como minimo 1 digito y 1 caracter especial</div>
-                                    <input class="form-control" placeholder="Contraseña" type="password" th:field="*{contraseniaHash}">
-                                    <div th:if="${errorpatroncontra != null}" th:text="${errorpatroncontra}" class="text-danger"></div>
                                     <div class="text-danger" th:if="${#fields.hasErrors('contraseniaHash')}" th:errors="*{contraseniaHash}"></div>
+                                    <div th:if="${errorpatroncontra != null}" th:text="${errorpatroncontra}" class="text-danger"></div>
+                                    <input class="form-control" placeholder="Contraseña" type="password" th:field="*{contraseniaHash}">
                                 </div>
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                     <label>Confirmar contraseña</label>

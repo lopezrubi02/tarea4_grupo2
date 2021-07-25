@@ -11,9 +11,7 @@
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
     <!-- site metas -->
     <title>Spicyo</title>
-    <meta name="keywords" content="">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="author" content="gareca">
     <!-- bootstrap css -->
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
     <!-- owl css -->
@@ -36,15 +34,12 @@
 </head>
 
 <!-- body -->
-
 <body class="main-layout">
     <!-- loader  -->
     <div class="loader_bg">
         <div class="loader"><img th:src="@{images/loading.gif}" alt="" /></div>
     </div>
-
     <div class="wrapper">
-    <!-- end loader -->
 
      <div class="sidebar">
             <!-- Sidebar  -->
@@ -85,13 +80,10 @@
                     <div class="full">
                         <div class="right_header_info">
                             <ul>
-
                                 <li class="dinone"><a th:href="@{usuariosActuales}">Usuarios Actuales</a></li>
                                 <li class="dinone"><a th:href="@{gestionCuentas}">Gestión de nuevas cuentas</a></li>
                                 <li class="dinone"><a th:href="@{reportes}">Reportes</a></li>
 
-                                
-                                <!-- TODO -->
                                 <li class="button_user">
                                     <a class="button active" th:href="@{/admin/miCuenta}">Mi cuenta</a>
 
@@ -135,8 +127,7 @@
             </div>
         </div>
     </header>
-    <!-- end header -->
-    
+
     <!-- blog -->
     <div class="blog">
         <div class="container">
@@ -188,7 +179,6 @@
                             <input type="date" class="form-control" th:field="*{fechaNacimiento}">
                         </div>
 
-
                         <div class="form-group">
                             <label>Sexo</label>
                             <p class="text-danger" th:if="${#fields.hasErrors('sexo')}" th:errors="*{sexo}"></p>
@@ -197,7 +187,6 @@
                                 <option th:value="Femenino" th:text="F"></option>
                             </select>
                         </div>
-
 
                         <a th:if="${usuario.getIdusuarios() != 1}"  th:href="@{'/admin/delete' + '?id=' + ${usuario.getIdusuarios()}}" class="btn btn-danger">Eliminar</a>
                         <button type="submit" class="btn btn-warning">Guardar cambios</button>
@@ -209,7 +198,6 @@
         </div>
     </div>
     </div>
-    <!-- end blog -->
 
 
         <!-- footer -->
@@ -262,7 +250,6 @@
         }
 
     </script>
-
     <style>
         #owl-demo .item{
             margin: 3px;
@@ -273,29 +260,6 @@
             height: auto;
         }
     </style>
-
-
-    <script>
-        $(document).ready(function() {
-            var owl = $('.owl-carousel');
-            owl.owlCarousel({
-                margin: 10,
-                nav: true,
-                loop: true,
-                responsive: {
-                    0: {
-                        items: 1
-                    },
-                    600: {
-                        items: 2
-                    },
-                    1000: {
-                        items: 5
-                    }
-                }
-            })
-        })
-    </script>
 
 </body>
 

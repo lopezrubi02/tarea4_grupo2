@@ -15,4 +15,6 @@ public interface TarjetasOnlineRepository extends JpaRepository<TarjetasOnline,I
     //para verificar si se ingresa una tarjeta repetida y no volver a guardar en la db
     List<TarjetasOnline> findAllByNumerotarjetaAndClienteEquals(String numero, Usuario cliente);
 
+    List<TarjetasOnline> findAllByIdtarjetasonlineAndClienteEquals(int idtarjeta, Usuario cliente);
+
 }
