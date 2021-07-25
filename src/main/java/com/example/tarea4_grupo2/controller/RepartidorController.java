@@ -733,7 +733,7 @@ public class RepartidorController {
                     attributes.addFlashAttribute("msgR", msgR);
                     return "redirect:/repartidor/miperfil";
                 } else {
-                    model.addAttribute("msg", "Contraseñas no son iguales");
+                    model.addAttribute("errorpatroncontra", "Contraseñas no son iguales");
                     Usuario usuario2 = optional.get();
                     model.addAttribute("usuario", usuario2);
 
@@ -862,6 +862,48 @@ public class RepartidorController {
         return pattern .matcher(placa).matches();
     }
 
+    @GetMapping("/repartidor/editardireccion")
+    public String agregardireccion(Model model,HttpSession session) {
+
+
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int id = sessionUser.getIdusuarios();
+
+
+        Optional<Usuario> optional = usuarioRepository.findById(id);
+
+        if (optional.isPresent()) {
+            Usuario usuario = optional.get();
+            model.addAttribute("usuario", usuario);
+
+        }
+
+        List<Distritos> listadistritos = distritosRepository.findAll();
+        model.addAttribute("listadistritos",listadistritos);
+        String direction=null;
+        model.addAttribute("direction",direction);
+        System.out.println(direction);
+        return "repartidor/editardireccion";
+    }
+
+    @PostMapping("/repartidor/guardarnuevadireccion")
+    public String guardarnuevadireccion(@RequestParam("direccion_real") String direccion,
+                                        @RequestParam("iddistrito") int iddistrito,
+                                        HttpSession session,RedirectAttributes attributes) {
+
+        Usuario user=(Usuario) session.getAttribute("usuarioLogueado");
+        Direcciones direccion_user = direccionesRepository.findByUsuario(user);
+        String dir = direccion.split(",")[0].trim();
+        direccion_user.setDireccion(dir);
+        System.out.println(iddistrito);
+        direccion_user.setDistrito(distritosRepository.findById(iddistrito).get());
+        direccionesRepository.save(direccion_user);
+        String msgR="La dirección fue actualizada exitosamente";
+        attributes.addFlashAttribute("msgR",msgR);
+        return "redirect:/repartidor/miperfil";
+    }
+
+
     @PostMapping("/save3")
     public String guardarRepartidor3(@ModelAttribute("usuario") @Valid Usuario usuario,
                                      BindingResult bindingResult,
@@ -880,9 +922,10 @@ public class RepartidorController {
             movilidad2=null;
         }
 
+        String msgS=null;
         if((usuario.getSexo().equalsIgnoreCase("femenino")||
                 usuario.getSexo().equalsIgnoreCase("masculino"))){
-            usuario.setSexo("Masculino");
+            msgS="Seleccione una opción válida";
         }
 
         boolean correoExis = false;
@@ -936,7 +979,10 @@ public class RepartidorController {
             licenciaVal = "La licencia no es válida";
         }
 
-        if (bindingResult.hasErrors() || correoExis || !dniexiste || !correovalido || !placaValida || !licenciaValida || !movilidadselec) {
+        if (bindingResult.hasErrors() || correoExis || !dniexiste || !correovalido
+                || !placaValida || !licenciaValida || !movilidadselec ||
+                !(usuario.getSexo().equalsIgnoreCase("femenino")||
+                        usuario.getSexo().equalsIgnoreCase("masculino"))) {
             model.addAttribute("listadistritos", distritosRepository.findAll());
             model.addAttribute("errordni","Ingrese un DNI válido");
             model.addAttribute("correoExis", correoExis);
@@ -945,6 +991,7 @@ public class RepartidorController {
             model.addAttribute("msgC",msgC);
             model.addAttribute("msgc1",msgc1);
             model.addAttribute("msgc2",msgc2);
+            model.addAttribute("msgS",msgS);
             model.addAttribute("direccionVal",direccionVal);
             model.addAttribute("movilidadselec",movilidadselec);
             model.addAttribute("movilidad2",movilidad2);

@@ -173,6 +173,7 @@
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <label class="form-label">Sexo</label>
+                                                <div th:if="${msgcS != null}" th:text="${msgcS}" class="alert alert-danger" role="alert"></div>
                                                 <select type="text" class="form-select" th:field="*{sexo}" style="width: 100%;">
                                                     <option value="Masculino" text="Masculino">Masculino</option>
                                                     <option value="Femenino" text="Femenino">Femenino</option>

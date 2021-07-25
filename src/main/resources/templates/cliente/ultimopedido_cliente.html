@@ -402,13 +402,19 @@
 		var distritorestaurante = document.getElementById("distritorestaurante").value;
 		var distritopedidoentrega = document.getElementById("distritopedidoentrega").value;
 
+		console.log(montototalpedido);
+		console.log(distritorestaurante);
+		console.log(distritopedidoentrega)
+
 		if(distritorestaurante == distritopedidoentrega){
-			let montocostoplatos = montototalpedido - 5;
+			console.log("entra if");
+			let montocostoplatos = montototalpedido - 5.00;
 			$('#montoplatos').text("S/" + montocostoplatos);
 			console.log(montocostoplatos);
 		}else{
-			let montocostoplatos = montototalpedido - 8;
-			$('#montoplatos').innerHTML(montocostoplatos);
+			console.log("entra else");
+			let montocostoplatos = montototalpedido - 8.00;
+			$('#montoplatos').text("S/" + montocostoplatos);
 			console.log(montocostoplatos);
 		}
 
