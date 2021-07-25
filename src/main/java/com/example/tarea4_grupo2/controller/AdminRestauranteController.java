@@ -244,7 +244,6 @@ public class AdminRestauranteController {
         restauranteRepository.deleteById(id);
         user.setCuentaActiva(3);
         usuarioRepository.save(user);
-
         return "redirect:/adminrest/sinrestaurante";
     }
 
