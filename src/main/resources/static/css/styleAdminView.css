@@ -316,9 +316,9 @@ header .container-fluid {
     border: solid #eaeaea 1px;
 }
 .button_user a:hover, .button_user a:focus, .button_user a.active {
-    background: #d8b00f;
+    background: #e3d105;
     color: #fff;
-    border-color: #d8b00f;
+    border-color: #e3d105;
     color: #222;
 }
 #sidebarCollapse {
@@ -639,7 +639,7 @@ header .container-fluid {
 /** end Our Client **/
 /*--------------------------------------------------------------------- footer ---------------------------------------------------------------------*/
 .footer {
-    background: #d8b00f;
+    background: #e3d105;
     padding-top:90px;
     margin-top: 90px;
 }
