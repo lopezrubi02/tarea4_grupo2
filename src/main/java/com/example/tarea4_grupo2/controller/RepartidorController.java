@@ -880,9 +880,10 @@ public class RepartidorController {
             movilidad2=null;
         }
 
+        String msgS=null;
         if((usuario.getSexo().equalsIgnoreCase("femenino")||
                 usuario.getSexo().equalsIgnoreCase("masculino"))){
-            usuario.setSexo("Masculino");
+            msgS="Seleccione una opción válida";
         }
 
         boolean correoExis = false;
@@ -936,7 +937,10 @@ public class RepartidorController {
             licenciaVal = "La licencia no es válida";
         }
 
-        if (bindingResult.hasErrors() || correoExis || !dniexiste || !correovalido || !placaValida || !licenciaValida || !movilidadselec) {
+        if (bindingResult.hasErrors() || correoExis || !dniexiste || !correovalido
+                || !placaValida || !licenciaValida || !movilidadselec ||
+                !(usuario.getSexo().equalsIgnoreCase("femenino")||
+                        usuario.getSexo().equalsIgnoreCase("masculino"))) {
             model.addAttribute("listadistritos", distritosRepository.findAll());
             model.addAttribute("errordni","Ingrese un DNI válido");
             model.addAttribute("correoExis", correoExis);
@@ -945,6 +949,7 @@ public class RepartidorController {
             model.addAttribute("msgC",msgC);
             model.addAttribute("msgc1",msgc1);
             model.addAttribute("msgc2",msgc2);
+            model.addAttribute("msgS",msgS);
             model.addAttribute("direccionVal",direccionVal);
             model.addAttribute("movilidadselec",movilidadselec);
             model.addAttribute("movilidad2",movilidad2);
