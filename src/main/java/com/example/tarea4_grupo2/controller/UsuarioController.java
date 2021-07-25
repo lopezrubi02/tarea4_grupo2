@@ -1169,7 +1169,7 @@ public class UsuarioController {
                             int tam = listapedidoscliente.size();
                             Pedidos ultimopedido = listapedidoscliente.get(tam - 1);
                             int idultimopedido = ultimopedido.getIdpedidos();
-                            PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido, Integer.valueOf(idplato));
+                            PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido, idplato);
                             PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey, pedidos, platoelegido, descripcion, Integer.valueOf(cantidad), cubiertos);
                             pedidos.addpedido(pedidoHasPlato);
                             pedidos.setMontototal("0");
@@ -1199,7 +1199,7 @@ public class UsuarioController {
                             System.out.println(platoelegido.getNombre());
                             Pedidos pedidos = pedidoencurso;
                             int idultimopedido = pedidoencurso.getIdpedidos();
-                            PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido, Integer.valueOf(idplato));
+                            PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido, idplato);
                             PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey, pedidos, platoelegido, descripcion, Integer.valueOf(cantidad), cubiertos);
                             pedidoHasPlatoKey.setPedidosidpedidos(idultimopedido);
                             pedidoHasPlato.setId(pedidoHasPlatoKey);

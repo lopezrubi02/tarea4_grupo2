@@ -82,12 +82,14 @@
                                         </form>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:if="${cupon.idcupones}">
                                             <label for="plato">Plato asociado</label><br>
+                                            <div th:if="${platoInvalido != null}" th:text="${platoInvalido}" class="text-danger"></div>
                                             <select id="platonombre" class="form-select" style="margin-bottom:20px;width: 100%;height: 50px;border: #fff solid 2px;box-shadow: 0 0 0 .2rem rgba(255, 255, 255, .25);" th:field="*{plato}">
                                                 <option th:each="plato: ${listaPlatos}" th:value="${plato.idplato}" th:text="${plato.nombre}"></option>
                                             </select>
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" th:unless="${cupon.idcupones}">
                                             <label for="plato">Plato asociado</label><br>
+                                            <div th:if="${platoInvalido != null}" th:text="${platoInvalido}" class="text-danger"></div>
                                             <select id="platonombre" class="form-select" style="margin-bottom:20px;width: 100%;height: 50px;border: #fff solid 2px;box-shadow: 0 0 0 .2rem rgba(255, 255, 255, .25);" th:field="*{plato}">
                                                 <option th:each="plato: ${listaPlatos}" th:value="${plato.idplato}" th:text="${plato.nombre}"
                                                         th:selected="${plato.idplato == cupon.plato}"></option>
