@@ -217,8 +217,23 @@ public class LoginController {
     }
 
     @GetMapping(value = {"","/login"})
-    public String loginForm(){
-        return "login/login";
+    public String loginForm(HttpSession session,Authentication auth){
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        if(sessionUser != null){
+            System.out.println("sesion iniciada");
+            String nombreocorreo = auth.getName();
+            System.out.println(nombreocorreo);
+            boolean escorreo = isValid(nombreocorreo);
+            if(!escorreo){
+                System.out.println("inicio con google");
+                return "redirect:/redirectByRol";
+            }else{
+                System.out.println("inicio con db");
+                return "redirect:/redirectByRolDB";
+            }
+        }else{
+            return "login/login";
+        }
     }
 
     @GetMapping("/redirectByRolDB")
