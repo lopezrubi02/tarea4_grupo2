@@ -387,7 +387,7 @@ public class RepartidorController {
 
 
     public ByteArrayInputStream exportAllData1(int id) throws IOException {
-        String[] columns1 = { "# PEDIDO", "RESTAURANTE", "DISTRITO DEL RESTAURANTE", "DISTRITO DE DESTINO", "S/. COMISIÓN", "CALIFICACION"};
+        String[] columns1 = { "#", "RESTAURANTE", "DISTRITO DEL RESTAURANTE", "DESTINO", "S/. COMISIÓN", "CALIFICACION"};
         String[] columns2 = { "MES", "AÑO", "COMISIÓN MENSUAL" };
 
         Workbook workbook = new HSSFWorkbook();
