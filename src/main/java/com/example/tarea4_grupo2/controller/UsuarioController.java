@@ -1020,6 +1020,7 @@ public class UsuarioController {
             int idplatopedir = Integer.parseInt(idplato);
             int idrestaurante = Integer.parseInt(idrest);
             int direccionxenviar = Integer.parseInt(direccion);
+            // TODO validar plato activo en 1 y disponibilidad en 1, caso contrario redirigir a vista restaurantexpedir
             Optional<Plato> platoopt = platoRepository.findById(idplatopedir);
             Optional<Restaurante> restopt = restauranteRepository.findById(idrestaurante);
             Optional<Direcciones> diropt = Optional.ofNullable(direccionesRepository.findDireccionesByIddireccionesAndUsuario_Idusuarios(direccionxenviar, idusuarioactual));
@@ -1138,7 +1139,7 @@ public class UsuarioController {
     try {
         if (platoopt.isPresent() && restauranteopt.isPresent() && diropt.isPresent()) {
             Plato platoelegido = platoopt.get();
-
+            // TODO validar plato activo en 1 y disponibilidad en 1, caso contrario redirigir a vista restaurantexpedir
             Pedidos pedidoencurso = pedidosRepository.pedidoencursoxrestaurante(idcliente, Integer.parseInt(idrestaurante));
             int cubiertos = Integer.parseInt(cubiertosxpenviar);
 
@@ -1231,6 +1232,19 @@ public class UsuarioController {
         }else{
             model.addAttribute("lista",1);
             for (Pedidos pedidoencurso : listapedidospendientes){
+                // TODO validar plato activo en 1 y disponibilidad en 1, caso contrario borrar ese plato de la db
+                /*
+                boolean carritoactualizado = false;
+                    for (PedidoHasPlato php : platosxpedido){
+                        if(php.getPlato().getActivo() == 0){
+                            //borrar ese plato del pedido
+                            carritoactualizado = true;
+                        }
+                    }
+                    if(carritoactualizado){
+                        attr.addFlashAttribute("carritoact","Tu carrito se ha actualizado");
+                    }
+                 */
                 List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
                 System.out.println(pedidoencurso.getIdpedidos());
                 System.out.println(pedidoencurso.getDireccionentrega().getIddirecciones());
