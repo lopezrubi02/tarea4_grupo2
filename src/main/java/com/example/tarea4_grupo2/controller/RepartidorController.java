@@ -238,6 +238,8 @@ public class RepartidorController {
         if (pedidoElegido.isPresent()) {
             Pedidos pedido = pedidoElegido.get();
             pedido.setEstadorepartidor("recogido"); //Estado de esperando ser entregado al cliente
+            pedido.setEstadorestaurante("entregado");
+
             model.addAttribute("pedido", pedido);
 
             Usuario usuario = usuarioRepository.findUsuarioById(pedido.getIdcliente());
