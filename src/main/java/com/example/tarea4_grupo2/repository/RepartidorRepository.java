@@ -57,6 +57,7 @@ public interface RepartidorRepository  extends JpaRepository<Repartidor, Integer
     List<RepartidorComisionMensualDTO> obtenerComisionPorMes(int id);
 
     //Listo
+    /*
     @Query(value = "select p.idpedidos ,r.nombre as restaurante, d2.nombredistrito as distritorestaurante,d.direccion as direccioncliente, p.comisionrepartidor as comision, p.montototal as monto\n" +
             "from pedidos p\n" +
             "    inner join  restaurante r on (p.restauranteIdrestaurante = r.idrestaurante)\n" +
@@ -64,7 +65,15 @@ public interface RepartidorRepository  extends JpaRepository<Repartidor, Integer
             "    inner join distritos d2 on (d.iddistrito = d2.iddistritos)\n" +
             "where p.estadorepartidor like concat('pendient', '%')", nativeQuery = true)
     List<PedidosDisponiblesDTO> findListaPedidosDisponibles();
+    */
 
+    @Query(value = "select p.idpedidos ,r.nombre as restaurante, d2.nombredistrito as distritorestaurante,d.direccion as direccioncliente, p.comisionrepartidor as comision, p.montototal as monto\n" +
+            "from pedidos p\n" +
+            "    inner join  restaurante r on (p.restauranteIdrestaurante = r.idrestaurante)\n" +
+            "    inner join direcciones d on (p.direccionentrega = d.iddirecciones)\n" +
+            "    inner join distritos d2 on (d.iddistrito = d2.iddistritos)\n" +
+            "where p.estadorepartidor like concat('pendient', '%') and d2.nombredistrito like ?1", nativeQuery = true)
+    List<PedidosDisponiblesDTO> findListaPedidosDisponibles(String distritoRepartidor);
 
     //Usado por Adminsistema en reportes de repartidores
 
