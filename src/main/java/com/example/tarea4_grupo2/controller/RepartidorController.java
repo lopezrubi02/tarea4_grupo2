@@ -100,7 +100,9 @@ public class RepartidorController {
         Optional<Usuario> usuarioopt = usuarioRepository.findById(sessionUser.getIdusuarios());
         if (usuarioopt.isPresent()) {
             if (rep.isDisponibilidad()) {
-                List<PedidosDisponiblesDTO> listaPedidos = repartidorRepository.findListaPedidosDisponibles();
+                String distritoRepartidor = rep.getDistritos().getNombredistrito();
+                //List<PedidosDisponiblesDTO> listaPedidos = repartidorRepository.findListaPedidosDisponibles();
+                List<PedidosDisponiblesDTO> listaPedidos = repartidorRepository.findListaPedidosDisponibles(distritoRepartidor);
 
                 if (listaPedidos.isEmpty()) {
                     attr.addFlashAttribute("msg", "No hay pedidos disponibles para mostrar.");
