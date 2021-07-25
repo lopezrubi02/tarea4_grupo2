@@ -630,8 +630,19 @@ public class RepartidorController {
                     return "repartidor/repartidor_perfil";
                 }
             } else {
-                model.addAttribute("errorpatroncontra", "Las contraseñas no son iguales");
-                model.addAttribute("usuario", user2);
+                if(!password2.isEmpty()){
+                    model.addAttribute("errorpatroncontra", "Las contraseñas no son iguales");
+                }
+                //Usuario usuario2 = optional.get();
+                model.addAttribute("usuario", usuario2);
+                Repartidor repartidor2 = repartidorRepository.findRepartidorByIdusuariosEquals(id);
+                model.addAttribute("repartidor", repartidor2);
+                Direcciones direcciones2 = direccionesRepository.findByUsuario(usuario2);
+                model.addAttribute("direcciones", direcciones2);
+
+                Distritos distritoUsuario = direcciones2.getDistrito();
+                model.addAttribute("distritoUsuario", distritoUsuario);
+                model.addAttribute("listadistritos", distritosRepository.findAll());
 
                 return "repartidor/repartidor_perfil";
             }

@@ -90,7 +90,9 @@
                     <div class="col-md-8" style="margin-bottom: 0px;">
                         <div class="form-floating" style=" border-style: groove;margin-bottom: 0px">
                             <input name="searchField" class="form-control" id="floatingInputGrid" type="text" placeholder="Buscar por nombre, apellidos o DNI"/>
-                            <label for="floatingInputGrid">Buscar por nombre, apellido o DNI</label>
+                            <!--label for="floatingInputGrid">Buscar por nombre, apellido o DNI</label-->
+                            <label th:if="${busqueda == ''}" for="floatingInputGrid">Buscar por nombre, apellido o DNI</label>
+                            <label th:if="${busqueda != ''}" for="floatingInputGrid" th:text="${'Busqueda actual: '+ busqueda}"></label>
                         </div>
                     </div>
                     <button class="btn btn-dark" type="submit" >Buscar</button>
