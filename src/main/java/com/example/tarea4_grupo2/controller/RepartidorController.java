@@ -640,18 +640,31 @@ public class RepartidorController {
                     usuarioRepository.save(user);
                     String msgR = "El perfil fue editado exitosamente";
                     attributes.addFlashAttribute("msgR", msgR);
+                    model.addAttribute("usuario", user2);
                     return "redirect:/repartidor/miperfil";
+                }else{
+
                 }
                 String fileName = file.getOriginalFilename();
-                if (fileName.contains("..")) {
-                    model.addAttribute("msg", "No se permiten '..' en el archivo");
+                String msg=null;
+                if (fileName.contains("..") || !(fileName.contains(".jpg") || fileName.contains(".png"))){
+                    msg="El formato del archivo debe ser .jpg o .png";
+                    model.addAttribute("msg", msg);
+                    Usuario usuario2 = optional.get();
+                    model.addAttribute("usuario", usuario2);
+
+                    Repartidor repartidor2 = repartidorRepository.findRepartidorByIdusuariosEquals(id);
+                    model.addAttribute("repartidor", repartidor2);
+                    Direcciones direcciones2 = direccionesRepository.findByUsuario(usuario2);
+                    model.addAttribute("direcciones", direcciones2);
+
+                    Distritos distritoUsuario = direcciones2.getDistrito();
+                    model.addAttribute("distritoUsuario", distritoUsuario);
+                    model.addAttribute("listadistritos", distritosRepository.findAll());
                     return "repartidor/repartidor_perfil";
                 }
 
-                if (!fileName.contains(".jpg") || !fileName.contains(".png")) {
-                    model.addAttribute("msg", "Solo se permiten formatos jpg y png en las fotos");
-                    return "repartidor/repartidor_perfil";
-                }
+
                 try {
                     Repartidor repartidor = repartidorRepository.findRepartidorByIdusuariosEquals(usuario.getIdusuarios());
                     repartidor.setFoto(file.getBytes());
@@ -680,8 +693,20 @@ public class RepartidorController {
                         return "redirect:/repartidor/miperfil";
                     }
                     String fileName = file.getOriginalFilename();
-                    if (fileName.contains("..")) {
-                        model.addAttribute("msg", "No se permiten '..' en el archivo");
+                    if (fileName.contains("..") || !(fileName.contains(".jpg") || fileName.contains(".png"))) {
+                        model.addAttribute("msg", "El formato del archivo debe ser .jpg o .png");
+                        Usuario usuario2 = optional.get();
+                        model.addAttribute("usuario", usuario2);
+
+                        Repartidor repartidor2 = repartidorRepository.findRepartidorByIdusuariosEquals(id);
+                        model.addAttribute("repartidor", repartidor2);
+                        Direcciones direcciones2 = direccionesRepository.findByUsuario(usuario2);
+                        model.addAttribute("direcciones", direcciones2);
+
+                        Distritos distritoUsuario = direcciones2.getDistrito();
+                        model.addAttribute("distritoUsuario", distritoUsuario);
+                        model.addAttribute("listadistritos", distritosRepository.findAll());
+
                         return "repartidor/repartidor_perfil";
                     }
                     try {
