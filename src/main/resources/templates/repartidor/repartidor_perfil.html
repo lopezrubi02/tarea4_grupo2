@@ -114,14 +114,15 @@
                                                     </div>
                                                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                         <label>Contraseña</label>
+                                                        <div th:if="${errorpatroncontra != null}" th:text="${errorpatroncontra}" class="text-danger"></div>
+                                                        <div th:if="${msgc1 != null}" th:text="${msgc1}" class="text-danger"></div>
                                                         <input placeholder="Passsword" class="form-control" type="password" th:value="*{contraseniaHash}"
                                                                name="contraseniaHash">
-                                                        <div th:if="${msgc1 != null}" th:text="${msgc1}" class="text-danger"></div>
                                                     </div>
                                                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                         <label>Confirmar contraseña</label>
-                                                        <input placeholder="Passsword" class="form-control" type="password" name="password2">
                                                         <div th:if="${msgc2 != null}" th:text="${msgc2}" class="text-danger"></div>
+                                                        <input placeholder="Passsword" class="form-control" type="password" name="password2">
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-md-3">
