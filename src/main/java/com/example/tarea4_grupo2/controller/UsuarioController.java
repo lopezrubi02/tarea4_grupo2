@@ -1020,7 +1020,7 @@ public class UsuarioController {
             int idplatopedir = Integer.parseInt(idplato);
             int idrestaurante = Integer.parseInt(idrest);
             int direccionxenviar = Integer.parseInt(direccion);
-            Optional<Plato> platoopt = platoRepository.findById(idplatopedir);
+            Optional<Plato> platoopt = platoRepository.findById(String.valueOf(idplatopedir));
             Optional<Restaurante> restopt = restauranteRepository.findById(idrestaurante);
             Optional<Direcciones> diropt = Optional.ofNullable(direccionesRepository.findDireccionesByIddireccionesAndUsuario_Idusuarios(direccionxenviar, idusuarioactual));
 
@@ -1132,7 +1132,7 @@ public class UsuarioController {
         int idcliente=sessionUser.getIdusuarios();
 
     Optional<Restaurante> restauranteopt = restauranteRepository.findById(Integer.valueOf(idrestaurante));
-    Optional<Plato> platoopt = platoRepository.findById(Integer.valueOf(idplato));
+    Optional<Plato> platoopt = platoRepository.findById(idplato);
     Optional<Direcciones> diropt = direccionesRepository.findById(Integer.valueOf(direccionxenviar));
 
     try {
@@ -1256,7 +1256,7 @@ public class UsuarioController {
         try{
             int idplatoint = Integer.parseInt(idplato);
 
-            Optional<Plato> platoopt = platoRepository.findById(idplatoint);
+            Optional<Plato> platoopt = platoRepository.findById(String.valueOf(idplatoint));
             if(platoopt.isPresent()){
 
                 List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idusuario);

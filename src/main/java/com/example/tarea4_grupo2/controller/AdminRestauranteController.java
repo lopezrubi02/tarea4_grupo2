@@ -580,7 +580,7 @@ public class AdminRestauranteController {
                         }catch(IOException e) {
                                 System.out.println("ARCHIVO NO COMPATIBLE");
                                 e.printStackTrace();
-                                platoRepository.deleteById(Integer.parseInt(plato1.getIdplato()));
+                                platoRepository.deleteById(plato1.getIdplato());
                                 model.addAttribute("plato",plato);
                                 model.addAttribute("iddelrestaurante", idrestaurante);
                                 model.addAttribute("msgFotoInvalida", "La foto no contiene el formato adecuado. Elija otra imagen.");
@@ -791,18 +791,23 @@ public class AdminRestauranteController {
     }
 
     @GetMapping("/editarCupon")
-    public String editarCupon(@ModelAttribute("cupon") Cupones cupon, @RequestParam("idcupon") int id, Model model){
-        Optional<Cupones> optCupon = cuponesRepository.findById(id);
-        if(optCupon.isPresent()){
-            cupon = optCupon.get();
-            Restaurante restaurante = cupon.getRestaurante();
-            int idrestaurante = restaurante.getIdrestaurante();
-            model.addAttribute("cupon",cupon);
-            List<Plato> listaPlatos = platoRepository.buscarPlatosPorIdRestaurante(idrestaurante);
-            model.addAttribute("index",0);
-            model.addAttribute("listaPlatos",listaPlatos);
-            return "AdminRestaurantes/generarCupon";
-        }else{
+    public String editarCupon(@ModelAttribute("cupon") Cupones cupon, @RequestParam("idcupon") String id, Model model, RedirectAttributes attr){
+        try{
+            Optional<Cupones> optCupon = cuponesRepository.findById(Integer.parseInt(id));
+            if(optCupon.isPresent()){
+                cupon = optCupon.get();
+                Restaurante restaurante = cupon.getRestaurante();
+                int idrestaurante = restaurante.getIdrestaurante();
+                model.addAttribute("cupon",cupon);
+                List<Plato> listaPlatos = platoRepository.buscarPlatosPorIdRestaurante(idrestaurante);
+                model.addAttribute("index",0);
+                model.addAttribute("listaPlatos",listaPlatos);
+                return "AdminRestaurantes/generarCupon";
+            }else{
+                return "redirect:/adminrest/cupones";
+            }
+        }catch(NumberFormatException e){
+            attr.addFlashAttribute("cuponInvalido","Este cupon no existe");
             return "redirect:/adminrest/cupones";
         }
     }
