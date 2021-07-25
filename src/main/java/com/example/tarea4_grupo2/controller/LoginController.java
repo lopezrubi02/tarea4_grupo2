@@ -113,8 +113,8 @@ public class LoginController {
 
                                 /* Envio de correo de confirmacion */
                                 String subject = "Creacion de cuenta";
-                                String aws = "ec2-user@ec2-3-84-20-210.compute-1.amazonaws.com";
-                                String direccionurl = "http://" + aws + ":8081/login";
+                                String aws = "http://g-spicyo.publicvm.com";
+                                String direccionurl = "http://" + aws + ":8080/login";
                                 String mensaje = "¡Hola! Tu cuenta de administrador de restaurante ha sido creada exitosamente. Registra tu restaurante!<br><br>" +
                                         "Ahora es parte de Spicyo. Para ingresar a su cuenta haga click: <a href='" + direccionurl + "'>AQUÍ</a> <br><br>Atte. Equipo de Spicy :D</b>";
                                 String correoDestino = usuario.getEmail();
@@ -378,8 +378,8 @@ public class LoginController {
                 // no cambien esto
                 //String direccion = "http://localhost:8090/cambiar1/";
                 //Pegar aquí los datos del AWS;
-                String aws = "ec2-user@ec2-3-84-20-210.compute-1.amazonaws.com";
-                String direccion = "http://" + aws + ":8081/cambiar1/";
+                String aws = "http://g-spicyo.publicvm.com";
+                String direccion = "http://" + aws + ":8080/cambiar1/";
                 URL url = new URL(direccion + token);
                 mensaje = "¡Hola!<br><br>Para reestablecer su contraseña haga click: <a href='" + direccion + token + "'>AQUÍ</a> <br><br>Atte. Equipo de Spicy :D</b>";
                 attr.addFlashAttribute("msg", "¡Revisa tu correo para continuar el proceso! :D");

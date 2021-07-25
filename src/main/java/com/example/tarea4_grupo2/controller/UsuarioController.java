@@ -249,8 +249,8 @@ public class UsuarioController {
 
                             /* Envio de correo de confirmacion */
                             String subject = "Cuenta creada en Spicyo";
-                            String aws = "ec2-user@ec2-3-84-20-210.compute-1.amazonaws.com";
-                            String direccionurl = "http://" + aws + ":8081/login";
+                            String aws = "http://g-spicyo.publicvm.com";
+                            String direccionurl = "http://" + aws + ":8080/login";
                             String mensaje = "¡Hola!<br><br>" +
                                     "Ahora es parte de Spicyo. Para ingresar a su cuenta haga click: <a href='" + direccionurl + "'>AQUÍ</a> <br><br>Atte. Equipo de Spicy :D</b>";
                             String correoDestino = usuario.getEmail();
