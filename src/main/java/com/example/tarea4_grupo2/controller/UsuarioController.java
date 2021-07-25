@@ -69,9 +69,6 @@ public class UsuarioController {
     @GetMapping(value={"/cliente/paginaprincipal","/cliente/","/cliente"})
     public String paginaprincipal(HttpSession session, Model model) {
 
-        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-        int idusuario=sessionUser.getIdusuarios();
-
         return "cliente/paginaPrincipal";
     }
 
@@ -252,8 +249,8 @@ public class UsuarioController {
 
                             /* Envio de correo de confirmacion */
                             String subject = "Cuenta creada en Spicyo";
-                            String aws = "ec2-user@ec2-3-84-20-210.compute-1.amazonaws.com";
-                            String direccionurl = "http://" + aws + ":8081/login";
+                            String aws = "g-spicyo.publicvm.com";
+                            String direccionurl = "http://" + aws + ":8080/login";
                             String mensaje = "¡Hola!<br><br>" +
                                     "Ahora es parte de Spicyo. Para ingresar a su cuenta haga click: <a href='" + direccionurl + "'>AQUÍ</a> <br><br>Atte. Equipo de Spicy :D</b>";
                             String correoDestino = usuario.getEmail();
@@ -886,10 +883,10 @@ public class UsuarioController {
             listarestaurantes = new ArrayList<Restaurante>(set);
             HashSet<Plato> set2 = new HashSet<Plato>(listaplatos);
             listaplatos = new ArrayList<Plato>(set2);
-            if (listaplatos.size() == 0 && listarestaurantes.size() == 0) {
+            if(listaplatos.size() == 0 && listarestaurantes.size() == 0) {
                 System.out.println("NO ENCONTRÓ BUSQUEDA FILTRO POR NOMBRE");
                 model.addAttribute("alertabusqueda", "No hay coincidencia de búsqueda");
-            } else {
+            }else {
                 System.out.println("DEBIÓ ENCONTRAR BUSQUEDA FILTRO POR NOMBRE");
             }
             model.addAttribute("nombrebuscado", buscar);
@@ -1020,7 +1017,8 @@ public class UsuarioController {
             int idplatopedir = Integer.parseInt(idplato);
             int idrestaurante = Integer.parseInt(idrest);
             int direccionxenviar = Integer.parseInt(direccion);
-            Optional<Plato> platoopt = platoRepository.findById(String.valueOf(idplatopedir));
+            // TODO validar plato activo en 1 y disponibilidad en 1, caso contrario redirigir a vista restaurantexpedir
+            Optional<Plato> platoopt = platoRepository.findById(idplatopedir);
             Optional<Restaurante> restopt = restauranteRepository.findById(idrestaurante);
             Optional<Direcciones> diropt = Optional.ofNullable(direccionesRepository.findDireccionesByIddireccionesAndUsuario_Idusuarios(direccionxenviar, idusuarioactual));
 
@@ -1070,13 +1068,13 @@ public class UsuarioController {
                             idrestsel = pedidoencurso.getRestaurantepedido().getIdrestaurante();
                         }
                         Plato platoseleccionado = platoopt.get();
-                        if (idrestsel == idrestaurante && pedidopendiente == null  && platoseleccionado.getActivo() == 1) {
+                        if (idrestsel == idrestaurante && pedidopendiente == null  && platoseleccionado.getActivo() == 1 && platoseleccionado.getDisponibilidad() == 1) {
                             Pedidos pedidoencurso = pedidosRepository.pedidoencursoxrestaurante(idusuarioactual, idrestaurante);
-                            if(pedidoencurso != null){
+                            if (pedidoencurso != null) {
                                 List<PedidoHasPlato> pedidoencurso2 = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
-                                if(!pedidoencurso2.isEmpty()){
-                                    for(PedidoHasPlato pedidoencurso3 : pedidoencurso2){
-                                        if(Integer.parseInt(pedidoencurso3.getPlato().getIdplato()) == idplatopedir){
+                                if (!pedidoencurso2.isEmpty()) {
+                                    for (PedidoHasPlato pedidoencurso3 : pedidoencurso2) {
+                                        if (pedidoencurso3.getPlato().getIdplato() == idplatopedir) {
                                             String comentariohecho = pedidoencurso3.getDescripcion();
                                             int cantpedida = pedidoencurso3.getCantidadplatos();
                                             int cubiertoelegido = pedidoencurso3.isCubiertos();
@@ -1084,9 +1082,9 @@ public class UsuarioController {
                                             System.out.println(comentariohecho);
                                             System.out.println(cantpedida);
                                             System.out.println(cubiertoelegido);
-                                            model.addAttribute("comentariohecho",comentariohecho);
-                                            model.addAttribute("cantpedida",cantpedida);
-                                            model.addAttribute("cubiertoelegido",cubiertoelegido);
+                                            model.addAttribute("comentariohecho", comentariohecho);
+                                            model.addAttribute("cantpedida", cantpedida);
+                                            model.addAttribute("cubiertoelegido", cubiertoelegido);
                                         }
                                     }
                                 }
@@ -1097,9 +1095,17 @@ public class UsuarioController {
                             model.addAttribute("iddireccionxenviar", direccionxenviar);
                             return "cliente/detalles_plato";
                         } else {
-                            String mensajependidopendiente = "No puede realizar otro pedido a otro restaurante que sea diferente al que ya ha seleccionado.";
-                            attr.addFlashAttribute("hayunpedidoencurso", mensajependidopendiente);
-                            return "redirect:/cliente/carritoproductos";
+                                if(platoseleccionado.getActivo() == 0 && platoseleccionado.getDisponibilidad() == 0) {
+                                    return "redirect:/cliente/restaurantexordenar?idrestaurante=" + idrestaurante + "&direccion=" + direccionxenviar;
+                                }
+                                else{
+                                    if(idrestsel != idrestaurante && pedidopendiente != null){
+                                        String mensajependidopendiente = "No puede realizar otro pedido a otro restaurante que sea diferente al que ya ha seleccionado.";
+                                        attr.addFlashAttribute("hayunpedidoencurso", mensajependidopendiente);
+
+                                    }
+                                    return "redirect:/cliente/restaurantexordenar?idrestaurante=" + idrestaurante + "&direccion=" + direccionxenviar;
+                                }
                         }
                     } else {
                         Plato platoseleccionado = platoopt.get();
@@ -1132,13 +1138,13 @@ public class UsuarioController {
         int idcliente=sessionUser.getIdusuarios();
 
     Optional<Restaurante> restauranteopt = restauranteRepository.findById(Integer.valueOf(idrestaurante));
-    Optional<Plato> platoopt = platoRepository.findById(idplato);
+    Optional<Plato> platoopt = platoRepository.findById(Integer.valueOf(idplato));
     Optional<Direcciones> diropt = direccionesRepository.findById(Integer.valueOf(direccionxenviar));
 
     try {
         if (platoopt.isPresent() && restauranteopt.isPresent() && diropt.isPresent()) {
             Plato platoelegido = platoopt.get();
-
+            // TODO validar plato activo en 1 y disponibilidad en 1, caso contrario redirigir a vista restaurantexpedir
             Pedidos pedidoencurso = pedidosRepository.pedidoencursoxrestaurante(idcliente, Integer.parseInt(idrestaurante));
             int cubiertos = Integer.parseInt(cubiertosxpenviar);
 
@@ -1219,7 +1225,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/cliente/carritoproductos")
-    public String carritoproductos(Model model, HttpSession session){
+    public String carritoproductos(Model model, HttpSession session, RedirectAttributes redirectAttributes){
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuario = sessionUser.getIdusuarios();
@@ -1231,15 +1237,52 @@ public class UsuarioController {
         }else{
             model.addAttribute("lista",1);
             for (Pedidos pedidoencurso : listapedidospendientes){
+                // TODO validar plato activo en 1 y disponibilidad en 1, caso contrario borrar ese plato de la db
                 List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
+                boolean carritoactualizado = false;
+                for (PedidoHasPlato php : platosxpedido){
+                    System.out.println("TRACER 2 ****************************");
+                    System.out.println(php.getPlato().getActivo());
+                    System.out.println(php.getPlato().getDisponibilidad());
+                    if(php.getPlato().getActivo() == 0 || php.getPlato().getDisponibilidad() == 0){
+                        System.out.println("TRACER 3  *****************");
+                        PedidoHasPlatoKey pedidoHasPlatoKey = php.getId();
+                        System.out.println(pedidoHasPlatoKey.getPedidosidpedidos());
+                        pedidoHasPlatoRepository.deleteById(pedidoHasPlatoKey);//si el pedido solo tiene un plato, como se va a eliminar el plato, se deberia eliminar el pedido
+                        System.out.println("debe borrar plato");
+                        carritoactualizado = true;
+                    }
+                }
+                if(carritoactualizado){
+                    redirectAttributes.addFlashAttribute("carritoact","Tu carrito se ha actualizado");
+                }
                 System.out.println(pedidoencurso.getIdpedidos());
                 System.out.println(pedidoencurso.getDireccionentrega().getIddirecciones());
-                MontoTotal_PedidoHasPlatoDTO montoTotal_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montototal(pedidoencurso.getIdpedidos());
-                model.addAttribute("platosxpedido",platosxpedido);
-                model.addAttribute("pedidoencurso",pedidoencurso);
-                model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
-                System.out.println(LocalDateTime.now());
-                pedidoencurso.setFechahorapedido(LocalDateTime.now());
+                try {
+                    MontoTotal_PedidoHasPlatoDTO montoTotal_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montototal(pedidoencurso.getIdpedidos());
+                    platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
+                    int descuento = pedidoHasPlatoRepository.descuento(pedidoencurso.getIdpedidos());
+                    int preciodescuento =  montoTotal_pedidoHasPlatoDTO.getpreciototal() - descuento;
+                    model.addAttribute("platosxpedido", platosxpedido);
+                    model.addAttribute("pedidoencurso", pedidoencurso);
+                    model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
+                    model.addAttribute("preciodescuento", preciodescuento);
+                    model.addAttribute("descuento", Integer.parseInt(String.valueOf(descuento)));
+                    System.out.println(LocalDateTime.now());
+                    pedidoencurso.setFechahorapedido(LocalDateTime.now());
+                }catch(Exception e){
+                    MontoTotal_PedidoHasPlatoDTO montoTotal_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montototal(pedidoencurso.getIdpedidos());
+                    platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
+                    int descuento = 0;
+                    int preciodescuento = montoTotal_pedidoHasPlatoDTO.getpreciototal() - descuento;
+                    model.addAttribute("platosxpedido", platosxpedido);
+                    model.addAttribute("pedidoencurso", pedidoencurso);
+                    model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
+                    model.addAttribute("preciodescuento", preciodescuento);
+                    model.addAttribute("descuento", Integer.parseInt(String.valueOf(descuento)));
+                    System.out.println(LocalDateTime.now());
+                    pedidoencurso.setFechahorapedido(LocalDateTime.now());
+                }
             }
         }
         return "cliente/carrito_productos";
@@ -1256,7 +1299,7 @@ public class UsuarioController {
         try{
             int idplatoint = Integer.parseInt(idplato);
 
-            Optional<Plato> platoopt = platoRepository.findById(String.valueOf(idplatoint));
+            Optional<Plato> platoopt = platoRepository.findById(idplatoint);
             if(platoopt.isPresent()){
 
                 List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idusuario);
@@ -1271,7 +1314,7 @@ public class UsuarioController {
                         int cantplatosrest = platosxpedido.size();
 
                         for(PedidoHasPlato plato1 : platosxpedido){
-                            int idplatoobtenido = Integer.parseInt(plato1.getPlato().getIdplato());
+                            int idplatoobtenido = plato1.getPlato().getIdplato();
                             if(idplatoobtenido == idplatoint){
                                 PedidoHasPlatoKey pedidoHasPlatoKey = plato1.getId();
                                 pedidoHasPlatoRepository.deleteById(pedidoHasPlatoKey);
@@ -1317,7 +1360,7 @@ public class UsuarioController {
 
     @GetMapping("/cliente/checkout")
     public String checkout(Model model, HttpSession session,
-                           @RequestParam(value = "idmetodo",defaultValue = "0") int idmetodo){
+                           @RequestParam(value = "idmetodo",defaultValue = "0") int idmetodo, RedirectAttributes attr){
 
          Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuario=sessionUser.getIdusuarios();
@@ -1336,25 +1379,51 @@ public class UsuarioController {
 
             for (Pedidos pedidoencurso : listapedidospendientes){
                 try {
+
                     List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
+                        // TODO validar plato activo en 1 y disponibilidad en 1, caso contrario borrar ese plato de la db
+                        boolean carritoactualizado = false;
+                        for (PedidoHasPlato php : platosxpedido) {
+                            System.out.println("TRACER 2 ****************************");
+                            System.out.println(php.getPlato().getActivo());
+                            System.out.println(php.getPlato().getDisponibilidad());
+                            if (php.getPlato().getActivo() == 0 || php.getPlato().getDisponibilidad() == 0) {
+                                System.out.println("TRACER 3  *****************");
+                                PedidoHasPlatoKey pedidoHasPlatoKey = php.getId();
+                                System.out.println(pedidoHasPlatoKey.getPedidosidpedidos());
+                                pedidoHasPlatoRepository.deleteById(pedidoHasPlatoKey);//si el pedido solo tiene un plato, como se va a eliminar el plato, se deberia eliminar el pedido
+                                System.out.println("debe borrar plato");
+                                carritoactualizado = true;
+                            }
+                        }
+                        if(carritoactualizado){
+                            attr.addFlashAttribute("carritoact","Tu carrito se ha actualizado");
+                        }
                     MontoTotal_PedidoHasPlatoDTO montoTotal_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montototal(pedidoencurso.getIdpedidos());
                     int montoPagar = pedidoHasPlatoRepository.pagarTodo(pedidoencurso.getIdpedidos());
                     int descuento = pedidoHasPlatoRepository.descuento(pedidoencurso.getIdpedidos());
                     int montototal_pagar = montoPagar - descuento;
+                    int preciodescuento = montoTotal_pedidoHasPlatoDTO.getpreciototal() - descuento;
                     model.addAttribute("platosxpedido",platosxpedido);
                     model.addAttribute("pedidoencurso",pedidoencurso);
                     model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
                     model.addAttribute("montopagar", montototal_pagar);
+                    model.addAttribute("preciodescuento", preciodescuento);
+                    model.addAttribute("descuento", descuento);
                 }catch(Exception e){
                     List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
                     MontoTotal_PedidoHasPlatoDTO montoTotal_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montototal(pedidoencurso.getIdpedidos());
                     int montoPagar = pedidoHasPlatoRepository.pagarTodo(pedidoencurso.getIdpedidos());
                     int descuento = 0;
                     int montototal_pagar = montoPagar - descuento;
+                    int preciodescuento = montoTotal_pedidoHasPlatoDTO.getpreciototal() - descuento;
                     model.addAttribute("platosxpedido",platosxpedido);
                     model.addAttribute("pedidoencurso",pedidoencurso);
                     model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
+                    model.addAttribute("preciodescuento", preciodescuento);
                     model.addAttribute("montopagar", montototal_pagar);
+                    model.addAttribute("descuento", descuento);
+
                 }
             }
             return "cliente/checkoutcarrito";
@@ -1420,73 +1489,143 @@ public class UsuarioController {
                 System.out.println(idmetodo);
                 System.out.println(metodosel.getMetodo());
                 for (Pedidos pedidoencurso : listapedidospendientes) {
-                    List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
-                    System.out.println(pedidoencurso.getIdpedidos());
-                    System.out.println(pedidoencurso.getDireccionentrega().getIddirecciones());
-                    MontoTotal_PedidoHasPlatoDTO montoTotal_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montototal(pedidoencurso.getIdpedidos());
-                    int pagarTodo = pedidoHasPlatoRepository.pagarTodo(pedidoencurso.getIdpedidos());
-                    int descuento = pedidoHasPlatoRepository.descuento(pedidoencurso.getIdpedidos());
-                    int montototal_pagar = pagarTodo - descuento;
-                    model.addAttribute("platosxpedido",platosxpedido);
-                    model.addAttribute("pedidoencurso",pedidoencurso);
-                    model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
-                    model.addAttribute("montopagar", montototal_pagar);
-                    System.out.println(pagarTodo);
-                    System.out.println(descuento);
-                    System.out.println(montototal_pagar);
-                    System.out.println(montoTotal_pedidoHasPlatoDTO);
-                    pedidoencurso.setMontototal(String.valueOf(montototal_pagar));
-                    pedidoencurso.setMetododepago(metodosel);
-                    if(idmetodo == 3){
-                        if(montoexacto != 0){
-                            System.out.println(montoexacto);
-                            if(montoexacto >= (montototal_pagar)){
-                                pedidoencurso.setMontoexacto(String.valueOf(montoexacto));
-                            }
-                            else{
-                                redirectAttributes.addFlashAttribute("pago1", "El monto exacto a pagar no es suficiente");
-                                return "redirect:/cliente/checkout";
-                            }
-                        }
-                        else{
-                            redirectAttributes.addFlashAttribute("pago2", "No ha ingresado un monto exacto");
-                            return "redirect:/cliente/checkout";
-                        }
-                    }
-                    if(idmetodo == 1){
-                        System.out.println(numerotarjeta);
-                        if(numerotarjeta == null){
-                            return "redirect:/cliente/checkout";
-                        }else{
+                    try {
+                        List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
+                        System.out.println(pedidoencurso.getIdpedidos());
+                        System.out.println(pedidoencurso.getDireccionentrega().getIddirecciones());
+                        MontoTotal_PedidoHasPlatoDTO montoTotal_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montototal(pedidoencurso.getIdpedidos());
+                        int pagarTodo = pedidoHasPlatoRepository.pagarTodo(pedidoencurso.getIdpedidos());
+                        int descuento = pedidoHasPlatoRepository.descuento(pedidoencurso.getIdpedidos());
+                        int montototal_pagar = pagarTodo - descuento;
+                        model.addAttribute("platosxpedido", platosxpedido);
+                        model.addAttribute("pedidoencurso", pedidoencurso);
+                        model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
+                        model.addAttribute("montopagar", montototal_pagar);
 
-                            boolean tarjetavalida = validartarjeta(numerotarjeta);
+                        System.out.println(pagarTodo);
+                        System.out.println(descuento);
+                        System.out.println(montototal_pagar);
+                        System.out.println(montoTotal_pedidoHasPlatoDTO);
+                        pedidoencurso.setMontototal(String.valueOf(montototal_pagar));
+                        pedidoencurso.setMetododepago(metodosel);
 
-                            if(tarjetavalida == true){
-                                List<TarjetasOnline> tarjetasxusuario = tarjetasOnlineRepository.findAllByNumerotarjetaAndClienteEquals(numerotarjeta, cliente);
-
-                                if(tarjetasxusuario.isEmpty()){
-                                    TarjetasOnline tarjetaxguardar = new TarjetasOnline();
-                                    tarjetaxguardar.setNumerotarjeta(numerotarjeta);
-                                    tarjetaxguardar.setCliente(cliente);
-                                    tarjetasOnlineRepository.save(tarjetaxguardar);
+                        if (idmetodo == 3) {
+                            if (montoexacto != 0) {
+                                System.out.println(montoexacto);
+                                if (montoexacto >= (montototal_pagar)) {
+                                    pedidoencurso.setMontoexacto(String.valueOf(montoexacto));
+                                } else {
+                                    redirectAttributes.addFlashAttribute("pago1", "El monto exacto a pagar no es suficiente");
+                                    return "redirect:/cliente/checkout";
                                 }
-                            }else{
-                                redirectAttributes.addFlashAttribute("tarjetanovalida", "El número de tarjeta no es válido. Las tarjetas validas son Visa, MasterCard, DinersClub, Discover, JCB");
+                            } else {
+                                redirectAttributes.addFlashAttribute("pago2", "No ha ingresado un monto exacto");
                                 return "redirect:/cliente/checkout";
                             }
-
                         }
+                        if (idmetodo == 1) {
+                            System.out.println(numerotarjeta);
+                            if (numerotarjeta == null) {
+                                return "redirect:/cliente/checkout";
+                            } else {
+
+                                boolean tarjetavalida = validartarjeta(numerotarjeta);
+
+                                if (tarjetavalida == true) {
+                                    List<TarjetasOnline> tarjetasxusuario = tarjetasOnlineRepository.findAllByNumerotarjetaAndClienteEquals(numerotarjeta, cliente);
+
+                                    if (tarjetasxusuario.isEmpty()) {
+                                        TarjetasOnline tarjetaxguardar = new TarjetasOnline();
+                                        tarjetaxguardar.setNumerotarjeta(numerotarjeta);
+                                        tarjetaxguardar.setCliente(cliente);
+                                        tarjetasOnlineRepository.save(tarjetaxguardar);
+                                    }
+                                } else {
+                                    redirectAttributes.addFlashAttribute("tarjetanovalida", "El número de tarjeta no es válido. Las tarjetas validas son Visa, MasterCard, DinersClub, Discover, JCB");
+                                    return "redirect:/cliente/checkout";
+                                }
+
+                            }
+                        }
+                        if (pedidoencurso.getRestaurantepedido().getDistrito() == pedidoencurso.getDireccionentrega().getDistrito()) {
+                            pedidoencurso.setComisionrepartidor(4);
+                            pedidoencurso.setComisionsistema(1);
+                        } else {
+                            pedidoencurso.setComisionrepartidor(6);
+                            pedidoencurso.setComisionsistema(2);
+                        }
+                        pedidoencurso.setEstadorestaurante("pendiente");
+                        pedidoencurso.setEstadorepartidor("indefinido");
+                        pedidosRepository.save(pedidoencurso);
+                    }catch (Exception e){
+                        List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
+                        System.out.println(pedidoencurso.getIdpedidos());
+                        System.out.println(pedidoencurso.getDireccionentrega().getIddirecciones());
+                        MontoTotal_PedidoHasPlatoDTO montoTotal_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montototal(pedidoencurso.getIdpedidos());
+                        int pagarTodo = pedidoHasPlatoRepository.pagarTodo(pedidoencurso.getIdpedidos());
+                        int descuento = 0;
+                        int montototal_pagar = pagarTodo - descuento;
+                        model.addAttribute("platosxpedido", platosxpedido);
+                        model.addAttribute("pedidoencurso", pedidoencurso);
+                        model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
+                        model.addAttribute("montopagar", montototal_pagar);
+
+                        System.out.println(pagarTodo);
+                        System.out.println(descuento);
+                        System.out.println(montototal_pagar);
+                        System.out.println(montoTotal_pedidoHasPlatoDTO);
+                        pedidoencurso.setMontototal(String.valueOf(montototal_pagar));
+                        pedidoencurso.setMetododepago(metodosel);
+
+                        if (idmetodo == 3) {
+                            if (montoexacto != 0) {
+                                System.out.println(montoexacto);
+                                if (montoexacto >= (montototal_pagar)) {
+                                    pedidoencurso.setMontoexacto(String.valueOf(montoexacto));
+                                } else {
+                                    redirectAttributes.addFlashAttribute("pago1", "El monto exacto a pagar no es suficiente");
+                                    return "redirect:/cliente/checkout";
+                                }
+                            } else {
+                                redirectAttributes.addFlashAttribute("pago2", "No ha ingresado un monto exacto");
+                                return "redirect:/cliente/checkout";
+                            }
+                        }
+                        if (idmetodo == 1) {
+                            System.out.println(numerotarjeta);
+                            if (numerotarjeta == null) {
+                                return "redirect:/cliente/checkout";
+                            } else {
+
+                                boolean tarjetavalida = validartarjeta(numerotarjeta);
+
+                                if (tarjetavalida == true) {
+                                    List<TarjetasOnline> tarjetasxusuario = tarjetasOnlineRepository.findAllByNumerotarjetaAndClienteEquals(numerotarjeta, cliente);
+
+                                    if (tarjetasxusuario.isEmpty()) {
+                                        TarjetasOnline tarjetaxguardar = new TarjetasOnline();
+                                        tarjetaxguardar.setNumerotarjeta(numerotarjeta);
+                                        tarjetaxguardar.setCliente(cliente);
+                                        tarjetasOnlineRepository.save(tarjetaxguardar);
+                                    }
+                                } else {
+                                    redirectAttributes.addFlashAttribute("tarjetanovalida", "El número de tarjeta no es válido. Las tarjetas validas son Visa, MasterCard, DinersClub, Discover, JCB");
+                                    return "redirect:/cliente/checkout";
+                                }
+
+                            }
+                        }
+                        if (pedidoencurso.getRestaurantepedido().getDistrito() == pedidoencurso.getDireccionentrega().getDistrito()) {
+                            pedidoencurso.setComisionrepartidor(4);
+                            pedidoencurso.setComisionsistema(1);
+                        } else {
+                            pedidoencurso.setComisionrepartidor(6);
+                            pedidoencurso.setComisionsistema(2);
+                        }
+                        pedidoencurso.setEstadorestaurante("pendiente");
+                        pedidoencurso.setEstadorepartidor("indefinido");
+                        pedidosRepository.save(pedidoencurso);
                     }
-                    if(pedidoencurso.getRestaurantepedido().getDistrito() == pedidoencurso.getDireccionentrega().getDistrito()){
-                        pedidoencurso.setComisionrepartidor(4);
-                        pedidoencurso.setComisionsistema(1);
-                    }else{
-                        pedidoencurso.setComisionrepartidor(6);
-                        pedidoencurso.setComisionsistema(2);
-                    }
-                    pedidoencurso.setEstadorestaurante("pendiente");
-                    pedidoencurso.setEstadorepartidor("indefinido");
-                    pedidosRepository.save(pedidoencurso);
                 }
                 redirectAttributes.addFlashAttribute("checkout", "Pedido listo");
             }
@@ -1522,6 +1661,8 @@ public class UsuarioController {
                 List<PedidoHasPlato> pedidoHasPlatoencurso = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(idultimopedido);
                 Optional<Pedidos> pedidoencursoopt = pedidosRepository.findById(pedidoHasPlatoencurso.get(0).getPedido().getIdpedidos());
                 Pedidos pedidoencurso = pedidoencursoopt.get();
+                System.out.println("*********************");
+                System.out.println(pedidoencurso.getIdpedidos());
                 model.addAttribute("pedido",pedidoencurso);
                 model.addAttribute("lista",pedidoHasPlatoencurso);
 
