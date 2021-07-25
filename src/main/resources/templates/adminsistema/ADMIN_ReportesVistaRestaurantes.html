@@ -78,7 +78,7 @@
                 </div>
                 <div class="d-flex justify-content-end">
                     <div class="col-5">
-                        <button th:if="${msg != null}" th:text="${msg}" class="btn btn-dark" role="alert"></button>
+                        <div th:if="${msg != null}" th:text="${msg}" class="alert alert-dark" role="alert"></div>
                     </div>
 
                 </div>
@@ -90,7 +90,8 @@
                     <div class="col-md-10" style="margin-bottom: 0px;">
                         <div class="form-floating" style=" border-style: groove;margin-bottom: 0px">
                             <input name="searchField" class="form-control" id="floatingInputGrid" type="text" placeholder="Buscar por nombre, apellidos o DNI"/>
-                            <label for="floatingInputGrid">Buscar restaurante</label>
+                            <label th:if="${busqueda == null}" for="floatingInputGrid">Buscar restaurante</label>
+                            <label th:if="${busqueda != null}" for="floatingInputGrid" th:text="${'Busqueda actual: '+ busqueda}"></label>
                         </div>
                     </div>
                     <button class="btn btn-dark" type="submit" >Buscar</button>
