@@ -1225,7 +1225,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/cliente/carritoproductos")
-    public String carritoproductos(Model model, HttpSession session){
+    public String carritoproductos(Model model, HttpSession session, RedirectAttributes redirectAttributes){
 
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         int idusuario = sessionUser.getIdusuarios();
@@ -1238,22 +1238,28 @@ public class UsuarioController {
             model.addAttribute("lista",1);
             for (Pedidos pedidoencurso : listapedidospendientes){
                 // TODO validar plato activo en 1 y disponibilidad en 1, caso contrario borrar ese plato de la db
-                /*
-                boolean carritoactualizado = false;
-                    for (PedidoHasPlato php : platosxpedido){
-                        if(php.getPlato().getActivo() == 0){
-                            //borrar ese plato del pedido
-                            carritoactualizado = true;
-                        }
-                    }
-                    if(carritoactualizado){
-                        attr.addFlashAttribute("carritoact","Tu carrito se ha actualizado");
-                    }
-                 */
                 List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
+                boolean carritoactualizado = false;
+                for (PedidoHasPlato php : platosxpedido){
+                    System.out.println("TRACER 2 ****************************");
+                    System.out.println(php.getPlato().getActivo());
+                    System.out.println(php.getPlato().getDisponibilidad());
+                    if(php.getPlato().getActivo() == 0 || php.getPlato().getDisponibilidad() == 0){
+                        System.out.println("TRACER 3  *****************");
+                        PedidoHasPlatoKey pedidoHasPlatoKey = php.getId();
+                        System.out.println(pedidoHasPlatoKey.getPedidosidpedidos());
+                        pedidoHasPlatoRepository.deleteById(pedidoHasPlatoKey);//si el pedido solo tiene un plato, como se va a eliminar el plato, se deberia eliminar el pedido
+                        System.out.println("debe borrar plato");
+                        carritoactualizado = true;
+                    }
+                }
+                if(carritoactualizado){
+                    redirectAttributes.addFlashAttribute("carritoact","Tu carrito se ha actualizado");
+                }
                 System.out.println(pedidoencurso.getIdpedidos());
                 System.out.println(pedidoencurso.getDireccionentrega().getIddirecciones());
                 MontoTotal_PedidoHasPlatoDTO montoTotal_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montototal(pedidoencurso.getIdpedidos());
+                platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
                 model.addAttribute("platosxpedido",platosxpedido);
                 model.addAttribute("pedidoencurso",pedidoencurso);
                 model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
@@ -1355,18 +1361,26 @@ public class UsuarioController {
 
             for (Pedidos pedidoencurso : listapedidospendientes){
                 try {
+
                     List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
-                    boolean carritoactualizado = false;
-                    for (PedidoHasPlato php : platosxpedido){
-                        if(php.getPlato().getActivo() == 0 && php.getPlato().getDisponibilidad() == 0){
-                            PedidoHasPlatoKey pedidoHasPlatoKey = php.getId();
-                            pedidoHasPlatoRepository.deleteById(pedidoHasPlatoKey);
-                            carritoactualizado = true;
+                        // TODO validar plato activo en 1 y disponibilidad en 1, caso contrario borrar ese plato de la db
+                        boolean carritoactualizado = false;
+                        for (PedidoHasPlato php : platosxpedido) {
+                            System.out.println("TRACER 2 ****************************");
+                            System.out.println(php.getPlato().getActivo());
+                            System.out.println(php.getPlato().getDisponibilidad());
+                            if (php.getPlato().getActivo() == 0 || php.getPlato().getDisponibilidad() == 0) {
+                                System.out.println("TRACER 3  *****************");
+                                PedidoHasPlatoKey pedidoHasPlatoKey = php.getId();
+                                System.out.println(pedidoHasPlatoKey.getPedidosidpedidos());
+                                pedidoHasPlatoRepository.deleteById(pedidoHasPlatoKey);//si el pedido solo tiene un plato, como se va a eliminar el plato, se deberia eliminar el pedido
+                                System.out.println("debe borrar plato");
+                                carritoactualizado = true;
+                            }
                         }
-                    }
-                    if(carritoactualizado){
-                        attr.addFlashAttribute("carritoact","Tu carrito se ha actualizado");
-                    }
+                        if(carritoactualizado){
+                            attr.addFlashAttribute("carritoact","Tu carrito se ha actualizado");
+                        }
                     MontoTotal_PedidoHasPlatoDTO montoTotal_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montototal(pedidoencurso.getIdpedidos());
                     int montoPagar = pedidoHasPlatoRepository.pagarTodo(pedidoencurso.getIdpedidos());
                     int descuento = pedidoHasPlatoRepository.descuento(pedidoencurso.getIdpedidos());
