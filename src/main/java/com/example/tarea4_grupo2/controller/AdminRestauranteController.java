@@ -30,6 +30,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Date;
+import java.sql.SQLOutput;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -473,21 +474,35 @@ public class AdminRestauranteController {
     }
 
     @GetMapping("/editarPlato")
-    public String editarPlato(Model model, @RequestParam("idplato") String idString, @ModelAttribute("plato") Plato plato) throws IOException{
+    public String editarPlato(Model model, @RequestParam("idplato") String idString, @ModelAttribute("plato") Plato plato, RedirectAttributes attr, HttpSession session) throws IOException {
 
-        try{
-            int id = Integer.parseInt(idString);
-            Optional<Plato> optionalPlato = platoRepository.findById(id);
-            if(optionalPlato.isPresent()){
-                plato = optionalPlato.get();
-                model.addAttribute("plato",plato);
-                return "AdminRestaurantes/newPlato";
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        Integer idrestaurante = restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
+        Optional<Usuario> usuarioOptional = usuarioRepository.findById(sessionUser.getIdusuarios());
+        if (usuarioOptional.isPresent()) {
+            Usuario usuarioNuevo = usuarioOptional.get();
+            if (usuarioNuevo.getCuentaActiva() == 1) {
+                try {
+                    int idplato = Integer.parseInt(idString);
+                    Optional<Plato> optionalPlato = platoRepository.buscarPlatoPorIdYPorIdRest(idplato, idrestaurante);
+                    if (optionalPlato.isPresent()) {
+                        plato = optionalPlato.get();
+                        model.addAttribute("plato", plato);
+                        return "AdminRestaurantes/newPlato";
+                    }else {
+                        attr.addFlashAttribute("platoInvalido", "No existe el plato solicitado.");
+                        return "redirect:/adminrest/menu";
+                    }
+                }catch (NumberFormatException e) {
+                    e.printStackTrace();
+                    attr.addFlashAttribute("platoInvalido", "No existe el plato solicitado.");
+                    return "redirect:/adminrest/menu";
+                }
             }else{
-                return "redirect:/adminrest/menu";
+                return "redirect:/adminrest/login";
             }
-        }catch (NumberFormatException e) {
-            e.printStackTrace();
-            return "redirect:/adminrest/menu";
+        }else{
+            return "redirect:/login";
         }
     }
 
@@ -513,16 +528,24 @@ public class AdminRestauranteController {
                     return "AdminRestaurantes/newPlato";
                 }
             }
-
+            System.out.println("TRACE2222");
+            if(plato.getIdplato() == null){
+                System.out.println("Es null");
+            }else if(plato.getIdplato().equals("")){
+                System.out.println("Es vacio");
+            }else{
+                System.out.println(plato.getIdplato());
+            }
             return "AdminRestaurantes/newPlato";
 
-        }else {
+        }else{
+
             /**Se obtiene Id de Restaurante**/
             Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
             Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
             /********************************/
 
-            if (plato.getIdplato() == 0) {
+            if (plato.getIdplato().equals("")) {
 
                 if (!(file.isEmpty())) {
                     System.out.println("Hay archivo");
@@ -588,12 +611,28 @@ public class AdminRestauranteController {
                 }
 
         }else{
+                try {
+                    int idplato = Integer.parseInt(plato.getIdplato());
+                }catch (NumberFormatException e) {
+                    e.printStackTrace();
+                    attr.addFlashAttribute("platoInvalido", "No se pudo guardar el plato solicitado.");
+                    return "redirect:/adminrest/menu";
+                }
 
                 platoRepository.save(plato);
 
                 if (!(file.isEmpty())) {
 
-                    Optional<FotosPlatos> optFoto = fotosPlatosRepository.encontrarIdPlato(plato.getIdplato());
+                    System.out.println("Hay archivo");
+                    if(!( (file.getContentType().contains("jpeg")) || (file.getContentType().contains("jpg")) || (file.getContentType().contains("png")) ||
+                            (file.getContentType().contains("JPEG")) || (file.getContentType().contains("JPG")) || (file.getContentType().contains("PNG")))) {
+                        model.addAttribute("msgFotoInvalida", "La foto no contiene el formato adecuado. Se aceptan solo archivos .jpeg, .jpg, .png");
+                        model.addAttribute("plato",plato);
+                        model.addAttribute("iddelrestaurante", idrestaurante);
+                        return "AdminRestaurantes/newPlato";
+                    }
+
+                    Optional<FotosPlatos> optFoto = fotosPlatosRepository.encontrarIdPlato(Integer.parseInt(plato.getIdplato()));
 
                     if (optFoto.isPresent()) {
 
@@ -636,20 +675,40 @@ public class AdminRestauranteController {
     }
 
     @GetMapping("/borrarPlato")
-    public String borrarPlato(@RequestParam("idplato") int id, RedirectAttributes attr){
+    public String borrarPlato(@RequestParam("idplato") String id, RedirectAttributes attr, HttpSession session){
 
-        Optional<Plato> optionalPlato = platoRepository.findById(id);
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        Integer idrestaurante = restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
+        Optional<Usuario> usuarioOptional = usuarioRepository.findById(sessionUser.getIdusuarios());
+        if (usuarioOptional.isPresent()) {
+            Usuario usuarioNuevo = usuarioOptional.get();
+            if (usuarioNuevo.getCuentaActiva() == 1) {
+                try {
+                    int idplato = Integer.parseInt(id);
+                    Optional<Plato> optionalPlato = platoRepository.buscarPlatoPorIdYPorIdRest(idplato, idrestaurante);
 
-        if(optionalPlato.isPresent()){
-            Plato platoBorrar = optionalPlato.get();
-            if(platoBorrar.getIdplato() != 0){
-                platoBorrar.setActivo(0);
-                platoRepository.save(platoBorrar);
-                attr.addFlashAttribute("msg", "Producto borrado exitosamente");
+                    if (optionalPlato.isPresent()) {
+                        Plato platoBorrar = optionalPlato.get();
+                        if (Integer.parseInt(platoBorrar.getIdplato()) != 0) {
+                            platoBorrar.setActivo(0);
+                            platoRepository.save(platoBorrar);
+                            attr.addFlashAttribute("msg", "Producto borrado exitosamente");
+                        }
+                        return "redirect:/adminrest/menu";
+                    } else {
+                        attr.addFlashAttribute("platoInvalido", "No se pudo borrar el plato solicitado.");
+                        return "redirect:/adminrest/menu";
+                    }
+                }catch (NumberFormatException e) {
+                    e.printStackTrace();
+                    attr.addFlashAttribute("platoInvalido", "No se pudo borrar el plato solicitado.");
+                    return "redirect:/adminrest/menu";
+                }
+            }else{
+                return "redirect:/adminrest/login";
             }
-            return "redirect:/adminrest/menu";
         }else{
-            return "redirect:/adminrest/menu";
+            return "redirect:/login";
         }
     }
 
@@ -732,18 +791,23 @@ public class AdminRestauranteController {
     }
 
     @GetMapping("/editarCupon")
-    public String editarCupon(@ModelAttribute("cupon") Cupones cupon, @RequestParam("idcupon") int id, Model model){
-        Optional<Cupones> optCupon = cuponesRepository.findById(id);
-        if(optCupon.isPresent()){
-            cupon = optCupon.get();
-            Restaurante restaurante = cupon.getRestaurante();
-            int idrestaurante = restaurante.getIdrestaurante();
-            model.addAttribute("cupon",cupon);
-            List<Plato> listaPlatos = platoRepository.buscarPlatosPorIdRestaurante(idrestaurante);
-            model.addAttribute("index",0);
-            model.addAttribute("listaPlatos",listaPlatos);
-            return "AdminRestaurantes/generarCupon";
-        }else{
+    public String editarCupon(@ModelAttribute("cupon") Cupones cupon, @RequestParam("idcupon") String id, Model model, RedirectAttributes attr){
+        try{
+            Optional<Cupones> optCupon = cuponesRepository.findById(Integer.parseInt(id));
+            if(optCupon.isPresent()){
+                cupon = optCupon.get();
+                Restaurante restaurante = cupon.getRestaurante();
+                int idrestaurante = restaurante.getIdrestaurante();
+                model.addAttribute("cupon",cupon);
+                List<Plato> listaPlatos = platoRepository.buscarPlatosPorIdRestaurante(idrestaurante);
+                model.addAttribute("index",0);
+                model.addAttribute("listaPlatos",listaPlatos);
+                return "AdminRestaurantes/generarCupon";
+            }else{
+                return "redirect:/adminrest/cupones";
+            }
+        }catch(NumberFormatException e){
+            attr.addFlashAttribute("cuponInvalido","Este cupon no existe");
             return "redirect:/adminrest/cupones";
         }
     }
@@ -766,11 +830,23 @@ public class AdminRestauranteController {
     public String guardarCupon(@ModelAttribute("cupon") @Valid Cupones cupon, BindingResult bindingResult, RedirectAttributes attr,
                                Model model, HttpSession session,@RequestParam("index") int index){
 
+        /**Se obtiene Id de Restaurante**/
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
+        if(cupon.getPlato() == null){
+            System.out.println("ENTRE");
+            model.addAttribute("cupon",cupon);
+            List<Plato> listaPlatos = platoRepository.buscarPlatosPorIdRestaurante(idrestaurante);
+            model.addAttribute("listaPlatos",listaPlatos);
+            model.addAttribute("index",index);
+            model.addAttribute("platoInvalido","El plato asociado no existe");
+            return "AdminRestaurantes/generarCupon";
+        }else{
+            System.out.println("NO ENTRE");
+        }
+        /********************************/
         if(bindingResult.hasErrors()){
-            /**Se obtiene Id de Restaurante**/
-            Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-            Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
-            /********************************/
+            System.out.println("Trace bindings");
             model.addAttribute("cupon",cupon);
             List<Plato> listaPlatos = platoRepository.buscarPlatosPorIdRestaurante(idrestaurante);
             model.addAttribute("listaPlatos",listaPlatos);
@@ -792,13 +868,10 @@ public class AdminRestauranteController {
         }else {
 
             if (cupon.getIdcupones() == 0) {
+                System.out.println("TRACE5");
 
                 if(cupon.getValordescuento() > cupon.getPlato().getPrecio()){
                     model.addAttribute("msg3", "El precio del descuento no puede ser mayor al precio del plato");
-                    /**Se obtiene Id de Restaurante**/
-                    Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-                    Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
-                    /********************************/
                     model.addAttribute("cupon",cupon);
                     List<Plato> listaPlatos = platoRepository.buscarPlatosPorIdRestaurante(idrestaurante);
                     model.addAttribute("listaPlatos",listaPlatos);
@@ -813,10 +886,6 @@ public class AdminRestauranteController {
                 Date inicio = cupon.getFechainicio();
                 Date fin = cupon.getFechafin();
                 if(fin.compareTo(inicio) < 0){
-                    /**Se obtiene Id de Restaurante**/
-                    Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-                    Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
-                    /********************************/
                     model.addAttribute("cupon",cupon);
                     List<Plato> listaPlatos = platoRepository.buscarPlatosPorIdRestaurante(idrestaurante);
                     model.addAttribute("listaPlatos",listaPlatos);
@@ -830,7 +899,19 @@ public class AdminRestauranteController {
                 return "redirect:/adminrest/cupones";
 
             } else {
-
+                Date inicio = cupon.getFechainicio();
+                Date fin = cupon.getFechafin();
+                if(fin.compareTo(inicio) < 0){
+                    /*Plato platoasociado = cupon.getPlato();
+                    System.out.println("ID DEL PLATO ASOCIADO es: ");
+                    System.out.println(platoasociado.getIdplato());*/
+                    model.addAttribute("cupon",cupon);
+                    List<Plato> listaPlatos = platoRepository.buscarPlatosPorIdRestaurante(idrestaurante);
+                    model.addAttribute("listaPlatos",listaPlatos);
+                    model.addAttribute("msg4", "La fecha de fin no puede ser antes que la fecha de inicio del cupon.");
+                    model.addAttribute("index",index);
+                    return "AdminRestaurantes/generarCupon";
+                }
                 cuponesRepository.save(cupon);
                 attr.addFlashAttribute("msg2", "Cupon actualizado exitosamente");
                 return "redirect:/adminrest/cupones";
@@ -1057,11 +1138,13 @@ public class AdminRestauranteController {
                 try {
                     page = Integer.parseInt(requestedPage);
                 }catch(Exception e) {
+                    attr.addFlashAttribute("msgpage","No existe la página solicitada");
                     return "redirect:/adminrest/reporte";
                 }
                 try {
                     page2 = Integer.parseInt(requestedPage2);
                 }catch(Exception e) {
+                    attr.addFlashAttribute("msgpage","No existe la página solicitada");
                     return "redirect:/adminrest/reporte";
                 }
                 int idrestaurante= restauranteRepository.buscarRestaurantePorIdAdmin(usuario.getIdusuarios()).get().getIdrestaurante();

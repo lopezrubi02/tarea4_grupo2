@@ -100,7 +100,9 @@ public class RepartidorController {
         Optional<Usuario> usuarioopt = usuarioRepository.findById(sessionUser.getIdusuarios());
         if (usuarioopt.isPresent()) {
             if (rep.isDisponibilidad()) {
-                List<PedidosDisponiblesDTO> listaPedidos = repartidorRepository.findListaPedidosDisponibles();
+                String distritoRepartidor = rep.getDistritos().getNombredistrito();
+                //List<PedidosDisponiblesDTO> listaPedidos = repartidorRepository.findListaPedidosDisponibles();
+                List<PedidosDisponiblesDTO> listaPedidos = repartidorRepository.findListaPedidosDisponibles(distritoRepartidor);
 
                 if (listaPedidos.isEmpty()) {
                     attr.addFlashAttribute("msg", "No hay pedidos disponibles para mostrar.");
@@ -236,6 +238,8 @@ public class RepartidorController {
         if (pedidoElegido.isPresent()) {
             Pedidos pedido = pedidoElegido.get();
             pedido.setEstadorepartidor("recogido"); //Estado de esperando ser entregado al cliente
+            pedido.setEstadorestaurante("entregado");
+
             model.addAttribute("pedido", pedido);
 
             Usuario usuario = usuarioRepository.findUsuarioById(pedido.getIdcliente());
@@ -385,7 +389,7 @@ public class RepartidorController {
 
 
     public ByteArrayInputStream exportAllData1(int id) throws IOException {
-        String[] columns1 = { "# PEDIDO", "RESTAURANTE", "DISTRITO DEL RESTAURANTE", "DISTRITO DE DESTINO", "S/. COMISIÓN", "CALIFICACION"};
+        String[] columns1 = { "#", "RESTAURANTE", "DISTRITO DEL RESTAURANTE", "DESTINO", "S/. COMISIÓN", "CALIFICACION"};
         String[] columns2 = { "MES", "AÑO", "COMISIÓN MENSUAL" };
 
         Workbook workbook = new HSSFWorkbook();
