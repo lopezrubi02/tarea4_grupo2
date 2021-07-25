@@ -138,7 +138,7 @@
           </div>
           <br>
           <div class="container">
-            <h1>Ingresos mensuales</h1>
+            <h1 style="font-weight: bold">Ingresos mensuales</h1>
             <div class="row table-users">
               <!-- table -->
               <div class="col-md-12">
@@ -198,7 +198,7 @@
           </div>
           <br>
           <div class="container">
-            <h1>Top 5 platos mas vendidos</h1>
+            <h1 style="font-weight: bold">Top 5 platos más vendidos</h1>
             <div class="row table-users">
               <!-- table -->
               <div class="col-md-12">
@@ -216,7 +216,6 @@
                             th:value="${p.getganancia()}">
                     </option>
                 </select>
-
                 <div class="table-responsive">
                   <table class="table table-striped" style="width: 600px" align="center">
                     <thead >
@@ -243,7 +242,7 @@
           </div>
           <br>
           <div class="container">
-            <h1>Top 5 platos menos vendidos</h1>
+            <h1 style="font-weight: bold">Top 5 platos menos vendidos</h1>
             <div class="row table-users">
               <!-- table -->
               <div class="col-md-12">
@@ -294,189 +293,182 @@
               <div class="col-md-2"></div>
             </div>
           </div>
-        </div>
-      </div>
-      <!-- end blog -->
-
-      <!-- footer -->
-      <fooetr>
           <div class="copyright" style="padding-top: 50px;background:#d8b00f">
             <div class="container">
               <p>© 2021 Todos los derechos reservados.</p>
             </div>
           </div>
-      </fooetr>
-      <!-- end footer -->
+        </div>
+      </div>
+      <!-- end blog -->
 
-    </div>
-    </div>
-    <div class="overlay"></div>
-    <!-- Javascript files-->
-    <script src="/js/jquery.min.js"></script>
-    <script src="/js/popper.min.js"></script>
-    <script src="/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/owl.carousel.min.js"></script>
-    <script src="/js/custom.js"></script>
-    <script src="/js/jquery.mCustomScrollbar.concat.min.js"></script>
-    <script src="/js/jquery-3.0.0.min.js"></script>
+      <!-- Javascript files-->
+      <script src="/js/jquery.min.js"></script>
+      <script src="/js/popper.min.js"></script>
+      <script src="/js/bootstrap.bundle.min.js"></script>
+      <script src="/js/owl.carousel.min.js"></script>
+      <script src="/js/custom.js"></script>
+      <script src="/js/jquery.mCustomScrollbar.concat.min.js"></script>
+      <script src="/js/jquery-3.0.0.min.js"></script>
 
-    <script>
-      var myoption2 = {
-        indexAxis: 'y',
-      };
-      let myChart;
-      var ctx = document.getElementById('myChartPlatosMenosVendidos').getContext('2d');
-      var listaPlatosTopDto=document.getElementById("platosMenosVendidos5");
-      var listaGanancia = document.getElementById("Top5Menos");
-      var nombresPlatos=[listaPlatosTopDto.length];
-      var cantidadPlatos=[listaPlatosTopDto.length];
-      var gananciasPlatos=[listaGanancia.length];
-      for(var i=0;i<listaPlatosTopDto.length;i++){
-        nombresPlatos[i]=listaPlatosTopDto[i].text;
-        console.log(nombresPlatos[i]);
-        cantidadPlatos[i]=listaPlatosTopDto[i].value;
-        console.log(cantidadPlatos[i]);
-        gananciasPlatos[i] = listaGanancia[i].value;
-        console.log(gananciasPlatos[i]);
-      }
-      myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: nombresPlatos,
-          datasets: [{
-            label: 'Cantidad de platos vendidos',
-            fillColor: "#79D1CF",
-            strokeColor: "#79D1CF",
-            data: cantidadPlatos,
-            backgroundColor: [
-              'rgb(227,209,5)',
-            ],
-            borderColor: [
-              'rgba(0,3,3,0.95)',
-            ],
-            borderWidth: 2
-          },{
-            label: 'Ganancia por plato',
-            data: gananciasPlatos,
-            backgroundColor: [
-              'rgb(227,209,5)',
-            ],
-            borderColor: [
-              'rgba(0,3,3,0.95)',
-            ],
-            borderWidth: 2
-          }]
-        },
-        options: myoption2
-      });
-    </script>
-
-    <script>
-      var myoption = {
-        indexAxis: 'y',
-      };
-      let myChart2;
-      var ctx = document.getElementById('myChartPlatosMasVendidos').getContext('2d');
-      var listaPlatosTopDto=document.getElementById("platosTopVendidos5");
-      var listaGanancia = document.getElementById("Top5Ganancias");
-      var nombresPlatos=[listaPlatosTopDto.length];
-      var cantidadPlatos=[listaPlatosTopDto.length];
-      var gananciasPlatos=[listaGanancia.length];
-      for(var i=0;i<listaPlatosTopDto.length;i++){
-        nombresPlatos[i]=listaPlatosTopDto[i].text;
-        console.log(nombresPlatos[i]);
-        cantidadPlatos[i]=listaPlatosTopDto[i].value;
-        console.log(cantidadPlatos[i]);
-        gananciasPlatos[i] = listaGanancia[i].value;
-        console.log(gananciasPlatos[i]);
-      }
-      myChart2 = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: nombresPlatos,
-          datasets: [{
-            label: 'Cantidad de platos vendidos',
-            fillColor: "#79D1CF",
-            strokeColor: "#79D1CF",
-            data: cantidadPlatos,
-            backgroundColor: [
-              'rgb(227,209,5)',
-            ],
-            borderColor: [
-              'rgba(0,3,3,0.95)',
-            ],
-            borderWidth: 2
-          },{
-            label: 'Ganancia por plato',
-            data: gananciasPlatos,
-            backgroundColor: [
-              'rgb(227,209,5)',
-            ],
-            borderColor: [
-              'rgba(0,3,3,0.95)',
-            ],
-            borderWidth: 2
-          }]
-        },
-        options: myoption
-      });
-    </script>
-
-    <script type="text/javascript">
-      $(document).ready(function() {
-        $("#sidebar").mCustomScrollbar({
-          theme: "minimal"
+      <script>
+        var myoption2 = {
+          indexAxis: 'y',
+        };
+        let myChart;
+        var ctx = document.getElementById('myChartPlatosMenosVendidos').getContext('2d');
+        var listaPlatosTopDto=document.getElementById("platosMenosVendidos5");
+        var listaGanancia = document.getElementById("Top5Menos");
+        var nombresPlatos=[listaPlatosTopDto.length];
+        var cantidadPlatos=[listaPlatosTopDto.length];
+        var gananciasPlatos=[listaGanancia.length];
+        for(var i=0;i<listaPlatosTopDto.length;i++){
+          nombresPlatos[i]=listaPlatosTopDto[i].text;
+          console.log(nombresPlatos[i]);
+          cantidadPlatos[i]=listaPlatosTopDto[i].value;
+          console.log(cantidadPlatos[i]);
+          gananciasPlatos[i] = listaGanancia[i].value;
+          console.log(gananciasPlatos[i]);
+        }
+        myChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: nombresPlatos,
+            datasets: [{
+              label: 'Cantidad de platos vendidos',
+              fillColor: "#79D1CF",
+              strokeColor: "#79D1CF",
+              data: cantidadPlatos,
+              backgroundColor: [
+                'rgb(227,209,5)',
+              ],
+              borderColor: [
+                'rgba(0,3,3,0.95)',
+              ],
+              borderWidth: 2
+            },{
+              label: 'Ganancia por plato',
+              data: gananciasPlatos,
+              backgroundColor: [
+                'rgb(227,209,5)',
+              ],
+              borderColor: [
+                'rgba(0,3,3,0.95)',
+              ],
+              borderWidth: 2
+            }]
+          },
+          options: myoption2
         });
+      </script>
 
-        $('#dismiss, .overlay').on('click', function() {
-          $('#sidebar').removeClass('active');
-          $('.overlay').removeClass('active');
+      <script>
+        var myoption = {
+          indexAxis: 'y',
+        };
+        let myChart2;
+        var ctx = document.getElementById('myChartPlatosMasVendidos').getContext('2d');
+        var listaPlatosTopDto=document.getElementById("platosTopVendidos5");
+        var listaGanancia = document.getElementById("Top5Ganancias");
+        var nombresPlatos=[listaPlatosTopDto.length];
+        var cantidadPlatos=[listaPlatosTopDto.length];
+        var gananciasPlatos=[listaGanancia.length];
+        for(var i=0;i<listaPlatosTopDto.length;i++){
+          nombresPlatos[i]=listaPlatosTopDto[i].text;
+          console.log(nombresPlatos[i]);
+          cantidadPlatos[i]=listaPlatosTopDto[i].value;
+          console.log(cantidadPlatos[i]);
+          gananciasPlatos[i] = listaGanancia[i].value;
+          console.log(gananciasPlatos[i]);
+        }
+        myChart2 = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: nombresPlatos,
+            datasets: [{
+              label: 'Cantidad de platos vendidos',
+              fillColor: "#79D1CF",
+              strokeColor: "#79D1CF",
+              data: cantidadPlatos,
+              backgroundColor: [
+                'rgb(227,209,5)',
+              ],
+              borderColor: [
+                'rgba(0,3,3,0.95)',
+              ],
+              borderWidth: 2
+            },{
+              label: 'Ganancia por plato',
+              data: gananciasPlatos,
+              backgroundColor: [
+                'rgb(227,209,5)',
+              ],
+              borderColor: [
+                'rgba(0,3,3,0.95)',
+              ],
+              borderWidth: 2
+            }]
+          },
+          options: myoption
         });
+      </script>
 
-        $('#sidebarCollapse').on('click', function() {
-          $('#sidebar').addClass('active');
-          $('.overlay').addClass('active');
-          $('.collapse.in').toggleClass('in');
-          $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+      <script type="text/javascript">
+        $(document).ready(function() {
+          $("#sidebar").mCustomScrollbar({
+            theme: "minimal"
+          });
+
+          $('#dismiss, .overlay').on('click', function() {
+            $('#sidebar').removeClass('active');
+            $('.overlay').removeClass('active');
+          });
+
+          $('#sidebarCollapse').on('click', function() {
+            $('#sidebar').addClass('active');
+            $('.overlay').addClass('active');
+            $('.collapse.in').toggleClass('in');
+            $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+          });
         });
-      });
-    </script>
+      </script>
 
-    <style>
-      #owl-demo .item{
-        margin: 3px;
-      }
-      #owl-demo .item img{
-        display: block;
-        width: 100%;
-        height: auto;
-      }
-    </style>
-    <script>
-      //console.log(document.getElementById("platosTopVendidos5"));
-      //console.log("Hola");
-    </script>
+      <style>
+        #owl-demo .item{
+          margin: 3px;
+        }
+        #owl-demo .item img{
+          display: block;
+          width: 100%;
+          height: auto;
+        }
+      </style>
+      <script>
+        //console.log(document.getElementById("platosTopVendidos5"));
+        //console.log("Hola");
+      </script>
 
-    <script>
-      $(document).ready(function() {
-        var owl = $('.owl-carousel');
-        owl.owlCarousel({
-          margin: 10,
-          nav: true,
-          loop: true,
-          responsive: {
-            0: {
-              items: 1
-            },
-            600: {
-              items: 2
-            },
-            1000: {
-              items: 5
+      <script>
+        $(document).ready(function() {
+          var owl = $('.owl-carousel');
+          owl.owlCarousel({
+            margin: 10,
+            nav: true,
+            loop: true,
+            responsive: {
+              0: {
+                items: 1
+              },
+              600: {
+                items: 2
+              },
+              1000: {
+                items: 5
+              }
             }
-          }
+          })
         })
-      })
-    </script>
+      </script>
+    </div>
   </body>
 </html>
