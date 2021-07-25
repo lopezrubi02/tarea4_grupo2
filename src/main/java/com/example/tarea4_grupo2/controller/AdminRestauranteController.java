@@ -828,12 +828,17 @@ public class AdminRestauranteController {
     @PostMapping("/guardarCupon")
     public String guardarCupon(@ModelAttribute("cupon") @Valid Cupones cupon, BindingResult bindingResult, RedirectAttributes attr,
                                Model model, HttpSession session,@RequestParam("index") int index){
+        if(cupon.getPlato() == null){
+            System.out.println("Es nulo");
+        }else{
+            System.out.println("Otra cosa");
+        }
 
+        /**Se obtiene Id de Restaurante**/
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
+        /********************************/
         if(bindingResult.hasErrors()){
-            /**Se obtiene Id de Restaurante**/
-            Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-            Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
-            /********************************/
             model.addAttribute("cupon",cupon);
             List<Plato> listaPlatos = platoRepository.buscarPlatosPorIdRestaurante(idrestaurante);
             model.addAttribute("listaPlatos",listaPlatos);
@@ -858,10 +863,6 @@ public class AdminRestauranteController {
 
                 if(cupon.getValordescuento() > cupon.getPlato().getPrecio()){
                     model.addAttribute("msg3", "El precio del descuento no puede ser mayor al precio del plato");
-                    /**Se obtiene Id de Restaurante**/
-                    Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-                    Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
-                    /********************************/
                     model.addAttribute("cupon",cupon);
                     List<Plato> listaPlatos = platoRepository.buscarPlatosPorIdRestaurante(idrestaurante);
                     model.addAttribute("listaPlatos",listaPlatos);
@@ -876,10 +877,6 @@ public class AdminRestauranteController {
                 Date inicio = cupon.getFechainicio();
                 Date fin = cupon.getFechafin();
                 if(fin.compareTo(inicio) < 0){
-                    /**Se obtiene Id de Restaurante**/
-                    Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-                    Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
-                    /********************************/
                     model.addAttribute("cupon",cupon);
                     List<Plato> listaPlatos = platoRepository.buscarPlatosPorIdRestaurante(idrestaurante);
                     model.addAttribute("listaPlatos",listaPlatos);
@@ -893,7 +890,19 @@ public class AdminRestauranteController {
                 return "redirect:/adminrest/cupones";
 
             } else {
-
+                Date inicio = cupon.getFechainicio();
+                Date fin = cupon.getFechafin();
+                if(fin.compareTo(inicio) < 0){
+                    /*Plato platoasociado = cupon.getPlato();
+                    System.out.println("ID DEL PLATO ASOCIADO es: ");
+                    System.out.println(platoasociado.getIdplato());*/
+                    model.addAttribute("cupon",cupon);
+                    List<Plato> listaPlatos = platoRepository.buscarPlatosPorIdRestaurante(idrestaurante);
+                    model.addAttribute("listaPlatos",listaPlatos);
+                    model.addAttribute("msg4", "La fecha de fin no puede ser antes que la fecha de inicio del cupon.");
+                    model.addAttribute("index",index);
+                    return "AdminRestaurantes/generarCupon";
+                }
                 cuponesRepository.save(cupon);
                 attr.addFlashAttribute("msg2", "Cupon actualizado exitosamente");
                 return "redirect:/adminrest/cupones";

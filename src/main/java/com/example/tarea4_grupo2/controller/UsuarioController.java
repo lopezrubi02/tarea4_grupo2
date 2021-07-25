@@ -1018,7 +1018,7 @@ public class UsuarioController {
             int idrestaurante = Integer.parseInt(idrest);
             int direccionxenviar = Integer.parseInt(direccion);
             // TODO validar plato activo en 1 y disponibilidad en 1, caso contrario redirigir a vista restaurantexpedir
-            Optional<Plato> platoopt = platoRepository.findById(idplatopedir);
+            Optional<Plato> platoopt = platoRepository.findById(idplato);
             Optional<Restaurante> restopt = restauranteRepository.findById(idrestaurante);
             Optional<Direcciones> diropt = Optional.ofNullable(direccionesRepository.findDireccionesByIddireccionesAndUsuario_Idusuarios(direccionxenviar, idusuarioactual));
 
@@ -1074,7 +1074,7 @@ public class UsuarioController {
                                 List<PedidoHasPlato> pedidoencurso2 = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
                                 if (!pedidoencurso2.isEmpty()) {
                                     for (PedidoHasPlato pedidoencurso3 : pedidoencurso2) {
-                                        if (pedidoencurso3.getPlato().getIdplato() == idplatopedir) {
+                                        if (Integer.parseInt(pedidoencurso3.getPlato().getIdplato()) == idplatopedir) {
                                             String comentariohecho = pedidoencurso3.getDescripcion();
                                             int cantpedida = pedidoencurso3.getCantidadplatos();
                                             int cubiertoelegido = pedidoencurso3.isCubiertos();
@@ -1138,7 +1138,7 @@ public class UsuarioController {
         int idcliente=sessionUser.getIdusuarios();
 
     Optional<Restaurante> restauranteopt = restauranteRepository.findById(Integer.valueOf(idrestaurante));
-    Optional<Plato> platoopt = platoRepository.findById(Integer.valueOf(idplato));
+    Optional<Plato> platoopt = platoRepository.findById(idplato);
     Optional<Direcciones> diropt = direccionesRepository.findById(Integer.valueOf(direccionxenviar));
 
     try {
@@ -1299,7 +1299,7 @@ public class UsuarioController {
         try{
             int idplatoint = Integer.parseInt(idplato);
 
-            Optional<Plato> platoopt = platoRepository.findById(idplatoint);
+            Optional<Plato> platoopt = platoRepository.findById(idplato);
             if(platoopt.isPresent()){
 
                 List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idusuario);
@@ -1314,7 +1314,7 @@ public class UsuarioController {
                         int cantplatosrest = platosxpedido.size();
 
                         for(PedidoHasPlato plato1 : platosxpedido){
-                            int idplatoobtenido = plato1.getPlato().getIdplato();
+                            int idplatoobtenido = Integer.parseInt(plato1.getPlato().getIdplato());
                             if(idplatoobtenido == idplatoint){
                                 PedidoHasPlatoKey pedidoHasPlatoKey = plato1.getId();
                                 pedidoHasPlatoRepository.deleteById(pedidoHasPlatoKey);
