@@ -239,13 +239,28 @@ public class AdminRestauranteController {
     }
 
     @GetMapping("/borrarRestaurante")
-    public String borrarRestaurante(HttpSession session){
-        Usuario user= (Usuario) session.getAttribute("usuarioLogueado");
-        int id=restauranteRepository.buscarRestaurantePorIdAdmin(user.getIdusuarios()).get().getIdrestaurante();
-        restauranteRepository.deleteById(id);
-        user.setCuentaActiva(3);
-        usuarioRepository.save(user);
-        return "redirect:/adminrest/sinrestaurante";
+    public String borrarRestaurante(HttpSession session, Model model) {
+
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        Integer idrestaurante = restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
+        Optional<Usuario> usuarioOptional = usuarioRepository.findById(sessionUser.getIdusuarios());
+        if (usuarioOptional.isPresent()) {
+            Usuario nuevoUsuario = usuarioOptional.get();
+            if (nuevoUsuario.getCuentaActiva() == 2) {
+                int id = restauranteRepository.buscarRestaurantePorIdAdmin(nuevoUsuario.getIdusuarios()).get().getIdrestaurante();
+                restauranteRepository.deleteById(id);
+                nuevoUsuario.setCuentaActiva(3);
+                usuarioRepository.save(nuevoUsuario);
+                return "redirect:/adminrest/sinrestaurante";
+            }else if(nuevoUsuario.getCuentaActiva() == 1){
+                model.addAttribute("restSinBorrar","No se puede anular tu registro porque tu restaurante ya ha sido aceptado. Haz click para ingresar.");
+                return "AdminRestaurantes/espera";
+            }else{
+                return "redirect:/login";
+            }
+        }else {
+            return "redirect:/login";
+        }
     }
 
     @PostMapping("/llenarcategoria")
