@@ -1221,7 +1221,7 @@ public class AdminRestauranteController {
         /********************************/
         /* Envio de correo de confirmacion */
         String subject = "Pedido rechazado";
-        String aws = "http://g-spicyo.publicvm.com";
+        String aws = "g-spicyo.publicvm.com";
         String direccionurl = "http://" + aws + ":8080/login";
         String mensaje = "¡Hola! Tu pedido ha sido rechazado por el administrador de restaurante. Por favor, intenta con un nuevo pedido.<br><br>" +
                 "Ahora es parte de Spicyo. Para ingresar a su cuenta haga click: <a href='" + direccionurl + "'>AQUÍ</a> <br><br>Atte. Equipo de Spicy :D</b>";

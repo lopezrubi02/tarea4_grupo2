@@ -983,7 +983,7 @@ public class RepartidorController {
 
         /* Envio de correo de confirmacion */
         String subject = "Cuenta creada en Spicyo";
-        String aws = "http://g-spicyo.publicvm.com";
+        String aws = "g-spicyo.publicvm.com";
         String direccionurl = "http://" + aws + ":8080/login";
         String mensaje = "¡Hola!<br><br>" +
                 "La cuenta fue registada exitosamente; sin embargo, debe esperar el " +
