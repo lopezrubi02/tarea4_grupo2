@@ -733,7 +733,7 @@ public class RepartidorController {
                     attributes.addFlashAttribute("msgR", msgR);
                     return "redirect:/repartidor/miperfil";
                 } else {
-                    model.addAttribute("msg", "Contraseñas no son iguales");
+                    model.addAttribute("errorpatroncontra", "Contraseñas no son iguales");
                     Usuario usuario2 = optional.get();
                     model.addAttribute("usuario", usuario2);
 
@@ -861,6 +861,48 @@ public class RepartidorController {
         }
         return pattern .matcher(placa).matches();
     }
+
+    @GetMapping("/repartidor/editardireccion")
+    public String agregardireccion(Model model,HttpSession session) {
+
+
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int id = sessionUser.getIdusuarios();
+
+
+        Optional<Usuario> optional = usuarioRepository.findById(id);
+
+        if (optional.isPresent()) {
+            Usuario usuario = optional.get();
+            model.addAttribute("usuario", usuario);
+
+        }
+
+        List<Distritos> listadistritos = distritosRepository.findAll();
+        model.addAttribute("listadistritos",listadistritos);
+        String direction=null;
+        model.addAttribute("direction",direction);
+        System.out.println(direction);
+        return "repartidor/editardireccion";
+    }
+
+    @PostMapping("/repartidor/guardarnuevadireccion")
+    public String guardarnuevadireccion(@RequestParam("direccion_real") String direccion,
+                                        @RequestParam("iddistrito") int iddistrito,
+                                        HttpSession session,RedirectAttributes attributes) {
+
+        Usuario user=(Usuario) session.getAttribute("usuarioLogueado");
+        Direcciones direccion_user = direccionesRepository.findByUsuario(user);
+        String dir = direccion.split(",")[0].trim();
+        direccion_user.setDireccion(dir);
+        System.out.println(iddistrito);
+        direccion_user.setDistrito(distritosRepository.findById(iddistrito).get());
+        direccionesRepository.save(direccion_user);
+        String msgR="La dirección fue actualizada exitosamente";
+        attributes.addFlashAttribute("msgR",msgR);
+        return "redirect:/repartidor/miperfil";
+    }
+
 
     @PostMapping("/save3")
     public String guardarRepartidor3(@ModelAttribute("usuario") @Valid Usuario usuario,
