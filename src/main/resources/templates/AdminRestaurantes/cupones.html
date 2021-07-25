@@ -31,6 +31,7 @@
             <div class="container">
                 <h1>Cupones</h1>
                 <div class="row">
+                    <div th:if="${cuponInvalido != null}" th:text="${cuponInvalido}" class="alert alert-danger" style="width: 630px;height: 60px;margin-top: 10px;text-align: center"></div>
                     <div class="col-md-12">
                         <div class="table-responsive">
                             <table class="table table-striped">

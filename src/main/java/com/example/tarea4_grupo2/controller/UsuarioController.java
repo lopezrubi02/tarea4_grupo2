@@ -532,11 +532,13 @@ public class UsuarioController {
         Usuario user = useropt.get();
         List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idusuarioactual);
         Pedidos pedidopendiente = pedidosRepository.pedidoencurso(idusuarioactual);
-        System.out.println("TRACER 0 ******");
+        System.out.println("TRACER 0 ******************");
         if(listapedidospendientes.size() >= 1 || (pedidopendiente != null && !pedidopendiente.getEstadorestaurante().equalsIgnoreCase("rechazado"))){
-            System.out.println("TRACER 1*******");
+            System.out.println("TRACER 1***************");
             String mensajependidopendiente = "No puede realizar otro pedido a otro restaurante que sea diferente al que ya ha seleccionado.";
-            if(pedidopendiente != null && !pedidopendiente.getEstadorestaurante().equalsIgnoreCase("rechazado")){                mensajependidopendiente = "No puede realizar otro pedido mientras tenga un pedido en curso";
+            if(pedidopendiente != null && !pedidopendiente.getEstadorestaurante().equalsIgnoreCase("rechazado")){
+                System.out.println("TRACER 2*****************");
+                mensajependidopendiente = "No puede realizar otro pedido mientras tenga un pedido en curso";
                 attr.addFlashAttribute("hayunpedidoencurso",mensajependidopendiente);
                 return "redirect:/cliente/progresopedido";
             }
@@ -954,7 +956,8 @@ public class UsuarioController {
                          int idrestsel = idrestaurante;
                          System.out.println("VALIDACIONES NO REALIZAR PEDIDO");
                          if(listapedidospendientes.size() >= 1 || (pedidopendiente != null && !pedidopendiente.getEstadorestaurante().equalsIgnoreCase("rechazado"))){
-                             if (pedidopendiente != null && !pedidopendiente.getEstadorestaurante().equalsIgnoreCase("rechazado")) {                                 System.out.println("HAY PEDIDO PENDIENTE");
+                             if (pedidopendiente != null && !pedidopendiente.getEstadorestaurante().equalsIgnoreCase("rechazado")) {
+                                 System.out.println("HAY PEDIDO PENDIENTE");
                                  String mensajependidopendiente = "No puede realizar otro pedido mientras tenga un pedido en curso";
                                  attr.addFlashAttribute("hayunpedidoencurso", mensajependidopendiente);
                                  return "redirect:/cliente/progresopedido";
@@ -1018,7 +1021,7 @@ public class UsuarioController {
             int idrestaurante = Integer.parseInt(idrest);
             int direccionxenviar = Integer.parseInt(direccion);
             // TODO validar plato activo en 1 y disponibilidad en 1, caso contrario redirigir a vista restaurantexpedir
-            Optional<Plato> platoopt = platoRepository.findById(idplatopedir);
+            Optional<Plato> platoopt = platoRepository.findById(idplato);
             Optional<Restaurante> restopt = restauranteRepository.findById(idrestaurante);
             Optional<Direcciones> diropt = Optional.ofNullable(direccionesRepository.findDireccionesByIddireccionesAndUsuario_Idusuarios(direccionxenviar, idusuarioactual));
 
@@ -1059,7 +1062,8 @@ public class UsuarioController {
                 if(continuar == true && rest.getUsuario().getCuentaActiva() == 1){
                     int idrestsel = idrestaurante;
                     if(listapedidospendientes.size() >= 1 || (pedidopendiente != null && !pedidopendiente.getEstadorestaurante().equalsIgnoreCase("rechazado"))){
-                        if (pedidopendiente != null && !pedidopendiente.getEstadorestaurante().equalsIgnoreCase("rechazado")) {                            String mensajependidopendiente = "No puede realizar otro pedido mientras tenga un pedido en curso";
+                        if (pedidopendiente != null && !pedidopendiente.getEstadorestaurante().equalsIgnoreCase("rechazado")) {
+                            String mensajependidopendiente = "No puede realizar otro pedido mientras tenga un pedido en curso";
                             attr.addFlashAttribute("hayunpedidoencurso", mensajependidopendiente);
                             return "redirect:/cliente/progresopedido";
                         }
@@ -1073,7 +1077,7 @@ public class UsuarioController {
                                 List<PedidoHasPlato> pedidoencurso2 = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
                                 if (!pedidoencurso2.isEmpty()) {
                                     for (PedidoHasPlato pedidoencurso3 : pedidoencurso2) {
-                                        if (pedidoencurso3.getPlato().getIdplato() == idplatopedir) {
+                                        if (Integer.parseInt(pedidoencurso3.getPlato().getIdplato()) == idplatopedir) {
                                             String comentariohecho = pedidoencurso3.getDescripcion();
                                             int cantpedida = pedidoencurso3.getCantidadplatos();
                                             int cubiertoelegido = pedidoencurso3.isCubiertos();
@@ -1137,7 +1141,7 @@ public class UsuarioController {
         int idcliente=sessionUser.getIdusuarios();
 
     Optional<Restaurante> restauranteopt = restauranteRepository.findById(Integer.valueOf(idrestaurante));
-    Optional<Plato> platoopt = platoRepository.findById(Integer.valueOf(idplato));
+    Optional<Plato> platoopt = platoRepository.findById(idplato);
     Optional<Direcciones> diropt = direccionesRepository.findById(Integer.valueOf(direccionxenviar));
 
     try {
@@ -1165,7 +1169,7 @@ public class UsuarioController {
                             int tam = listapedidoscliente.size();
                             Pedidos ultimopedido = listapedidoscliente.get(tam - 1);
                             int idultimopedido = ultimopedido.getIdpedidos();
-                            PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido, Integer.valueOf(idplato));
+                            PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido, idplato);
                             PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey, pedidos, platoelegido, descripcion, Integer.valueOf(cantidad), cubiertos);
                             pedidos.addpedido(pedidoHasPlato);
                             pedidos.setMontototal("0");
@@ -1195,7 +1199,7 @@ public class UsuarioController {
                             System.out.println(platoelegido.getNombre());
                             Pedidos pedidos = pedidoencurso;
                             int idultimopedido = pedidoencurso.getIdpedidos();
-                            PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido, Integer.valueOf(idplato));
+                            PedidoHasPlatoKey pedidoHasPlatoKey = new PedidoHasPlatoKey(idultimopedido, idplato);
                             PedidoHasPlato pedidoHasPlato = new PedidoHasPlato(pedidoHasPlatoKey, pedidos, platoelegido, descripcion, Integer.valueOf(cantidad), cubiertos);
                             pedidoHasPlatoKey.setPedidosidpedidos(idultimopedido);
                             pedidoHasPlato.setId(pedidoHasPlatoKey);
@@ -1298,7 +1302,7 @@ public class UsuarioController {
         try{
             int idplatoint = Integer.parseInt(idplato);
 
-            Optional<Plato> platoopt = platoRepository.findById(idplatoint);
+            Optional<Plato> platoopt = platoRepository.findById(idplato);
             if(platoopt.isPresent()){
 
                 List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idusuario);
@@ -1313,7 +1317,7 @@ public class UsuarioController {
                         int cantplatosrest = platosxpedido.size();
 
                         for(PedidoHasPlato plato1 : platosxpedido){
-                            int idplatoobtenido = plato1.getPlato().getIdplato();
+                            int idplatoobtenido = Integer.parseInt(plato1.getPlato().getIdplato());
                             if(idplatoobtenido == idplatoint){
                                 PedidoHasPlatoKey pedidoHasPlatoKey = plato1.getId();
                                 pedidoHasPlatoRepository.deleteById(pedidoHasPlatoKey);
@@ -1488,7 +1492,7 @@ public class UsuarioController {
                 System.out.println(idmetodo);
                 System.out.println(metodosel.getMetodo());
                 for (Pedidos pedidoencurso : listapedidospendientes) {
-                    try {
+                    //try {
                         List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
                         System.out.println(pedidoencurso.getIdpedidos());
                         System.out.println(pedidoencurso.getDireccionentrega().getIddirecciones());
@@ -1504,7 +1508,6 @@ public class UsuarioController {
                         System.out.println(pagarTodo);
                         System.out.println(descuento);
                         System.out.println(montototal_pagar);
-                        System.out.println(montoTotal_pedidoHasPlatoDTO);
                         pedidoencurso.setMontototal(String.valueOf(montototal_pagar));
                         pedidoencurso.setMetododepago(metodosel);
 
@@ -1515,16 +1518,22 @@ public class UsuarioController {
                                     pedidoencurso.setMontoexacto(String.valueOf(montoexacto));
                                 } else {
                                     redirectAttributes.addFlashAttribute("pago1", "El monto exacto a pagar no es suficiente");
+                                    montoexacto = 0;
+                                    pedidoencurso.setMontototal(String.valueOf(montoexacto));
                                     return "redirect:/cliente/checkout";
                                 }
                             } else {
                                 redirectAttributes.addFlashAttribute("pago2", "No ha ingresado un monto exacto");
+                                montoexacto = 0;
+                                pedidoencurso.setMontototal(String.valueOf(montoexacto));
                                 return "redirect:/cliente/checkout";
                             }
                         }
                         if (idmetodo == 1) {
                             System.out.println(numerotarjeta);
                             if (numerotarjeta == null) {
+                                montoexacto = 0;
+                                pedidoencurso.setMontototal(String.valueOf(montoexacto));
                                 return "redirect:/cliente/checkout";
                             } else {
 
@@ -1541,6 +1550,8 @@ public class UsuarioController {
                                     }
                                 } else {
                                     redirectAttributes.addFlashAttribute("tarjetanovalida", "El número de tarjeta no es válido. Las tarjetas validas son Visa, MasterCard, DinersClub, Discover, JCB");
+                                    montoexacto = 0;
+                                    pedidoencurso.setMontototal(String.valueOf(montoexacto));
                                     return "redirect:/cliente/checkout";
                                 }
 
@@ -1556,7 +1567,7 @@ public class UsuarioController {
                         pedidoencurso.setEstadorestaurante("pendiente");
                         pedidoencurso.setEstadorepartidor("indefinido");
                         pedidosRepository.save(pedidoencurso);
-                    }catch (Exception e){
+                    /*}catch (Exception e){
                         List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
                         System.out.println(pedidoencurso.getIdpedidos());
                         System.out.println(pedidoencurso.getDireccionentrega().getIddirecciones());
@@ -1624,7 +1635,7 @@ public class UsuarioController {
                         pedidoencurso.setEstadorestaurante("pendiente");
                         pedidoencurso.setEstadorepartidor("indefinido");
                         pedidosRepository.save(pedidoencurso);
-                    }
+                    }*/
                 }
                 redirectAttributes.addFlashAttribute("checkout", "Pedido listo");
             }
