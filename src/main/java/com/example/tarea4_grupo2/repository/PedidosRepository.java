@@ -4,11 +4,13 @@ import com.example.tarea4_grupo2.dto.*;
 import com.example.tarea4_grupo2.entity.Pedidos;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
 /* Obtencion del Top 3 de Restaurantes*/
     @Query(value = "select re.nombre as restaurante, count(*) as vecesasistida from " +

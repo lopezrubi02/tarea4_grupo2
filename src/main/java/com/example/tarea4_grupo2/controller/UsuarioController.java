@@ -1492,7 +1492,7 @@ public class UsuarioController {
                 System.out.println(idmetodo);
                 System.out.println(metodosel.getMetodo());
                 for (Pedidos pedidoencurso : listapedidospendientes) {
-                    try {
+                    //try {
                         List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
                         System.out.println(pedidoencurso.getIdpedidos());
                         System.out.println(pedidoencurso.getDireccionentrega().getIddirecciones());
@@ -1508,7 +1508,6 @@ public class UsuarioController {
                         System.out.println(pagarTodo);
                         System.out.println(descuento);
                         System.out.println(montototal_pagar);
-                        System.out.println(montoTotal_pedidoHasPlatoDTO);
                         pedidoencurso.setMontototal(String.valueOf(montototal_pagar));
                         pedidoencurso.setMetododepago(metodosel);
 
@@ -1519,16 +1518,22 @@ public class UsuarioController {
                                     pedidoencurso.setMontoexacto(String.valueOf(montoexacto));
                                 } else {
                                     redirectAttributes.addFlashAttribute("pago1", "El monto exacto a pagar no es suficiente");
+                                    montoexacto = 0;
+                                    pedidoencurso.setMontototal(String.valueOf(montoexacto));
                                     return "redirect:/cliente/checkout";
                                 }
                             } else {
                                 redirectAttributes.addFlashAttribute("pago2", "No ha ingresado un monto exacto");
+                                montoexacto = 0;
+                                pedidoencurso.setMontototal(String.valueOf(montoexacto));
                                 return "redirect:/cliente/checkout";
                             }
                         }
                         if (idmetodo == 1) {
                             System.out.println(numerotarjeta);
                             if (numerotarjeta == null) {
+                                montoexacto = 0;
+                                pedidoencurso.setMontototal(String.valueOf(montoexacto));
                                 return "redirect:/cliente/checkout";
                             } else {
 
@@ -1545,6 +1550,8 @@ public class UsuarioController {
                                     }
                                 } else {
                                     redirectAttributes.addFlashAttribute("tarjetanovalida", "El número de tarjeta no es válido. Las tarjetas validas son Visa, MasterCard, DinersClub, Discover, JCB");
+                                    montoexacto = 0;
+                                    pedidoencurso.setMontototal(String.valueOf(montoexacto));
                                     return "redirect:/cliente/checkout";
                                 }
 
@@ -1560,7 +1567,7 @@ public class UsuarioController {
                         pedidoencurso.setEstadorestaurante("pendiente");
                         pedidoencurso.setEstadorepartidor("indefinido");
                         pedidosRepository.save(pedidoencurso);
-                    }catch (Exception e){
+                    /*}catch (Exception e){
                         List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
                         System.out.println(pedidoencurso.getIdpedidos());
                         System.out.println(pedidoencurso.getDireccionentrega().getIddirecciones());
@@ -1628,7 +1635,7 @@ public class UsuarioController {
                         pedidoencurso.setEstadorestaurante("pendiente");
                         pedidoencurso.setEstadorepartidor("indefinido");
                         pedidosRepository.save(pedidoencurso);
-                    }
+                    }*/
                 }
                 redirectAttributes.addFlashAttribute("checkout", "Pedido listo");
             }
