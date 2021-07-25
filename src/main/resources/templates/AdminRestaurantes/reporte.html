@@ -1,485 +1,482 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/adminRestaurante.html :: header( title = 'Reporte')">
-
-</head>
-
-<!-- body -->
-<body class="main-layout Recipes_page">
-<div class="wrapper">
-  <div class="sidebar">
-    <!-- Sidebar  -->
-    <nav id="sidebar">
-      <div id="dismiss">
-        <i class="fa fa-arrow-left"></i>
+  <head th:replace="fragments/adminRestaurante.html :: header( title = 'Reporte')"></head>
+  <!-- body -->
+  <body class="main-layout Recipes_page">
+    <div class="wrapper">
+      <div class="sidebar">
+        <!-- Sidebar  -->
+        <nav id="sidebar">
+          <div id="dismiss">
+            <i class="fa fa-arrow-left"></i>
+          </div>
+          <ul class="list-unstyled components">
+            <li><a th:href="@{/adminrest/perfil}">Perfil</a></li>
+            <li><a th:href="@{/adminrest/menu}">Menu</a></li>
+            <li><a th:href="@{/adminrest/cupones}">Cupones</a></li>
+            <li><a th:href="@{/adminrest/pedidos}">Pedidos</a></li>
+            <li><a th:href="@{/adminrest/calificaciones}">Calificaciones</a></li>
+          </ul>
+        </nav>
       </div>
-      <ul class="list-unstyled components">
-        <li><a th:href="@{/adminrest/perfil}">Perfil</a></li>
-        <li><a th:href="@{/adminrest/menu}">Menu</a></li>
-        <li><a th:href="@{/adminrest/cupones}">Cupones</a></li>
-        <li><a th:href="@{/adminrest/pedidos}">Pedidos</a></li>
-        <li><a th:href="@{/adminrest/calificaciones}">Calificaciones</a></li>
-      </ul>
-    </nav>
-  </div>
-  <div id="content">
-    <!-- header -->
-    <header>
-      <div th:replace="fragments/adminRestaurante.html :: navbar"></div>
-    </header>
-    <!-- end header -->
-    <!-- blog -->
-    <div class="blog">
-      <div class="container">
-        <div class="row">
-          <div class="col-8">
-          </div>
-          <div class="col-4">
-            <div class="d-flex justify-content-end">
-              <a th:href="@{/adminrest/excelexportar}" type="button" class="btn btn-outline-success" style="text-align: center;">Exportar a Excel</a>
+      <div id="content">
+        <!-- header -->
+        <header>
+          <div th:replace="fragments/adminRestaurante.html :: navbar"></div>
+        </header>
+        <!-- end header -->
+        <div class="yellow_bg" style="margin-bottom: -140px">
+          <div class="container">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="title">
+                  <h2 style="color: #000000">Reportes</h2>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <br>
-        <div class="row">
-          <div class="col-8">
-            <h1>Historial de pedidos</h1>
-            <div th:if="${registroVacio != null}" th:text="${registroVacio}" class="alert alert-danger"></div>
-            <div th:if="${msgpage != null}" th:text="${msgpage}" class="alert alert-danger"></div>
-          </div>
-        </div>
-        <br>
-        <form class="input-group" method="post" th:action="@{/adminrest/buscarReporte}">
-          <!--
-          <div class="input-group-text">
-            <input style="margin: 5px" class="form-control" placeholder="Ingrese el texto a buscar" name="name">
-            <button class="btn btn-primary" style="margin: 5px" type="submit">Buscar</button>
-            <a class="btn btn-danger" style="margin: 5px" th:href="@{/reporte}">Limpiar</a>
-          </div>
-          -->
-          <div class="col-md-10" style="border-style: groove">
-            <input name="name" class="form-control" style="height: 50px;margin-bottom: 0px"
-                   type="text" placeholder="Nombre del cliente, Nombre del plato, Método de pago, Distrito del pedido " th:if="${name==''}"/>
-            <input name="name" class="form-control" style="height: 50px;margin-bottom: 0px"
-                   type="text" placeholder="Nombre del cliente, Nombre del plato, Método de pago, Distrito del pedido " th:unless="${name==''}" th:value="${name}"/>
-          </div>
-          <div class="col-md-1">
-            <button style="height: 50px" class="btn btn-dark" type="submit">Buscar</button>
-          </div>
-          <div class="col-md-1">
-            <button style="height: 50px" class="btn btn-warning"><a class="button" th:href="@{/adminrest/reporte}">Limpiar</a></button>
-          </div>
-        </form>
-        <br>
-        <div class="row table-users">
-          <!-- table -->
-          <div class="col-md-12">
-            <div class="table-responsive">
-              <table class="table table-striped">
-                <thead >
-                <tr>
-                  <th scope="col">#Pedido</th>
-                  <th scope="col" width="200px">Fecha del pedido</th>
-                  <th scope="col" width="200px">Nombre del cliente</th>
-                  <th scope="col" width="200px">Monto del pedido</th>
-                  <th scope="col" width="200px">Nombre del plato</th>
-                  <th scope="col" width="200px">Metodo de pago</th>
-                  <th scope="col" width="200px">Distrito del pedido</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="pedido: ${listaPedidosPorFecha}">
-                  <td th:text="${pedido.getnumeropedido()}"></td>
-                  <td scope="row" th:text="${pedido.getfechahorapedido()}"><a href="repartidor_pedido_1.html"></a></td>
-                  <td th:text="${pedido.getnombre()} + ' ' + ${pedido.getapellidos()}"></td>
-                  <td th:text="${pedido.getmontototal()}"></td>
-                  <td th:text="${pedido.getnombreplato()}"></td>
-                  <td th:text="${pedido.getmetodo()}"></td>
-                  <td th:text="${pedido.getdistrito()}"></td>
-                </tr>
-                </tbody>
-              </table>
+        <!-- blog -->
+        <div class="blog">
+          <div class="container">
+            <div class="row">
+              <div class="col-8">
+              </div>
+              <div class="col-4">
+                <div class="d-flex justify-content-end">
+                  <a th:href="@{/adminrest/excelexportar}" type="button" class="btn btn-outline-success" style="text-align: center;">Exportar a Excel</a>
+                </div>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-8">
+                <h1 style="font-weight: bold">Historial de pedidos</h1>
+                <div th:if="${registroVacio != null}" th:text="${registroVacio}" class="alert alert-danger"></div>
+                <div th:if="${msgpage != null}" th:text="${msgpage}" class="alert alert-danger"></div>
+              </div>
+            </div>
+            <br>
+            <form class="input-group" method="post" th:action="@{/adminrest/buscarReporte}">
+              <div class="col-md-10" style="border-style: groove">
+                <input name="name" class="form-control" style="height: 50px;margin-bottom: 0px" type="text" placeholder="Nombre del cliente, Nombre del plato, Método de pago, Distrito del pedido " th:if="${name==''}"/>
+                <input name="name" class="form-control" style="height: 50px;margin-bottom: 0px" type="text" placeholder="Nombre del cliente, Nombre del plato, Método de pago, Distrito del pedido " th:unless="${name==''}" th:value="${name}"/>
+              </div>
+              <div class="col-md-1">
+                <button style="height: 50px" class="btn btn-dark" type="submit">Buscar</button>
+              </div>
+              <div class="col-md-1">
+                <button style="height: 50px" class="btn btn-warning"><a class="button" th:href="@{/adminrest/reporte}">Limpiar</a></button>
+              </div>
+            </form>
+            <br>
+            <div class="row table-users">
+              <!-- table -->
+              <div class="col-md-12">
+                <div class="table-responsive">
+                  <table class="table table-striped">
+                    <thead >
+                    <tr>
+                      <th scope="col">#Pedido</th>
+                      <th scope="col" width="200px">Fecha del pedido</th>
+                      <th scope="col" width="200px">Nombre del cliente</th>
+                      <th scope="col" width="200px">Monto del pedido</th>
+                      <th scope="col" width="200px">Nombre del plato</th>
+                      <th scope="col" width="200px">Metodo de pago</th>
+                      <th scope="col" width="200px">Distrito del pedido</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="pedido: ${listaPedidosPorFecha}">
+                      <td th:text="${pedido.getnumeropedido()}"></td>
+                      <td scope="row" th:text="${pedido.getfechahorapedido()}"><a href="repartidor_pedido_1.html"></a></td>
+                      <td th:text="${pedido.getnombre()} + ' ' + ${pedido.getapellidos()}"></td>
+                      <td th:text="${pedido.getmontototal()}"></td>
+                      <td th:text="${pedido.getnombreplato()}"></td>
+                      <td th:text="${pedido.getmetodo()}"></td>
+                      <td th:text="${pedido.getdistrito()}"></td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <!-- end of table -->
+              <div class="col-md-12">
+              <div class="row">
+                <nav aria-label="Page navigation example" class = "mx-auto" >
+                  <ul class="pagination justify-content-center">
+
+                    <!--  BOTON ANTERIOR -->
+                    <li class="page-item disabled" th:if="${currentPage eq 1 }">
+                      <span class="page-link">Anterior</span>
+                    </li>
+                    <li class="page-item" th:unless="${currentPage eq 1}">
+                      <a class="page-link"
+                         th:href="@{/adminrest/reporte(page=${currentPage - 1},page2=${currentPage2})}">Anterior</a>
+                    </li>
+
+                    <!-- BOTONES NUMEROS -->
+                    <li th:each="i : ${#numbers.sequence( 1, maxNumberOfPages )}"
+                        th:class="${ i == currentPage ? 'page-item active .bg-secondary' : 'page-item' }">
+                      <a class="page-link"  th:href="@{/adminrest/reporte(page=${i},page2=${currentPage2})}"
+                         th:text="${i}"
+                      ></a>
+                    </li>
+
+                    <!--  BOTON SIGUIENTE -->
+                    <li class="page-item disabled" th:if="${currentPage eq maxNumberOfPages }">
+                      <span class="page-link">Anterior</span>
+                    </li>
+                    <li class="page-item" th:unless="${currentPage eq maxNumberOfPages}">
+                      <a class="page-link" th:href="@{/adminrest/reporte(page=${currentPage + 1},page2=${currentPage2})}">Siguiente</a>
+                    </li>
+                  </ul>
+                </nav>
+              </div>
+              </div>
             </div>
           </div>
-          <!-- end of table -->
-          <div class="col-md-12">
-          <div class="row">
-            <nav aria-label="Page navigation example" class = "mx-auto" >
-              <ul class="pagination justify-content-center">
+          <br>
+          <div class="container">
+            <h1>Ingresos mensuales</h1>
+            <div class="row table-users">
+              <!-- table -->
+              <div class="col-md-12">
+                <div class="table-responsive">
+                  <table class="table table-striped" style="width: 600px" align="center">
+                    <thead >
+                    <tr>
+                      <th scope="col" width="200px" align="center">Mes</th>
+                      <th scope="col" width="200px" align="center">Anio</th>
+                      <th scope="col" width="200px" align="center">Ganancia (S/.)</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="g: ${listaGanancias}">
+                      <td align="center" th:text="${g.getmes()}"></td>
+                      <td align="center" th:text="${g.getanio()}"></td>
+                      <td align="center" th:text="${g.getganancia()}"></td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="col-md-12">
+              <div class="row">
+                <nav aria-label="Page navigation example" class = "mx-auto">
+                  <ul class="pagination justify-content-center">
 
-                <!--  BOTON ANTERIOR -->
-                <li class="page-item disabled" th:if="${currentPage eq 1 }">
-                  <span class="page-link">Anterior</span>
-                </li>
-                <li class="page-item" th:unless="${currentPage eq 1}">
-                  <a class="page-link"
-                     th:href="@{/adminrest/reporte(page=${currentPage - 1},page2=${currentPage2})}">Anterior</a>
-                </li>
+                    <!--  BOTON ANTERIOR -->
+                    <li class="page-item disabled" th:if="${currentPage2 eq 1 }">
+                      <span class="page-link">Anterior</span>
+                    </li>
+                    <li class="page-item" th:unless="${currentPage2 eq 1}">
+                      <a class="page-link"
+                         th:href="@{/adminrest/reporte(page=${currentPage},page2=${currentPage2 - 1})}">Anterior</a>
+                    </li>
 
-                <!-- BOTONES NUMEROS -->
-                <li th:each="i : ${#numbers.sequence( 1, maxNumberOfPages )}"
-                    th:class="${ i == currentPage ? 'page-item active .bg-secondary' : 'page-item' }">
-                  <a class="page-link"  th:href="@{/adminrest/reporte(page=${i},page2=${currentPage2})}"
-                     th:text="${i}"
-                  ></a>
-                </li>
+                    <!-- BOTONES NUMEROS -->
+                    <li th:each="i2 : ${#numbers.sequence( 1, maxNumberOfPages2 )}"
+                        th:class="${ i2 == currentPage2 ? 'page-item active .bg-secondary' : 'page-item' }">
+                      <a class="page-link"  th:href="@{/adminrest/reporte(page=${currentPage},page2=${i2})}"
+                         th:text="${i2}"
+                      ></a>
+                    </li>
 
-                <!--  BOTON SIGUIENTE -->
-                <li class="page-item disabled" th:if="${currentPage eq maxNumberOfPages }">
-                  <span class="page-link">Anterior</span>
-                </li>
-                <li class="page-item" th:unless="${currentPage eq maxNumberOfPages}">
-                  <a class="page-link" th:href="@{/adminrest/reporte(page=${currentPage + 1},page2=${currentPage2})}">Siguiente</a>
-                </li>
-              </ul>
-            </nav>
+                    <!--  BOTON SIGUIENTE -->
+                    <li class="page-item disabled" th:if="${currentPage2 eq maxNumberOfPages2 }">
+                      <span class="page-link">Anterior</span>
+                    </li>
+                    <li class="page-item" th:unless="${currentPage2 eq maxNumberOfPages2}">
+                      <a class="page-link" th:href="@{/adminrest/reporte(page=${currentPage},page2=${currentPage2 + 1})}">Siguiente</a>
+                    </li>
+                  </ul>
+                </nav>
+              </div>
+              </div>
+            </div>
           </div>
+          <br>
+          <div class="container">
+            <h1>Top 5 platos mas vendidos</h1>
+            <div class="row table-users">
+              <!-- table -->
+              <div class="col-md-12">
+
+                <select id="platosTopVendidos5" style="display: none">
+                  <option th:each="p:${platosTop5}"
+                          th:text="${p.getnombreplato()}"
+                          th:value="${p.getcantidad()}">
+                  </option>
+                </select>
+
+                <select id="Top5Ganancias" style="display: none">
+                    <option th:each="p:${platosTop5}"
+                            th:text="${p.getnombreplato()}"
+                            th:value="${p.getganancia()}">
+                    </option>
+                </select>
+
+                <div class="table-responsive">
+                  <table class="table table-striped" style="width: 600px" align="center">
+                    <thead >
+                    <tr>
+                      <th scope="col" width="200px" align="center">Nombre del plato</th>
+                      <th scope="col" width="200px" align="center">Cantidad vendida</th>
+                      <th scope="col" width="200px" align="center">Ganancia por plato(S/.)</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="p: ${platosTop5}">
+                      <td align="center" th:text="${p.getnombreplato()}"></td>
+                      <td align="center" th:text="${p.getcantidad()}"></td>
+                      <td align="center" th:text="${p.getganancia()}"></td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="container" style="width: 1000px; height: 500px">
+              <canvas id="myChartPlatosMasVendidos" width="1000px" height="500px"></canvas>
+            </div>
+          </div>
+          <br>
+          <div class="container">
+            <h1>Top 5 platos menos vendidos</h1>
+            <div class="row table-users">
+              <!-- table -->
+              <div class="col-md-12">
+
+                <select id="platosMenosVendidos5" style="display: none">
+                  <option th:each="p:${platosNoTop5}"
+                          th:text="${p.getnombreplato()}"
+                          th:value="${p.getcantidad()}">
+                  </option>
+                </select>
+
+                <select id="Top5Menos" style="display: none">
+                  <option th:each="p:${platosNoTop5}"
+                          th:text="${p.getnombreplato()}"
+                          th:value="${p.getganancia()}">
+                  </option>
+                </select>
+                <div class="table-responsive">
+                  <table class="table table-striped" style="width: 600px" align="center">
+                    <thead >
+                    <tr>
+                      <th scope="col" width="200px" align="center">Nombre del plato</th>
+                      <th scope="col" width="200px" align="center">Cantidad vendida</th>
+                      <th scope="col" width="200px" align="center">Ganancia por plato(S/.)</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="p: ${platosNoTop5}">
+                      <td align="center" th:text="${p.getnombreplato()}"></td>
+                      <td align="center" th:text="${p.getcantidad()}"></td>
+                      <td align="center" th:text="${p.getganancia()}"></td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="container" style="width: 1000px; height: 500px">
+              <canvas id="myChartPlatosMenosVendidos" width="1000px" height="500px"></canvas>
+            </div>
+            <div class="row">
+              <div class="col-md-2">
+                <div class="d-flex justify-content-start" >
+                  <a type="button" th:href="@{/adminrest/perfil}" class="send" style="text-align: center;background: #d8b00f">Regresar</a>
+                </div>
+              </div>
+              <div class="col-md-8"></div>
+              <div class="col-md-2"></div>
+            </div>
           </div>
         </div>
       </div>
-      <br>
-      <div class="container">
-        <h1>Ingresos mensuales</h1>
-        <div class="row table-users">
-          <!-- table -->
-          <div class="col-md-12">
-            <div class="table-responsive">
-              <table class="table table-striped" style="width: 600px" align="center">
-                <thead >
-                <tr>
-                  <th scope="col" width="200px" align="center">Mes</th>
-                  <th scope="col" width="200px" align="center">Anio</th>
-                  <th scope="col" width="200px" align="center">Ganancia (S/.)</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="g: ${listaGanancias}">
-                  <td align="center" th:text="${g.getmes()}"></td>
-                  <td align="center" th:text="${g.getanio()}"></td>
-                  <td align="center" th:text="${g.getganancia()}"></td>
-                </tr>
-                </tbody>
-              </table>
+      <!-- end blog -->
+
+      <!-- footer -->
+      <fooetr>
+          <div class="copyright" style="padding-top: 50px;background:#d8b00f">
+            <div class="container">
+              <p>© 2021 Todos los derechos reservados.</p>
             </div>
           </div>
-          <div class="col-md-12">
-          <div class="row">
-            <nav aria-label="Page navigation example" class = "mx-auto">
-              <ul class="pagination justify-content-center">
+      </fooetr>
+      <!-- end footer -->
 
-                <!--  BOTON ANTERIOR -->
-                <li class="page-item disabled" th:if="${currentPage2 eq 1 }">
-                  <span class="page-link">Anterior</span>
-                </li>
-                <li class="page-item" th:unless="${currentPage2 eq 1}">
-                  <a class="page-link"
-                     th:href="@{/adminrest/reporte(page=${currentPage},page2=${currentPage2 - 1})}">Anterior</a>
-                </li>
-
-                <!-- BOTONES NUMEROS -->
-                <li th:each="i2 : ${#numbers.sequence( 1, maxNumberOfPages2 )}"
-                    th:class="${ i2 == currentPage2 ? 'page-item active .bg-secondary' : 'page-item' }">
-                  <a class="page-link"  th:href="@{/adminrest/reporte(page=${currentPage},page2=${i2})}"
-                     th:text="${i2}"
-                  ></a>
-                </li>
-
-                <!--  BOTON SIGUIENTE -->
-                <li class="page-item disabled" th:if="${currentPage2 eq maxNumberOfPages2 }">
-                  <span class="page-link">Anterior</span>
-                </li>
-                <li class="page-item" th:unless="${currentPage2 eq maxNumberOfPages2}">
-                  <a class="page-link" th:href="@{/adminrest/reporte(page=${currentPage},page2=${currentPage2 + 1})}">Siguiente</a>
-                </li>
-              </ul>
-            </nav>
-          </div>
-          </div>
-        </div>
-      </div>
-      <br>
-      <div class="container">
-        <h1>Top 5 platos mas vendidos</h1>
-        <div class="row table-users">
-          <!-- table -->
-          <div class="col-md-12">
-
-            <select id="platosTopVendidos5" style="display: none">
-              <option th:each="p:${platosTop5}"
-                      th:text="${p.getnombreplato()}"
-                      th:value="${p.getcantidad()}">
-              </option>
-            </select>
-
-            <select id="Top5Ganancias" style="display: none">
-                <option th:each="p:${platosTop5}"
-                        th:text="${p.getnombreplato()}"
-                        th:value="${p.getganancia()}">
-                </option>
-            </select>
-
-            <div class="table-responsive">
-              <table class="table table-striped" style="width: 600px" align="center">
-                <thead >
-                <tr>
-                  <th scope="col" width="200px" align="center">Nombre del plato</th>
-                  <th scope="col" width="200px" align="center">Cantidad vendida</th>
-                  <th scope="col" width="200px" align="center">Ganancia por plato(S/.)</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="p: ${platosTop5}">
-                  <td align="center" th:text="${p.getnombreplato()}"></td>
-                  <td align="center" th:text="${p.getcantidad()}"></td>
-                  <td align="center" th:text="${p.getganancia()}"></td>
-                </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-        <div class="container" style="width: 1000px; height: 500px">
-          <canvas id="myChartPlatosMasVendidos" width="1000px" height="500px"></canvas>
-        </div>
-      </div>
-      <br>
-      <div class="container">
-        <h1>Top 5 platos menos vendidos</h1>
-        <div class="row table-users">
-          <!-- table -->
-          <div class="col-md-12">
-
-            <select id="platosMenosVendidos5" style="display: none">
-              <option th:each="p:${platosNoTop5}"
-                      th:text="${p.getnombreplato()}"
-                      th:value="${p.getcantidad()}">
-              </option>
-            </select>
-
-            <select id="Top5Menos" style="display: none">
-              <option th:each="p:${platosNoTop5}"
-                      th:text="${p.getnombreplato()}"
-                      th:value="${p.getganancia()}">
-              </option>
-            </select>
-            <div class="table-responsive">
-              <table class="table table-striped" style="width: 600px" align="center">
-                <thead >
-                <tr>
-                  <th scope="col" width="200px" align="center">Nombre del plato</th>
-                  <th scope="col" width="200px" align="center">Cantidad vendida</th>
-                  <th scope="col" width="200px" align="center">Ganancia por plato(S/.)</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="p: ${platosNoTop5}">
-                  <td align="center" th:text="${p.getnombreplato()}"></td>
-                  <td align="center" th:text="${p.getcantidad()}"></td>
-                  <td align="center" th:text="${p.getganancia()}"></td>
-                </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-        <div class="container" style="width: 1000px; height: 500px">
-          <canvas id="myChartPlatosMenosVendidos" width="1000px" height="500px"></canvas>
-        </div>
-        <div class="row">
-          <div class="col-md-2">
-            <div class="d-flex justify-content-start" >
-              <a type="button" th:href="@{/adminrest/perfil}" class="send" style="text-align: center;background: #d8b00f">Regresar</a>
-            </div>
-          </div>
-          <div class="col-md-8"></div>
-          <div class="col-md-2"></div>
-        </div>
-      </div>
     </div>
-  </div>
-  <!-- end blog -->
+    </div>
+    <div class="overlay"></div>
+    <!-- Javascript files-->
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/popper.min.js"></script>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/owl.carousel.min.js"></script>
+    <script src="/js/custom.js"></script>
+    <script src="/js/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="/js/jquery-3.0.0.min.js"></script>
 
-  <!-- footer -->
-  <fooetr>
-      <div class="copyright" style="padding-top: 50px;background:#d8b00f">
-        <div class="container">
-          <p>© 2021 Todos los derechos reservados.</p>
-        </div>
-      </div>
-  </fooetr>
-  <!-- end footer -->
-
-</div>
-</div>
-<div class="overlay"></div>
-<!-- Javascript files-->
-<script src="/js/jquery.min.js"></script>
-<script src="/js/popper.min.js"></script>
-<script src="/js/bootstrap.bundle.min.js"></script>
-<script src="/js/owl.carousel.min.js"></script>
-<script src="/js/custom.js"></script>
-<script src="/js/jquery.mCustomScrollbar.concat.min.js"></script>
-<script src="/js/jquery-3.0.0.min.js"></script>
-
-<script>
-  var myoption2 = {
-    indexAxis: 'y',
-  };
-  let myChart;
-  var ctx = document.getElementById('myChartPlatosMenosVendidos').getContext('2d');
-  var listaPlatosTopDto=document.getElementById("platosMenosVendidos5");
-  var listaGanancia = document.getElementById("Top5Menos");
-  var nombresPlatos=[listaPlatosTopDto.length];
-  var cantidadPlatos=[listaPlatosTopDto.length];
-  var gananciasPlatos=[listaGanancia.length];
-  for(var i=0;i<listaPlatosTopDto.length;i++){
-    nombresPlatos[i]=listaPlatosTopDto[i].text;
-    console.log(nombresPlatos[i]);
-    cantidadPlatos[i]=listaPlatosTopDto[i].value;
-    console.log(cantidadPlatos[i]);
-    gananciasPlatos[i] = listaGanancia[i].value;
-    console.log(gananciasPlatos[i]);
-  }
-  myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: nombresPlatos,
-      datasets: [{
-        label: 'Cantidad de platos vendidos',
-        fillColor: "#79D1CF",
-        strokeColor: "#79D1CF",
-        data: cantidadPlatos,
-        backgroundColor: [
-          'rgb(227,209,5)',
-        ],
-        borderColor: [
-          'rgba(0,3,3,0.95)',
-        ],
-        borderWidth: 2
-      },{
-        label: 'Ganancia por plato',
-        data: gananciasPlatos,
-        backgroundColor: [
-          'rgb(227,209,5)',
-        ],
-        borderColor: [
-          'rgba(0,3,3,0.95)',
-        ],
-        borderWidth: 2
-      }]
-    },
-    options: myoption2
-  });
-</script>
-
-<script>
-  var myoption = {
-    indexAxis: 'y',
-  };
-  let myChart2;
-  var ctx = document.getElementById('myChartPlatosMasVendidos').getContext('2d');
-  var listaPlatosTopDto=document.getElementById("platosTopVendidos5");
-  var listaGanancia = document.getElementById("Top5Ganancias");
-  var nombresPlatos=[listaPlatosTopDto.length];
-  var cantidadPlatos=[listaPlatosTopDto.length];
-  var gananciasPlatos=[listaGanancia.length];
-  for(var i=0;i<listaPlatosTopDto.length;i++){
-    nombresPlatos[i]=listaPlatosTopDto[i].text;
-    console.log(nombresPlatos[i]);
-    cantidadPlatos[i]=listaPlatosTopDto[i].value;
-    console.log(cantidadPlatos[i]);
-    gananciasPlatos[i] = listaGanancia[i].value;
-    console.log(gananciasPlatos[i]);
-  }
-  myChart2 = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: nombresPlatos,
-      datasets: [{
-        label: 'Cantidad de platos vendidos',
-        fillColor: "#79D1CF",
-        strokeColor: "#79D1CF",
-        data: cantidadPlatos,
-        backgroundColor: [
-          'rgb(227,209,5)',
-        ],
-        borderColor: [
-          'rgba(0,3,3,0.95)',
-        ],
-        borderWidth: 2
-      },{
-        label: 'Ganancia por plato',
-        data: gananciasPlatos,
-        backgroundColor: [
-          'rgb(227,209,5)',
-        ],
-        borderColor: [
-          'rgba(0,3,3,0.95)',
-        ],
-        borderWidth: 2
-      }]
-    },
-    options: myoption
-  });
-</script>
-
-<script type="text/javascript">
-  $(document).ready(function() {
-    $("#sidebar").mCustomScrollbar({
-      theme: "minimal"
-    });
-
-    $('#dismiss, .overlay').on('click', function() {
-      $('#sidebar').removeClass('active');
-      $('.overlay').removeClass('active');
-    });
-
-    $('#sidebarCollapse').on('click', function() {
-      $('#sidebar').addClass('active');
-      $('.overlay').addClass('active');
-      $('.collapse.in').toggleClass('in');
-      $('a[aria-expanded=true]').attr('aria-expanded', 'false');
-    });
-  });
-</script>
-
-<style>
-  #owl-demo .item{
-    margin: 3px;
-  }
-  #owl-demo .item img{
-    display: block;
-    width: 100%;
-    height: auto;
-  }
-</style>
-<script>
-  //console.log(document.getElementById("platosTopVendidos5"));
-  //console.log("Hola");
-</script>
-
-<script>
-  $(document).ready(function() {
-    var owl = $('.owl-carousel');
-    owl.owlCarousel({
-      margin: 10,
-      nav: true,
-      loop: true,
-      responsive: {
-        0: {
-          items: 1
-        },
-        600: {
-          items: 2
-        },
-        1000: {
-          items: 5
-        }
+    <script>
+      var myoption2 = {
+        indexAxis: 'y',
+      };
+      let myChart;
+      var ctx = document.getElementById('myChartPlatosMenosVendidos').getContext('2d');
+      var listaPlatosTopDto=document.getElementById("platosMenosVendidos5");
+      var listaGanancia = document.getElementById("Top5Menos");
+      var nombresPlatos=[listaPlatosTopDto.length];
+      var cantidadPlatos=[listaPlatosTopDto.length];
+      var gananciasPlatos=[listaGanancia.length];
+      for(var i=0;i<listaPlatosTopDto.length;i++){
+        nombresPlatos[i]=listaPlatosTopDto[i].text;
+        console.log(nombresPlatos[i]);
+        cantidadPlatos[i]=listaPlatosTopDto[i].value;
+        console.log(cantidadPlatos[i]);
+        gananciasPlatos[i] = listaGanancia[i].value;
+        console.log(gananciasPlatos[i]);
       }
-    })
-  })
-</script>
+      myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: nombresPlatos,
+          datasets: [{
+            label: 'Cantidad de platos vendidos',
+            fillColor: "#79D1CF",
+            strokeColor: "#79D1CF",
+            data: cantidadPlatos,
+            backgroundColor: [
+              'rgb(227,209,5)',
+            ],
+            borderColor: [
+              'rgba(0,3,3,0.95)',
+            ],
+            borderWidth: 2
+          },{
+            label: 'Ganancia por plato',
+            data: gananciasPlatos,
+            backgroundColor: [
+              'rgb(227,209,5)',
+            ],
+            borderColor: [
+              'rgba(0,3,3,0.95)',
+            ],
+            borderWidth: 2
+          }]
+        },
+        options: myoption2
+      });
+    </script>
 
-</body>
+    <script>
+      var myoption = {
+        indexAxis: 'y',
+      };
+      let myChart2;
+      var ctx = document.getElementById('myChartPlatosMasVendidos').getContext('2d');
+      var listaPlatosTopDto=document.getElementById("platosTopVendidos5");
+      var listaGanancia = document.getElementById("Top5Ganancias");
+      var nombresPlatos=[listaPlatosTopDto.length];
+      var cantidadPlatos=[listaPlatosTopDto.length];
+      var gananciasPlatos=[listaGanancia.length];
+      for(var i=0;i<listaPlatosTopDto.length;i++){
+        nombresPlatos[i]=listaPlatosTopDto[i].text;
+        console.log(nombresPlatos[i]);
+        cantidadPlatos[i]=listaPlatosTopDto[i].value;
+        console.log(cantidadPlatos[i]);
+        gananciasPlatos[i] = listaGanancia[i].value;
+        console.log(gananciasPlatos[i]);
+      }
+      myChart2 = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: nombresPlatos,
+          datasets: [{
+            label: 'Cantidad de platos vendidos',
+            fillColor: "#79D1CF",
+            strokeColor: "#79D1CF",
+            data: cantidadPlatos,
+            backgroundColor: [
+              'rgb(227,209,5)',
+            ],
+            borderColor: [
+              'rgba(0,3,3,0.95)',
+            ],
+            borderWidth: 2
+          },{
+            label: 'Ganancia por plato',
+            data: gananciasPlatos,
+            backgroundColor: [
+              'rgb(227,209,5)',
+            ],
+            borderColor: [
+              'rgba(0,3,3,0.95)',
+            ],
+            borderWidth: 2
+          }]
+        },
+        options: myoption
+      });
+    </script>
 
+    <script type="text/javascript">
+      $(document).ready(function() {
+        $("#sidebar").mCustomScrollbar({
+          theme: "minimal"
+        });
+
+        $('#dismiss, .overlay').on('click', function() {
+          $('#sidebar').removeClass('active');
+          $('.overlay').removeClass('active');
+        });
+
+        $('#sidebarCollapse').on('click', function() {
+          $('#sidebar').addClass('active');
+          $('.overlay').addClass('active');
+          $('.collapse.in').toggleClass('in');
+          $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+        });
+      });
+    </script>
+
+    <style>
+      #owl-demo .item{
+        margin: 3px;
+      }
+      #owl-demo .item img{
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+    </style>
+    <script>
+      //console.log(document.getElementById("platosTopVendidos5"));
+      //console.log("Hola");
+    </script>
+
+    <script>
+      $(document).ready(function() {
+        var owl = $('.owl-carousel');
+        owl.owlCarousel({
+          margin: 10,
+          nav: true,
+          loop: true,
+          responsive: {
+            0: {
+              items: 1
+            },
+            600: {
+              items: 2
+            },
+            1000: {
+              items: 5
+            }
+          }
+        })
+      })
+    </script>
+  </body>
 </html>

@@ -316,9 +316,9 @@ header .container-fluid {
     border: solid #eaeaea 1px;
 }
 .button_user a:hover, .button_user a:focus, .button_user a.active {
-    background: #d8b00f;
+    background: #e3d105;
     color: #fff;
-    border-color: #d8b00f;
+    border-color: #e3d105;
     color: #222;
 }
 #sidebarCollapse {
@@ -907,7 +907,7 @@ a.article, a.article:hover {
     font-weight: 500;
 }
 .yellow_bg {
-    background-color: #d8b00f;
+    background-color: #e3d105;
     padding: 40px 0px;
     margin-top: 90px;
 }
