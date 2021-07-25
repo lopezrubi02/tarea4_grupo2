@@ -30,6 +30,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Date;
+import java.sql.SQLOutput;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -828,17 +829,24 @@ public class AdminRestauranteController {
     @PostMapping("/guardarCupon")
     public String guardarCupon(@ModelAttribute("cupon") @Valid Cupones cupon, BindingResult bindingResult, RedirectAttributes attr,
                                Model model, HttpSession session,@RequestParam("index") int index){
-        if(cupon.getPlato() == null){
-            System.out.println("Es nulo");
-        }else{
-            System.out.println("Otra cosa");
-        }
 
         /**Se obtiene Id de Restaurante**/
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
         Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
+        if(cupon.getPlato() == null){
+            System.out.println("ENTRE");
+            model.addAttribute("cupon",cupon);
+            List<Plato> listaPlatos = platoRepository.buscarPlatosPorIdRestaurante(idrestaurante);
+            model.addAttribute("listaPlatos",listaPlatos);
+            model.addAttribute("index",index);
+            model.addAttribute("platoInvalido","El plato asociado no existe");
+            return "AdminRestaurantes/generarCupon";
+        }else{
+            System.out.println("NO ENTRE");
+        }
         /********************************/
         if(bindingResult.hasErrors()){
+            System.out.println("Trace bindings");
             model.addAttribute("cupon",cupon);
             List<Plato> listaPlatos = platoRepository.buscarPlatosPorIdRestaurante(idrestaurante);
             model.addAttribute("listaPlatos",listaPlatos);
@@ -860,6 +868,7 @@ public class AdminRestauranteController {
         }else {
 
             if (cupon.getIdcupones() == 0) {
+                System.out.println("TRACE5");
 
                 if(cupon.getValordescuento() > cupon.getPlato().getPrecio()){
                     model.addAttribute("msg3", "El precio del descuento no puede ser mayor al precio del plato");
