@@ -44,6 +44,7 @@
                         <a class="send" style="text-align: center;background:#e3d105; margin-left: 15px; margin-top: 15px; margin-bottom: 15px"
                            th:href="@{/adminrest/crearPlato}">Nuevo Plato
                         </a>
+                        <div th:if="${platoInvalido != null}"  th:text="${platoInvalido}" class="alert alert-danger" style="width: 630px;height: 60px;margin-top: 10px;text-align: center"></div>
                         <input id="cantidadPlatos" style="color: #1f1f1f;display: none" th:value="${cantidadPlatos}">
                         <div class="col-md-12">
                             <div class="owl-carousel owl-theme">

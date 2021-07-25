@@ -6,9 +6,11 @@ import com.example.tarea4_grupo2.entity.Repartidor;
 import com.example.tarea4_grupo2.entity.Restaurante;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface RepartidorRepository  extends JpaRepository<Repartidor, Integer> {
 
     @Query(value = "select * from datosrepartidor where usuariosidusuarios = ?1",nativeQuery = true)

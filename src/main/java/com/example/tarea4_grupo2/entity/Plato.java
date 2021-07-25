@@ -13,7 +13,7 @@ import java.util.Set;
 public class Plato {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int idplato;
+    private String idplato;
 
     @OneToMany(mappedBy = "pedido")
     private Set<PedidoHasPlato> pedidohasplato = new HashSet<>();
@@ -60,11 +60,11 @@ public class Plato {
         this.activo = activo;
     }
 
-    public int getIdplato() {
+    public String getIdplato() {
         return idplato;
     }
 
-    public void setIdplato(int idplato) {
+    public void setIdplato(String idplato) {
         this.idplato = idplato;
     }
 
