@@ -264,9 +264,9 @@ public class AdminRestauranteController {
     }
 
     @PostMapping("/llenarcategoria")
-    public String llenarcategorias(@ModelAttribute("restaurante") Restaurante restaurante,Model model){
+    public String llenarcategorias(@ModelAttribute("restaurante") Restaurante restaurante,Model model) {
         Optional<Restaurante> optional = restauranteRepository.findById(restaurante.getIdrestaurante());
-        optional.get().setCategoriasrestList(restaurante.getCategoriasrestList());
+        optional.get().setCategoriasrestList(restaurante.getCategoriasrestList().subList(0,4));
         restauranteRepository.save(optional.get());
         model.addAttribute("id",optional.get().getIdrestaurante());
         return "AdminRestaurantes/espera";
