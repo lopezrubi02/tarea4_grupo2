@@ -19,11 +19,13 @@ public class Restaurante {
     @Column(nullable = false)
     @NotBlank(message = "No puede estar en blanco")
     @Pattern(regexp = "^[0-9]*$",message = "Solo pueden ser numeros")
-    @Size(max=11,message = "No puede tenr más de 11 dígitos")
-    @Size(min=11,message = "No puede tenr menos de 11 dígitos")
+    @Size(max=11,message = "No puede tener más de 11 dígitos")
+    @Size(min=11,message = "No puede tener menos de 11 dígitos")
     private String ruc;
     @Column(nullable = false)
     @NotBlank(message = "No puede estar en blanco")
+    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñ ]*$",message = "Solo pueden letras")
+    @Size(max=45, message = "El nombre del restaurante no debe sobrepasar de 45 caracteres.")
     private String nombre;
     private Float calificacionpromedio;
     @ManyToOne

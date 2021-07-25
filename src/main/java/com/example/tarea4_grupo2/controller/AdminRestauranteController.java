@@ -110,6 +110,8 @@ public class AdminRestauranteController {
                                      Model model,
                                      HttpSession session) throws IOException {
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idadminrest = sessionUser.getIdusuarios();
+        System.out.println(idadminrest);
         int correcto = 1;
         try {
             restaurante.setFoto(file.getBytes());
@@ -172,7 +174,7 @@ public class AdminRestauranteController {
                     model.addAttribute("msgFotoInvalida", "La foto no contiene el formato adecuado. Se aceptan solo archivos .jpeg, .jpg, .png");
                 }
             }
-
+            Optional<Restaurante> restauranteAValidar = restauranteRepository.findRestauranteByRuc(restaurante.getRuc());
             if(!(restauranteRepository.findRestauranteByRuc(restaurante.getRuc()).isPresent())){
                 if (!(restaurante.getRuc().startsWith("20") || restaurante.getRuc().startsWith("10"))) {
                     correcto = 0;
@@ -184,8 +186,11 @@ public class AdminRestauranteController {
                     }
                 }
             }else{
-                correcto = 0;
-                model.addAttribute("msgrucerror","Ya existe un restaurante registrado con este RUC.");
+                Restaurante restauranteParaValidar = restauranteAValidar.get();
+                if(!(restauranteParaValidar.getUsuario().getIdusuarios() == idadminrest)) {
+                    correcto = 0;
+                    model.addAttribute("msgrucerror", "Ya existe un restaurante registrado con este RUC.");
+                }
             }
 
             if(direccion.equals("")){
