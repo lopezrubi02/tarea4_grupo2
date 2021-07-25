@@ -217,8 +217,23 @@ public class LoginController {
     }
 
     @GetMapping(value = {"","/login"})
-    public String loginForm(){
-        return "login/login";
+    public String loginForm(HttpSession session,Authentication auth){
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        if(sessionUser != null){
+            System.out.println("sesion iniciada");
+            String nombreocorreo = auth.getName();
+            System.out.println(nombreocorreo);
+            boolean escorreo = isValid(nombreocorreo);
+            if(!escorreo){
+                System.out.println("inicio con google");
+                return "redirect:/redirectByRol";
+            }else{
+                System.out.println("inicio con db");
+                return "redirect:/redirectByRolDB";
+            }
+        }else{
+            return "login/login";
+        }
     }
 
     @GetMapping("/redirectByRolDB")
@@ -229,37 +244,45 @@ public class LoginController {
             rol= role.getAuthority();
             break;
         }
-        Usuario usuarioLogueado= usuarioRepository.findByEmail(auth.getName());
-        session.setAttribute("usuarioLogueado",usuarioLogueado);
-        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        ZoneId zoneId = ZoneId.of("America/Lima");
-        LocalDateTime datetime1 = LocalDateTime.now(zoneId);
-        String formatDateTime = datetime1.format(format);
 
-        System.out.println(formatDateTime);
-        System.out.println(datetime1);
+        String nombreocorreo = auth.getName();
+        boolean escorreo = isValid(nombreocorreo);
+        if(!escorreo){
+            System.out.println("inicio con google");
+            return "redirect:/redirectByRol";
+        }else{
+            Usuario usuarioLogueado= usuarioRepository.findByEmail(auth.getName());
+            session.setAttribute("usuarioLogueado",usuarioLogueado);
+            DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            ZoneId zoneId = ZoneId.of("America/Lima");
+            LocalDateTime datetime1 = LocalDateTime.now(zoneId);
+            String formatDateTime = datetime1.format(format);
 
-        if (rol.equals("AdminRestaurante")){
-            usuarioLogueado.setUltimafechaingreso(datetime1);
-            usuarioRepository.save(usuarioLogueado);
-            return "redirect:/adminrest/login";
-        }else if(rol.equals("AdminSistema")){
-            usuarioLogueado.setUltimafechaingreso(datetime1);
-            usuarioRepository.save(usuarioLogueado);
-            return "redirect:/admin/gestionCuentas";
-        } else if(rol.equals("Repartidor")) {
-            usuarioLogueado.setUltimafechaingreso(datetime1);
-            usuarioRepository.save(usuarioLogueado);
-            return "redirect:/repartidor/home";
-        }else if(rol.equals("Cliente")){
-            usuarioLogueado.setUltimafechaingreso(datetime1);
-            usuarioRepository.save(usuarioLogueado);
-            return "redirect:/cliente/paginaprincipal";
+            System.out.println(formatDateTime);
+            System.out.println(datetime1);
+
+            if (rol.equals("AdminRestaurante")){
+                usuarioLogueado.setUltimafechaingreso(datetime1);
+                usuarioRepository.save(usuarioLogueado);
+                return "redirect:/adminrest/login";
+            }else if(rol.equals("AdminSistema")){
+                usuarioLogueado.setUltimafechaingreso(datetime1);
+                usuarioRepository.save(usuarioLogueado);
+                return "redirect:/admin/gestionCuentas";
+            } else if(rol.equals("Repartidor")) {
+                usuarioLogueado.setUltimafechaingreso(datetime1);
+                usuarioRepository.save(usuarioLogueado);
+                return "redirect:/repartidor/home";
+            }else if(rol.equals("Cliente")){
+                usuarioLogueado.setUltimafechaingreso(datetime1);
+                usuarioRepository.save(usuarioLogueado);
+                return "redirect:/cliente/paginaprincipal";
+            }else{
+                System.out.println(rol);
+                return "/login";
+            }
         }
-        else{
-            System.out.println(rol);
-            return "/login";
-        }
+
     }
 
     @GetMapping("/redirectByRol")
@@ -274,52 +297,58 @@ public class LoginController {
 
         System.out.println(auth.getName());
         System.out.println("correo logeado por api google");
-        CustomOAuth2User oauthUser = (CustomOAuth2User) auth.getPrincipal();
-        System.out.println(oauthUser.getEmail());
+        try{
+            CustomOAuth2User oauthUser = (CustomOAuth2User) auth.getPrincipal();
+            System.out.println(oauthUser.getEmail());
 
-        Usuario usuarioLogueado= usuarioRepository.getUserByUsername(oauthUser.getEmail());
-        session.setAttribute("usuarioLogueado",usuarioLogueado);
-        String rol_log = usuarioLogueado.getRol();
-        System.out.println("ROL OBTENIDO DEL USUARIO OBTENIDO");
-        System.out.println(rol_log);
-        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        ZoneId zoneId = ZoneId.of("America/Lima");
-        LocalDateTime datetime1 = LocalDateTime.now(zoneId);
-        String formatDateTime = datetime1.format(format);
+            Usuario usuarioLogueado= usuarioRepository.getUserByUsername(oauthUser.getEmail());
+            session.setAttribute("usuarioLogueado",usuarioLogueado);
+            String rol_log = usuarioLogueado.getRol();
+            System.out.println("ROL OBTENIDO DEL USUARIO OBTENIDO");
+            System.out.println(rol_log);
+            DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            ZoneId zoneId = ZoneId.of("America/Lima");
+            LocalDateTime datetime1 = LocalDateTime.now(zoneId);
+            String formatDateTime = datetime1.format(format);
 
-        System.out.println(formatDateTime);
-        System.out.println(datetime1);
+            System.out.println(formatDateTime);
+            System.out.println(datetime1);
 
-        if (rol_log.equalsIgnoreCase("AdminRestaurante")){
-            usuarioLogueado.setUltimafechaingreso(datetime1);
-            usuarioRepository.save(usuarioLogueado);
-            return "redirect:/adminrest/login";
-        }else if(rol_log.equalsIgnoreCase("AdminSistema")){
-            usuarioLogueado.setUltimafechaingreso(datetime1);
-            usuarioRepository.save(usuarioLogueado);
-            return "redirect:/admin/gestionCuentas";
-        } else if(rol_log.equalsIgnoreCase("Repartidor")) {
-            usuarioLogueado.setUltimafechaingreso(datetime1);
-
-            int repactivado = usuarioLogueado.getCuentaActiva();
-            if(repactivado == -1){
-                session.invalidate();
-                return "redirect:/login";
-            } else if(repactivado == 1){
+            if (rol_log.equalsIgnoreCase("AdminRestaurante")){
+                usuarioLogueado.setUltimafechaingreso(datetime1);
                 usuarioRepository.save(usuarioLogueado);
-                return "redirect:/repartidor/home";
-            }else{
-                session.invalidate();
-                return "redirect:/login";
-            }
+                return "redirect:/adminrest/login";
+            }else if(rol_log.equalsIgnoreCase("AdminSistema")){
+                usuarioLogueado.setUltimafechaingreso(datetime1);
+                usuarioRepository.save(usuarioLogueado);
+                return "redirect:/admin/gestionCuentas";
+            } else if(rol_log.equalsIgnoreCase("Repartidor")) {
+                usuarioLogueado.setUltimafechaingreso(datetime1);
 
-        }else if(rol_log.equalsIgnoreCase("Cliente")){
-            usuarioLogueado.setUltimafechaingreso(datetime1);
-            usuarioRepository.save(usuarioLogueado);
-            return "redirect:/cliente/paginaprincipal";
-        }else{
-            return "login/login";
+                int repactivado = usuarioLogueado.getCuentaActiva();
+                if(repactivado == -1){
+                    session.invalidate();
+                    return "redirect:/login";
+                } else if(repactivado == 1){
+                    usuarioRepository.save(usuarioLogueado);
+                    return "redirect:/repartidor/home";
+                }else{
+                    session.invalidate();
+                    return "redirect:/login";
+                }
+
+            }else if(rol_log.equalsIgnoreCase("Cliente")){
+                usuarioLogueado.setUltimafechaingreso(datetime1);
+                usuarioRepository.save(usuarioLogueado);
+                return "redirect:/cliente/paginaprincipal";
+            }else{
+                return "login/login";
+            }
+        }catch(ClassCastException e){
+            System.out.println(e.getMessage());
+            return "redirect:/login";
         }
+
     }
 
     @GetMapping("/olvidoContrasenia")
