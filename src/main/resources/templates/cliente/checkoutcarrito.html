@@ -161,7 +161,7 @@
                                             </div>
                                             <span>
                                                 <h4 th:if="${descuento != 0}" th:text="|S/${preciodescuento}|"></h4>
-                                                <h4 th:if="${descuento == 0}" th:text="|Subtotal a pagar: S/${montototal.getpreciototal()}|"></h4>
+                                                <h4 th:if="${descuento == 0}" th:text="|S/${montototal.getpreciototal()}|"></h4>
                                             </span>
                                         </li>
                                         <li class="list-group-item d-flex justify-content-between lh-sm">

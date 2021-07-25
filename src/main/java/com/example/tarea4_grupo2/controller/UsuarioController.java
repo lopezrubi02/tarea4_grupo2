@@ -1489,73 +1489,143 @@ public class UsuarioController {
                 System.out.println(idmetodo);
                 System.out.println(metodosel.getMetodo());
                 for (Pedidos pedidoencurso : listapedidospendientes) {
-                    List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
-                    System.out.println(pedidoencurso.getIdpedidos());
-                    System.out.println(pedidoencurso.getDireccionentrega().getIddirecciones());
-                    MontoTotal_PedidoHasPlatoDTO montoTotal_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montototal(pedidoencurso.getIdpedidos());
-                    int pagarTodo = pedidoHasPlatoRepository.pagarTodo(pedidoencurso.getIdpedidos());
-                    int descuento = pedidoHasPlatoRepository.descuento(pedidoencurso.getIdpedidos());
-                    int montototal_pagar = pagarTodo - descuento;
-                    model.addAttribute("platosxpedido",platosxpedido);
-                    model.addAttribute("pedidoencurso",pedidoencurso);
-                    model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
-                    model.addAttribute("montopagar", montototal_pagar);
-                    System.out.println(pagarTodo);
-                    System.out.println(descuento);
-                    System.out.println(montototal_pagar);
-                    System.out.println(montoTotal_pedidoHasPlatoDTO);
-                    pedidoencurso.setMontototal(String.valueOf(montototal_pagar));
-                    pedidoencurso.setMetododepago(metodosel);
-                    if(idmetodo == 3){
-                        if(montoexacto != 0){
-                            System.out.println(montoexacto);
-                            if(montoexacto >= (montototal_pagar)){
-                                pedidoencurso.setMontoexacto(String.valueOf(montoexacto));
-                            }
-                            else{
-                                redirectAttributes.addFlashAttribute("pago1", "El monto exacto a pagar no es suficiente");
-                                return "redirect:/cliente/checkout";
-                            }
-                        }
-                        else{
-                            redirectAttributes.addFlashAttribute("pago2", "No ha ingresado un monto exacto");
-                            return "redirect:/cliente/checkout";
-                        }
-                    }
-                    if(idmetodo == 1){
-                        System.out.println(numerotarjeta);
-                        if(numerotarjeta == null){
-                            return "redirect:/cliente/checkout";
-                        }else{
+                    try {
+                        List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
+                        System.out.println(pedidoencurso.getIdpedidos());
+                        System.out.println(pedidoencurso.getDireccionentrega().getIddirecciones());
+                        MontoTotal_PedidoHasPlatoDTO montoTotal_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montototal(pedidoencurso.getIdpedidos());
+                        int pagarTodo = pedidoHasPlatoRepository.pagarTodo(pedidoencurso.getIdpedidos());
+                        int descuento = pedidoHasPlatoRepository.descuento(pedidoencurso.getIdpedidos());
+                        int montototal_pagar = pagarTodo - descuento;
+                        model.addAttribute("platosxpedido", platosxpedido);
+                        model.addAttribute("pedidoencurso", pedidoencurso);
+                        model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
+                        model.addAttribute("montopagar", montototal_pagar);
 
-                            boolean tarjetavalida = validartarjeta(numerotarjeta);
+                        System.out.println(pagarTodo);
+                        System.out.println(descuento);
+                        System.out.println(montototal_pagar);
+                        System.out.println(montoTotal_pedidoHasPlatoDTO);
+                        pedidoencurso.setMontototal(String.valueOf(montototal_pagar));
+                        pedidoencurso.setMetododepago(metodosel);
 
-                            if(tarjetavalida == true){
-                                List<TarjetasOnline> tarjetasxusuario = tarjetasOnlineRepository.findAllByNumerotarjetaAndClienteEquals(numerotarjeta, cliente);
-
-                                if(tarjetasxusuario.isEmpty()){
-                                    TarjetasOnline tarjetaxguardar = new TarjetasOnline();
-                                    tarjetaxguardar.setNumerotarjeta(numerotarjeta);
-                                    tarjetaxguardar.setCliente(cliente);
-                                    tarjetasOnlineRepository.save(tarjetaxguardar);
+                        if (idmetodo == 3) {
+                            if (montoexacto != 0) {
+                                System.out.println(montoexacto);
+                                if (montoexacto >= (montototal_pagar)) {
+                                    pedidoencurso.setMontoexacto(String.valueOf(montoexacto));
+                                } else {
+                                    redirectAttributes.addFlashAttribute("pago1", "El monto exacto a pagar no es suficiente");
+                                    return "redirect:/cliente/checkout";
                                 }
-                            }else{
-                                redirectAttributes.addFlashAttribute("tarjetanovalida", "El número de tarjeta no es válido. Las tarjetas validas son Visa, MasterCard, DinersClub, Discover, JCB");
+                            } else {
+                                redirectAttributes.addFlashAttribute("pago2", "No ha ingresado un monto exacto");
                                 return "redirect:/cliente/checkout";
                             }
-
                         }
+                        if (idmetodo == 1) {
+                            System.out.println(numerotarjeta);
+                            if (numerotarjeta == null) {
+                                return "redirect:/cliente/checkout";
+                            } else {
+
+                                boolean tarjetavalida = validartarjeta(numerotarjeta);
+
+                                if (tarjetavalida == true) {
+                                    List<TarjetasOnline> tarjetasxusuario = tarjetasOnlineRepository.findAllByNumerotarjetaAndClienteEquals(numerotarjeta, cliente);
+
+                                    if (tarjetasxusuario.isEmpty()) {
+                                        TarjetasOnline tarjetaxguardar = new TarjetasOnline();
+                                        tarjetaxguardar.setNumerotarjeta(numerotarjeta);
+                                        tarjetaxguardar.setCliente(cliente);
+                                        tarjetasOnlineRepository.save(tarjetaxguardar);
+                                    }
+                                } else {
+                                    redirectAttributes.addFlashAttribute("tarjetanovalida", "El número de tarjeta no es válido. Las tarjetas validas son Visa, MasterCard, DinersClub, Discover, JCB");
+                                    return "redirect:/cliente/checkout";
+                                }
+
+                            }
+                        }
+                        if (pedidoencurso.getRestaurantepedido().getDistrito() == pedidoencurso.getDireccionentrega().getDistrito()) {
+                            pedidoencurso.setComisionrepartidor(4);
+                            pedidoencurso.setComisionsistema(1);
+                        } else {
+                            pedidoencurso.setComisionrepartidor(6);
+                            pedidoencurso.setComisionsistema(2);
+                        }
+                        pedidoencurso.setEstadorestaurante("pendiente");
+                        pedidoencurso.setEstadorepartidor("indefinido");
+                        pedidosRepository.save(pedidoencurso);
+                    }catch (Exception e){
+                        List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
+                        System.out.println(pedidoencurso.getIdpedidos());
+                        System.out.println(pedidoencurso.getDireccionentrega().getIddirecciones());
+                        MontoTotal_PedidoHasPlatoDTO montoTotal_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montototal(pedidoencurso.getIdpedidos());
+                        int pagarTodo = pedidoHasPlatoRepository.pagarTodo(pedidoencurso.getIdpedidos());
+                        int descuento = 0;
+                        int montototal_pagar = pagarTodo - descuento;
+                        model.addAttribute("platosxpedido", platosxpedido);
+                        model.addAttribute("pedidoencurso", pedidoencurso);
+                        model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
+                        model.addAttribute("montopagar", montototal_pagar);
+
+                        System.out.println(pagarTodo);
+                        System.out.println(descuento);
+                        System.out.println(montototal_pagar);
+                        System.out.println(montoTotal_pedidoHasPlatoDTO);
+                        pedidoencurso.setMontototal(String.valueOf(montototal_pagar));
+                        pedidoencurso.setMetododepago(metodosel);
+
+                        if (idmetodo == 3) {
+                            if (montoexacto != 0) {
+                                System.out.println(montoexacto);
+                                if (montoexacto >= (montototal_pagar)) {
+                                    pedidoencurso.setMontoexacto(String.valueOf(montoexacto));
+                                } else {
+                                    redirectAttributes.addFlashAttribute("pago1", "El monto exacto a pagar no es suficiente");
+                                    return "redirect:/cliente/checkout";
+                                }
+                            } else {
+                                redirectAttributes.addFlashAttribute("pago2", "No ha ingresado un monto exacto");
+                                return "redirect:/cliente/checkout";
+                            }
+                        }
+                        if (idmetodo == 1) {
+                            System.out.println(numerotarjeta);
+                            if (numerotarjeta == null) {
+                                return "redirect:/cliente/checkout";
+                            } else {
+
+                                boolean tarjetavalida = validartarjeta(numerotarjeta);
+
+                                if (tarjetavalida == true) {
+                                    List<TarjetasOnline> tarjetasxusuario = tarjetasOnlineRepository.findAllByNumerotarjetaAndClienteEquals(numerotarjeta, cliente);
+
+                                    if (tarjetasxusuario.isEmpty()) {
+                                        TarjetasOnline tarjetaxguardar = new TarjetasOnline();
+                                        tarjetaxguardar.setNumerotarjeta(numerotarjeta);
+                                        tarjetaxguardar.setCliente(cliente);
+                                        tarjetasOnlineRepository.save(tarjetaxguardar);
+                                    }
+                                } else {
+                                    redirectAttributes.addFlashAttribute("tarjetanovalida", "El número de tarjeta no es válido. Las tarjetas validas son Visa, MasterCard, DinersClub, Discover, JCB");
+                                    return "redirect:/cliente/checkout";
+                                }
+
+                            }
+                        }
+                        if (pedidoencurso.getRestaurantepedido().getDistrito() == pedidoencurso.getDireccionentrega().getDistrito()) {
+                            pedidoencurso.setComisionrepartidor(4);
+                            pedidoencurso.setComisionsistema(1);
+                        } else {
+                            pedidoencurso.setComisionrepartidor(6);
+                            pedidoencurso.setComisionsistema(2);
+                        }
+                        pedidoencurso.setEstadorestaurante("pendiente");
+                        pedidoencurso.setEstadorepartidor("indefinido");
+                        pedidosRepository.save(pedidoencurso);
                     }
-                    if(pedidoencurso.getRestaurantepedido().getDistrito() == pedidoencurso.getDireccionentrega().getDistrito()){
-                        pedidoencurso.setComisionrepartidor(4);
-                        pedidoencurso.setComisionsistema(1);
-                    }else{
-                        pedidoencurso.setComisionrepartidor(6);
-                        pedidoencurso.setComisionsistema(2);
-                    }
-                    pedidoencurso.setEstadorestaurante("pendiente");
-                    pedidoencurso.setEstadorepartidor("indefinido");
-                    pedidosRepository.save(pedidoencurso);
                 }
                 redirectAttributes.addFlashAttribute("checkout", "Pedido listo");
             }
