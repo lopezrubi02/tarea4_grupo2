@@ -589,7 +589,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
     //----------------------------
     @GetMapping("/newuser")
     public String revisarCuenta(Model model,
-            @RequestParam(value = "id") String idString, RedirectAttributes attr){
+            @RequestParam(value = "id",defaultValue = "") String idString, RedirectAttributes attr){
         try{
             int id = Integer.parseInt(idString);
             Optional<Usuario> optional = usuarioRepository.findById(id);
