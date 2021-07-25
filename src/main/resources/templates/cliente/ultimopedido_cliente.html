@@ -190,6 +190,7 @@
 		<div class="footer">
 			<div class="container-fluid">
 				<div class="row" th:if="${ultimopedido}"> <!-- hay algun pedido -->
+					<div th:if="${hayunpedidoencurso != null}" th:text="${hayunpedidoencurso}" class="alert alert-warning" role="alert" style="width: 75%;margin-left: 200px;"></div>
 					<input type="hidden" name="estadorestaurante" id="estadorestaurante" th:value="${pedido.estadorestaurante}">
 					<input type="hidden" name="estadorepartidor" id="estadorepartidor" th:value="${pedido.estadorepartidor}">
 					<h2 style="padding-left: 223px;">Tu pedido más reciente</h2>

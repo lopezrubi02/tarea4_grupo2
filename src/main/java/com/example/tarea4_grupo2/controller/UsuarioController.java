@@ -532,9 +532,12 @@ public class UsuarioController {
         Usuario user = useropt.get();
         List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idusuarioactual);
         Pedidos pedidopendiente = pedidosRepository.pedidoencurso(idusuarioactual);
-        if(listapedidospendientes.size() >= 1 || pedidopendiente != null){
+        System.out.println("TRACER 0 ******************");
+        if(listapedidospendientes.size() >= 1 || (pedidopendiente != null && !pedidopendiente.getEstadorestaurante().equalsIgnoreCase("rechazado"))){
+            System.out.println("TRACER 1***************");
             String mensajependidopendiente = "No puede realizar otro pedido a otro restaurante que sea diferente al que ya ha seleccionado.";
-            if(pedidopendiente != null){
+            if(pedidopendiente != null && !pedidopendiente.getEstadorestaurante().equalsIgnoreCase("rechazado")){
+                System.out.println("TRACER 2*****************");
                 mensajependidopendiente = "No puede realizar otro pedido mientras tenga un pedido en curso";
                 attr.addFlashAttribute("hayunpedidoencurso",mensajependidopendiente);
                 return "redirect:/cliente/progresopedido";
@@ -952,8 +955,8 @@ public class UsuarioController {
                      if (restopt.isPresent()) {
                          int idrestsel = idrestaurante;
                          System.out.println("VALIDACIONES NO REALIZAR PEDIDO");
-                         if (listapedidospendientes.size() >= 0 || pedidopendiente != null) {
-                             if (pedidopendiente != null) {
+                         if(listapedidospendientes.size() >= 1 || (pedidopendiente != null && !pedidopendiente.getEstadorestaurante().equalsIgnoreCase("rechazado"))){
+                             if (pedidopendiente != null && !pedidopendiente.getEstadorestaurante().equalsIgnoreCase("rechazado")) {
                                  System.out.println("HAY PEDIDO PENDIENTE");
                                  String mensajependidopendiente = "No puede realizar otro pedido mientras tenga un pedido en curso";
                                  attr.addFlashAttribute("hayunpedidoencurso", mensajependidopendiente);
@@ -1058,8 +1061,8 @@ public class UsuarioController {
                 Restaurante rest = restopt.get();
                 if(continuar == true && rest.getUsuario().getCuentaActiva() == 1){
                     int idrestsel = idrestaurante;
-                    if (listapedidospendientes.size() >= 0 || pedidopendiente != null) {
-                        if (pedidopendiente != null) {
+                    if(listapedidospendientes.size() >= 1 || (pedidopendiente != null && !pedidopendiente.getEstadorestaurante().equalsIgnoreCase("rechazado"))){
+                        if (pedidopendiente != null && !pedidopendiente.getEstadorestaurante().equalsIgnoreCase("rechazado")) {
                             String mensajependidopendiente = "No puede realizar otro pedido mientras tenga un pedido en curso";
                             attr.addFlashAttribute("hayunpedidoencurso", mensajependidopendiente);
                             return "redirect:/cliente/progresopedido";
