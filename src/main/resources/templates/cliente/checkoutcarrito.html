@@ -157,9 +157,12 @@
                                     <ul class="list-group mb-3">
                                         <li class="list-group-item d-flex justify-content-between lh-sm">
                                             <div>
-                                                <h6 class="my-0">Costo total de productos</h6>
+                                                <h6 class="my-0">Costo total de productos <strike  th:if="${descuento != 0}" th:text="|S/${montototal.getpreciototal()}|"></strike></h6>
                                             </div>
-                                            <span class="text-muted" th:text="|S/ ${montototal.getpreciototal()}|"></span>
+                                            <span>
+                                                <h4 th:if="${descuento != 0}" th:text="|S/${preciodescuento}|"></h4>
+                                                <h4 th:if="${descuento == 0}" th:text="|Subtotal a pagar: S/${montototal.getpreciototal()}|"></h4>
+                                            </span>
                                         </li>
                                         <li class="list-group-item d-flex justify-content-between lh-sm">
                                             <div>
@@ -179,7 +182,6 @@
                                             <div>
                                                 <h6 class="my-0">Total</h6>
                                             </div>
-                                            <strike>Este texto aparece tachado</strike>
                                             <span></span>
                                             <strong th:text="|S/ ${montopagar}|"></strong>
                                         </li>

@@ -111,7 +111,8 @@
                                     </table>
                                 </div>
                                 <div>
-                                    <h4 style="color: white;" th:text="|Subtotal a pagar: S/${montototal.getpreciototal()}|"></h4>
+                                    <h4 style="color: white;">Subtotal a pagar: <strong style="color: white;" th:if="${descuento != 0}" th:text="|S/${preciodescuento}|"></strong><strike style="color: white;" th:if="${descuento != 0}" th:text="|S/${montototal.getpreciototal()}|"></strike></h4>
+                                    <h4 style="color: white;" th:if="${descuento == 0}" th:text="|Subtotal a pagar: S/${montototal.getpreciototal()}|"></h4>
                                 </div>
                                 <div class="row">
                                     <a th:href="@{/cliente/vaciarcarrrito}" style="width: 50%;">

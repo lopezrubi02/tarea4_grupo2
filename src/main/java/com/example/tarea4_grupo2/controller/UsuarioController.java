@@ -1258,13 +1258,31 @@ public class UsuarioController {
                 }
                 System.out.println(pedidoencurso.getIdpedidos());
                 System.out.println(pedidoencurso.getDireccionentrega().getIddirecciones());
-                MontoTotal_PedidoHasPlatoDTO montoTotal_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montototal(pedidoencurso.getIdpedidos());
-                platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
-                model.addAttribute("platosxpedido",platosxpedido);
-                model.addAttribute("pedidoencurso",pedidoencurso);
-                model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
-                System.out.println(LocalDateTime.now());
-                pedidoencurso.setFechahorapedido(LocalDateTime.now());
+                try {
+                    MontoTotal_PedidoHasPlatoDTO montoTotal_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montototal(pedidoencurso.getIdpedidos());
+                    platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
+                    int descuento = pedidoHasPlatoRepository.descuento(pedidoencurso.getIdpedidos());
+                    int preciodescuento =  montoTotal_pedidoHasPlatoDTO.getpreciototal() - descuento;
+                    model.addAttribute("platosxpedido", platosxpedido);
+                    model.addAttribute("pedidoencurso", pedidoencurso);
+                    model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
+                    model.addAttribute("preciodescuento", preciodescuento);
+                    model.addAttribute("descuento", Integer.parseInt(String.valueOf(descuento)));
+                    System.out.println(LocalDateTime.now());
+                    pedidoencurso.setFechahorapedido(LocalDateTime.now());
+                }catch(Exception e){
+                    MontoTotal_PedidoHasPlatoDTO montoTotal_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montototal(pedidoencurso.getIdpedidos());
+                    platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
+                    int descuento = 0;
+                    int preciodescuento = montoTotal_pedidoHasPlatoDTO.getpreciototal() - descuento;
+                    model.addAttribute("platosxpedido", platosxpedido);
+                    model.addAttribute("pedidoencurso", pedidoencurso);
+                    model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
+                    model.addAttribute("preciodescuento", preciodescuento);
+                    model.addAttribute("descuento", Integer.parseInt(String.valueOf(descuento)));
+                    System.out.println(LocalDateTime.now());
+                    pedidoencurso.setFechahorapedido(LocalDateTime.now());
+                }
             }
         }
         return "cliente/carrito_productos";
@@ -1385,20 +1403,27 @@ public class UsuarioController {
                     int montoPagar = pedidoHasPlatoRepository.pagarTodo(pedidoencurso.getIdpedidos());
                     int descuento = pedidoHasPlatoRepository.descuento(pedidoencurso.getIdpedidos());
                     int montototal_pagar = montoPagar - descuento;
+                    int preciodescuento = montoTotal_pedidoHasPlatoDTO.getpreciototal() - descuento;
                     model.addAttribute("platosxpedido",platosxpedido);
                     model.addAttribute("pedidoencurso",pedidoencurso);
                     model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
                     model.addAttribute("montopagar", montototal_pagar);
+                    model.addAttribute("preciodescuento", preciodescuento);
+                    model.addAttribute("descuento", descuento);
                 }catch(Exception e){
                     List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
                     MontoTotal_PedidoHasPlatoDTO montoTotal_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montototal(pedidoencurso.getIdpedidos());
                     int montoPagar = pedidoHasPlatoRepository.pagarTodo(pedidoencurso.getIdpedidos());
                     int descuento = 0;
                     int montototal_pagar = montoPagar - descuento;
+                    int preciodescuento = montoTotal_pedidoHasPlatoDTO.getpreciototal() - descuento;
                     model.addAttribute("platosxpedido",platosxpedido);
                     model.addAttribute("pedidoencurso",pedidoencurso);
                     model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
+                    model.addAttribute("preciodescuento", preciodescuento);
                     model.addAttribute("montopagar", montototal_pagar);
+                    model.addAttribute("descuento", descuento);
+
                 }
             }
             return "cliente/checkoutcarrito";
