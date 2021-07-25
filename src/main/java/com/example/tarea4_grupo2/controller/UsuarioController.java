@@ -1068,13 +1068,13 @@ public class UsuarioController {
                             idrestsel = pedidoencurso.getRestaurantepedido().getIdrestaurante();
                         }
                         Plato platoseleccionado = platoopt.get();
-                        if (idrestsel == idrestaurante && pedidopendiente == null  && platoseleccionado.getActivo() == 1) {
+                        if (idrestsel == idrestaurante && pedidopendiente == null  && platoseleccionado.getActivo() == 1 && platoseleccionado.getDisponibilidad() == 1) {
                             Pedidos pedidoencurso = pedidosRepository.pedidoencursoxrestaurante(idusuarioactual, idrestaurante);
-                            if(pedidoencurso != null){
+                            if (pedidoencurso != null) {
                                 List<PedidoHasPlato> pedidoencurso2 = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
-                                if(!pedidoencurso2.isEmpty()){
-                                    for(PedidoHasPlato pedidoencurso3 : pedidoencurso2){
-                                        if(pedidoencurso3.getPlato().getIdplato() == idplatopedir){
+                                if (!pedidoencurso2.isEmpty()) {
+                                    for (PedidoHasPlato pedidoencurso3 : pedidoencurso2) {
+                                        if (pedidoencurso3.getPlato().getIdplato() == idplatopedir) {
                                             String comentariohecho = pedidoencurso3.getDescripcion();
                                             int cantpedida = pedidoencurso3.getCantidadplatos();
                                             int cubiertoelegido = pedidoencurso3.isCubiertos();
@@ -1082,9 +1082,9 @@ public class UsuarioController {
                                             System.out.println(comentariohecho);
                                             System.out.println(cantpedida);
                                             System.out.println(cubiertoelegido);
-                                            model.addAttribute("comentariohecho",comentariohecho);
-                                            model.addAttribute("cantpedida",cantpedida);
-                                            model.addAttribute("cubiertoelegido",cubiertoelegido);
+                                            model.addAttribute("comentariohecho", comentariohecho);
+                                            model.addAttribute("cantpedida", cantpedida);
+                                            model.addAttribute("cubiertoelegido", cubiertoelegido);
                                         }
                                     }
                                 }
@@ -1095,9 +1095,17 @@ public class UsuarioController {
                             model.addAttribute("iddireccionxenviar", direccionxenviar);
                             return "cliente/detalles_plato";
                         } else {
-                            String mensajependidopendiente = "No puede realizar otro pedido a otro restaurante que sea diferente al que ya ha seleccionado.";
-                            attr.addFlashAttribute("hayunpedidoencurso", mensajependidopendiente);
-                            return "redirect:/cliente/carritoproductos";
+                                if(platoseleccionado.getActivo() == 0 && platoseleccionado.getDisponibilidad() == 0) {
+                                    return "redirect:/cliente/restaurantexordenar?idrestaurante=" + idrestaurante + "&direccion=" + direccionxenviar;
+                                }
+                                else{
+                                    if(idrestsel != idrestaurante && pedidopendiente != null){
+                                        String mensajependidopendiente = "No puede realizar otro pedido a otro restaurante que sea diferente al que ya ha seleccionado.";
+                                        attr.addFlashAttribute("hayunpedidoencurso", mensajependidopendiente);
+
+                                    }
+                                    return "redirect:/cliente/restaurantexordenar?idrestaurante=" + idrestaurante + "&direccion=" + direccionxenviar;
+                                }
                         }
                     } else {
                         Plato platoseleccionado = platoopt.get();
@@ -1350,8 +1358,9 @@ public class UsuarioController {
                     List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
                     boolean carritoactualizado = false;
                     for (PedidoHasPlato php : platosxpedido){
-                        if(php.getPlato().getActivo() == 0){
-                            //borrar ese plato del pedido
+                        if(php.getPlato().getActivo() == 0 && php.getPlato().getDisponibilidad() == 0){
+                            PedidoHasPlatoKey pedidoHasPlatoKey = php.getId();
+                            pedidoHasPlatoRepository.deleteById(pedidoHasPlatoKey);
                             carritoactualizado = true;
                         }
                     }
