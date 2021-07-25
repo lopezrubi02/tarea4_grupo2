@@ -1,274 +1,261 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/adminRestaurante.html :: header( title = 'Calificaciones')">
-</head>
-<style>
-  #form p {
-    text-align: center;
-  }
-
-  #form label {
-    font-size: 20px;
-  }
-
-  input[type="radio"] {
-    display: none;
-  }
-
-  label {
-    color: grey
-  }
-
-  .clasificacion {
-    direction: rtl;
-    unicode-bidi: bidi-override;
-  }
-
-  label:hover,
-  label:hover ~ label {
-    color: orange;
-  }
-
-  input[type="radio"]:checked ~ label{
-    color: orange;
-  }
-</style>
-<!-- body -->
-<input id="valorbusqueda" th:value="${searchfield}" style="display: none">
-<body class="main-layout Recipes_page">
-<div class="wrapper">
-  <div class="sidebar">
-    <!-- Sidebar  -->
-    <nav id="sidebar">
-      <div id="dismiss">
-        <i class="fa fa-arrow-left"></i>
+  <head th:replace="fragments/adminRestaurante.html :: header( title = 'Calificaciones')"></head>
+  <style>
+    #form p {
+      text-align: center;
+    }
+    #form label {
+      font-size: 20px;
+    }
+    input[type="radio"] {
+      display: none;
+    }
+    label {
+      color: grey
+    }
+    .clasificacion {
+      direction: rtl;
+      unicode-bidi: bidi-override;
+    }
+    label:hover,
+    label:hover ~ label {
+      color: orange;
+    }
+    input[type="radio"]:checked ~ label{
+      color: orange;
+    }
+  </style>
+  <input id="valorbusqueda" th:value="${searchfield}" style="display: none">
+  <!-- body -->
+  <body class="main-layout Recipes_page">
+    <div class="wrapper">
+      <div class="sidebar">
+        <!-- Sidebar  -->
+        <nav id="sidebar">
+          <div id="dismiss">
+            <i class="fa fa-arrow-left"></i>
+          </div>
+          <ul class="list-unstyled components">
+            <li><a th:href="@{/adminrest/perfil}">Perfil</a></li>
+            <li><a th:href="@{/adminrest/menu}">Menu</a></li>
+            <li><a th:href="@{/adminrest/cupones}">Cupones</a></li>
+            <li><a th:href="@{/adminrest/pedidos}">Pedidos</a></li>
+            <li><a th:href="@{/adminrest/calificaciones}">Calificaciones</a></li>
+          </ul>
+        </nav>
       </div>
-      <ul class="list-unstyled components">
-        <li><a th:href="@{/adminrest/perfil}">Perfil</a></li>
-        <li><a th:href="@{/adminrest/menu}">Menu</a></li>
-        <li><a th:href="@{/adminrest/cupones}">Cupones</a></li>
-        <li><a th:href="@{/adminrest/pedidos}">Pedidos</a></li>
-        <li><a th:href="@{/adminrest/calificaciones}">Calificaciones</a></li>
-      </ul>
-    </nav>
-  </div>
-  <div id="content">
-    <!-- header -->
-    <header>
-      <div th:replace="fragments/adminRestaurante.html :: navbar"></div>
-    </header>
-    <!-- end header -->
-
-    <!-- blog -->
-    <div class="blog">
-      <div class="container">
-        <h1>Calificaciones otorgadas por los usuarios</h1>
-        <div class="col-md-12">
-        <form class="input-group" method="post" th:action="@{/adminrest/buscarCalificaciones}">
-          <div class="col-md-10" style="border-style: groove">
-            <p>Elija su calificación: </p>
-            <p class="clasificacion" style="transform: translateY(4px)" align="left">
-              <input id="radio1" type="radio" name="searchfield" value="5"><!--
-              --><label style="font-size:40px" for="radio1" >★</label><!--
-              --><input id="radio2" type="radio" name="searchfield" value="4"><!--
-              --><label style="font-size:40px"  for="radio2">★</label><!--
-              --><input id="radio3" type="radio" name="searchfield" value="3"><!--
-              --><label style="font-size:40px"  for="radio3">★</label><!--
-              --><input id="radio4" type="radio" name="searchfield" value="2"><!--
-              --><label style="font-size:40px"  for="radio4">★</label><!--
-              --><input id="radio5" type="radio" name="searchfield" value="1"><!--
-              --><label style="font-size:40px"  for="radio5">★</label>
-            </p>
-          </div>
-          <div id="habbuscar"  class="col-md-1">
-          <button id="buscar" style="height: 50px" class="btn btn-dark">Buscar</button>
-          </div>
-          <div class="col-md-1">
-          <button style="height: 50px" class="btn btn-warning"><a class="button" th:href="@{'/adminrest/calificaciones'}">Limpiar</a></button>
-          </div>
-        </form>
-          <br>
-        </div>
-        <div class="row table-users">
-          <!-- table -->
-          <div class="col-md-12">
-            <div class="table-responsive">
-              <table class="table table-striped" style="width: 1000px" align="center">
-                <thead >
-                <tr>
-                  <th scope="col" style="text-align: center;width: 50px">Calificacion</th>
-                  <th scope="col" style="text-align: center;width: 200px">Comentario del usuario</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="c: ${listaComentarios}">
-                  <td style="width: 20px;text-align: center" th:text="${c.getcalificacion()} + ' ' + 'estrellas'"></td>
-                  <td style="width: 200px;text-align: center" th:text="${c.getcomentario()}"></td>
-                </tr>
-                </tbody>
-              </table>
+      <div id="content">
+        <!-- header -->
+        <header>
+          <div th:replace="fragments/adminRestaurante.html :: navbar"></div>
+        </header>
+        <!-- end header -->
+        <div class="yellow_bg" style="margin-bottom: -130px">
+          <div class="container">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="title">
+                  <h2 style="color: #000000">Calificaciones otorgadas por los usuarios</h2>
+                </div>
+              </div>
             </div>
           </div>
-          <!-- end of table -->
-          <!-- paginacion -->
-          <div class="col-md-12">
-          <div class="row">
-            <nav aria-label="Page navigation example" class = "mx-auto">
-              <ul class="pagination justify-content-center">
-
-                <!--  BOTON ANTERIOR -->
-                <li class="page-item disabled" th:if="${currentPage eq 1 }">
-                  <span class="page-link">Anterior</span>
-                </li>
-                <li class="page-item" th:unless="${currentPage eq 1}">
-                  <a class="page-link"
-                     th:href="@{/adminrest/calificaciones(page=${currentPage - 1},searchfield=${searchfield})}">Anterior</a>
-                </li>
-
-                <!-- BOTONES NUMEROS -->
-                <li th:each="i : ${#numbers.sequence( 1, maxNumberOfPages )}"
-                    th:class="${ i == currentPage ? 'page-item active .bg-secondary' : 'page-item' }">
-                  <a class="page-link"  th:href="@{/adminrest/calificaciones(page=${i},searchfield=${searchfield})}"
-                     th:text="${i}"
-                  ></a>
-                </li>
-
-                <!--  BOTON SIGUIENTE -->
-                <li class="page-item disabled" th:if="${currentPage eq maxNumberOfPages }">
-                  <span class="page-link">Anterior</span>
-                </li>
-                <li class="page-item" th:unless="${currentPage eq maxNumberOfPages}">
-                  <a class="page-link" th:href="@{/adminrest/calificaciones(page=${currentPage + 1},searchfield=${searchfield})}">Siguiente</a>
-                </li>
-              </ul>
-            </nav>
-          </div>
-          </div>
         </div>
-        <div class="row">
-          <div class="col-md-2">
-            <div class="d-flex justify-content-start" >
-              <a type="button" th:href="@{/adminrest/perfil}" class="send" style="text-align: center;background: #d8b00f">Regresar</a>
+        <!-- blog -->
+        <div class="blog">
+          <div class="container">
+            <div class="col-md-12">
+            <form class="input-group" method="post" th:action="@{/adminrest/buscarCalificaciones}">
+              <div class="col-md-10" style="border-style: groove">
+                <p>Elija su calificación: </p>
+                <p class="clasificacion" style="transform: translateY(4px)" align="left">
+                  <input id="radio1" type="radio" name="searchfield" value="5"><!--
+                  --><label style="font-size:40px" for="radio1" >★</label><!--
+                  --><input id="radio2" type="radio" name="searchfield" value="4"><!--
+                  --><label style="font-size:40px"  for="radio2">★</label><!--
+                  --><input id="radio3" type="radio" name="searchfield" value="3"><!--
+                  --><label style="font-size:40px"  for="radio3">★</label><!--
+                  --><input id="radio4" type="radio" name="searchfield" value="2"><!--
+                  --><label style="font-size:40px"  for="radio4">★</label><!--
+                  --><input id="radio5" type="radio" name="searchfield" value="1"><!--
+                  --><label style="font-size:40px"  for="radio5">★</label>
+                </p>
+              </div>
+              <div id="habbuscar"  class="col-md-1">
+              <button id="buscar" style="height: 50px" class="btn btn-dark">Buscar</button>
+              </div>
+              <div class="col-md-1">
+              <button style="height: 50px" class="btn btn-warning"><a class="button" th:href="@{'/adminrest/calificaciones'}">Limpiar</a></button>
+              </div>
+            </form>
+              <br>
+            </div>
+            <div class="row table-users">
+              <!-- table -->
+              <div class="col-md-12">
+                <div class="table-responsive">
+                  <table class="table table-striped" style="width: 1000px" align="center">
+                    <thead >
+                    <tr>
+                      <th scope="col" style="text-align: center;width: 50px">Calificacion</th>
+                      <th scope="col" style="text-align: center;width: 200px">Comentario del usuario</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="c: ${listaComentarios}">
+                      <td style="width: 20px;text-align: center" th:text="${c.getcalificacion()} + ' ' + 'estrellas'"></td>
+                      <td style="width: 200px;text-align: center" th:text="${c.getcomentario()}"></td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <!-- end of table -->
+              <!-- paginacion -->
+              <div class="col-md-12">
+              <div class="row">
+                <nav aria-label="Page navigation example" class = "mx-auto">
+                  <ul class="pagination justify-content-center">
+
+                    <!--  BOTON ANTERIOR -->
+                    <li class="page-item disabled" th:if="${currentPage eq 1 }">
+                      <span class="page-link">Anterior</span>
+                    </li>
+                    <li class="page-item" th:unless="${currentPage eq 1}">
+                      <a class="page-link"
+                         th:href="@{/adminrest/calificaciones(page=${currentPage - 1},searchfield=${searchfield})}">Anterior</a>
+                    </li>
+
+                    <!-- BOTONES NUMEROS -->
+                    <li th:each="i : ${#numbers.sequence( 1, maxNumberOfPages )}"
+                        th:class="${ i == currentPage ? 'page-item active .bg-secondary' : 'page-item' }">
+                      <a class="page-link"  th:href="@{/adminrest/calificaciones(page=${i},searchfield=${searchfield})}"
+                         th:text="${i}"
+                      ></a>
+                    </li>
+
+                    <!--  BOTON SIGUIENTE -->
+                    <li class="page-item disabled" th:if="${currentPage eq maxNumberOfPages }">
+                      <span class="page-link">Anterior</span>
+                    </li>
+                    <li class="page-item" th:unless="${currentPage eq maxNumberOfPages}">
+                      <a class="page-link" th:href="@{/adminrest/calificaciones(page=${currentPage + 1},searchfield=${searchfield})}">Siguiente</a>
+                    </li>
+                  </ul>
+                </nav>
+              </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2">
+                <div class="d-flex justify-content-start" >
+                  <a type="button" th:href="@{/adminrest/perfil}" class="send" style="text-align: center;background: #d8b00f">Regresar</a>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="col-md-8"></div>
-          <div class="col-md-2"></div>
+          <div class="copyright" style="padding-top: 50px;background:#d8b00f">
+            <div class="container">
+              <p>© 2021 Todos los derechos reservados.</p>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-  <!-- end blog -->
 
-  <!-- footer -->
-  <fooetr>
-    <div class="footer">
+      <!-- Javascript files-->
+      <script src="/js/jquery.min.js"></script>
+      <script src="/js/popper.min.js"></script>
+      <script src="/js/bootstrap.bundle.min.js"></script>
+      <script src="/js/owl.carousel.min.js"></script>
+      <script src="/js/custom.js"></script>
+      <script src="/js/jquery.mCustomScrollbar.concat.min.js"></script>
 
-      <div class="copyright">
-        <div class="container">
-          <p>© 2021 Todos los derechos reservados</p>
-        </div>
-      </div>
-    </div>
-  </fooetr>
-  <!-- end footer -->
+      <script src="/js/jquery-3.0.0.min.js"></script>
+      <script type="text/javascript">
+        $(document).ready(function() {
+          $("#sidebar").mCustomScrollbar({
+            theme: "minimal"
+          });
 
-</div>
-</div>
-<div class="overlay"></div>
-<!-- Javascript files-->
-<script src="/js/jquery.min.js"></script>
-<script src="/js/popper.min.js"></script>
-<script src="/js/bootstrap.bundle.min.js"></script>
-<script src="/js/owl.carousel.min.js"></script>
-<script src="/js/custom.js"></script>
-<script src="/js/jquery.mCustomScrollbar.concat.min.js"></script>
+          $('#dismiss, .overlay').on('click', function() {
+            $('#sidebar').removeClass('active');
+            $('.overlay').removeClass('active');
+          });
 
-<script src="/js/jquery-3.0.0.min.js"></script>
-<script type="text/javascript">
-  $(document).ready(function() {
-    $("#sidebar").mCustomScrollbar({
-      theme: "minimal"
-    });
+          $('#sidebarCollapse').on('click', function() {
+            $('#sidebar').addClass('active');
+            $('.overlay').addClass('active');
+            $('.collapse.in').toggleClass('in');
+            $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+          });
+        });
+      </script>
 
-    $('#dismiss, .overlay').on('click', function() {
-      $('#sidebar').removeClass('active');
-      $('.overlay').removeClass('active');
-    });
-
-    $('#sidebarCollapse').on('click', function() {
-      $('#sidebar').addClass('active');
-      $('.overlay').addClass('active');
-      $('.collapse.in').toggleClass('in');
-      $('a[aria-expanded=true]').attr('aria-expanded', 'false');
-    });
-  });
-</script>
-
-<style>
-  #owl-demo .item{
-    margin: 3px;
-  }
-  #owl-demo .item img{
-    display: block;
-    width: 100%;
-    height: auto;
-  }
-</style>
-
-
-<script>
-  $(document).ready(function() {
-    var owl = $('.owl-carousel');
-    owl.owlCarousel({
-      margin: 10,
-      nav: true,
-      loop: true,
-      responsive: {
-        0: {
-          items: 1
-        },
-        600: {
-          items: 2
-        },
-        1000: {
-          items: 5
+      <style>
+        #owl-demo .item{
+          margin: 3px;
         }
-      }
-    })
-  })
-</script>
-<script>
-  console.log("hola");
-  var valor=document.getElementById("valorbusqueda").value;
-  console.log(valor);
-  var radio1=document.getElementById("radio1").value;
-  var radio2=document.getElementById("radio2").value;
-  var radio3=document.getElementById("radio3").value;
-  var radio4=document.getElementById("radio4").value;
-  var radio5=document.getElementById("radio5").value;
-  switch (valor) {
-    case radio1:
-      console.log(radio1);
-      document.getElementById("radio1").checked=true;
-      break;
-    case radio2:
-      console.log(radio2);
-      document.getElementById("radio2").checked=true;
-      break;
-    case radio3:
-      console.log(radio3);
-      document.getElementById("radio3").checked=true;
-      break;
-    case radio4:
-      console.log(radio4);
-      document.getElementById("radio4").checked=true;
-      break;
-    case radio5:
-      console.log(radio5);
-      document.getElementById("radio5").checked=true;
-      break;
-  }
-</script>
-</body>
+        #owl-demo .item img{
+          display: block;
+          width: 100%;
+          height: auto;
+        }
+      </style>
 
+      <script>
+        $(document).ready(function() {
+          var owl = $('.owl-carousel');
+          owl.owlCarousel({
+            margin: 10,
+            nav: true,
+            loop: true,
+            responsive: {
+              0: {
+                items: 1
+              },
+              600: {
+                items: 2
+              },
+              1000: {
+                items: 5
+              }
+            }
+          })
+        })
+      </script>
+      <script>
+        console.log("hola");
+        var valor=document.getElementById("valorbusqueda").value;
+        console.log(valor);
+        var radio1=document.getElementById("radio1").value;
+        var radio2=document.getElementById("radio2").value;
+        var radio3=document.getElementById("radio3").value;
+        var radio4=document.getElementById("radio4").value;
+        var radio5=document.getElementById("radio5").value;
+        switch (valor) {
+          case radio1:
+            console.log(radio1);
+            document.getElementById("radio1").checked=true;
+            break;
+          case radio2:
+            console.log(radio2);
+            document.getElementById("radio2").checked=true;
+            break;
+          case radio3:
+            console.log(radio3);
+            document.getElementById("radio3").checked=true;
+            break;
+          case radio4:
+            console.log(radio4);
+            document.getElementById("radio4").checked=true;
+            break;
+          case radio5:
+            console.log(radio5);
+            document.getElementById("radio5").checked=true;
+            break;
+        }
+      </script>
+    </div>
+  </body>
 </html>
