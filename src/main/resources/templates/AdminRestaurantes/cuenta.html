@@ -130,6 +130,7 @@
                                                 <label>Contraseña</label>
                                                 <div th:if="${msgpasserror2 != null}" th:text="${msgpasserror2}" class="text-danger"></div>
                                                 <div th:if="${msgpasserror != null}" th:text="${msgpasserror}" class="text-danger"></div>
+                                                <div style="color: white;">Debe de tener como minimo 8 caracteres incluyendo como minimo 1 digito,1 mayúscula y 1 caracter especial</div>
                                                 <input placeholder="Contraseña" class="form-control" type="password" th:field="*{contraseniaHash}">
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
