@@ -128,10 +128,8 @@
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <label>Contraseña</label>
-                                                <div th:if="${msg != null}" th:text="${msg}" class="text-danger"></div>
-                                                <div th:if="${msg2 != null}" th:text="${msg2}" class="text-danger"></div>
+                                                <div th:if="${msgpasserror2 != null}" th:text="${msgpasserror2}" class="text-danger"></div>
                                                 <div th:if="${msgpasserror != null}" th:text="${msgpasserror}" class="text-danger"></div>
-                                                <div class="text-danger" th:if="${#fields.hasErrors('contraseniaHash')}" th:errors="*{contraseniaHash}"></div>
                                                 <input placeholder="Contraseña" class="form-control" type="password" th:field="*{contraseniaHash}">
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">

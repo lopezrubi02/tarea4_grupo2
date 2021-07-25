@@ -1246,7 +1246,6 @@ public class AdminRestauranteController {
         Usuario user=(Usuario)session.getAttribute("usuarioLogueado");
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(user.getIdusuarios());
         Restaurante rest= restauranteRepository.obtenerperfilRest(user.getIdusuarios());
-
         if(usuarioOptional.isPresent()) {
             Usuario usuarioNuevo = usuarioOptional.get();
             if(usuarioNuevo.getCuentaActiva()==1){
@@ -1259,7 +1258,7 @@ public class AdminRestauranteController {
                 model.addAttribute("direccion_rest",rest.getDireccion()+", "+rest.getDistrito().getNombredistrito());
                 return "AdminRestaurantes/cuenta";
             }else{
-                return "redirect:/adminrest/login";
+                return "redirect:/login";
             }
         }else{
             return "redirect:/login";
@@ -1276,6 +1275,54 @@ public class AdminRestauranteController {
                                     Model model){
         Usuario user=(Usuario) session.getAttribute("usuarioLogueado");
         Restaurante rest= restauranteRepository.obtenerperfilRest(user.getIdusuarios());
+        int correcto=1;
+        int flg_contra=0;
+
+        if(bindingResult.hasFieldErrors("telefono")){
+            correcto=0;
+        }
+        System.out.println("contraseña");
+        System.out.println(usuario.getContraseniaHash());
+        if(usuario.getContraseniaHash()!=null&&(!(usuario.getContraseniaHash().equals("")))){
+            System.out.println("Entre");
+            flg_contra=1;
+            if(!Pattern.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$",usuario.getContraseniaHash())){
+                correcto=0;
+                model.addAttribute("msgpasserror", "Contraseñas no cumple con los requisitos");
+
+            }
+            if(usuario.getContraseniaHash().equals(pass2)){
+                correcto=0;
+                model.addAttribute("msgpasserror2","Contraseñas no osn iguales");
+            }
+        }
+        if(correcto==0){
+            model.addAttribute("direccion_rest",rest.getDireccion()+", "+rest.getDistrito().getNombredistrito());
+            model.addAttribute("datos",usuarioRepository.obtenerDatos(usuario.getIdusuarios()));
+            model.addAttribute("listadirecciones",direccionesRepository.findAllByUsuarioAndActivoEquals(usuario,1));
+            model.addAttribute("restaurante",restauranteRepository.obtenerperfilRest(usuario.getIdusuarios()));
+            model.addAttribute("ruc",restauranteRepository.buscarRuc(usuario.getIdusuarios()));
+            model.addAttribute("listadistritos",distritosRepository.findAll());
+            model.addAttribute("telefono",telefono);
+            return "AdminRestaurantes/cuenta";
+        }
+        else{
+            if(flg_contra==0){
+                user.setTelefono(usuario.getTelefono());
+                usuarioRepository.save(user);
+                attr.addFlashAttribute("suceso","Perfil actualizado exitosamente");
+                return "redirect:/adminrest/cuentaAdmin";
+            }
+            else{
+                user.setTelefono(usuario.getTelefono());
+                user.setContraseniaHash(BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt()));
+                usuarioRepository.save(user);
+                attr.addFlashAttribute("suceso","Perfil actualizado exitosamente");
+                return "redirect:/adminrest/cuentaAdmin";
+            }
+        }
+/*
+
         if(bindingResult.hasFieldErrors("telefono")|| bindingResult.hasFieldErrors("contraseniaHash")){
             if (!BCrypt.checkpw(usuario.getContraseniaHash(),user.getContraseniaHash())) {
                 model.addAttribute("msg", "Contraseña incorrecta");
@@ -1336,6 +1383,7 @@ public class AdminRestauranteController {
                 return "AdminRestaurantes/cuenta";
             }
         }
+ */
     }
 
     @GetMapping("/editardireccion")
