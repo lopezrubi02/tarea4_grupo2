@@ -180,7 +180,6 @@
                         <div class="form-group">
                             <label>Sexo</label>
                             <div class="text-danger" th:if="${#fields.hasErrors('sexo')}" th:errors="*{sexo}"></div>
-                            <div th:if="${sexoValido != null}" th:text="${sexoValido}" class="text-danger"></div>
                             <select class="form-select" placeholder="Sexo" type="text" th:field="*{sexo}" style="width: 100%;">
                                 <option value="Masculino" text="Masculino">Masculino</option>
                                 <option value="Femenino" text="Femenino">Femenino</option>
