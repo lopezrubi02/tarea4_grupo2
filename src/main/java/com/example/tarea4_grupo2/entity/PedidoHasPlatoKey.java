@@ -11,12 +11,12 @@ public class PedidoHasPlatoKey implements Serializable {
     private int pedidosidpedidos;
 
     @Column(name = "platoidplato")
-    private int platoidplato;
+    private String platoidplato;
 
     public PedidoHasPlatoKey() {
     }
 
-    public PedidoHasPlatoKey(int pedidosidpedidos, int platoidplato) {
+    public PedidoHasPlatoKey(int pedidosidpedidos, String platoidplato) {
         super();
         this.pedidosidpedidos = pedidosidpedidos;
         this.platoidplato = platoidplato;
@@ -30,11 +30,11 @@ public class PedidoHasPlatoKey implements Serializable {
         this.pedidosidpedidos = pedidosidpedidos;
     }
 
-    public int getPlatoidplato() {
+    public String getPlatoidplato() {
         return platoidplato;
     }
 
-    public void setPlatoidplato(int platoidplato) {
+    public void setPlatoidplato(String platoidplato) {
         this.platoidplato = platoidplato;
     }
 }
