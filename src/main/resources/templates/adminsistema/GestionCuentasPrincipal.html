@@ -113,23 +113,29 @@
             </div>
 
             <hr>
-            <div class="row">
-			<div class="col-12 col-md-6">
-                    <!-- imagen -->
-                    <div align="center"><img th:src="@{/images/Foto-NuevoRest.jpg}" href="ADMIN_nuevasCuentas.html" width="350" height="350"></div>
-					<a th:href="@{nuevosUsuarios}">
-					<button type="button " class="btn btn-dark btn-lg btn-block" th:href="@{nuevosUsuarios}">Solicitud de Nuevas Cuentas</button></a>
+            <div class="row" th:if="${idAdmin == 1}">
+                <div class="col-12 col-md-6">
+                        <!-- imagen -->
+                        <div align="center"><img th:src="@{/images/Foto-NuevoRest.jpg}" href="ADMIN_nuevasCuentas.html" width="350" height="350"></div>
+                        <a th:href="@{nuevosUsuarios}">
+                        <button type="button " class="btn btn-dark btn-lg btn-block" th:href="@{nuevosUsuarios}">Solicitud de Nuevas Cuentas</button></a>
                 </div>
 				
-                <div th:if="${idAdmin == 1}"class="col-12 col-md-6">
+                <div class="col-12 col-md-6">
 					<!-- imagen -->
                     <div align="center"><img th:src="@{/images/Foto-NuevoAdmin.png}" th:href="@{adminForm}" width="348" height="348"></div>
 					<a th:href="@{adminForm}">
 					<button type="button btn-block" class="btn btn-warning btn-lg btn-block" th:href="@{adminForm}">Añadir Nuevo Administrador</button></a>
                 </div>
-				
-			<!-- Anterior NavBar-->
-				
+            </div>
+            <div class="row" th:if="${idAdmin != 1}">
+                <div class="col-12 col-md-12">
+                    <!-- imagen -->
+                    <div align="center"><img th:src="@{/images/Foto-NuevoRest.jpg}" href="ADMIN_nuevasCuentas.html" width="350" height="350"></div>
+                    <a th:href="@{nuevosUsuarios}">
+                        <button type="button " class="btn btn-dark btn-lg btn-block" th:href="@{nuevosUsuarios}">Solicitud de Nuevas Cuentas</button></a>
+                </div>
+
             </div>
         </div>
     </div>

@@ -530,10 +530,10 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
                 nombreRol = "Todos";
             }
             model.addAttribute("nombreRol",nombreRol);
-
+            model.addAttribute("busqueda",buscar);
             //todo agregado para lograr paginacion
             if(usuarioList.size() == 0){
-
+                //attr.addFlashAttribute("busqueda",buscar);
                 if(buscar.equals("") && rol.equals("Todos")){
                     attr.addFlashAttribute("msg","No hay nuevas Cuentas que aceptar");
                     return "redirect:/admin/gestionCuentas";
@@ -580,6 +580,8 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
             System.out.println("El rol es: " + rol);
             attr.addAttribute("rolSelected",rol);
             attr.addAttribute("searchField", buscar);
+
+            model.addAttribute("busqueda",buscar);
 
             //model.addAttribute("listaUsuariosNuevos",usuarioList);
             //return "adminsistema/nuevasCuentas";
@@ -714,9 +716,17 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
     }
 
     @PostMapping("/denegar")
-    public String denegarCuenta(@RequestParam(value="id") int id,
+    public String denegarCuenta(@RequestParam(value="id", defaultValue = "") String idString,
                                 @RequestParam(value = "message", defaultValue = "Sin razón") String message,
                                 RedirectAttributes attr){
+        int id;
+        try {
+            id = Integer.parseInt(idString);
+        }catch (Exception e){
+            attr.addFlashAttribute("msg","Ocurrio un error con el ID");
+            return "redirect:/admin/nuevosUsuarios";
+        }
+
         Optional<Usuario> optional = usuarioRepository.findById(id);
         if(optional.isPresent()){
             Usuario usuario = optional.get();
@@ -769,7 +779,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
                             "<p>El restaurante asociado a la cuenta que ha registrado se le ha denegado la solicitud de aprobación.</p>\n" +
                             "<p>Motivo: '" +message +"'</p>\n" +
                             "<p>&nbsp;</p>\n" +
-                            "<p>Nota: Si en el motivo de denegación se le indicaron puntos que mejorar o detallar, puede volver a intentar a registrar su cuenta</p>\n" +
+                            "<p>Nota: Si en el motivo de denegación se le indicaron puntos que mejorar o detallar, puede volver a intentar registrar su restaurante</p>\n" +
                             "<p>&nbsp;</p>\n" +
                             "<br>Atte. Equipo de Spicyo</br>";
 
@@ -928,13 +938,20 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
 
         List<Usuario> usuarioList;
         String buscar = "%" + searchField + "%";
+        model.addAttribute("busqueda",searchField);
 
         if(!searchField.equals("") && (rol.equals("Repartidor") || rol.equals("AdminRestaurante") || rol.equals("Cliente"))) {
             usuarioList = usuarioRepository.cuentasActualesRol(buscar,rol);
-
+            if(usuarioList.size()==0){
+                usuarioList = usuarioRepository.usuarioreportes();
+                model.addAttribute("msg","No se encontraron resultados para su búsqueda");
+            }
         }else if(!searchField.equals("")){
             usuarioList = usuarioRepository.cuentasActuales(buscar);
-
+            if(usuarioList.size()==0){
+                usuarioList = usuarioRepository.usuarioreportes();
+                model.addAttribute("msg","No se encontraron resultados para su búsqueda");
+            }
         }else if(rol.equals("Repartidor") || rol.equals("AdminRestaurante") || rol.equals("Cliente")){
             usuarioList = usuarioRepository.findAllByRolAndCuentaActiva(rol,1);
 
@@ -952,6 +969,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
         }else{
             nombreRol = "Todos";
         }
+
 
         int numberOfPages = (int) Math.ceil(usuarioList.size() / numberOfUsersPerPage);
         if (page > numberOfPages) {
@@ -995,6 +1013,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
         List<RestauranteReportes_DTO> reporteLista;
         if(!searchField.equals("")){
             String buscar = "%" + searchField + "%";
+            model.addAttribute("busqueda",searchField);
             reporteLista = restauranteRepository.reportesRestaurantes2(buscar);
 
             if(reporteLista.size()==0){
@@ -1030,24 +1049,25 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
         model.addAttribute("reporteLista",lisOfUsersPage);
 
 
+        List<RestauranteReportes_DTO> reporteLista0 = restauranteRepository.reportesRestaurantes();
         double max = 0;
         int indicemayor = 0;
-        for (int i = 0; i < reporteLista.size(); i++) {
-            if (reporteLista.get(i).getVentastotales() > max) {
-                max = reporteLista.get(i).getVentastotales();
+        for (int i = 0; i < reporteLista0.size(); i++) {
+            if (reporteLista0.get(i).getVentastotales() > max) {
+                max = reporteLista0.get(i).getVentastotales();
                 indicemayor = i;
             }
         }
         double min = max;
         int indicemenor = indicemayor;
-        for (int i = 0; i < reporteLista.size(); i++) {
-            if (reporteLista.get(i).getVentastotales() < min) {
-                min = reporteLista.get(i).getVentastotales();
+        for (int i = 0; i < reporteLista0.size(); i++) {
+            if (reporteLista0.get(i).getVentastotales() < min) {
+                min = reporteLista0.get(i).getVentastotales();
                 indicemenor = i;
             }
         }
-        RestauranteReportes_DTO mayor = reporteLista.get(indicemayor);
-        RestauranteReportes_DTO menor = reporteLista.get(indicemenor);
+        RestauranteReportes_DTO mayor = reporteLista0.get(indicemayor);
+        RestauranteReportes_DTO menor = reporteLista0.get(indicemenor);
 
         model.addAttribute("mayorrest",mayor);
         model.addAttribute("menorrest",menor);
@@ -1072,6 +1092,7 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
         List<RepartidoresReportes_DTO> reporteLista;
         if(!searchField.equals("")){
             String buscar = "%" + searchField + "%";
+            model.addAttribute("busqueda",searchField);
             reporteLista = repartidorRepository.reporteRepartidores2(buscar);
             if(reporteLista.size()==0){
                 reporteLista = repartidorRepository.reporteRepartidores();
@@ -1108,25 +1129,25 @@ public ResponseEntity<byte[]> mostrarImagenRest(@PathVariable("id") int id){
 
 
 
-
+        List<RepartidoresReportes_DTO> reporteLista0 = repartidorRepository.reporteRepartidores();
         int max = 0;
         int indicemayor = 0;
-        for (int i = 0; i < reporteLista.size(); i++) {
-            if (reporteLista.get(i).getPedidos() > max) {
-                max = reporteLista.get(i).getPedidos();
+        for (int i = 0; i < reporteLista0.size(); i++) {
+            if (reporteLista0.get(i).getPedidos() > max) {
+                max = reporteLista0.get(i).getPedidos();
                 indicemayor = i;
             }
         }
         int min = max;
         int indicemenor = indicemayor;
-        for (int i = 0; i < reporteLista.size(); i++) {
-            if (reporteLista.get(i).getPedidos() < min) {
-                min = reporteLista.get(i).getPedidos();
+        for (int i = 0; i < reporteLista0.size(); i++) {
+            if (reporteLista0.get(i).getPedidos() < min) {
+                min = reporteLista0.get(i).getPedidos();
                 indicemenor = i;
             }
         }
-        RepartidoresReportes_DTO mayor = reporteLista.get(indicemayor);
-        RepartidoresReportes_DTO menor = reporteLista.get(indicemenor);
+        RepartidoresReportes_DTO mayor = reporteLista0.get(indicemayor);
+        RepartidoresReportes_DTO menor = reporteLista0.get(indicemenor);
 
         model.addAttribute("mayorrep",mayor);
         model.addAttribute("menorrep",menor);

@@ -104,6 +104,8 @@
                                                     </div>
                                                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                         <label>Dirección </label>
+                                                        <br/><a th:href="@{'/repartidor/editardireccion'}"> Editar dirección</a>
+                                                        </br>
                                                         <input class="form-control" type="text" th:value="|${direcciones.direccion} - ${distritoUsuario.nombredistrito}|"
                                                         name="direccion">
                                                     </div>
