@@ -1246,11 +1246,17 @@ public class UsuarioController {
                     System.out.println("TRACER 2 ****************************");
                     System.out.println(php.getPlato().getActivo());
                     System.out.println(php.getPlato().getDisponibilidad());
+                    int cantplatosrest = platosxpedido.size();
                     if(php.getPlato().getActivo() == 0 || php.getPlato().getDisponibilidad() == 0){
                         System.out.println("TRACER 3  *****************");
-                        PedidoHasPlatoKey pedidoHasPlatoKey = php.getId();
-                        System.out.println(pedidoHasPlatoKey.getPedidosidpedidos());
-                        pedidoHasPlatoRepository.deleteById(pedidoHasPlatoKey);// TODO si el pedido solo tiene un plato, como se va a eliminar el plato, se deberia eliminar el pedido
+                        // TODO si el pedido solo tiene un plato, como se va a eliminar el plato, se deberia eliminar el pedido
+                        if(cantplatosrest == 1) {
+                            pedidosRepository.deleteById(pedidoencurso.getIdpedidos());
+                        }else{
+                            PedidoHasPlatoKey pedidoHasPlatoKey = php.getId();
+                            System.out.println(pedidoHasPlatoKey.getPedidosidpedidos());
+                            pedidoHasPlatoRepository.deleteById(pedidoHasPlatoKey);
+                        }
                         System.out.println("debe borrar plato");
                         carritoactualizado = true;
                     }
@@ -1388,11 +1394,17 @@ public class UsuarioController {
                     System.out.println("TRACER 2 ****************************");
                     System.out.println(php.getPlato().getActivo());
                     System.out.println(php.getPlato().getDisponibilidad());
+                    int cantplatosrest = platosxpedido.size();
                     if (php.getPlato().getActivo() == 0 || php.getPlato().getDisponibilidad() == 0) {
                         System.out.println("TRACER 3  *****************");
-                        PedidoHasPlatoKey pedidoHasPlatoKey = php.getId();
-                        System.out.println(pedidoHasPlatoKey.getPedidosidpedidos());
-                        pedidoHasPlatoRepository.deleteById(pedidoHasPlatoKey);//TODO si el pedido solo tiene un plato, como se va a eliminar el plato, se deberia eliminar el pedido
+                        // TODO si el pedido solo tiene un plato, como se va a eliminar el plato, se deberia eliminar el pedido
+                        if(cantplatosrest == 1) {
+                            pedidosRepository.deleteById(pedidoencurso.getIdpedidos());
+                        }else{
+                            PedidoHasPlatoKey pedidoHasPlatoKey = php.getId();
+                            System.out.println(pedidoHasPlatoKey.getPedidosidpedidos());
+                            pedidoHasPlatoRepository.deleteById(pedidoHasPlatoKey);
+                        }
                         System.out.println("debe borrar plato");
                         carritoactualizado = true;
                     }
