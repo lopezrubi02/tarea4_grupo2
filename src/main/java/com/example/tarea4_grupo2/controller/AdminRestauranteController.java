@@ -945,6 +945,7 @@ public class AdminRestauranteController {
     @GetMapping("/calificaciones")
     public String verCalificaciones(Model model, @RequestParam(name = "page", defaultValue = "1") String requestedPage,
                                     @RequestParam(name = "searchfield", defaultValue = "") String searchField,HttpSession session, RedirectAttributes attr){
+        int flagBuscar = 0;
         Usuario usuario=(Usuario) session.getAttribute("usuarioLogueado");
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(usuario.getIdusuarios());
         if(usuarioOptional.isPresent()) {
@@ -957,6 +958,7 @@ public class AdminRestauranteController {
                 if (searchField.equals("")) {
                     comentariosList = pedidosRepository.comentariosUsuarios(idrestaurante);
                 } else {
+                    flagBuscar = 1;
                     comentariosList = pedidosRepository.buscarComentariosUsuarios(searchField, idrestaurante);
                 }
 
@@ -977,8 +979,13 @@ public class AdminRestauranteController {
                     model.addAttribute("searchfield", searchField);
                     return "AdminRestaurantes/calificaciones";
                 } else {
-                    attr.addFlashAttribute("sinCalificaciones","No tienes ninguna calificacion hasta la fecha.");
-                    return "redirect:/adminrest/perfil";
+                    if(flagBuscar ==1){
+                        attr.addFlashAttribute("sinCalificaciones","No se ha encontrado registro con dicha calificacion.");
+                        return "redirect:/adminrest/calificaciones";
+                    }else{
+                        attr.addFlashAttribute("sinCalificaciones","No tienes ninguna calificacion hasta la fecha.");
+                        return "redirect:/adminrest/perfil";
+                    }
                 }
             }else {
                 return "redirect:/adminrest/login";

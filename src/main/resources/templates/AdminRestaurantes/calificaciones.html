@@ -65,6 +65,7 @@
         <!-- blog -->
         <div class="blog">
           <div class="container">
+            <div th:if="${sinCalificaciones != null}" th:text="${sinCalificaciones}" class="alert alert-danger" style="width: 630px; text-align: center;margin-top:-20px; margin-left: 15px;margin-bottom: 10px"></div>
             <div class="col-md-12">
             <form class="input-group" method="post" th:action="@{/adminrest/buscarCalificaciones}">
               <div class="col-md-10" style="border-style: groove">
