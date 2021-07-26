@@ -389,7 +389,7 @@ public class RepartidorController {
 
 
     public ByteArrayInputStream exportAllData1(int id) throws IOException {
-        String[] columns1 = { "#", "RESTAURANTE", "DISTRITO DEL RESTAURANTE", "DESTINO", "S/. COMISIÓN", "CALIFICACION"};
+        String[] columns1 = { "#", "RESTAURANTE", "DISTRITO DEL RESTAURANTE", "DISTRITO DEL CLIENTE", "S/. COMISIÓN", "CALIFICACION"};
         String[] columns2 = { "MES", "AÑO", "COMISIÓN MENSUAL" };
 
         Workbook workbook = new HSSFWorkbook();
@@ -413,8 +413,8 @@ public class RepartidorController {
             row1 = sheet1.createRow(initRow1);
             row1.createCell(0).setCellValue(initRow1);
             row1.createCell(1).setCellValue(pedidoDisponible.getNombre());
-            row1.createCell(2).setCellValue(pedidoDisponible.getRestaurantedistrito());
-            row1.createCell(3).setCellValue(pedidoDisponible.getClienteubicacion());
+            row1.createCell(2).setCellValue(pedidoDisponible.getClienteubicacion());
+            row1.createCell(3).setCellValue(pedidoDisponible.getRestaurantedistrito());
             row1.createCell(4).setCellValue(pedidoDisponible.getComisionrepartidor()+ ".00");
             row1.createCell(5).setCellValue(pedidoDisponible.getCalificacionrepartidor());
             initRow1++;
@@ -585,9 +585,14 @@ public class RepartidorController {
 
         System.out.println(usuario.getContraseniaHash());
 
+        boolean cont1val;
         if (!matcher1.matches()) {
             msgc1 = "La contraseña debe tener al menos una letra, un número y un caracter especial";
+            cont1val=false;
+        }else{
+            cont1val=true;
         }
+        boolean cont2val=true;
         String msgc2 = null;
         Matcher matcher2 = pattern1.matcher(password2);
         if (password2.isEmpty()) {
@@ -595,10 +600,13 @@ public class RepartidorController {
         } else {
             if (!matcher2.matches()) {
                 msgc2 = "La contraseña debe tener al menos una letra, un número y un caracter especial";
+                cont2val=false;
+            }else{
+                cont2val=true;
             }
         }
 
-        if (bindingResult.hasFieldErrors("telefono") ||  bindingResult.hasFieldErrors("contraseniaHash")) {
+        if (bindingResult.hasFieldErrors("telefono") || !cont1val || !cont2val) {
 
             model.addAttribute("msgc1", msgc1);
             model.addAttribute("msgc2", msgc2);
@@ -649,9 +657,12 @@ public class RepartidorController {
 
 
         } else {
+            String contraseniahashbcrypt = BCrypt.hashpw(password2, BCrypt.gensalt());
+
             if (usuario.getContraseniaHash().equals(password2)) {
                 if (file.isEmpty()) {
                     user.setTelefono(usuario.getTelefono());
+                    user.setContraseniaHash(contraseniahashbcrypt);
                     usuarioRepository.save(user);
                     String msgR = "El perfil fue editado exitosamente";
                     attributes.addFlashAttribute("msgR", msgR);
@@ -692,6 +703,9 @@ public class RepartidorController {
                     return "repartidor/repartidor_perfil";
                 }
                 user.setTelefono(usuario.getTelefono());
+                 contraseniahashbcrypt = BCrypt.hashpw(password2, BCrypt.gensalt());
+                System.out.println(contraseniahashbcrypt);
+                user.setContraseniaHash(contraseniahashbcrypt);
 
                 usuarioRepository.save(user);
                 String msgR = "El perfil fue editado exitosamente";
