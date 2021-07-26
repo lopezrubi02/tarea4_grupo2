@@ -398,11 +398,16 @@ public class UsuarioController {
                 List<TiempoMedio_ClienteDTO> tiempoMedio_clienteDTOS = pedidosRepository.obtenerTiemposPromedio(idusuarios, anio, mes);
 
                 DineroAhorrado_ClienteDTO dineroAhorrado_clienteDTO = pedidosRepository.dineroAhorrado(idusuarios, anio, mes);
+                if(dineroAhorrado_clienteDTO == null){
+                    int diferencia = 0;
+                    model.addAttribute("diferencia", diferencia);
+                }else{
+                    model.addAttribute("diferencia", dineroAhorrado_clienteDTO);
+                }
                 model.addAttribute("cliente", cliente);
                 model.addAttribute("listaTop3Restaurantes",top3Restaurantes_clienteDTOS );
                 model.addAttribute("listaTop3Platos", top3Platos_clientesDTOS);
                 model.addAttribute("listaPromedioTiempo", tiempoMedio_clienteDTOS);
-                model.addAttribute("diferencia", dineroAhorrado_clienteDTO);
                 model.addAttribute("listaHistorialConsumo", pedidosRepository.obtenerHistorialConsumo(idusuarios, anio, mes));
                 model.addAttribute("fechaseleccionada",fechamostrar);
                 model.addAttribute("id",idusuarios);
