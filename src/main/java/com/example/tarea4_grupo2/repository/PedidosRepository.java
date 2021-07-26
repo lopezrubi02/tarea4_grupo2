@@ -105,18 +105,26 @@ public interface PedidosRepository extends JpaRepository<Pedidos, Integer> {
             "where r.idrestaurante=?1 and p.estadorestaurante='pendiente' order by p.fechahorapedido desc",nativeQuery = true)
     List<PedidosAdminRestDto> listaPedidos(Integer id);
 
-    @Query(value = "select p.idpedidos as numeropedido, p.fechahorapedido as fechahorapedido, \n" +
-            "u.nombre as nombre, u.apellidos as apellidos, p.montototal as montototal, pt.nombre as nombreplato,\n" +
-            "m.metodo as metodo, d.nombredistrito as distrito\n" +
-            " from pedidos p\n" +
-            " inner join usuarios u on u.idusuarios = p.idcliente \n" +
-            " inner join direcciones dir on dir.iddirecciones = p.direccionentrega\n" +
-            "  inner join distritos d on d.iddistritos = dir.iddistrito\n" +
-            " inner join metodospago m on m.idmetodospago = p.idmetodopago\n" +
-            " inner join pedidoshasplato pl on pl.pedidosidpedidos = p.idpedidos\n" +
-            " inner join plato pt on pt.idplato = pl.platoidplato\n" +
-            " where p.estadorestaurante = 'entregado' and p.restauranteidrestaurante = ?1\n" +
-            "  order by p.fechahorapedido asc", nativeQuery = true)
+    @Query(value = "select p.idpedidos as numeropedido, \n" +
+            "p.fechahorapedido as fechahorapedido,\n" +
+            "u.nombre as nombre, \n" +
+            "u.apellidos as apellidos, \n" +
+            "p.montototal as montototal, \n" +
+            "(select GROUP_CONCAT(pa.nombre SEPARATOR ', ') as nombreplato from plato pa\n" +
+            "inner join pedidoshasplato pl on pl.platoidplato = pa.idplato \n" +
+            "inner join pedidos p on p.idpedidos = pl.pedidosidpedidos where p.idpedidos = numeropedido)  as nombreplato,\n" +
+            "m.metodo as metodo,\n" +
+            "d.nombredistrito as distrito\n" +
+            "from pedidos p\n" +
+            "inner join usuarios u on u.idusuarios = p.idcliente\n" +
+            "inner join direcciones dir on dir.iddirecciones = p.direccionentrega\n" +
+            "inner join distritos d on d.iddistritos = dir.iddistrito\n" +
+            "inner join metodospago m on m.idmetodospago = p.idmetodopago\n" +
+            "inner join pedidoshasplato pl on pl.pedidosidpedidos = p.idpedidos\n" +
+            "inner join plato pt on pt.idplato = pl.platoidplato\n" +
+            "where p.estadorestaurante = 'entregado' and p.restauranteidrestaurante = ?1\n" +
+            "group by numeropedido\n" +
+            "order by p.fechahorapedido asc", nativeQuery = true)
     List<PedidosReporteDto> listaPedidosReporteporFechamasantigua(Integer id);
 
     @Query(value = "select p.idpedidos as numeropedido, p.fechahorapedido as fechahorapedido, \n" +

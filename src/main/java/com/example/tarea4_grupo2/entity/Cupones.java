@@ -4,10 +4,7 @@ package com.example.tarea4_grupo2.entity;
 import org.springframework.format.annotation.NumberFormat;
 
 import javax.persistence.*;
-import javax.validation.constraints.Digits;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.*;
 import java.sql.Date;
 
 @Entity
@@ -20,10 +17,12 @@ public class Cupones {
 
     @NotBlank(message = "El nombre no puede estar vacio.")
     @Column(nullable = false)
+    @Size(max = 45, message = "El nombre no debe sobrepasar los 45 caracteres.")
     private String nombre;
 
     @NotBlank(message = "La descripcion no puede estar vacia.")
     @Column(nullable = false)
+    @Size(max = 150, message = "La descripcion no puede sobrepasar los 150 caracteres.")
     private String descripcion;
 
     @Positive(message = "Este valor no puede ser un numero negativo.")
