@@ -53,7 +53,7 @@ public interface RepartidorRepository  extends JpaRepository<Repartidor, Integer
     @Query(value = "SELECT sum(comisionrepartidor) as 'comision_mensual',month(fechahorapedido) as 'mes'," +
             "year(fechahorapedido) as 'year'\n" +
             "FROM proyecto.pedidos \n" +
-            "where (idrepartidor=?1) ",nativeQuery = true)
+            "where (idrepartidor=?1 and estadorepartidor='entregado') group by month(fechahorapedido)",nativeQuery = true)
     List<RepartidorComisionMensualDTO> obtenerComisionPorMes(int id);
 
     //Listo
