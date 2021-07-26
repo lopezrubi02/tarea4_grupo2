@@ -1,166 +1,162 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/adminRestaurante.html :: header( title = 'Menu')"></head>
-
-<!-- body -->
-<body class="main-layout Recipes_page">
-    <div class="wrapper">
-        <div class="sidebar">
-            <!-- Sidebar  -->
-            <nav id="sidebar">
-                <div id="dismiss">
-                    <i class="fa fa-arrow-left"></i>
-                </div>
-                <ul class="list-unstyled components">
-                    <li><a th:href="@{/adminrest/perfil}">Perfil</a></li>
-                    <li><a th:href="@{/adminrest/menu}">Menu</a></li>
-                    <li><a th:href="@{/adminrest/cupones}">Cupones</a></li>
-                    <li><a th:href="@{/adminrest/pedidos}">Pedidos</a></li>
-                    <li><a th:href="@{/adminrest/calificaciones}">Calificaciones</a></li>
-                </ul>
-            </nav>
-        </div>
-        <div id="content">
-            <!-- header -->
-            <header>
-                <div th:replace="fragments/adminRestaurante.html :: navbar"></div>
-            </header>
-            <!-- end header -->
-            <div class="yellow_bg">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="title">
-                                <h2 style="color: #000000">Nuestro menu</h2>
+    <head th:replace="fragments/adminRestaurante.html :: header( title = 'Menu')"></head>
+    <!-- body -->
+    <body class="main-layout Recipes_page">
+        <div class="wrapper">
+            <div class="sidebar">
+                <!-- Sidebar  -->
+                <nav id="sidebar">
+                    <div id="dismiss">
+                        <i class="fa fa-arrow-left"></i>
+                    </div>
+                    <ul class="list-unstyled components">
+                        <li><a th:href="@{/adminrest/perfil}">Perfil</a></li>
+                        <li><a th:href="@{/adminrest/menu}">Menu</a></li>
+                        <li><a th:href="@{/adminrest/cupones}">Cupones</a></li>
+                        <li><a th:href="@{/adminrest/pedidos}">Pedidos</a></li>
+                        <li><a th:href="@{/adminrest/calificaciones}">Calificaciones</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div id="content">
+                <!-- header -->
+                <header>
+                    <div th:replace="fragments/adminRestaurante.html :: navbar"></div>
+                </header>
+                <!-- end header -->
+                <div class="yellow_bg">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="title">
+                                    <h2 style="color: #000000">Nuestro menú</h2>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <!-- section -->
-            <section class="lqq-section">
-                <div class="container">
-                    <div class="row">
-                        <a class="send" style="text-align: center;background:#e3d105; margin-left: 15px; margin-top: 15px; margin-bottom: 15px"
-                           th:href="@{/adminrest/crearPlato}">Nuevo Plato
-                        </a>
-                        <div th:if="${platoInvalido != null}"  th:text="${platoInvalido}" class="alert alert-danger" style="width: 630px;height: 60px;margin-top: 10px;text-align: center"></div>
-                        <input id="cantidadPlatos" style="color: #1f1f1f;display: none" th:value="${cantidadPlatos}">
-                        <div class="col-md-12">
-                            <div class="owl-carousel owl-theme">
-                                <div class="item" th:each="plato : ${listaPlatos}">
-                                    <div class="product_blog_img" align="center">
-                                        <a th:href="@{'/adminrest/editarPlato' + '?idplato=' + ${plato.idplato}}">
-                                            <figure><img th:src="@{'/adminrest/imagenplato' + '?idplato=' + ${plato.idplato}}" alt="#"></figure>
-                                        </a>
-                                    </div>
-                                    <div class="product_blog_cont" style="align-content: center">
-                                        <h3 style="color: #1f1f1f" th:text="${plato.nombre}"></h3>
-                                        <span style="color: #002752">Descripción:</span><h4 style="color: #1f1f1f" th:text="${plato.descripcion}"></h4>
-                                        <span style="color: #002752">Precio: S/.</span><h4 style="color: #1f1f1f" th:text="${plato.precio}"></h4>
-                                        <span style="color: #002752">¿Tiene stock?</span><h4 style="color: #1f1f1f" th:text="${plato.disponibilidad == 1? 'Si':'No'}"></h4>
-                                        <div class="row" style="padding-bottom: 0px">
-                                            <a class="send" style="background:#e3d105"
-                                               th:href="@{'/adminrest/borrarPlato' + '?idplato=' + ${plato.idplato}}">Borrar plato
+                <!-- section -->
+                <section class="lqq-section">
+                    <div class="container">
+                        <div class="row">
+                            <a class="send" style="text-align: center;background:#d8b00f; margin-left: 15px; margin-top: 15px; margin-bottom: 15px"
+                               th:href="@{/adminrest/crearPlato}">Nuevo Plato
+                            </a>
+                            <div th:if="${platoInvalido != null}"  th:text="${platoInvalido}" class="alert alert-danger" style="width: 630px;height: 60px;margin-top: 10px;text-align: center"></div>
+                            <input id="cantidadPlatos" style="color: #1f1f1f;display: none" th:value="${cantidadPlatos}">
+                            <div class="col-md-12">
+                                <div class="owl-carousel owl-theme">
+                                    <div class="item" th:each="plato : ${listaPlatos}">
+                                        <div class="product_blog_img" align="center">
+                                            <a th:href="@{'/adminrest/editarPlato' + '?idplato=' + ${plato.idplato}}">
+                                                <figure><img th:src="@{'/adminrest/imagenplato' + '?idplato=' + ${plato.idplato}}" alt="#"></figure>
                                             </a>
+                                        </div>
+                                        <div class="product_blog_cont" style="align-content: center">
+                                            <h3 style="color: #1f1f1f" th:text="${plato.nombre}"></h3>
+                                            <span style="color: #002752">Descripción:</span><h4 style="color: #1f1f1f" th:text="${plato.descripcion}"></h4>
+                                            <span style="color: #002752">Precio: S/.</span><h4 style="color: #1f1f1f" th:text="${plato.precio}"></h4>
+                                            <span style="color: #002752">¿Tiene stock?</span><h4 style="color: #1f1f1f" th:text="${plato.disponibilidad == 1? 'Si':'No'}"></h4>
+                                            <div class="row" style="padding-bottom: 0px">
+                                                <a class="send" style="background:#d8b00f"
+                                                   th:href="@{'/adminrest/borrarPlato' + '?idplato=' + ${plato.idplato}}">Borrar plato
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </section>
-            <!-- end section -->
-            <!-- footer -->
-            <fooetr>
-                <div class="footer">
-
-                    <div class="copyright">
+                </section>
+                <!-- end section -->
+                <!-- footer -->
+                <footer>
+                    <div class="copyright" style="padding-top: 50px;background:#d8b00f">
                         <div class="container">
-                            <p>© 2021 Todos los derechos reservados</p>
+                            <p>© 2021 Todos los derechos reservados.</p>
                         </div>
                     </div>
-                </div>
-            </fooetr>
-            <!-- end footer -->
+                </footer>
+                <!-- end footer -->
+            </div>
+
+            <!-- Javascript files-->
+            <script src="/js/jquery.min.js"></script>
+            <script src="/js/popper.min.js"></script>
+            <script src="/js/bootstrap.bundle.min.js"></script>
+            <script src="/js/owl.carousel.min.js"></script>
+            <script src="/js/custom.js"></script>
+            <script src="/js/jquery.mCustomScrollbar.concat.min.js"></script>
+
+            <script src="/js/jquery-3.0.0.min.js"></script>
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    $("#sidebar").mCustomScrollbar({
+                        theme: "minimal"
+                    });
+
+                    $('#dismiss, .overlay').on('click', function () {
+                        $('#sidebar').removeClass('active');
+                        $('.overlay').removeClass('active');
+                    });
+
+                    $('#sidebarCollapse').on('click', function () {
+                        $('#sidebar').addClass('active');
+                        $('.overlay').addClass('active');
+                        $('.collapse.in').toggleClass('in');
+                        $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+                    });
+                });
+            </script>
+
+            <script>
+                $(document).ready(function () {
+                    console.log("Numero de platos: ");
+                    let cant = $("#cantidadPlatos").val();
+                    console.log(cant);
+                    if(cant>5){
+                        console.log("Mayor a 5");
+                        var owl = $('.owl-carousel');
+                        owl.owlCarousel({
+                            margin: 10,
+                            nav: true,
+                            loop: true,
+                            responsive: {
+                                0: {
+                                    items: 1
+                                },
+                                600: {
+                                    items: 2
+                                },
+                                1000: {
+                                    items: 5
+                                }
+                            }
+                        });
+                    }else{
+                        console.log("Menor a 5");
+                        var owl = $('.owl-carousel');
+                        owl.owlCarousel({
+                            margin: 10,
+                            nav: true,
+                            loop: false,
+                            responsive: {
+                                0: {
+                                    items: 1
+                                },
+                                600: {
+                                    items: 2
+                                },
+                                1000: {
+                                    items: 5
+                                }
+                            }
+                        });
+                    }
+                })
+            </script>
         </div>
-    </div>
-    <div class="overlay"></div>
-    <!-- Javascript files-->
-    <script src="/js/jquery.min.js"></script>
-    <script src="/js/popper.min.js"></script>
-    <script src="/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/owl.carousel.min.js"></script>
-    <script src="/js/custom.js"></script>
-    <script src="/js/jquery.mCustomScrollbar.concat.min.js"></script>
-
-    <script src="/js/jquery-3.0.0.min.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $("#sidebar").mCustomScrollbar({
-                theme: "minimal"
-            });
-
-            $('#dismiss, .overlay').on('click', function () {
-                $('#sidebar').removeClass('active');
-                $('.overlay').removeClass('active');
-            });
-
-            $('#sidebarCollapse').on('click', function () {
-                $('#sidebar').addClass('active');
-                $('.overlay').addClass('active');
-                $('.collapse.in').toggleClass('in');
-                $('a[aria-expanded=true]').attr('aria-expanded', 'false');
-            });
-        });
-    </script>
-
-    <script>
-        $(document).ready(function () {
-            console.log("Numero de platos: ");
-            let cant = $("#cantidadPlatos").val();
-            console.log(cant);
-            if(cant>5){
-                console.log("Mayor a 5");
-                var owl = $('.owl-carousel');
-                owl.owlCarousel({
-                    margin: 10,
-                    nav: true,
-                    loop: true,
-                    responsive: {
-                        0: {
-                            items: 1
-                        },
-                        600: {
-                            items: 2
-                        },
-                        1000: {
-                            items: 5
-                        }
-                    }
-                });
-            }else{
-                console.log("Menor a 5");
-                var owl = $('.owl-carousel');
-                owl.owlCarousel({
-                    margin: 10,
-                    nav: true,
-                    loop: false,
-                    responsive: {
-                        0: {
-                            items: 1
-                        },
-                        600: {
-                            items: 2
-                        },
-                        1000: {
-                            items: 5
-                        }
-                    }
-                });
-            }
-        })
-    </script>
-</body>
+    </body>
 </html>

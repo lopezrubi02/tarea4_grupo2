@@ -31,6 +31,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Date;
 import java.sql.SQLOutput;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -110,6 +111,8 @@ public class AdminRestauranteController {
                                      Model model,
                                      HttpSession session) throws IOException {
         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idadminrest = sessionUser.getIdusuarios();
+        System.out.println(idadminrest);
         int correcto = 1;
         try {
             restaurante.setFoto(file.getBytes());
@@ -172,7 +175,7 @@ public class AdminRestauranteController {
                     model.addAttribute("msgFotoInvalida", "La foto no contiene el formato adecuado. Se aceptan solo archivos .jpeg, .jpg, .png");
                 }
             }
-
+            Optional<Restaurante> restauranteAValidar = restauranteRepository.findRestauranteByRuc(restaurante.getRuc());
             if(!(restauranteRepository.findRestauranteByRuc(restaurante.getRuc()).isPresent())){
                 if (!(restaurante.getRuc().startsWith("20") || restaurante.getRuc().startsWith("10"))) {
                     correcto = 0;
@@ -184,8 +187,11 @@ public class AdminRestauranteController {
                     }
                 }
             }else{
-                correcto = 0;
-                model.addAttribute("msgrucerror","Ya existe un restaurante registrado con este RUC.");
+                Restaurante restauranteParaValidar = restauranteAValidar.get();
+                if(!(restauranteParaValidar.getUsuario().getIdusuarios() == idadminrest)) {
+                    correcto = 0;
+                    model.addAttribute("msgrucerror", "Ya existe un restaurante registrado con este RUC.");
+                }
             }
 
             if(direccion.equals("")){
@@ -264,9 +270,9 @@ public class AdminRestauranteController {
     }
 
     @PostMapping("/llenarcategoria")
-    public String llenarcategorias(@ModelAttribute("restaurante") Restaurante restaurante,Model model){
+    public String llenarcategorias(@ModelAttribute("restaurante") Restaurante restaurante,Model model) {
         Optional<Restaurante> optional = restauranteRepository.findById(restaurante.getIdrestaurante());
-        optional.get().setCategoriasrestList(restaurante.getCategoriasrestList());
+        optional.get().setCategoriasrestList(restaurante.getCategoriasrestList().subList(0,4));
         restauranteRepository.save(optional.get());
         model.addAttribute("id",optional.get().getIdrestaurante());
         return "AdminRestaurantes/espera";
@@ -1041,12 +1047,13 @@ public class AdminRestauranteController {
                 cell.setCellValue(columnsPedido[i]);
                 cell.setCellStyle(headStyle);
             }
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// Date format: yyyy-MM-dd year month day yyyy-MM-dd HH:mm:ss year month day hour minute second
             List<PedidosReporteDto> listaPedidos = pedidosRepository.listaPedidosReporteporFechamasantigua(id);
             int initRow = 1;
             for (PedidosReporteDto pedido : listaPedidos) {
                 row1 = sheet1.createRow(initRow);
                 row1.createCell(0).setCellValue(pedido.getnumeropedido());
-                row1.createCell(1).setCellValue(String.valueOf(pedido.getfechahorapedido()));
+                row1.createCell(1).setCellValue(sdf.format(pedido.getfechahorapedido()));
                 row1.createCell(2).setCellValue(pedido.getnombre());
                 row1.createCell(3).setCellValue(pedido.getmontototal());
                 row1.createCell(4).setCellValue(pedido.getnombreplato());
@@ -1148,37 +1155,38 @@ public class AdminRestauranteController {
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(usuario.getIdusuarios());
         int page;
         int page2;
-            if(usuario.getCuentaActiva()==1){
+        if(usuarioOptional.isPresent()) {
+            Usuario usuarioNuevo = usuarioOptional.get();
+            if (usuarioNuevo.getCuentaActiva() == 1) {
                 float numberOfUsersPerPage = 7;
                 try {
                     page = Integer.parseInt(requestedPage);
-                }catch(Exception e) {
-                    attr.addFlashAttribute("msgpage","No existe la página solicitada");
+                } catch (Exception e) {
+                    attr.addFlashAttribute("msgpage", "No existe la página solicitada");
                     return "redirect:/adminrest/reporte";
                 }
                 try {
                     page2 = Integer.parseInt(requestedPage2);
-                }catch(Exception e) {
-                    attr.addFlashAttribute("msgpage","No existe la página solicitada");
+                } catch (Exception e) {
+                    attr.addFlashAttribute("msgpage", "No existe la página solicitada");
                     return "redirect:/adminrest/reporte";
                 }
-                int idrestaurante= restauranteRepository.buscarRestaurantePorIdAdmin(usuario.getIdusuarios()).get().getIdrestaurante();
+                int idrestaurante = restauranteRepository.buscarRestaurantePorIdAdmin(usuario.getIdusuarios()).get().getIdrestaurante();
                 List<PedidosReporteDto> pedidosReporte;
-                if(name.equals("")){
+                if (name.equals("")) {
                     System.out.println("Trace1");
                     pedidosReporte = pedidosRepository.listaPedidosReporteporFechamasantigua(idrestaurante);
-                    if(pedidosReporte.isEmpty()){
-                        attr.addFlashAttribute("registroVacio","No tienes ningun reporte de pedidos hasta la fecha.");
+                    if (pedidosReporte.isEmpty()) {
+                        attr.addFlashAttribute("registroVacio", "No tienes ningun reporte de pedidos hasta la fecha.");
                         return "redirect:/adminrest/perfil";
                     }
-                }
-                else{
+                } else {
                     System.out.println("Trace2");
                     System.out.println(name);
-                    pedidosReporte=pedidosRepository.buscarPorReporte(name,idrestaurante);
+                    pedidosReporte = pedidosRepository.buscarPorReporte(name, idrestaurante);
                 }
                 List<PedidosGananciaMesDto> listaGanancias = pedidosRepository.gananciaPorMes(idrestaurante);
-                if(!(pedidosReporte.isEmpty())){
+                if (!(pedidosReporte.isEmpty())) {
                     int numberOfPages = (int) Math.ceil(pedidosReporte.size() / numberOfUsersPerPage);
                     int numberOfPages2 = (int) Math.ceil(listaGanancias.size() / numberOfUsersPerPage);
                     if (page > numberOfPages) {
@@ -1196,20 +1204,23 @@ public class AdminRestauranteController {
                     model.addAttribute("listaPedidosPorFecha", lisOfPedidosReportePage);
                     model.addAttribute("currentPage", page);
                     model.addAttribute("maxNumberOfPages", numberOfPages);
-                    model.addAttribute("listaGanancias",lisOfGananciasPage);
+                    model.addAttribute("listaGanancias", lisOfGananciasPage);
                     model.addAttribute("currentPage2", page2);
                     model.addAttribute("maxNumberOfPages2", numberOfPages2);
-                    model.addAttribute("platosTop5",pedidosRepository.platosMasVendidos(idrestaurante));
-                    model.addAttribute("platosNoTop5",pedidosRepository.platosMenosVendidos(idrestaurante));
-                    model.addAttribute("name",name);
+                    model.addAttribute("platosTop5", pedidosRepository.platosMasVendidos(idrestaurante));
+                    model.addAttribute("platosNoTop5", pedidosRepository.platosMenosVendidos(idrestaurante));
+                    model.addAttribute("name", name);
                     return "AdminRestaurantes/reporte";
-                }else{
-                    attr.addFlashAttribute("registroVacio","No se han encontrado registros");
+                } else {
+                    attr.addFlashAttribute("registroVacio", "No se han encontrado registros");
                     return "redirect:/adminrest/reporte";
                 }
-            }else{
-                return "redirect:/login";
+            }else {
+                return "redirect:/adminrest/login";
             }
+        }else{
+            return "redirect:/login";
+        }
     }
 
     @PostMapping("/buscarReporte")
