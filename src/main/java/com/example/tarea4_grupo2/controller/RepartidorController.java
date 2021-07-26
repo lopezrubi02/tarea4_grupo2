@@ -74,6 +74,21 @@ public class RepartidorController {
                               HttpSession session) {
         try {
             Integer idInt = Integer.parseInt(id);
+            //obtienes el pedido con el id recibido
+            //obtienes la lista
+            //valida que el pedido con el id recibido esté en la lista que acabas de obtener
+            //for dela lista
+            boolean valido = false;
+            for(Pedidos pedidoobtenido : lista){
+                if(pedidoobtenido.getIdpedidos() == Integer.parseInt(id)){
+                    valido = true;
+                }
+            }
+            if(valido){
+
+            }else{
+                return "redirect:/repartidor";
+            }
             Optional<Pedidos> pedidoElegido = pedidosRepository.findById(idInt);
             Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
 
@@ -200,7 +215,21 @@ public class RepartidorController {
         Integer idPedidoElegidoInt = Integer.parseInt(idPedidoElegido);
         Optional<Pedidos> pedidoElegido = pedidosRepository.findById(idPedidoElegidoInt);
             Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+//obtienes el pedido con el id recibido
+        //obtienes la lista
+        //valida que el pedido con el id recibido esté en la lista que acabas de obtener
+        //for dela lista
+        boolean valido = false;
+        for(Pedidos pedidoobtenido : lista){
+            if(pedidoobtenido.getIdpedidos() == Integer.parseInt(id)){
+                valido = true;
+            }
+        }
+        if(valido){
 
+        }else{
+            return "redirect:/repartidor";
+        }
             if (pedidoElegido.isPresent()) {
                 Pedidos pedido = pedidoElegido.get();
                 //pedido.setIdrepartidor(sessionUser.getIdusuarios());
@@ -251,7 +280,21 @@ public class RepartidorController {
             Integer idPedidoElegidoInt = Integer.parseInt(idPedidoElegido);
             Optional<Pedidos> pedidoElegido = pedidosRepository.findById(idPedidoElegidoInt);
             Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+//obtienes el pedido con el id recibido
+            //obtienes la lista
+            //valida que el pedido con el id recibido esté en la lista que acabas de obtener
+            //for dela lista
+            boolean valido = false;
+            for(Pedidos pedidoobtenido : lista){
+                if(pedidoobtenido.getIdpedidos() == Integer.parseInt(id)){
+                    valido = true;
+                }
+            }
+            if(valido){
 
+            }else{
+                return "redirect:/repartidor";
+            }
             if (pedidoElegido.isPresent()) {
                 Pedidos pedido = pedidoElegido.get();
                 pedido.setEstadorepartidor("recogido"); //Estado de esperando ser entregado al cliente
@@ -291,6 +334,21 @@ public class RepartidorController {
             Integer idPedidoElegidoInt = Integer.parseInt(idPedidoElegido);
             Optional<Pedidos> pedidoElegido = pedidosRepository.findById(idPedidoElegidoInt);
             Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+            //obtienes el pedido con el id recibido
+            //obtienes la lista
+            //valida que el pedido con el id recibido esté en la lista que acabas de obtener
+            //for dela lista
+            boolean valido = false;
+            for(Pedidos pedidoobtenido : lista){
+                if(pedidoobtenido.getIdpedidos() == Integer.parseInt(id)){
+                    valido = true;
+                }
+            }
+            if(valido){
+
+            }else{
+                return "redirect:/repartidor";
+            }
             if (pedidoElegido.isPresent()) {
                 Pedidos pedido = pedidoElegido.get();
                 pedido.setEstadorepartidor("entregado"); //Estado de entregado al cliente
