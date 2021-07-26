@@ -65,12 +65,15 @@
                 <div class="footer">
                     <div class="container-fluid">
                         <div class="row" style="text-align: center">
-                            <div class="col-xl-12" style="align-content: center;padding-bottom: 100px">
+                            <div class="col-xl-12" style="align-content: center;padding-bottom: 25px">
                                 <div class="row">
                                     <a style="margin: auto"><div style="color: black;font-size:xx-large"><u>Su restaurante esta en proceso de evaluación</u></div></a>
                                 </div>
-                                <div th:if="${restSinBorrar != null}" style="width: 900px; text-align: center;margin-top:15px;margin-bottom: -75px; margin-left: 490px" class="alert alert-danger"><a th:if="${restSinBorrar != null}" th:href="@{/adminrest/login}" th:text="${restSinBorrar}"></a></div>
                             </div>
+                            <div class="col-xl-12" style="align-content: center;">
+                                <a class="alert-danger" style="margin: auto;font-size:large;text-align: center" th:if="${restSinBorrar != null}" th:href="@{/adminrest/login}" th:text="${restSinBorrar}"></a>
+                            </div>
+                            <br><br><br>
                         </div>
                         <div class="col-xl-12" align="center">
                             <div class="img-box">
