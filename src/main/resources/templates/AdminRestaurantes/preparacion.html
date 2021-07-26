@@ -26,10 +26,20 @@
             <div th:replace="fragments/adminRestaurante.html :: navbar"></div>
         </header>
         <!-- end header -->
+        <div class="yellow_bg" style="margin-bottom: -140px">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="title">
+                            <h2 style="color: #000000">Tus pedidos en preparación</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- blog -->
         <div class="blog">
             <div class="container">
-                <h1>Aceptados</h1>
                 <div class="row table-users">
                     <!-- table -->
                     <div class="col-md-12">
@@ -67,25 +77,14 @@
                 <a class="send" th:if="${valid}" th:href="@{/adminrest/perfil}" style="background: #d8b00f;text-align: center">Regresar</a>
                 <a class="send" th:unless="${valid}" th:href="@{/adminrest/pedidos}" style="background: #d8b00f;text-align: center">Regresar</a>
             </div>
+            <div class="copyright" style="padding-top: 50px;background:#d8b00f">
+                <div class="container">
+                    <p>© 2021 Todos los derechos reservados.</p>
+                </div>
+            </div>
         </div>
     </div>
     <!-- end blog -->
-
-    <!-- footer -->
-    <fooetr>
-        <div class="footer">
-            <div class="container-fluid">
-                <div class="copyright">
-                    <div class="container">
-                        <p>© 2050 All Rights Reserved</p>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </fooetr>
-    <!-- end footer -->
-
 </div>
 </div>
 <div class="overlay"></div>

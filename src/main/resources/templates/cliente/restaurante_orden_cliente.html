@@ -77,7 +77,10 @@
               <span th:each="categoriarest : ${restaurantexordenar.categoriasrestList}"
                     th:text="${categoriarest.nombrecategoria}">
               </span>
-                            <span  th:text="${restaurantexordenar.calificacionpromedio} + '★ - ' + ${cantreviews} + ' revisiones'"></span>
+                            <span  th:if="${restaurantexordenar.calificacionpromedio!=null}"
+                                   th:text="${restaurantexordenar.calificacionpromedio} + '★ - ' + ${cantreviews} + ' revisiones'"></span>
+                            <span  th:if="${restaurantexordenar.calificacionpromedio==null}"
+                                   th:text="'Sin calificaciones' + '★ - ' + ${cantreviews} + ' revisiones'"></span>
                         </p>
                     </div>
                 </div>

@@ -69,28 +69,49 @@ public class RepartidorController {
     RestauranteRepository restauranteRepository;
 
     @GetMapping("/repartidor/VerDetalles")
-    public String verDetalles(Model model, @RequestParam("id") int id, RedirectAttributes attr, HttpSession session) {
-        Optional<Pedidos> pedidoElegido = pedidosRepository.findById(id);
-        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+    public String verDetalles(Model model, @RequestParam("id") String id,
+                              RedirectAttributes attr,
+                              HttpSession session) {
+        try {
+            Integer idInt = Integer.parseInt(id);
+            //obtienes el pedido con el id recibido
+            //obtienes la lista
+            //valida que el pedido con el id recibido esté en la lista que acabas de obtener
+            //for dela lista
+            boolean valido = false;
+            for(Pedidos pedidoobtenido : lista){
+                if(pedidoobtenido.getIdpedidos() == Integer.parseInt(id)){
+                    valido = true;
+                }
+            }
+            if(valido){
 
-        if (pedidoElegido.isPresent()) {
-            Pedidos pedido = pedidoElegido.get();
-            model.addAttribute("pedido", pedido);
+            }else{
+                return "redirect:/repartidor";
+            }
+            Optional<Pedidos> pedidoElegido = pedidosRepository.findById(idInt);
+            Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
 
-            Restaurante restaurante = restauranteRepository.findRestauranteById(pedido.getRestaurantepedido().getIdrestaurante());
-            model.addAttribute("restaurante", restaurante);
+            if (pedidoElegido.isPresent()) {
+                Pedidos pedido = pedidoElegido.get();
+                model.addAttribute("pedido", pedido);
 
-            Direcciones direccion = direccionesRepository.findDireccionById(pedido.getDireccionentrega().getIddirecciones());
-            model.addAttribute("direccion", direccion);
+                Restaurante restaurante = restauranteRepository.findRestauranteById(pedido.getRestaurantepedido().getIdrestaurante());
+                model.addAttribute("restaurante", restaurante);
 
-            List<PlatosPorPedidoDTO> listaPlatosPorPedidoDTO = repartidorRepository.findListaPlatosPorPedido(pedido.getIdpedidos());
-            model.addAttribute("listaPlatosPorPedidoDTO", listaPlatosPorPedidoDTO);
+                Direcciones direccion = direccionesRepository.findDireccionById(pedido.getDireccionentrega().getIddirecciones());
+                model.addAttribute("direccion", direccion);
 
-            return "repartidor/repartidor_detalles_pedido";
-        } else {
-            attr.addFlashAttribute("msg", "Este pedido ya no está disponible :(");
-            return "redirect:/repartidor";
-        }
+                List<PlatosPorPedidoDTO> listaPlatosPorPedidoDTO = repartidorRepository.findListaPlatosPorPedido(pedido.getIdpedidos());
+                model.addAttribute("listaPlatosPorPedidoDTO", listaPlatosPorPedidoDTO);
+
+                return "repartidor/repartidor_detalles_pedido";
+            } else {
+                attr.addFlashAttribute("msg", "Este pedido ya no está disponible :(");
+                return "redirect:/repartidor";
+            }
+        }catch(NumberFormatException e) {
+            return "redirect:/repartidor";}
     }
 
     @GetMapping("/repartidor/PedidosDisponibles")
@@ -187,107 +208,167 @@ public class RepartidorController {
 
     //El repartidor acepta el pedido del restaurante y se cambia el estado a "esperando recojo del restaurante"
     @GetMapping("/repartidor/AceptaPedido")
-    public String aceptaPedidoPorElRepartidor(RedirectAttributes attr, HttpSession session, @RequestParam("idpedido") int idPedidoElegido, Model model) {
-        Optional<Pedidos> pedidoElegido = pedidosRepository.findById(idPedidoElegido);
-        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+    public String aceptaPedidoPorElRepartidor(RedirectAttributes attr, HttpSession session,
+                                              @RequestParam(value = "idpedido") String idPedidoElegido,
+                                              Model model) {
+    try {
+        Integer idPedidoElegidoInt = Integer.parseInt(idPedidoElegido);
+        Optional<Pedidos> pedidoElegido = pedidosRepository.findById(idPedidoElegidoInt);
+            Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+//obtienes el pedido con el id recibido
+        //obtienes la lista
+        //valida que el pedido con el id recibido esté en la lista que acabas de obtener
+        //for dela lista
+        boolean valido = false;
+        for(Pedidos pedidoobtenido : lista){
+            if(pedidoobtenido.getIdpedidos() == Integer.parseInt(id)){
+                valido = true;
+            }
+        }
+        if(valido){
 
-        if (pedidoElegido.isPresent()) {
-            Pedidos pedido = pedidoElegido.get();
-            //pedido.setIdrepartidor(sessionUser.getIdusuarios());
-
-            Optional<Usuario> repopt = usuarioRepository.findById(sessionUser.getIdusuarios());
-            Usuario repartidor = repopt.get();
-            pedido.setRepartidor(repartidor);
-
-            //Pone en ocupado la disponibilidad al aceptar un pedido.
-            Optional<Repartidor> repopt2 = Optional.ofNullable(repartidorRepository.findRepartidorByIdusuariosEquals(sessionUser.getIdusuarios()));
-            Repartidor repartidor1 = repopt2.get();
-            repartidor1.setDisponibilidad(false);
-            repartidorRepository.save(repartidor1);
-
-            //Pone en estado aceptado el repartidorEstado
-            pedido.setEstadorepartidor("aceptado"); //Estado de esperando recojo del restaurante
-            model.addAttribute("pedido", pedido);
-
-            Restaurante restaurante = restauranteRepository.findRestauranteById(pedido.getRestaurantepedido().getIdrestaurante());
-            model.addAttribute("restaurante", restaurante);
-
-            Direcciones direccion = direccionesRepository.findDireccionById(pedido.getDireccionentrega().getIddirecciones());
-            model.addAttribute("direccion", direccion);
-
-            List<PlatosPorPedidoDTO> listaPlatosPorPedidoDTO = repartidorRepository.findListaPlatosPorPedido(pedido.getIdpedidos());
-            model.addAttribute("listaPlatosPorPedidoDTO", listaPlatosPorPedidoDTO);
-
-            session.setAttribute("disponibilidad", repartidorRepository.findRepartidorByIdusuariosEquals(sessionUser.getIdusuarios()).isDisponibilidad());
-
-            pedidosRepository.save(pedido);
-            return "repartidor/repartidor_recojo_de_producto";
-        } else {
-            attr.addFlashAttribute("msg", "Este pedido ya no está disponible :(");
+        }else{
             return "redirect:/repartidor";
         }
+            if (pedidoElegido.isPresent()) {
+                Pedidos pedido = pedidoElegido.get();
+                //pedido.setIdrepartidor(sessionUser.getIdusuarios());
+
+                Optional<Usuario> repopt = usuarioRepository.findById(sessionUser.getIdusuarios());
+                Usuario repartidor = repopt.get();
+                pedido.setRepartidor(repartidor);
+
+                //Pone en ocupado la disponibilidad al aceptar un pedido.
+                Optional<Repartidor> repopt2 = Optional.ofNullable(repartidorRepository.findRepartidorByIdusuariosEquals(sessionUser.getIdusuarios()));
+                Repartidor repartidor1 = repopt2.get();
+                repartidor1.setDisponibilidad(false);
+                repartidorRepository.save(repartidor1);
+
+                //Pone en estado aceptado el repartidorEstado
+                pedido.setEstadorepartidor("aceptado"); //Estado de esperando recojo del restaurante
+                model.addAttribute("pedido", pedido);
+
+                Restaurante restaurante = restauranteRepository.findRestauranteById(pedido.getRestaurantepedido().getIdrestaurante());
+                model.addAttribute("restaurante", restaurante);
+
+                Direcciones direccion = direccionesRepository.findDireccionById(pedido.getDireccionentrega().getIddirecciones());
+                model.addAttribute("direccion", direccion);
+
+                List<PlatosPorPedidoDTO> listaPlatosPorPedidoDTO = repartidorRepository.findListaPlatosPorPedido(pedido.getIdpedidos());
+                model.addAttribute("listaPlatosPorPedidoDTO", listaPlatosPorPedidoDTO);
+
+                session.setAttribute("disponibilidad", repartidorRepository.findRepartidorByIdusuariosEquals(sessionUser.getIdusuarios()).isDisponibilidad());
+
+                pedidosRepository.save(pedido);
+                return "repartidor/repartidor_recojo_de_producto";
+            } else {
+                attr.addFlashAttribute("msg", "Este pedido ya no está disponible :(");
+                return "redirect:/repartidor";
+            }
+    }catch(NumberFormatException e) {
+        return "redirect:/repartidor";}
+
     }
 
     //pendiente, aceptado, recogido, entregado
     //El repartidor recoge el pedido del restaurante y el estado cambia a "por entregar".
     @GetMapping("/repartidor/ConfirmaRecojo")
-    public String confirmaRecojo(HttpSession session, RedirectAttributes attr, @RequestParam("idpedido") int idPedidoElegido, Model model) {
-        Optional<Pedidos> pedidoElegido = pedidosRepository.findById(idPedidoElegido);
-        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+    public String confirmaRecojo(HttpSession session, RedirectAttributes attr,
+                                 @RequestParam("idpedido") String idPedidoElegido,
+                                 Model model) {
+        try {
+            Integer idPedidoElegidoInt = Integer.parseInt(idPedidoElegido);
+            Optional<Pedidos> pedidoElegido = pedidosRepository.findById(idPedidoElegidoInt);
+            Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+//obtienes el pedido con el id recibido
+            //obtienes la lista
+            //valida que el pedido con el id recibido esté en la lista que acabas de obtener
+            //for dela lista
+            boolean valido = false;
+            for(Pedidos pedidoobtenido : lista){
+                if(pedidoobtenido.getIdpedidos() == Integer.parseInt(id)){
+                    valido = true;
+                }
+            }
+            if(valido){
 
-        if (pedidoElegido.isPresent()) {
-            Pedidos pedido = pedidoElegido.get();
-            pedido.setEstadorepartidor("recogido"); //Estado de esperando ser entregado al cliente
-            pedido.setEstadorestaurante("entregado");
+            }else{
+                return "redirect:/repartidor";
+            }
+            if (pedidoElegido.isPresent()) {
+                Pedidos pedido = pedidoElegido.get();
+                pedido.setEstadorepartidor("recogido"); //Estado de esperando ser entregado al cliente
+                pedido.setEstadorestaurante("entregado");
 
-            model.addAttribute("pedido", pedido);
+                model.addAttribute("pedido", pedido);
 
-            Usuario usuario = usuarioRepository.findUsuarioById(pedido.getIdcliente());
-            model.addAttribute("usuario", usuario);
+                Usuario usuario = usuarioRepository.findUsuarioById(pedido.getIdcliente());
+                model.addAttribute("usuario", usuario);
 
-            Restaurante restaurante = restauranteRepository.findRestauranteById(pedido.getRestaurantepedido().getIdrestaurante());
-            model.addAttribute("restaurante", restaurante);
+                Restaurante restaurante = restauranteRepository.findRestauranteById(pedido.getRestaurantepedido().getIdrestaurante());
+                model.addAttribute("restaurante", restaurante);
 
-            Direcciones direccion = direccionesRepository.findDireccionById(pedido.getDireccionentrega().getIddirecciones());
-            model.addAttribute("direccion", direccion);
+                Direcciones direccion = direccionesRepository.findDireccionById(pedido.getDireccionentrega().getIddirecciones());
+                model.addAttribute("direccion", direccion);
 
-            List<PlatosPorPedidoDTO> listaPlatosPorPedidoDTO = repartidorRepository.findListaPlatosPorPedido(pedido.getIdpedidos());
-            model.addAttribute("listaPlatosPorPedidoDTO", listaPlatosPorPedidoDTO);
+                List<PlatosPorPedidoDTO> listaPlatosPorPedidoDTO = repartidorRepository.findListaPlatosPorPedido(pedido.getIdpedidos());
+                model.addAttribute("listaPlatosPorPedidoDTO", listaPlatosPorPedidoDTO);
 
-            pedidosRepository.save(pedido);
+                pedidosRepository.save(pedido);
 
-            return "repartidor/repartidor_pedido_en_progreso";
-        } else {
-            attr.addFlashAttribute("msg", "Este pedido ya no está disponible :(");
-            return "redirect:/repartidor";
-        }
-
+                return "repartidor/repartidor_pedido_en_progreso";
+            } else {
+                attr.addFlashAttribute("msg", "Este pedido ya no está disponible :(");
+                return "redirect:/repartidor";
+            }
+        }catch(NumberFormatException e) {
+            return "redirect:/repartidor";}
     }
 
     //El repartidor entrega el pedido al cliente
     @GetMapping("/repartidor/ConfirmaEntrega")
-    public String confirmaEntrega(HttpSession session,RedirectAttributes attr, @RequestParam("idpedido") int idPedidoElegido, Model model) {
-        Optional<Pedidos> pedidoElegido = pedidosRepository.findById(idPedidoElegido);
-        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+    public String confirmaEntrega(HttpSession session,RedirectAttributes attr,
+                                  @RequestParam("idpedido") String idPedidoElegido,
+                                  Model model) {
+        try {
+            Integer idPedidoElegidoInt = Integer.parseInt(idPedidoElegido);
+            Optional<Pedidos> pedidoElegido = pedidosRepository.findById(idPedidoElegidoInt);
+            Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+            //obtienes el pedido con el id recibido
+            //obtienes la lista
+            //valida que el pedido con el id recibido esté en la lista que acabas de obtener
+            //for dela lista
+            boolean valido = false;
+            for(Pedidos pedidoobtenido : lista){
+                if(pedidoobtenido.getIdpedidos() == Integer.parseInt(id)){
+                    valido = true;
+                }
+            }
+            if(valido){
 
-        if (pedidoElegido.isPresent()) {
-            Pedidos pedido = pedidoElegido.get();
-            pedido.setEstadorepartidor("entregado"); //Estado de entregado al cliente
-            model.addAttribute("pedido", pedido);
+            }else{
+                return "redirect:/repartidor";
+            }
+            if (pedidoElegido.isPresent()) {
+                Pedidos pedido = pedidoElegido.get();
+                pedido.setEstadorepartidor("entregado"); //Estado de entregado al cliente
+                model.addAttribute("pedido", pedido);
 
-            pedido.setFechahoraentregado(LocalDateTime.now());
+                pedido.setFechahoraentregado(LocalDateTime.now());
 
-            Optional<Repartidor> repopt2 = Optional.ofNullable(repartidorRepository.findRepartidorByIdusuariosEquals(sessionUser.getIdusuarios()));
-            Repartidor repartidor1 = repopt2.get();
-            repartidor1.setDisponibilidad(true);
-            repartidorRepository.save(repartidor1);
+                Optional<Repartidor> repopt2 = Optional.ofNullable(repartidorRepository.findRepartidorByIdusuariosEquals(sessionUser.getIdusuarios()));
+                Repartidor repartidor1 = repopt2.get();
+                repartidor1.setDisponibilidad(true);
+                repartidorRepository.save(repartidor1);
 
-            pedidosRepository.save(pedido);
-            attr.addFlashAttribute("msgVerde", "Se registró la entrega del pedido. ¡Gracias!");
-        } else {
-            attr.addFlashAttribute("msg", "Este pedido ya no está disponible :(");
-        }
-        return "redirect:/repartidor";
+                pedidosRepository.save(pedido);
+                attr.addFlashAttribute("msgVerde", "Se registró la entrega del pedido. ¡Gracias!");
+            } else {
+                attr.addFlashAttribute("msg", "Este pedido ya no está disponible :(");
+            }
+            return "redirect:/repartidor";
+    }catch(NumberFormatException e) {
+        return "redirect:/repartidor";}
     }
 
     //Filtra por Restaurante o Distrito
@@ -585,9 +666,14 @@ public class RepartidorController {
 
         System.out.println(usuario.getContraseniaHash());
 
+        boolean cont1val;
         if (!matcher1.matches()) {
             msgc1 = "La contraseña debe tener al menos una letra, un número y un caracter especial";
+            cont1val=false;
+        }else{
+            cont1val=true;
         }
+        boolean cont2val=true;
         String msgc2 = null;
         Matcher matcher2 = pattern1.matcher(password2);
         if (password2.isEmpty()) {
@@ -595,10 +681,13 @@ public class RepartidorController {
         } else {
             if (!matcher2.matches()) {
                 msgc2 = "La contraseña debe tener al menos una letra, un número y un caracter especial";
+                cont2val=false;
+            }else{
+                cont2val=true;
             }
         }
 
-        if (bindingResult.hasFieldErrors("telefono") ||  bindingResult.hasFieldErrors("contraseniaHash")) {
+        if (bindingResult.hasFieldErrors("telefono") || !cont1val || !cont2val) {
 
             model.addAttribute("msgc1", msgc1);
             model.addAttribute("msgc2", msgc2);
@@ -649,9 +738,12 @@ public class RepartidorController {
 
 
         } else {
+            String contraseniahashbcrypt = BCrypt.hashpw(password2, BCrypt.gensalt());
+
             if (usuario.getContraseniaHash().equals(password2)) {
                 if (file.isEmpty()) {
                     user.setTelefono(usuario.getTelefono());
+                    user.setContraseniaHash(contraseniahashbcrypt);
                     usuarioRepository.save(user);
                     String msgR = "El perfil fue editado exitosamente";
                     attributes.addFlashAttribute("msgR", msgR);
@@ -692,6 +784,9 @@ public class RepartidorController {
                     return "repartidor/repartidor_perfil";
                 }
                 user.setTelefono(usuario.getTelefono());
+                 contraseniahashbcrypt = BCrypt.hashpw(password2, BCrypt.gensalt());
+                System.out.println(contraseniahashbcrypt);
+                user.setContraseniaHash(contraseniahashbcrypt);
 
                 usuarioRepository.save(user);
                 String msgR = "El perfil fue editado exitosamente";

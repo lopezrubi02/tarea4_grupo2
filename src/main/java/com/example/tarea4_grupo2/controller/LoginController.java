@@ -61,6 +61,7 @@ public class LoginController {
         System.out.println(direction);
         return "AdminRestaurantes/register";
     }
+
     @PostMapping("/guardaradminrest")
     public String guardarAdmin(@ModelAttribute("usuario") @Valid Usuario usuario, BindingResult bindingResult,
                                @RequestParam("password2") String password2,
@@ -76,6 +77,11 @@ public class LoginController {
         if(!usuario.getContraseniaHash().equals(password2)){
             correcto=0;
             model.addAttribute("msgcontra","Contraseñas no son iguales");
+        }else{
+            if(!Pattern.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$",usuario.getContraseniaHash())){
+                correcto=0;
+                model.addAttribute("msgcontra", "Contraseñas no cumple con los requisitos");
+            }
         }
         if(persona.isPresent()){
             correcto=0;
@@ -96,7 +102,6 @@ public class LoginController {
         }
         if(correcto==0) {
             model.addAttribute("direction",direccion);
-            model.addAttribute("msgcontra","Contraseñas no son iguales");
             model.addAttribute("listadistritos",distritosRepository.findAll());
             return "AdminRestaurantes/register";
         }

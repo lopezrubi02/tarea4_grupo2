@@ -44,7 +44,7 @@
                                     <th scope="col">CANTIDAD PLATOS</th>
                                     <th scope="col">DIRECCION</th>
                                     <th scope="col">DISTRITO</th>
-                                    <th scope="col">MONTO TOTAL</th>
+                                    <th scope="col">MONTO POR PLATO</th>
                                     <th scope="col">CUBIERTOS</th>
                                     <th></th>
                                 </tr>
@@ -58,7 +58,8 @@
                                     <td th:text="${pedido.getdireccion()}"></td>
                                     <td th:text="${pedido.getnombredistrito()}"></td>
                                     <td th:text="${pedido.getprecio()}"></td>
-                                    <td th:text="${pedido.getcubiertos()}"></td>
+                                    <td th:if="${pedido.getcubiertos() == 0}" th:text="No"></td>
+                                    <td th:if="${pedido.getcubiertos() == 1}" th:text="Sí"></td>
                                 </tr>
                                 </tbody>
                             </table>
