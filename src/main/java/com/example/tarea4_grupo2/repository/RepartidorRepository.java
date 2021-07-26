@@ -29,11 +29,12 @@ public interface RepartidorRepository  extends JpaRepository<Repartidor, Integer
 
 
     @Query(value = "select p.idpedidos, p.montototal, p.comisionrepartidor, p.calificacionrepartidor, r.nombre,\n" +
-            "       d2.nombredistrito as restaurantedistrito, d.direccion as clienteubicacion\n" +
+            "       d3.nombredistrito as restaurantedistrito, d2.nombredistrito as clienteubicacion\n" +
             "from pedidos p\n" +
             "         inner join restaurante r on (p.restauranteidrestaurante=r.idrestaurante)\n" +
             "         inner join direcciones d on (d.iddirecciones = p.direccionentrega )\n" +
             "         inner join distritos d2 on (d2.iddistritos = d.iddistrito)\n" +
+            "    inner join distritos d3 on (r.iddistrito = d3.iddistritos)\n" +
             "where (d2.nombredistrito like %?1% or r.nombre like %?1%) AND p.estadorepartidor LIKE concat('entregado', '%') and p.idrepartidor = ?2\n", nativeQuery = true)
     List <PedidosReporteDTOs> findReporte(String valorBuscado, int idRepartidor);
 
