@@ -71,7 +71,7 @@ public interface RepartidorRepository  extends JpaRepository<Repartidor, Integer
             "from pedidos p\n" +
             "    inner join  restaurante r on (p.restauranteIdrestaurante = r.idrestaurante)\n" +
             "    inner join direcciones d on (p.direccionentrega = d.iddirecciones)\n" +
-            "    inner join distritos d2 on (d.iddistrito = d2.iddistritos)\n" +
+            "    inner join distritos d2 on (r.iddistrito = d2.iddistritos)\n" +
             "where p.estadorepartidor like concat('pendient', '%') and d2.nombredistrito like ?1", nativeQuery = true)
     List<PedidosDisponiblesDTO> findListaPedidosDisponibles(String distritoRepartidor);
 
