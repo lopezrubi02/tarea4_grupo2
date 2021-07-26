@@ -108,6 +108,7 @@
 
                                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" style="padding-top: 25px">
                                         <label id="direccion-texto">Direccion: Debe hacer click para validar</label>
+                                        <div th:if="${msgdir != null}" th:text="${msgdir}" class="text-danger"></div>
                                         <div id="error-distrito" class="text-danger"></div>
                                         <div id="error-direccion" class="text-danger"></div>
                                         <div class="input-group">

@@ -1507,8 +1507,12 @@ public class AdminRestauranteController {
     @PostMapping("/guardardireccion")
     public String guardarnuevadireccion(@RequestParam("iddistrito") Integer iddistrito,
                                         @RequestParam("direccion_real") String direccion,
+                                        RedirectAttributes attr,
                                         HttpSession session) {
-
+        if(direccion.equals("")||direccion==null){
+            attr.addFlashAttribute("msgdir","La direccion no puede ser nula");
+            return "redirect:/adminrest/editardireccion";
+        }
         Usuario user=(Usuario) session.getAttribute("usuarioLogueado");
         Direcciones direccion_user = direccionesRepository.findByUsuario(user);
         String dir = direccion.split(",")[0].trim();
