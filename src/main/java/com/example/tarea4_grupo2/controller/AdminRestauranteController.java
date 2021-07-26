@@ -1438,15 +1438,16 @@ public class AdminRestauranteController {
         System.out.println(usuario.getContraseniaHash());
         if(usuario.getContraseniaHash()!=null&&(!(usuario.getContraseniaHash().equals("")))){
             System.out.println("Entre");
+            System.out.println(pass2);
             flg_contra=1;
             if(!Pattern.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$",usuario.getContraseniaHash())){
                 correcto=0;
                 model.addAttribute("msgpasserror", "Contraseñas no cumple con los requisitos");
 
             }
-            if(usuario.getContraseniaHash().equals(pass2)){
+            if(!(usuario.getContraseniaHash().equals(pass2))){
                 correcto=0;
-                model.addAttribute("msgpasserror2","Contraseñas no osn iguales");
+                model.addAttribute("msgpasserror2","Contraseñas no son iguales");
             }
         }
         if(correcto==0){
