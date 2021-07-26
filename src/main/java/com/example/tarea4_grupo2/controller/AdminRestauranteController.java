@@ -1320,6 +1320,7 @@ public class AdminRestauranteController {
                 optional.get().setEstadorestaurante("aceptado");
                 optional.get().setEstadorepartidor("pendiente"); //Para que le aparezca al repartidor
                 pedidosRepository.save(optional.get());
+                attr.addFlashAttribute("msgra","Pedido aceptado exitosamente");
                 return"redirect:/adminrest/pedidos";
             }
             else{
@@ -1355,6 +1356,7 @@ public class AdminRestauranteController {
                 System.out.println(correoDestino);
                 sendMailService.sendMail(correoDestino, "saritaatanacioarenas@gmail.com", subject, mensaje);
                 System.out.println("llegue");
+                attr.addFlashAttribute("msgar","Pedido rechazado exitosamente");
                 return"redirect:/adminrest/pedidos";
             }
             else{
