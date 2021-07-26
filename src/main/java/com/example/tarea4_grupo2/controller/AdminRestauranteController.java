@@ -1366,11 +1366,25 @@ public class AdminRestauranteController {
     }
 
     @GetMapping("/preparadopedido")
-    public String platoPreparado(@RequestParam("id") int id){
-        Optional<Pedidos> optional = pedidosRepository.findById(id);
-        optional.get().setEstadorestaurante("preparado");
-        pedidosRepository.save(optional.get());
-        return "redirect:/adminrest/pedidos";
+    public String platoPreparado(@RequestParam("id") String id,HttpSession session,RedirectAttributes attr){
+        try{
+            int idp=Integer.parseInt(id);
+            Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+            Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
+            Optional<Pedidos> optional = pedidosRepository.findById(idp);
+            if(idrestaurante==optional.get().getRestaurantepedido().getIdrestaurante()){
+                optional.get().setEstadorestaurante("preparado");
+                pedidosRepository.save(optional.get());
+                return "redirect:/adminrest/pedidos";
+            }
+            else{
+                attr.addFlashAttribute("msgid","Pedido no corresponde al restaurante");
+                return "redirect:/adminrest/pedidos";
+            }
+        }catch (NumberFormatException e){
+            attr.addFlashAttribute("msgid","Id del pedido no existe");
+            return "redirect:/adminrest/pedidos";
+        }
     }
 
     /************************CUENTA************************/

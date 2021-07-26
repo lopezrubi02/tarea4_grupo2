@@ -74,7 +74,10 @@ public class RepartidorController {
                               HttpSession session) {
         try {
             Integer idInt = Integer.parseInt(id);
-
+            //obtienes el pedido con el id recibido
+            //obtienes la lista
+            //valida que el pedido con el id recibido esté en la lista que acabas de obtener
+            //for dela lista
             Optional<Pedidos> pedidoElegido = pedidosRepository.findById(idInt);
             Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
 
@@ -201,6 +204,10 @@ public class RepartidorController {
         Integer idPedidoElegidoInt = Integer.parseInt(idPedidoElegido);
         Optional<Pedidos> pedidoElegido = pedidosRepository.findById(idPedidoElegidoInt);
             Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+//obtienes el pedido con el id recibido
+        //obtienes la lista
+        //valida que el pedido con el id recibido esté en la lista que acabas de obtener
+        //for dela lista
 
             if (pedidoElegido.isPresent()) {
                 Pedidos pedido = pedidoElegido.get();
@@ -619,12 +626,18 @@ public class RepartidorController {
         System.out.println(usuario.getContraseniaHash());
 
         boolean cont1val;
-        if (!matcher1.matches()) {
-            msgc1 = "La contraseña debe tener al menos una letra, un número y un caracter especial";
-            cont1val=false;
-        }else{
-            cont1val=true;
-        }
+
+            if (!matcher1.matches()) {
+                msgc1 = "La contraseña debe tener al menos una letra, un número y un caracter especial";
+                if(!usuario.getContraseniaHash().equalsIgnoreCase(user2.getContraseniaHash())) {
+                    cont1val=false;
+                }
+                cont1val=true;
+            }else{
+                cont1val=true;
+            }
+
+
         boolean cont2val=true;
         String msgc2 = null;
         Matcher matcher2 = pattern1.matcher(password2);
