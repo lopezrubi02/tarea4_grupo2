@@ -1578,6 +1578,7 @@ public class UsuarioController {
                             pedidoencurso.setComisionrepartidor(6);
                             pedidoencurso.setComisionsistema(2);
                         }
+                        pedidoencurso.setFechahorapedido(LocalDateTime.now());
                         pedidoencurso.setEstadorestaurante("pendiente");
                         pedidoencurso.setEstadorepartidor("indefinido");
                         pedidosRepository.save(pedidoencurso);
