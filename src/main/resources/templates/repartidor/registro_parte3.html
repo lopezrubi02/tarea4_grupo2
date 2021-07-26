@@ -173,7 +173,7 @@
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <label class="form-label">Sexo</label>
-                                                <div th:if="${msgcS != null}" th:text="${msgcS}" class="alert alert-danger" role="alert"></div>
+                                                <div th:if="${msgcS != null}" th:text="${msgcS}" class="text-danger"></div>
                                                 <select type="text" class="form-select" th:field="*{sexo}" style="width: 100%;">
                                                     <option value="Masculino" text="Masculino">Masculino</option>
                                                     <option value="Femenino" text="Femenino">Femenino</option>
@@ -201,20 +201,21 @@
                                             </br>
                                             <div style="margin-top: 20px" class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <label>Contraseña</label>
+                                                <div th:if="${msgerror != null}" th:text="${msgerror}" class="text-danger"></div>
                                                 <div style="color: white;">Debe de tener como minimo 8 caracteres incluyendo como minimo 1 digito,1 mayúscula y 1 caracter especial</div>
-                                                <div th:if="${msgc1 != null}" th:text="${msgc1}" class="alert alert-danger" role="alert"></div>
+                                                <div th:if="${msgc1 != null}" th:text="${msgc1}" class="text-danger"></div>
                                                 <div class="text-danger" th:if="${#fields.hasErrors('contraseniaHash')}" th:errors="*{contraseniaHash}"></div>
                                                 <input class="form-control" placeholder="Contraseña" type="password" th:field="*{contraseniaHash}">
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <label>Confirmar Contraseña</label>
                                                 <div class="text-danger" th:if="${#fields.hasErrors('contraseniaHash')}" th:errors="*{contraseniaHash}"></div>
-                                                <div th:if="${msgc2 != null}" th:text="${msgc2}" class="alert alert-danger" role="alert"></div>
+                                                <div th:if="${msgc2 != null}" th:text="${msgc2}" class="text-danger"></div>
                                                 <input class="form-control" placeholder="Confirmar Contraseña" type="password" name="password2" id="password2">
                                             </div>
                                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                                 <label for="archivo">Foto</label>
-                                                <div th:if="${msg != null}" th:text="${msg}" class="alert alert-danger" role="alert"></div>
+                                                <div th:if="${msg != null}" th:text="${msg}" class="text-danger"></div>
                                                 <input type="file" class="form-control" id="archivo" name="archivo"/>
                                             </div>
 

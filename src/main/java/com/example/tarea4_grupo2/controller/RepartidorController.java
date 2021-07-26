@@ -1170,6 +1170,8 @@ public class RepartidorController {
 
             //return "redirect:/repartidor/new1";
         } else {
+            String msgerror="Las contraseñas no son iguales";
+            model.addAttribute("msgerror",msgerror);
             return "repartidor/registro_parte3";
         }
         String msgR="El registro fue exitoso";
