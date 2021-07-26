@@ -1059,7 +1059,7 @@ public class RepartidorController {
             licenciaVal = "La licencia no es válida";
         }
 
-        if (bindingResult.hasErrors() || correoExis || !dniexiste || !correovalido
+        if (!cont1val||!cont2val||bindingResult.hasErrors() || correoExis || !dniexiste || !correovalido
                 || !placaValida || !licenciaValida || !movilidadselec ||
                 !(usuario.getSexo().equalsIgnoreCase("femenino")||
                         usuario.getSexo().equalsIgnoreCase("masculino"))) {
