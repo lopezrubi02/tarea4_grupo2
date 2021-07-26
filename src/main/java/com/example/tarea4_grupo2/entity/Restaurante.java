@@ -24,7 +24,7 @@ public class Restaurante {
     private String ruc;
     @Column(nullable = false)
     @NotBlank(message = "No puede estar en blanco")
-    @Pattern(regexp = "^[a-zA-ZáéíóúÁÉÍÓÚñ ]*$",message = "Solo pueden letras")
+    @Pattern(regexp = "^[0-9a-zA-ZáéíóúÁÉÍÓÚñ ]*$",message = "Ingrese un nombre valido")
     @Size(max=45, message = "El nombre del restaurante no debe sobrepasar de 45 caracteres.")
     private String nombre;
     private Float calificacionpromedio;
