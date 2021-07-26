@@ -586,12 +586,18 @@ public class RepartidorController {
         System.out.println(usuario.getContraseniaHash());
 
         boolean cont1val;
-        if (!matcher1.matches()) {
-            msgc1 = "La contraseña debe tener al menos una letra, un número y un caracter especial";
-            cont1val=false;
-        }else{
-            cont1val=true;
-        }
+
+            if (!matcher1.matches()) {
+                msgc1 = "La contraseña debe tener al menos una letra, un número y un caracter especial";
+                if(!usuario.getContraseniaHash().equalsIgnoreCase(user2.getContraseniaHash())) {
+                    cont1val=false;
+                }
+                cont1val=true;
+            }else{
+                cont1val=true;
+            }
+
+
         boolean cont2val=true;
         String msgc2 = null;
         Matcher matcher2 = pattern1.matcher(password2);
