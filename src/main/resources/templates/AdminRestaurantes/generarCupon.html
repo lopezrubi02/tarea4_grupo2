@@ -57,8 +57,7 @@
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <label class="col-xl-12 col-lg-12 col-md-12 col-sm-12" for="descripcion">Descripcion</label>
                                             <div class="text-danger" th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></div>
-                                            <input class="form-control" th:field="*{descripcion}" placeholder="Descripcion" type="text" name="descripcion" id="descripcion">
-
+                                            <textarea class="form-control" th:field="*{descripcion}" placeholder="Descripcion" type="text" name="descripcion" id="descripcion"></textarea>
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <label class="col-xl-12 col-lg-12 col-md-12 col-sm-12" for="valordescuento">Valor de descuento (S/.)</label>

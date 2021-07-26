@@ -18,13 +18,13 @@ public interface RepartidorRepository  extends JpaRepository<Repartidor, Integer
 
 
     //
-    @Query(value="select p.idpedidos, p.montototal, p.comisionrepartidor, p.calificacionrepartidor, r.nombre, d2.nombredistrito as restaurantedistrito, d.direccion as clienteubicacion\n" +
+    @Query(value="select p.idpedidos, p.montototal, p.comisionrepartidor, p.calificacionrepartidor, r.nombre, d2.nombredistrito as restaurantedistrito, d3.nombredistrito AS clienteubicacion\n" +
             "    from pedidos p\n" +
             "    inner join restaurante r on (p.restauranteidrestaurante=r.idrestaurante)\n" +
             "    inner join direcciones d on (p.direccionentrega = d.iddirecciones)\n" +
             "    inner join distritos d2 on (d.iddistrito = d2.iddistritos)\n" +
-            "    inner join restaurante r2 on (r2.iddistrito= d2.iddistritos)\n" +
-            "    where p.idrepartidor=?1 group by p.idpedidos;\n", nativeQuery = true)
+            "    inner join distritos d3 on (r.iddistrito = d3.iddistritos)\n" +
+            "    where p.idrepartidor=?1 AND p.estadorepartidor LIKE concat('entregado', '%') group by p.idpedidos;\n", nativeQuery = true)
     List<PedidosReporteDTOs> findPedidosPorRepartidor(int idRepartidor);
 
 
@@ -53,7 +53,7 @@ public interface RepartidorRepository  extends JpaRepository<Repartidor, Integer
     @Query(value = "SELECT sum(comisionrepartidor) as 'comision_mensual',month(fechahorapedido) as 'mes'," +
             "year(fechahorapedido) as 'year'\n" +
             "FROM proyecto.pedidos \n" +
-            "where (idrepartidor=?1) ",nativeQuery = true)
+            "where (idrepartidor=?1 and estadorepartidor='entregado') group by month(fechahorapedido)",nativeQuery = true)
     List<RepartidorComisionMensualDTO> obtenerComisionPorMes(int id);
 
     //Listo
@@ -72,7 +72,7 @@ public interface RepartidorRepository  extends JpaRepository<Repartidor, Integer
             "    inner join  restaurante r on (p.restauranteIdrestaurante = r.idrestaurante)\n" +
             "    inner join direcciones d on (p.direccionentrega = d.iddirecciones)\n" +
             "    inner join distritos d2 on (r.iddistrito = d2.iddistritos)\n" +
-            "where p.estadorepartidor like concat('pendient', '%') and d2.nombredistrito like ?1", nativeQuery = true)
+            "where p.estadorepartidor like concat('pendiente', '%') and d2.nombredistrito like ?1", nativeQuery = true)
     List<PedidosDisponiblesDTO> findListaPedidosDisponibles(String distritoRepartidor);
 
     //Usado por Adminsistema en reportes de repartidores
