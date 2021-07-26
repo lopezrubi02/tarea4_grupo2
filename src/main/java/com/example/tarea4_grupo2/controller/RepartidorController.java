@@ -629,10 +629,11 @@ public class RepartidorController {
 
             if (!matcher1.matches()) {
                 msgc1 = "La contraseña debe tener al menos una letra, un número y un caracter especial";
+
+                cont1val=true;
                 if(!usuario.getContraseniaHash().equalsIgnoreCase(user2.getContraseniaHash())) {
                     cont1val=false;
                 }
-                cont1val=true;
             }else{
                 cont1val=true;
             }
@@ -994,15 +995,23 @@ public class RepartidorController {
         }
 
         String msgS=null;
-        if((usuario.getSexo().equalsIgnoreCase("femenino")||
+        if(!(usuario.getSexo().equalsIgnoreCase("femenino")||
                 usuario.getSexo().equalsIgnoreCase("masculino"))){
             msgS="Seleccione una opción válida";
         }
 
         boolean correoExis = false;
         boolean correovalido = isValid(usuario.getEmail());
-        boolean licenciaValida=isValidLicencia(licencia);
-        boolean placaValida=isValidPlaca(placa);
+
+        boolean licenciaValida;
+        boolean placaValida;
+        if(movilidad2.equalsIgnoreCase("bicicleta")){
+            placaValida=true;
+            licenciaValida=true;
+        }else{
+             licenciaValida=isValidLicencia(licencia);
+             placaValida=isValidPlaca(placa);
+        }
 
         Usuario usuario1 = usuarioRepository.findByEmail(usuario.getEmail());
 
@@ -1016,21 +1025,21 @@ public class RepartidorController {
         }
 
 
-        boolean cont1val=false;
+        boolean cont1val=true;
         String msgc1=null;
 
         Pattern pattern1 = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$");
         Matcher matcher1 = pattern1.matcher(usuario.getContraseniaHash());
-        if( matcher1.matches()){
+        if( !matcher1.matches()){
              msgc1="La contraseña debe tener al menos una letra, un número y un caracter especial";
-             cont1val=true;
+             cont1val=false;
         }
         String msgc2=null;
-        boolean cont2val=false;
+        boolean cont2val=true;
         Matcher matcher2 = pattern1.matcher(pass2);
-        if( matcher2.matches()){
+        if( !matcher2.matches()){
             msgc2="La contraseña debe tener al menos una letra, un número y un caracter especial";
-            cont2val=true;
+            cont2val=false;
         }
         boolean direccionVal=false;
         if(direccion.trim().isEmpty()){
@@ -1055,7 +1064,9 @@ public class RepartidorController {
                 !(usuario.getSexo().equalsIgnoreCase("femenino")||
                         usuario.getSexo().equalsIgnoreCase("masculino"))) {
             model.addAttribute("listadistritos", distritosRepository.findAll());
-            model.addAttribute("errordni","Ingrese un DNI válido");
+            if(!dniexiste){
+                model.addAttribute("errordni","Ingrese un DNI válido");
+            }
             model.addAttribute("correoExis", correoExis);
             model.addAttribute("placaVal",placaVal);
             model.addAttribute("licenciaVal",licenciaVal);
