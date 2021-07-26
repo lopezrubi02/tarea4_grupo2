@@ -128,10 +128,10 @@
                     <div class="form-floating">
                         <table class="table table-light table-hover">
                             <tbody>
-                            <input type="hidden" id="listatarjetas" th:value="${listatarjetas}">
+
                             <tr th:each="tarjeta : ${listatarjetas}">
-                                <input type="hidden" th:value="${tarjeta.getNumerotarjeta()}" id ="tarjetatexto">
-                                <td id = "tarjetasecret">Mark</td>
+
+                                <td th:text="${tarjeta.numerotarjeta}">Mark</td>
                                 <td><a th:href="@{'/cliente/borrartarjeta?idtarjeta=' + ${tarjeta.getIdtarjetasonline()}}"><img src="http://cdn.onlinewebfonts.com/svg/img_512185.png"  width="25" height="25"/></a></td>
                             </tr>
                             </tbody>
@@ -217,44 +217,6 @@
 
     </script>
 
-    <script type="text/javascript">
-        $(document).ready(function() {
-            var number = document.getElementById("tarjetatexto").value;
-            console.log(tarjetatexto);
-            var listatarjetas = document.getElementById("listatarjetas").value;
-            console.log(listatarjetas);
-            console.log(listatarjetas.length);
-
-                var a = '';
-                if(number.length <= 11){
-                    for(var i = 0; i < number.length; i++){
-                        a = a + '*';
-                        $('#tarjetasecret').text(a);
-                    }
-                }
-                else
-                {
-                    for(var i = 0; i < number.length; i++){
-                        if(i <= 11){
-                            a = a + '*';
-                            $('#tarjetasecret').text(a);
-                            console.log($('#tarjetasecret').val());
-                        }
-                        else{
-                            a = a + number.substring(i,i+1);
-                            $('#tarjetasecret').text(a);
-                            console.log($('#tarjetasecret').val());
-                        }
-                        console.log($('#tarjetasecret').val());
-                    }
-                }
-
-
-
-
-        });
-
-    </script>
     <style>
         #owl-demo .item{
             margin: 3px;

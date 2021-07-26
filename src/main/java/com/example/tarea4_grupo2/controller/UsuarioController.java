@@ -600,6 +600,10 @@ public class UsuarioController {
 
                     HashSet<Restaurante> set = new HashSet<Restaurante>(restauranteshallados);
                     restauranteshallados = new ArrayList<Restaurante>(set);
+                    if(restauranteshallados.isEmpty()){
+                        model.addAttribute("listavacia","No hay restaurantes cercanos a tu zona");
+                    }
+
                     model.addAttribute("restalrededor",listadr);
                     model.addAttribute("listarestaurantes",restauranteshallados);
                 } else {
