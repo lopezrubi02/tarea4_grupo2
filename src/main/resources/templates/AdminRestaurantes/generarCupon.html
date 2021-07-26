@@ -190,7 +190,9 @@
                         items: 5
                     }
                 }
-            })
+            });
+            var index=document.getElementById("platonombre").selectedIndex;
+            document.getElementById("precioplato").value=document.getElementById("precios").options[index].value;
         })
     </script>
     <script>
