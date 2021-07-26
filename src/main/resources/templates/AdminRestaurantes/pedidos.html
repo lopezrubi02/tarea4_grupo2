@@ -30,6 +30,7 @@
         <div class="blog">
             <div class="container">
                 <h1>Pedidos</h1>
+                <div th:if="${msgid != null}" th:text="${msgid}" class="alert-danger"></div>
                 <div class="row table-users">
                     <!-- table -->
                     <div class="col-md-12">
@@ -58,7 +59,7 @@
                                     <td th:text="${#dates.format(pedidos.getfechahorapedido(), 'dd-MM-yyyy')}"></td>
                                     <td th:text="${#dates.format(pedidos.getfechahorapedido(), 'HH:MM')}"></td>
                                     <td style="width: 120px"><a class="send" th:href="@{'/adminrest/aceptarpedido'+'?id='+${pedidos.getidpedidos()}}" style="text-align: center;background: #d8b00f;width: 100px">Aceptar</a></td>
-                                    <td style="width: 120px"><button class="send" th:href="@{'/adminrest/rechazarpedido'+'?id='+${pedidos.getidpedidos()}}" style="text-align: center;background: #d8b00f;width: 100px">Rechazar</button></td>
+                                    <td style="width: 120px"><a class="send" th:href="@{'/adminrest/rechazarpedido'+'?id='+${pedidos.getidpedidos()}}" style="text-align: center;background: #d8b00f;width: 100px">Rechazar</a></td>
                                 </tr>
                                 </tbody>
                             </table>
