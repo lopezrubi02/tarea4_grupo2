@@ -679,7 +679,7 @@ public class RepartidorController {
                     usuarioRepository.save(user);
                     return "redirect:/repartidor/miperfil";
                 } else {
-                    model.addAttribute("errorpatroncontra", "La contraseña no cumple con los requisitos: mínimo 8 caracteres, un número y un caracter especial");
+                    model.addAttribute("errorpatroncontra", "La contraseña no cumple con los requisitos: mínimo 8 caracteres,una mayúscula, un número y un caracter especial");
                     model.addAttribute("usuario", user2);
 
                     return "repartidor/repartidor_perfil";
@@ -1031,14 +1031,14 @@ public class RepartidorController {
         Pattern pattern1 = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$");
         Matcher matcher1 = pattern1.matcher(usuario.getContraseniaHash());
         if( !matcher1.matches()){
-             msgc1="La contraseña debe tener al menos una letra, un número y un caracter especial";
+             msgc1="La contraseña debe tener al menos una mayúscula, un número y un caracter especial";
              cont1val=false;
         }
         String msgc2=null;
         boolean cont2val=true;
         Matcher matcher2 = pattern1.matcher(pass2);
         if( !matcher2.matches()){
-            msgc2="La contraseña debe tener al menos una letra, un número y un caracter especial";
+            msgc2="La contraseña debe tener al menos una mayúscula, un número y un caracter especial";
             cont2val=false;
         }
         boolean direccionVal=false;
@@ -1059,7 +1059,7 @@ public class RepartidorController {
             licenciaVal = "La licencia no es válida";
         }
 
-        if (bindingResult.hasErrors() || correoExis || !dniexiste || !correovalido
+        if (!cont1val||!cont2val||bindingResult.hasErrors() || correoExis || !dniexiste || !correovalido
                 || !placaValida || !licenciaValida || !movilidadselec ||
                 !(usuario.getSexo().equalsIgnoreCase("femenino")||
                         usuario.getSexo().equalsIgnoreCase("masculino"))) {
