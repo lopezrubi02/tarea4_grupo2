@@ -63,7 +63,7 @@ public class AdminRestauranteController {
     @Autowired
     FotosPlatosRepository fotosPlatosRepository;
 
-    @GetMapping("/login")
+    @GetMapping(value = {"","/login"})
     public String loginAdmin(HttpSession session){
 
         /*Se obtiene Id de Usuario*/
