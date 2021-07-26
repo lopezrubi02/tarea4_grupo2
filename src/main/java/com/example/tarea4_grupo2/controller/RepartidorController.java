@@ -389,7 +389,7 @@ public class RepartidorController {
 
 
     public ByteArrayInputStream exportAllData1(int id) throws IOException {
-        String[] columns1 = { "#", "RESTAURANTE", "DISTRITO DEL RESTAURANTE", "DESTINO", "S/. COMISIÓN", "CALIFICACION"};
+        String[] columns1 = { "#", "RESTAURANTE", "DISTRITO DEL RESTAURANTE", "DISTRITO DEL CLIENTE", "S/. COMISIÓN", "CALIFICACION"};
         String[] columns2 = { "MES", "AÑO", "COMISIÓN MENSUAL" };
 
         Workbook workbook = new HSSFWorkbook();
@@ -413,8 +413,8 @@ public class RepartidorController {
             row1 = sheet1.createRow(initRow1);
             row1.createCell(0).setCellValue(initRow1);
             row1.createCell(1).setCellValue(pedidoDisponible.getNombre());
-            row1.createCell(2).setCellValue(pedidoDisponible.getRestaurantedistrito());
-            row1.createCell(3).setCellValue(pedidoDisponible.getClienteubicacion());
+            row1.createCell(2).setCellValue(pedidoDisponible.getClienteubicacion());
+            row1.createCell(3).setCellValue(pedidoDisponible.getRestaurantedistrito());
             row1.createCell(4).setCellValue(pedidoDisponible.getComisionrepartidor()+ ".00");
             row1.createCell(5).setCellValue(pedidoDisponible.getCalificacionrepartidor());
             initRow1++;

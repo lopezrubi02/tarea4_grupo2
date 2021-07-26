@@ -67,137 +67,62 @@ public class LoginController {
                                @RequestParam("iddistrito") int iddistrito,
                                @RequestParam("direccion_real") String direccion,
                                Model model){
-        System.out.println(usuario.getContraseniaHash());
-        System.out.println(password2);
+        int correcto=1;
+        Optional<Usuario> persona = usuarioRepository.findByEmailAndAndRol(usuario.getEmail(), "AdminRestaurante");
         if(bindingResult.hasErrors()){
-            Optional<Usuario> persona = usuarioRepository.findByEmailAndAndRol(usuario.getEmail(), "AdminRestaurante");
+            correcto=0;
             model.addAttribute("listadistritos",distritosRepository.findAll());
-            if(!usuario.getContraseniaHash().equals(password2)){
-                model.addAttribute("msgcontra","Contraseñas no son iguales");
-            }
-            if(persona.isPresent()){
-                model.addAttribute("msgcorreo","Correo ya existe");
-            }
-            if(!validarDNI(usuario.getDni())){
-                model.addAttribute("msgdni","DNI no existe");
-            }
+        }
+        if(!usuario.getContraseniaHash().equals(password2)){
+            correcto=0;
+            model.addAttribute("msgcontra","Contraseñas no son iguales");
+        }
+        if(persona.isPresent()){
+            correcto=0;
+            model.addAttribute("msgcorreo","Correo ya existe");
+        }
+        if(!validarDNI(usuario.getDni())){
+            correcto=0;
+            model.addAttribute("msgdni","DNI no existe");
+        }
+        if(!(usuario.getSexo().equals("Masculino"))&&!(usuario.getSexo().equals("Femenino"))){
+            System.out.println(usuario.getSexo());
+            correcto=0;
+            model.addAttribute("msgsex","Sexo no existe");
+        }
+        if(direccion.equals("")||direccion==null){
+            correcto=0;
+            model.addAttribute("msgdir","Direccion no puede ser nula");
+        }
+        if(correcto==0) {
             model.addAttribute("direction",direccion);
+            model.addAttribute("msgcontra","Contraseñas no son iguales");
+            model.addAttribute("listadistritos",distritosRepository.findAll());
             return "AdminRestaurantes/register";
         }
-        else {
-            if(isValid(usuario.getEmail())){
-                if(usuario.getContraseniaHash().equals(password2)) {
-                    System.out.println("aqui gozu");
-                    if (validarContrasenia(usuario.getContraseniaHash())) {
-                        Optional<Usuario> persona = usuarioRepository.findByEmailAndAndRol(usuario.getEmail(), "AdminRestaurante");
-                        //Optional<Usuario> validardni = usuarioRepository.findByDniAndRol(usuario.getDni(), "AdminRestaurante");
-                        if (!(persona.isPresent())) {
-                            if (validarDNI(usuario.getDni())) {
-                                //if(!(validardni.isPresent())) {
-                                String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
-                                usuario.setContraseniaHash(contraseniahashbcrypt);
-                                usuarioRepository.save(usuario);
-                                Usuario usuarionuevo = usuarioRepository.findByEmail(usuario.getEmail());
-                                Direcciones direccionactual = new Direcciones();
-                                direccion = direccion.split(",")[0];
-                                direccionactual.setDireccion(direccion);
-                                Distritos distritosactual = distritosRepository.findById(iddistrito).get();
-                                direccionactual.setDistrito(distritosactual);
-                                //direccionactual.setUsuariosIdusuarios(usuarionuevo.getIdusuarios());
-                                direccionactual.setUsuario(usuarionuevo);
-                                direccionactual.setActivo(1);
-                                direccionesRepository.save(direccionactual);
-
-                                /* Envio de correo de confirmacion */
-                                String subject = "Creacion de cuenta";
-                                String aws = "g-spicyo.publicvm.com";
-                                String direccionurl = "http://" + aws + ":8080/login";
-                                String mensaje = "¡Hola! Tu cuenta de administrador de restaurante ha sido creada exitosamente. Registra tu restaurante!<br><br>" +
-                                        "Ahora es parte de Spicyo. Para ingresar a su cuenta haga click: <a href='" + direccionurl + "'>AQUÍ</a> <br><br>Atte. Equipo de Spicy :D</b>";
-                                String correoDestino = usuario.getEmail();
-                                sendMailService.sendMail(correoDestino, "saritaatanacioarenas@gmail.com", subject, mensaje);
-                                return "AdminRestaurantes/correo";
-                                //}
-                                //else{
-                                //model.addAttribute("msgdni","Dni ya existe");
-                                //model.addAttribute("listadistritos",distritosRepository.findAll());
-                                //return "AdminRestaurantes/register";
-                                //}
-                            } else {
-                                if (!usuario.getContraseniaHash().equals(password2)) {
-                                    model.addAttribute("msgcontra", "Contraseñas no son iguales");
-                                }
-                                if (persona.isPresent()) {
-                                    model.addAttribute("msgcorreo", "Correo ya existe");
-                                }
-                                model.addAttribute("direction", direccion);
-                                model.addAttribute("msgdni", "DNI no existe");
-                                model.addAttribute("listadistritos", distritosRepository.findAll());
-                                return "AdminRestaurantes/register";
-                            }
-                        } else {
-                            if (!usuario.getContraseniaHash().equals(password2)) {
-                                model.addAttribute("msgcontra", "Contraseñas no son iguales");
-                            }
-                            if (!validarDNI(usuario.getDni())) {
-                                model.addAttribute("msgdni", "DNI no existe");
-                            }
-                            model.addAttribute("direction", direccion);
-                            model.addAttribute("msgcorreo", "Correo ya existe");
-                            model.addAttribute("listadistritos", distritosRepository.findAll());
-                            return "AdminRestaurantes/register";
-                        }
-                    }
-                    else{
-                        Optional<Usuario> persona = usuarioRepository.findByEmailAndAndRol(usuario.getEmail(), "AdminRestaurante");
-                        if(persona.isPresent()){
-                            model.addAttribute("msgcorreo","Correo ya existe");
-                        }
-                        if(!validarDNI(usuario.getDni())){
-                            model.addAttribute("msgdni","DNI no existe");
-                        }
-
-                        model.addAttribute("direction",direccion);
-                        model.addAttribute("msgcontra","La contraseña no cumple con los requisitos: mínimo 8 caracteres,una mayúscula, un número y un caracter especial");
-                        model.addAttribute("listadistritos",distritosRepository.findAll());
-                        return "AdminRestaurantes/register";
-                    }
-                }
-                else {
-                    Optional<Usuario> persona = usuarioRepository.findByEmailAndAndRol(usuario.getEmail(), "AdminRestaurante");
-                    if(persona.isPresent()){
-                        model.addAttribute("msgcorreo","Correo ya existe");
-                    }
-                    if(!validarDNI(usuario.getDni())){
-                        model.addAttribute("msgdni","DNI no existe");
-                    }
-                    if(!validarContrasenia(usuario.getContraseniaHash())){
-                        model.addAttribute("msgcontrapatron","La contraseña no cumple con los requisitos: mínimo 8 caracteres,una mayúscula, un número y un caracter especial");
-                    }
-
-                    model.addAttribute("direction",direccion);
-                    model.addAttribute("msgcontra","Contraseñas no son iguales");
-                    model.addAttribute("listadistritos",distritosRepository.findAll());
-                    return "AdminRestaurantes/register";
-                }
-            }
-            else{
-                Optional<Usuario> persona = usuarioRepository.findByEmailAndAndRol(usuario.getEmail(), "AdminRestaurante");
-                if(persona.isPresent()){
-                    model.addAttribute("msgcorreo","Correo ya existe");
-                }
-                if(!validarDNI(usuario.getDni())){
-                    model.addAttribute("msgdni","DNI no existe");
-                }
-                if(!validarContrasenia(usuario.getContraseniaHash())){
-                    model.addAttribute("msgcontrapatron","La contraseña no cumple con los requisitos: mínimo 8 caracteres,una mayúscula, un número y un caracter especial");
-                }
-
-                model.addAttribute("direction",direccion);
-                model.addAttribute("msgcontra","Contraseñas no son iguales");
-                model.addAttribute("listadistritos",distritosRepository.findAll());
-                return "AdminRestaurantes/register";
-            }
+        else{
+            String contraseniahashbcrypt = BCrypt.hashpw(usuario.getContraseniaHash(), BCrypt.gensalt());
+            usuario.setContraseniaHash(contraseniahashbcrypt);
+            usuarioRepository.save(usuario);
+            Usuario usuarionuevo = usuarioRepository.findByEmail(usuario.getEmail());
+            Direcciones direccionactual = new Direcciones();
+            direccion = direccion.split(",")[0];
+            direccionactual.setDireccion(direccion);
+            Distritos distritosactual = distritosRepository.findById(iddistrito).get();
+            direccionactual.setDistrito(distritosactual);
+            //direccionactual.setUsuariosIdusuarios(usuarionuevo.getIdusuarios());
+            direccionactual.setUsuario(usuarionuevo);
+            direccionactual.setActivo(1);
+            direccionesRepository.save(direccionactual);
+            /* Envio de correo de confirmacion */
+            String subject = "Creacion de cuenta";
+            String aws = "g-spicyo.publicvm.com";
+            String direccionurl = "http://" + aws + ":8080/login";
+            String mensaje = "¡Hola! Tu cuenta de administrador de restaurante ha sido creada exitosamente. Registra tu restaurante!<br><br>" +
+                    "Ahora es parte de Spicyo. Para ingresar a su cuenta haga click: <a href='" + direccionurl + "'>AQUÍ</a> <br><br>Atte. Equipo de Spicy :D</b>";
+            String correoDestino = usuario.getEmail();
+            sendMailService.sendMail(correoDestino, "saritaatanacioarenas@gmail.com", subject, mensaje);
+            return "AdminRestaurantes/correo";
         }
     }
 

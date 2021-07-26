@@ -75,8 +75,8 @@
                     <tr th:each="pedidoDisponible, info : ${listaReporte1}">
                         <td th:text="${10*currentPage + info.index -9}"></td>
                         <td th:text="${pedidoDisponible.getNombre()}"></td>
-                        <td th:text="${pedidoDisponible.getRestaurantedistrito()}"></td>
                         <td th:text="${pedidoDisponible.getClienteubicacion()}"></td>
+                        <td th:text="${pedidoDisponible.getRestaurantedistrito()}"></td>
                         <td th:text="${pedidoDisponible.getComisionrepartidor()} + '.00'"></td>
                         <td th:text="${pedidoDisponible.getCalificacionrepartidor()}"></td>
                     </tr>
