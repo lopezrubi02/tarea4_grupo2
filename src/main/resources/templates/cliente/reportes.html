@@ -187,7 +187,8 @@
                                     </figure>
                                 </div>
                                 <div class="container">
-                                    <p th:text="|Se ha ahorrado ${diferencia.getDiferencia()} soles|"></p>
+                                    <p th:if="${(diferencia == null)}"  th:text="|Se ha ahorrado 0 soles|"></p>
+                                    <p th:if="${diferencia != null}" th:text="|Se ha ahorrado ${diferencia.getDiferencia()} soles|"></p>
                                 </div>
                             </div>
                         </div>

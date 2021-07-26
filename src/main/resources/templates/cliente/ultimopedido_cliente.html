@@ -198,7 +198,10 @@
 						<div class="card" style="margin-top: 50px; margin-bottom: 50px;">
 							<div class="row d-flex justify-content-between px-3 top">
 								<div class="d-flex">
-									<h5>Estado de tu pedido</h5>
+									<h5>Estado de tu pedido: </h5>
+									</br>
+									</br>
+									<h5 th:if="${pedido.estadorestaurante == 'rechazado'}" > Tu pedido ha sido rechazado por el restaurante. Te invitamos a realizar otro pedido.</h5>
 								</div>
 								<div class="d-flex flex-column text-sm-right">
 									<p class="mb-0">Fecha de pedido <span class="font-weight-bold" style="color: black;" th:text="${pedido.fechahorapedido.toString().replace('T',' ')}">01/12/19</span></p>

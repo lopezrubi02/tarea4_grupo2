@@ -1320,6 +1320,7 @@ public class AdminRestauranteController {
                 optional.get().setEstadorestaurante("aceptado");
                 optional.get().setEstadorepartidor("pendiente"); //Para que le aparezca al repartidor
                 pedidosRepository.save(optional.get());
+                attr.addFlashAttribute("msgra","Pedido aceptado exitosamente");
                 return"redirect:/adminrest/pedidos";
             }
             else{
@@ -1338,6 +1339,7 @@ public class AdminRestauranteController {
         try{
             int idp=Integer.parseInt(id);
             Optional<Pedidos> optional = pedidosRepository.findById(idp);
+            usuarioRepository.findUsuarioById(optional.get().getIdcliente()).getEmail();
             Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
             Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
             if(idrestaurante==optional.get().getRestaurantepedido().getIdrestaurante()){
@@ -1350,9 +1352,11 @@ public class AdminRestauranteController {
                 String direccionurl = "http://" + aws + ":8080/login";
                 String mensaje = "¡Hola! Tu pedido ha sido rechazado por el administrador de restaurante. Por favor, intenta con un nuevo pedido.<br><br>" +
                         "Ahora es parte de Spicyo. Para ingresar a su cuenta haga click: <a href='" + direccionurl + "'>AQUÍ</a> <br><br>Atte. Equipo de Spicy :D</b>";
-                String correoDestino = sessionUser.getEmail();
+                String correoDestino = usuarioRepository.findUsuarioById(optional.get().getIdcliente()).getEmail();
+                System.out.println(correoDestino);
                 sendMailService.sendMail(correoDestino, "saritaatanacioarenas@gmail.com", subject, mensaje);
                 System.out.println("llegue");
+                attr.addFlashAttribute("msgar","Pedido rechazado exitosamente");
                 return"redirect:/adminrest/pedidos";
             }
             else{
