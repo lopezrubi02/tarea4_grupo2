@@ -399,8 +399,13 @@ public class UsuarioController {
 
                 DineroAhorrado_ClienteDTO dineroAhorrado_clienteDTO = pedidosRepository.dineroAhorrado(idusuarios, anio, mes);
                 if(dineroAhorrado_clienteDTO == null){
-                    int diferencia = 0;
-                    model.addAttribute("diferencia", diferencia);
+                    DineroAhorrado_ClienteDTO dto = new DineroAhorrado_ClienteDTO() {
+                        @Override
+                        public int getDiferencia() {
+                            return 0;
+                        }
+                    };
+                    model.addAttribute("diferencia", dto);
                 }else{
                     model.addAttribute("diferencia", dineroAhorrado_clienteDTO);
                 }
