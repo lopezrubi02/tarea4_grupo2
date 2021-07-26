@@ -31,84 +31,84 @@
 <!-- body -->
 
 <body class="main-layout">
-    <!-- loader  -->
-    <!--div class="loader_bg">
-        <div class="loader"><img th:src="@{/images/loading.gif}" alt="" /></div>
-    </div-->
+<!-- loader  -->
+<!--div class="loader_bg">
+    <div class="loader"><img th:src="@{/images/loading.gif}" alt="" /></div>
+</div-->
 
-    <div class="wrapper">
-        <!-- end loader -->
+<div class="wrapper">
+    <!-- end loader -->
 
-        <!-- Sidebar  -->
-        <div th:replace="fragments/cliente.html:: slider" class="sidebar">
-        </div>
-
+    <!-- Sidebar  -->
+    <div th:replace="fragments/cliente.html:: slider" class="sidebar">
     </div>
 
+</div>
 
-    <div id="content">
+
+<div id="content">
     <!-- header -->
     <header th:replace="fragments/cliente.html :: bar"></header>
 
 
-  <div class="yellow_bg">
-   <div class="container">
+    <div class="yellow_bg">
+        <div class="container">
             <div class="row">
-               <div class="col-md-12">
-                  <div class="title">
-                     <h2 th:text="${restaurantexordenar.nombre}">McDonald's</h2>
-                    
-                  </div>
-               </div>
-            </div>
-          </div>
-</div>
+                <div class="col-md-12">
+                    <div class="title">
+                        <h2 th:text="${restaurantexordenar.nombre}">McDonald's</h2>
 
-<!-- blog -->
-<div class="blog" style="padding-top: 20px;">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-12">
-          <div th:if="${platoagregado != null}" th:text="${platoagregado}" class="alert alert-warning" role="alert"></div>
-          <div class="title">
-          <i><img th:src="@{/images/title.png}" alt="#"/></i>
-          
-          <p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- blog -->
+    <div class="blog" style="padding-top: 20px;">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div th:if="${platoagregado != null}" th:text="${platoagregado}" class="alert alert-warning" role="alert"></div>
+                    <div class="title">
+                        <i><img th:src="@{/images/title.png}" alt="#"/></i>
+
+                        <p>
               <span th:each="categoriarest : ${restaurantexordenar.categoriasrestList}"
                     th:text="${categoriarest.nombrecategoria}">
               </span>
-              <span  th:text="${restaurantexordenar.calificacionpromedio} + '★ - ' + ${cantreviews} + ' revisiones'"></span>
-		  </p>
+                            <span  th:text="${restaurantexordenar.calificacionpromedio} + '★ - ' + ${cantreviews} + ' revisiones'"></span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mar_bottom" th:each="plato : ${platosxrest}">
+                    <div class="blog_box">
+                        <div class="blog_img_box">
+                            <figure><img th:src="@{|/cliente/imagenplato/${plato.idplato}|}" width="70" height="70"/></figure>
+                        </div>
+                        <h3 th:text="${plato.nombre}">Combowok de la Suerte</h3>
+                        <p th:text="${plato.descripcion}">Encájate Chi Jau Kay, 2 wantanes, gaseosa personal y salsa tamarindo.
+                        </p>
+                        <p th:text="'S/' + ${plato.precio}">precio</p>
+                        <a th:href="@{'/cliente/platoxpedir?idrestaurante=' + ${restaurantexordenar.idrestaurante} + '&idplato=' + ${plato.idplato} + '&direccion=' + ${direccionxenviar}}"><h4 style="text-align: right; margin-right: 10px">Agregar</h4></a>
+                        </br>
+                    </div>
+                    </br>
+                </div>
+
+                </br>
+
+            </div>
         </div>
-      </div>
+        <!-- end blog -->
+
     </div>
-      <div class="row">
-          <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mar_bottom" th:each="plato : ${platosxrest}">
-              <div class="blog_box">
-                  <div class="blog_img_box">
-                      <figure><img th:src="@{|/cliente/imagenplato/${plato.idplato}|}" width="70" height="70"/></figure>
-                  </div>
-                  <h3 th:text="${plato.nombre}">Combowok de la Suerte</h3>
-                  <p th:text="${plato.descripcion}">Encájate Chi Jau Kay, 2 wantanes, gaseosa personal y salsa tamarindo.
-                  </p>
-                  <p th:text="'S/' + ${plato.precio}">precio</p>
-                  <a th:href="@{'/cliente/platoxpedir?idrestaurante=' + ${restaurantexordenar.idrestaurante} + '&idplato=' + ${plato.idplato} + '&direccion=' + ${direccionxenviar}}"><h4 style="text-align: right; margin-right: 10px">Agregar</h4></a>
-                  </br>
-              </div>
-              </br>
-          </div>
-
-      </br>
-
-  </div>
-</div>
-<!-- end blog -->
-
-</div>
     <!-- footer -->
     <fooetr>
         <div class="footer">
-            
+
             <div class="copyright">
                 <div class="container">
                     <p>© 2021 Todos los derechos reservados</p>
@@ -118,75 +118,76 @@
     </fooetr>
     <!-- end footer -->
 
-    </div>
-    </div>
-    <div class="overlay"></div>
-    <!-- Javascript files-->
+</div>
+</div>
+<div class="overlay"></div>
+<!-- Javascript files-->
 
-    <script th:src="@{/js/pruebacarrito.js}" ></script>
+<script th:src="@{/js/pruebacarrito.js}" ></script>
 
-    <script th:src="@{/js/jquery.min.js}" ></script>
-    <script th:src="@{/js/popper.min.js}" ></script>
-    <script th:src="@{/js/bootstrap.bundle.min.js}" ></script>
-    <script th:src="@{/js/owl.carousel.min.js}" ></script>
-    <script th:src="@{/js/custom.js}" ></script>
-    <script th:src="@{/js/jquery.mCustomScrollbar.concat.min.js}" ></script>
+<script th:src="@{/js/jquery.min.js}" ></script>
+<script th:src="@{/js/popper.min.js}" ></script>
+<script th:src="@{/js/bootstrap.bundle.min.js}" ></script>
+<script th:src="@{/js/owl.carousel.min.js}" ></script>
+<script th:src="@{/js/custom.js}" ></script>
+<script th:src="@{/js/jquery.mCustomScrollbar.concat.min.js}" ></script>
 
-    <script th:src="@{/js/jquery-3.0.0.min.js}" ></script>
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $("#sidebar").mCustomScrollbar({
-                theme: "minimal"
-            });
-
-            $('#dismiss, .overlay').on('click', function() {
-                $('#sidebar').removeClass('active');
-                $('.overlay').removeClass('active');
-            });
-
-            $('#sidebarCollapse').on('click', function() {
-                $('#sidebar').addClass('active');
-                $('.overlay').addClass('active');
-                $('.collapse.in').toggleClass('in');
-                $('a[aria-expanded=true]').attr('aria-expanded', 'false');
-            });
+<script th:src="@{/js/jquery-3.0.0.min.js}" ></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#sidebar").mCustomScrollbar({
+            theme: "minimal"
         });
 
-    </script>
-    <style>
-        #owl-demo .item{
-            margin: 3px;
-        }
-        #owl-demo .item img{
-            display: block;
-            width: 100%;
-            height: auto;
-        }
-    </style>
+        $('#dismiss, .overlay').on('click', function() {
+            $('#sidebar').removeClass('active');
+            $('.overlay').removeClass('active');
+        });
+
+        $('#sidebarCollapse').on('click', function() {
+            $('#sidebar').addClass('active');
+            $('.overlay').addClass('active');
+            $('.collapse.in').toggleClass('in');
+            $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+        });
+    });
+
+</script>
+<style>
+    #owl-demo .item{
+        margin: 3px;
+    }
+    #owl-demo .item img{
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+</style>
 
 
-    <script>
-        $(document).ready(function() {
-            var owl = $('.owl-carousel');
-            owl.owlCarousel({
-                margin: 10,
-                nav: true,
-                loop: true,
-                responsive: {
-                    0: {
-                        items: 1
-                    },
-                    600: {
-                        items: 2
-                    },
-                    1000: {
-                        items: 5
-                    }
+<script>
+    $(document).ready(function() {
+        var owl = $('.owl-carousel');
+        owl.owlCarousel({
+            margin: 10,
+            nav: true,
+            loop: true,
+            responsive: {
+                0: {
+                    items: 1
+                },
+                600: {
+                    items: 2
+                },
+                1000: {
+                    items: 5
                 }
-            })
+            }
         })
-    </script>
+    })
+</script>
 
 </body>
 
 </html>
+
