@@ -600,6 +600,10 @@ public class UsuarioController {
 
                     HashSet<Restaurante> set = new HashSet<Restaurante>(restauranteshallados);
                     restauranteshallados = new ArrayList<Restaurante>(set);
+                    if(restauranteshallados.isEmpty()){
+                        model.addAttribute("listavacia","No hay restaurantes cercanos a tu zona");
+                    }
+
                     model.addAttribute("restalrededor",listadr);
                     model.addAttribute("listarestaurantes",restauranteshallados);
                 } else {
@@ -1368,61 +1372,65 @@ public class UsuarioController {
 
     @GetMapping("/cliente/checkout")
     public String checkout(Model model, HttpSession session,
-                           @RequestParam(value = "idmetodo",defaultValue = "0") int idmetodo, RedirectAttributes attr){
+                           @RequestParam(value = "idmetodo",defaultValue = "0") String idmetodo, RedirectAttributes attr){
+        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+        int idusuario = sessionUser.getIdusuarios();
 
-         Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-        int idusuario=sessionUser.getIdusuarios();
-        Optional<MetodosDePago> metodoopt = metodosDePagoRepository.findById(idmetodo);
-        if(metodoopt.isPresent()){
-            MetodosDePago metodosel = metodoopt.get();
-            model.addAttribute("metodoelegido",idmetodo);
+        try {
+            Optional<MetodosDePago> metodoopt = metodosDePagoRepository.findById(Integer.valueOf(idmetodo));
+            if (metodoopt.isPresent()) {
+                MetodosDePago metodosel = metodoopt.get();
+                model.addAttribute("metodoelegido", Integer.valueOf(idmetodo));
+            }
+        } catch (NumberFormatException e){
+        return "redirect:/cliente/checkout";
         }
-        List<MetodosDePago> listametodos = metodosDePagoRepository.findAll();
-        model.addAttribute("listametodospago",listametodos);
+            List<MetodosDePago> listametodos = metodosDePagoRepository.findAll();
+            model.addAttribute("listametodospago", listametodos);
 
-        List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idusuario);
-        if(listapedidospendientes.isEmpty()){
-            return "redirect:/cliente/realizarpedido";
-        }else{
+            List<Pedidos> listapedidospendientes = pedidosRepository.listapedidospendientes(idusuario);
+            if (listapedidospendientes.isEmpty()) {
+                return "redirect:/cliente/realizarpedido";
+            } else {
 
-            for (Pedidos pedidoencurso : listapedidospendientes){
-              //  try {
+                for (Pedidos pedidoencurso : listapedidospendientes) {
+                    //  try {
 
-                List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
-                boolean carritoactualizado = false;
-                for (PedidoHasPlato php : platosxpedido) {
-                    System.out.println("TRACER 2 ****************************");
-                    System.out.println(php.getPlato().getActivo());
-                    System.out.println(php.getPlato().getDisponibilidad());
-                    int cantplatosrest = platosxpedido.size();
-                    if (php.getPlato().getActivo() == 0 || php.getPlato().getDisponibilidad() == 0) {
-                        System.out.println("TRACER 3  *****************");
-                        // TODO si el pedido solo tiene un plato, como se va a eliminar el plato, se deberia eliminar el pedido
-                        if(cantplatosrest == 1) {
-                            pedidosRepository.deleteById(pedidoencurso.getIdpedidos());
-                        }else{
-                            PedidoHasPlatoKey pedidoHasPlatoKey = php.getId();
-                            System.out.println(pedidoHasPlatoKey.getPedidosidpedidos());
-                            pedidoHasPlatoRepository.deleteById(pedidoHasPlatoKey);
+                    List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
+                    boolean carritoactualizado = false;
+                    for (PedidoHasPlato php : platosxpedido) {
+                        System.out.println("TRACER 2 ****************************");
+                        System.out.println(php.getPlato().getActivo());
+                        System.out.println(php.getPlato().getDisponibilidad());
+                        int cantplatosrest = platosxpedido.size();
+                        if (php.getPlato().getActivo() == 0 || php.getPlato().getDisponibilidad() == 0) {
+                            System.out.println("TRACER 3  *****************");
+                            // TODO si el pedido solo tiene un plato, como se va a eliminar el plato, se deberia eliminar el pedido
+                            if (cantplatosrest == 1) {
+                                pedidosRepository.deleteById(pedidoencurso.getIdpedidos());
+                            } else {
+                                PedidoHasPlatoKey pedidoHasPlatoKey = php.getId();
+                                System.out.println(pedidoHasPlatoKey.getPedidosidpedidos());
+                                pedidoHasPlatoRepository.deleteById(pedidoHasPlatoKey);
+                            }
+                            System.out.println("debe borrar plato");
+                            carritoactualizado = true;
                         }
-                        System.out.println("debe borrar plato");
-                        carritoactualizado = true;
                     }
-                }
-                if(carritoactualizado){
-                    attr.addFlashAttribute("carritoact","Tu carrito se ha actualizado");
-                }
-                MontoTotal_PedidoHasPlatoDTO montoTotal_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montototal(pedidoencurso.getIdpedidos());
-                int montoPagar = pedidoHasPlatoRepository.pagarTodo(pedidoencurso.getIdpedidos());
-                int descuento = pedidoHasPlatoRepository.descuento(pedidoencurso.getIdpedidos());
-                int montototal_pagar = montoPagar - descuento;
-                int preciodescuento = montoTotal_pedidoHasPlatoDTO.getpreciototal() - descuento;
-                model.addAttribute("platosxpedido",platosxpedido);
-                model.addAttribute("pedidoencurso",pedidoencurso);
-                model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
-                model.addAttribute("montopagar", montototal_pagar);
-                model.addAttribute("preciodescuento", preciodescuento);
-                model.addAttribute("descuento", descuento);
+                    if (carritoactualizado) {
+                        attr.addFlashAttribute("carritoact", "Tu carrito se ha actualizado");
+                    }
+                    MontoTotal_PedidoHasPlatoDTO montoTotal_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montototal(pedidoencurso.getIdpedidos());
+                    int montoPagar = pedidoHasPlatoRepository.pagarTodo(pedidoencurso.getIdpedidos());
+                    int descuento = pedidoHasPlatoRepository.descuento(pedidoencurso.getIdpedidos());
+                    int montototal_pagar = montoPagar - descuento;
+                    int preciodescuento = montoTotal_pedidoHasPlatoDTO.getpreciototal() - descuento;
+                    model.addAttribute("platosxpedido", platosxpedido);
+                    model.addAttribute("pedidoencurso", pedidoencurso);
+                    model.addAttribute("montototal", montoTotal_pedidoHasPlatoDTO);
+                    model.addAttribute("montopagar", montototal_pagar);
+                    model.addAttribute("preciodescuento", preciodescuento);
+                    model.addAttribute("descuento", descuento);
      /*           }catch(Exception e){
                     List<PedidoHasPlato> platosxpedido = pedidoHasPlatoRepository.findAllByPedido_Idpedidos(pedidoencurso.getIdpedidos());
                     MontoTotal_PedidoHasPlatoDTO montoTotal_pedidoHasPlatoDTO = pedidoHasPlatoRepository.montototal(pedidoencurso.getIdpedidos());
@@ -1438,9 +1446,9 @@ public class UsuarioController {
                     model.addAttribute("descuento", descuento);
 
                 }*/
+                }
+                return "cliente/checkoutcarrito";
             }
-            return "cliente/checkoutcarrito";
-        }
     }
 
     /** Para validar tarjeta de crédito  **/
@@ -1574,6 +1582,7 @@ public class UsuarioController {
                             pedidoencurso.setComisionrepartidor(6);
                             pedidoencurso.setComisionsistema(2);
                         }
+                        pedidoencurso.setFechahorapedido(LocalDateTime.now());
                         pedidoencurso.setEstadorestaurante("pendiente");
                         pedidoencurso.setEstadorepartidor("indefinido");
                         pedidosRepository.save(pedidoencurso);

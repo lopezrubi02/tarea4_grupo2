@@ -1310,40 +1310,81 @@ public class AdminRestauranteController {
     }
 
     @GetMapping("/aceptarpedido")
-    public String aceptarPedido(@RequestParam("id")int id){
-        Optional<Pedidos> optional = pedidosRepository.findById(id);
-        optional.get().setEstadorestaurante("aceptado");
-        optional.get().setEstadorepartidor("pendiente"); //Para que le aparezca al repartidor
-        pedidosRepository.save(optional.get());
-        return"redirect:/adminrest/pedidos";
+    public String aceptarPedido(@RequestParam("id")String id,HttpSession session,RedirectAttributes attr){
+        try{
+            int idp=Integer.parseInt(id);
+            Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+            Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
+            Optional<Pedidos> optional = pedidosRepository.findById(idp);
+            if(idrestaurante==optional.get().getRestaurantepedido().getIdrestaurante()){
+                optional.get().setEstadorestaurante("aceptado");
+                optional.get().setEstadorepartidor("pendiente"); //Para que le aparezca al repartidor
+                pedidosRepository.save(optional.get());
+                return"redirect:/adminrest/pedidos";
+            }
+            else{
+                attr.addFlashAttribute("msgid","Pedido no corresponde al restaurante");
+                return "redirect:/adminrest/pedidos";
+            }
+        }catch (NumberFormatException e){
+            attr.addFlashAttribute("msgid","Id del pedido no existe");
+            return "redirect:/adminrest/pedidos";
+        }
+
     }
 
     @GetMapping("/rechazarpedido")
-    public String rechazarPedido(@RequestParam("id")int id, HttpSession session){
-        Optional<Pedidos> optional = pedidosRepository.findById(id);
-        optional.get().setEstadorestaurante("rechazado");
-        pedidosRepository.save(optional.get());
-        /**Se obtiene Id de Restaurante**/
-        Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
-        Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
-        /********************************/
-        /* Envio de correo de confirmacion */
-        String subject = "Pedido rechazado";
-        String aws = "g-spicyo.publicvm.com";
-        String direccionurl = "http://" + aws + ":8080/login";
-        String mensaje = "¡Hola! Tu pedido ha sido rechazado por el administrador de restaurante. Por favor, intenta con un nuevo pedido.<br><br>" +
-                "Ahora es parte de Spicyo. Para ingresar a su cuenta haga click: <a href='" + direccionurl + "'>AQUÍ</a> <br><br>Atte. Equipo de Spicy :D</b>";
-        String correoDestino = sessionUser.getEmail();
-        sendMailService.sendMail(correoDestino, "saritaatanacioarenas@gmail.com", subject, mensaje);
-        return"redirect:/adminrest/pedidos";
+    public String rechazarPedido(@RequestParam("id")String id, HttpSession session,RedirectAttributes attr){
+        try{
+            int idp=Integer.parseInt(id);
+            Optional<Pedidos> optional = pedidosRepository.findById(idp);
+            Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+            Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
+            if(idrestaurante==optional.get().getRestaurantepedido().getIdrestaurante()){
+                optional.get().setEstadorestaurante("rechazado");
+                pedidosRepository.save(optional.get());
+                /********************************/
+                /* Envio de correo de confirmacion */
+                String subject = "Pedido rechazado";
+                String aws = "g-spicyo.publicvm.com";
+                String direccionurl = "http://" + aws + ":8080/login";
+                String mensaje = "¡Hola! Tu pedido ha sido rechazado por el administrador de restaurante. Por favor, intenta con un nuevo pedido.<br><br>" +
+                        "Ahora es parte de Spicyo. Para ingresar a su cuenta haga click: <a href='" + direccionurl + "'>AQUÍ</a> <br><br>Atte. Equipo de Spicy :D</b>";
+                String correoDestino = sessionUser.getEmail();
+                sendMailService.sendMail(correoDestino, "saritaatanacioarenas@gmail.com", subject, mensaje);
+                System.out.println("llegue");
+                return"redirect:/adminrest/pedidos";
+            }
+            else{
+                attr.addFlashAttribute("msgid","Pedido no corresponde al restaurante");
+                return "redirect:/adminrest/pedidos";
+            }
+        }catch (NumberFormatException e){
+            attr.addFlashAttribute("msgid","Id del pedido no existe");
+            return "redirect:/adminrest/pedidos";
+        }
     }
 
     @GetMapping("/preparadopedido")
-    public String platoPreparado(@RequestParam("id") int id){
-        Optional<Pedidos> optional = pedidosRepository.findById(id);
-        optional.get().setEstadorestaurante("preparado");
-        pedidosRepository.save(optional.get());
-        return "redirect:/adminrest/pedidos";
+    public String platoPreparado(@RequestParam("id") String id,HttpSession session,RedirectAttributes attr){
+        try{
+            int idp=Integer.parseInt(id);
+            Usuario sessionUser = (Usuario) session.getAttribute("usuarioLogueado");
+            Integer idrestaurante=restauranteRepository.buscarRestaurantePorIdAdmin(sessionUser.getIdusuarios()).get().getIdrestaurante();
+            Optional<Pedidos> optional = pedidosRepository.findById(idp);
+            if(idrestaurante==optional.get().getRestaurantepedido().getIdrestaurante()){
+                optional.get().setEstadorestaurante("preparado");
+                pedidosRepository.save(optional.get());
+                return "redirect:/adminrest/pedidos";
+            }
+            else{
+                attr.addFlashAttribute("msgid","Pedido no corresponde al restaurante");
+                return "redirect:/adminrest/pedidos";
+            }
+        }catch (NumberFormatException e){
+            attr.addFlashAttribute("msgid","Id del pedido no existe");
+            return "redirect:/adminrest/pedidos";
+        }
     }
 
     /************************CUENTA************************/
