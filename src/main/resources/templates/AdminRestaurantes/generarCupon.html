@@ -57,8 +57,7 @@
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <label class="col-xl-12 col-lg-12 col-md-12 col-sm-12" for="descripcion">Descripcion</label>
                                             <div class="text-danger" th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></div>
-                                            <input class="form-control" th:field="*{descripcion}" placeholder="Descripcion" type="text" name="descripcion" id="descripcion">
-
+                                            <textarea class="form-control" th:field="*{descripcion}" placeholder="Descripcion" type="text" name="descripcion" id="descripcion"></textarea>
                                         </div>
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <label class="col-xl-12 col-lg-12 col-md-12 col-sm-12" for="valordescuento">Valor de descuento (S/.)</label>
@@ -117,6 +116,7 @@
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                                 <div class="img-box" align="center">
                                     <figure><img src="/images/cupon.jpg" style="width:475px;height:800px"></figure>
+                                    <div style="text-align: center;font-size: 30px;color: black">Imagen referencial</div>
                                 </div>
                             </div>
                         </div>
@@ -189,7 +189,9 @@
                         items: 5
                     }
                 }
-            })
+            });
+            var index=document.getElementById("platonombre").selectedIndex;
+            document.getElementById("precioplato").value=document.getElementById("precios").options[index].value;
         })
     </script>
     <script>

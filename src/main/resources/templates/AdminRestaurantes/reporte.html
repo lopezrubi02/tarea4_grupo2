@@ -89,7 +89,7 @@
                     <tbody>
                     <tr th:each="pedido: ${listaPedidosPorFecha}">
                       <td th:text="${pedido.getnumeropedido()}"></td>
-                      <td scope="row" th:text="${pedido.getfechahorapedido()}"><a href="repartidor_pedido_1.html"></a></td>
+                      <td scope="row" th:text="${#calendars.format(pedido.getfechahorapedido(),'dd-MM-yyyy HH:mm')}"></td>
                       <td th:text="${pedido.getnombre()} + ' ' + ${pedido.getapellidos()}"></td>
                       <td th:text="${pedido.getmontototal()}"></td>
                       <td th:text="${pedido.getnombreplato()}"></td>
