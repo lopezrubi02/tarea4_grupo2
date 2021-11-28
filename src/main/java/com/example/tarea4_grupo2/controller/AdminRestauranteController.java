@@ -1181,6 +1181,7 @@ public class AdminRestauranteController {
                 int idrestaurante = restauranteRepository.buscarRestaurantePorIdAdmin(usuario.getIdusuarios()).get().getIdrestaurante();
                 List<PedidosReporteDto> pedidosReporte;
                 if (name.equals("")) {
+                    System.out.println("NAME VACIO");
                     System.out.println("Trace1");
                     pedidosReporte = pedidosRepository.listaPedidosReporteporFechamasantigua(idrestaurante);
                     if (pedidosReporte.isEmpty()) {
@@ -1194,6 +1195,7 @@ public class AdminRestauranteController {
                 }
                 List<PedidosGananciaMesDto> listaGanancias = pedidosRepository.gananciaPorMes(idrestaurante);
                 if (!(pedidosReporte.isEmpty())) {
+                    System.out.println("LISTA REPORTES NO ES VACIA");
                     int numberOfPages = (int) Math.ceil(pedidosReporte.size() / numberOfUsersPerPage);
                     int numberOfPages2 = (int) Math.ceil(listaGanancias.size() / numberOfUsersPerPage);
                     if (page > numberOfPages) {
